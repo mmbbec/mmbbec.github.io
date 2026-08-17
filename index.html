@@ -186,7 +186,7 @@
         }
 
         /* ================================
-           PROFILE BUTTONS (like Dr. Tawade)
+           PROFILE BUTTONS
         ================================ */
         .profile-buttons {
             display: flex;
@@ -472,7 +472,7 @@
         }
 
         /* ================================
-           PUBLICATIONS (numbered)
+           PUBLICATIONS
         ================================ */
         .publications {
             background: white;
@@ -517,7 +517,7 @@
         }
 
         /* ================================
-           BOOKS & PATENTS (split)
+           BOOKS & PATENTS
         ================================ */
         .two-column {
             display: grid;
@@ -700,7 +700,7 @@
         }
 
         /* ================================
-           RESEARCH PROFILES (links)
+           RESEARCH PROFILES
         ================================ */
         .profiles {
             background: #f7f9fc;
@@ -758,14 +758,19 @@
         .contact {
             background: #eef5fb;
         }
-        .contact-box {
-            max-width: 800px;
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            max-width: 1000px;
             margin: auto;
-            text-align: center;
+        }
+        .contact-box {
             background: white;
-            padding: 40px 35px;
+            padding: 35px 30px;
             border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
         }
         .contact-box p {
             margin-bottom: 10px;
@@ -794,6 +799,87 @@
         }
         .email-link:hover {
             color: #d94a32;
+        }
+
+        /* Visitor Counter */
+        .visitor-counter {
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #555;
+        }
+        .visitor-counter .counter-icon {
+            font-size: 18px;
+            margin-right: 6px;
+        }
+        #visitor-count {
+            font-weight: bold;
+            color: #163b65;
+            font-size: 16px;
+        }
+
+        /* Contact Form */
+        .contact-form-box {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        .contact-form-box h3 {
+            color: #163b65;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: 0.3s;
+            background: #fafbfc;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #163b65;
+            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.15);
+            background: #fff;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .contact-form-box .btn-primary {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        #formSuccess {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #d4edda;
+            border-radius: 8px;
+            color: #155724;
+            margin-top: 20px;
+            font-weight: 500;
         }
 
         /* ================================
@@ -837,6 +923,532 @@
         }
         .back-to-top:hover {
             background: #d94a32;
+        }
+
+        /* ================================
+           ===== FLASH NEWS & EVENTS SLIDER =====
+        ================================ */
+
+        /* --- News Ticker --- */
+        .news-ticker-wrap {
+            background: #102d4b;
+            color: #fff;
+            padding: 10px 0;
+            overflow: hidden;
+            border-bottom: 3px solid #d94a32;
+            position: relative;
+            z-index: 10;
+        }
+        .news-ticker-inner {
+            max-width: 1150px;
+            margin: auto;
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .news-ticker-label {
+            background: #d94a32;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 4px 16px;
+            border-radius: 3px;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: pulse-label 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-label {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .ticker-scroll {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 28px;
+        }
+        .ticker-scroll ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            animation: ticker-scroll 28s linear infinite;
+            white-space: nowrap;
+        }
+        .ticker-scroll ul li {
+            padding: 0 40px;
+            font-size: 14px;
+            color: #f0f4fa;
+            display: inline-block;
+        }
+        .ticker-scroll ul li a {
+            color: #ffb4a3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .ticker-scroll ul li a:hover {
+            text-decoration: underline;
+            color: #fff;
+        }
+        .ticker-scroll ul li .ticker-badge {
+            background: #d94a32;
+            font-size: 10px;
+            padding: 1px 10px;
+            border-radius: 12px;
+            margin-right: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        @keyframes ticker-scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* --- Flash News Section --- */
+        .flash-news-section {
+            background: #f7f9fc;
+            padding: 60px 0 70px;
+        }
+        .flash-news-section .container {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Flash Heading */
+        .flash-heading {
+            text-align: center;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .flash-heading h2 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #d94a32, #b53d28);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            position: relative;
+            animation: flash-blink 1.2s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(217, 74, 50, 0.15);
+        }
+        @keyframes flash-blink {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            25% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.98);
+            }
+            75% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+        .flash-heading .flash-icon {
+            font-size: 36px;
+            animation: flash-icon-pulse 0.9s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes flash-icon-pulse {
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.25) rotate(-8deg);
+            }
+        }
+        .flash-heading .flash-sub {
+            font-size: 14px;
+            color: #888;
+            font-weight: 400;
+            -webkit-text-fill-color: #888;
+            background: none;
+            letter-spacing: 0;
+        }
+
+        /* --- Events Slider --- */
+        .events-slider-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .events-slider-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+        .event-slide {
+            min-width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        .event-slide-img {
+            position: relative;
+            overflow: hidden;
+            min-height: 320px;
+            background: #dfe8f1;
+            cursor: pointer;
+        }
+        .event-slide-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .event-slide-img:hover img {
+            transform: scale(1.03);
+        }
+        .event-slide-img .img-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 18px 22px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transition: 0.4s;
+            text-align: center;
+        }
+        .event-slide-img:hover .img-overlay {
+            opacity: 1;
+        }
+        .event-slide-img .img-overlay span {
+            background: #d94a32;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .event-slide-content {
+            padding: 35px 40px 35px 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .event-slide-content .event-badge {
+            display: inline-block;
+            background: #d94a32;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+        .event-slide-content .event-date {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .event-slide-content .event-date i {
+            margin-right: 6px;
+        }
+        .event-slide-content h3 {
+            font-size: 26px;
+            color: #163b65;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .event-slide-content p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+        .event-slide-content .read-more-btn {
+            display: inline-block;
+            padding: 10px 28px;
+            background: #163b65;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            width: fit-content;
+        }
+        .event-slide-content .read-more-btn:hover {
+            background: #d94a32;
+            transform: translateX(5px);
+        }
+
+        /* Slider Controls */
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            margin-top: 30px;
+        }
+        .slider-controls button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #163b65;
+            background: white;
+            color: #163b65;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-controls button:hover {
+            background: #163b65;
+            color: white;
+        }
+        .slider-controls .dots {
+            display: flex;
+            gap: 10px;
+        }
+        .slider-controls .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d0d7de;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 0;
+        }
+        .slider-controls .dot.active {
+            background: #d94a32;
+            transform: scale(1.25);
+        }
+        .slider-controls .dot:hover {
+            background: #163b65;
+        }
+
+        /* --- Event Grid (below slider) --- */
+        .events-grid-title {
+            text-align: center;
+            font-size: 24px;
+            color: #163b65;
+            margin: 50px 0 25px;
+            font-weight: 700;
+        }
+        .events-grid-title span {
+            color: #d94a32;
+        }
+        .events-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+        .event-mini-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: 0.35s;
+            cursor: pointer;
+            border: 1px solid #edf0f5;
+        }
+        .event-mini-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+        .event-mini-card .mini-img {
+            height: 160px;
+            overflow: hidden;
+            background: #dfe8f1;
+            position: relative;
+        }
+        .event-mini-card .mini-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+        .event-mini-card:hover .mini-img img {
+            transform: scale(1.05);
+        }
+        .event-mini-card .mini-img .mini-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #d94a32;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+        .event-mini-card .mini-body {
+            padding: 16px 18px 18px;
+        }
+        .event-mini-card .mini-body .mini-date {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+        .event-mini-card .mini-body h4 {
+            font-size: 15px;
+            color: #163b65;
+            margin: 6px 0 8px;
+            line-height: 1.3;
+        }
+        .event-mini-card .mini-body p {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .event-mini-card .mini-body .mini-read {
+            font-size: 13px;
+            color: #d94a32;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .event-mini-card .mini-body .mini-read:hover {
+            color: #163b65;
+        }
+
+        /* --- Event Modal (Lightbox) --- */
+        .event-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            padding: 30px;
+        }
+        .event-modal.active {
+            display: flex;
+        }
+        .event-modal-content {
+            background: white;
+            max-width: 820px;
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: modalFade 0.35s ease;
+        }
+        @keyframes modalFade {
+            0% {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .event-modal-content .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 30px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .event-modal-content .modal-close:hover {
+            background: #d94a32;
+            transform: rotate(90deg);
+        }
+        .event-modal-content .modal-img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            background: #dfe8f1;
+        }
+        .event-modal-content .modal-body {
+            padding: 30px 35px 35px;
+            overflow-y: auto;
+        }
+        .event-modal-content .modal-body .modal-date {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .event-modal-content .modal-body h2 {
+            font-size: 28px;
+            color: #163b65;
+            margin-bottom: 12px;
+        }
+        .event-modal-content .modal-body p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        .event-modal-content .modal-body .modal-details {
+            background: #f7f9fc;
+            padding: 18px 22px;
+            border-radius: 8px;
+            border-left: 4px solid #d94a32;
+            font-size: 14px;
+            color: #444;
+            margin-top: 12px;
+        }
+        .event-modal-content .modal-body .modal-details strong {
+            color: #163b65;
         }
 
         /* ================================
@@ -892,6 +1504,39 @@
             }
             .edu-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+            /* Events */
+            .event-slide {
+                grid-template-columns: 1fr;
+            }
+            .event-slide-img {
+                min-height: 220px;
+            }
+            .event-slide-content {
+                padding: 25px 25px 30px;
+            }
+            .event-slide-content h3 {
+                font-size: 22px;
+            }
+            .events-mini-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .flash-heading h2 {
+                font-size: 30px;
+            }
+            .news-ticker-inner {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .ticker-scroll {
+                height: 24px;
+            }
+            .ticker-scroll ul li {
+                font-size: 12px;
+                padding: 0 20px;
             }
         }
 
@@ -972,6 +1617,46 @@
             .dropdown.active .dropdown-content {
                 display: block;
             }
+            /* Events mobile */
+            .event-slide-img {
+                min-height: 180px;
+            }
+            .event-slide-content h3 {
+                font-size: 19px;
+            }
+            .event-slide-content p {
+                font-size: 14px;
+            }
+            .events-mini-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .event-mini-card .mini-img {
+                height: 120px;
+            }
+            .event-mini-card .mini-body h4 {
+                font-size: 13px;
+            }
+            .flash-heading h2 {
+                font-size: 26px;
+            }
+            .flash-heading .flash-icon {
+                font-size: 28px;
+            }
+            .event-modal-content .modal-body {
+                padding: 20px;
+            }
+            .event-modal-content .modal-body h2 {
+                font-size: 22px;
+            }
+            .slider-controls button {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            .events-mini-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -1013,6 +1698,30 @@
     </header>
 
     <!-- =====================================
+    BREAKING NEWS TICKER
+    ===================================== -->
+    <div class="news-ticker-wrap">
+        <div class="news-ticker-inner">
+            <span class="news-ticker-label">🔴 BREAKING</span>
+            <div class="ticker-scroll">
+                <ul>
+                    <li><span class="ticker-badge">📢</span> Dr. Biradar's new paper on <a href="#publications">"Anomalous Diffusion in Ternary Nanofluids"</a> published in EPJ Plus (2025)</li>
+                    <li><span class="ticker-badge">🏆</span> Recognized as reviewer for Springer, Elsevier &amp; World Scientific journals</li>
+                    <li><span class="ticker-badge">📄</span> 26+ research publications &amp; 4 patents filed</li>
+                    <li><span class="ticker-badge">👨‍🏫</span> Currently guiding 3 Ph.D. scholars in Fluid Dynamics &amp; Nanofluids</li>
+                    <li><span class="ticker-badge">🩸</span> YRC Blood Donation Camp organized on <a href="#yrc">Aug 15, 2026</a></li>
+                    <!-- Duplicate for seamless scroll -->
+                    <li><span class="ticker-badge">📢</span> Dr. Biradar's new paper on <a href="#publications">"Anomalous Diffusion in Ternary Nanofluids"</a> published in EPJ Plus (2025)</li>
+                    <li><span class="ticker-badge">🏆</span> Recognized as reviewer for Springer, Elsevier &amp; World Scientific journals</li>
+                    <li><span class="ticker-badge">📄</span> 26+ research publications &amp; 4 patents filed</li>
+                    <li><span class="ticker-badge">👨‍🏫</span> Currently guiding 3 Ph.D. scholars in Fluid Dynamics &amp; Nanofluids</li>
+                    <li><span class="ticker-badge">🩸</span> YRC Blood Donation Camp organized on <a href="#yrc">Aug 15, 2026</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================
     HOME (HERO)
     ===================================== -->
     <section class="hero" id="home">
@@ -1028,7 +1737,6 @@
                     Researcher in Fluid Dynamics, Magnetohydrodynamics, Nanofluids, Heat Transfer and Mathematical Modelling.
                 </p>
 
-                <!-- Profile Buttons (like Dr. Tawade) -->
                 <div class="profile-buttons">
                     <a href="https://scholar.google.com/citations?user=PQDhCuoAAAAJ" class="profile-btn" target="_blank">📊 Google Scholar</a>
                     <a href="https://www.researchgate.net/profile/Mahadev-Biradar" class="profile-btn" target="_blank">📄 ResearchGate</a>
@@ -1044,6 +1752,179 @@
             </div>
         </div>
     </section>
+
+    <!-- =============================================
+    FLASH NEWS & EVENTS SLIDER
+    ============================================= -->
+    <section class="flash-news-section" id="events">
+        <div class="container">
+
+            <!-- FLASH HEADING -->
+            <div class="flash-heading">
+                <span class="flash-icon">⚡</span>
+                <h2>FLASH NEWS</h2>
+                <span class="flash-icon">⚡</span>
+                <span class="flash-sub">— Latest Events &amp; Updates —</span>
+            </div>
+
+            <!-- SLIDER -->
+            <div class="events-slider-wrapper">
+                <div class="events-slider-track" id="sliderTrack">
+
+                    <!-- SLIDE 1: BOS Meeting (using bos.jfif) -->
+                    <div class="event-slide">
+                        <div class="event-slide-img" onclick="openModal(0)">
+                            <img src="bos.jfif" alt="BOS Meeting" />
+                            <div class="img-overlay"><span>📸 Click to enlarge</span></div>
+                        </div>
+                        <div class="event-slide-content">
+                            <span class="event-badge">📋 Meeting</span>
+                            <div class="event-date">📅 15 August 2026</div>
+                            <h3>Board of Studies (BOS) Meeting</h3>
+                            <p>
+                                Annual BOS meeting of the Department of Mathematics to review curriculum,
+                                discuss new course offerings, and plan for academic excellence. Key decisions
+                                on syllabus revision and research collaborations were taken.
+                            </p>
+                            <button class="read-more-btn" onclick="openModal(0)">Read More →</button>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 2: International Conference -->
+                    <div class="event-slide">
+                        <div class="event-slide-img" onclick="openModal(1)">
+                            <img src="https://placehold.co/600x400/163b65/ffffff?text=International+Conference" alt="International Conference" />
+                            <div class="img-overlay"><span>📸 Click to enlarge</span></div>
+                        </div>
+                        <div class="event-slide-content">
+                            <span class="event-badge">🌐 Conference</span>
+                            <div class="event-date">📅 9-11 January 2026</div>
+                            <h3>3rd M3HPCST International Conference</h3>
+                            <p>
+                                Presented a research paper on "MHD Prandtl fluid flow with viscous dissipation
+                                and thermal radiation" at the 3rd International Conference on Modern Mathematical
+                                Methods and High Performance Computing, Ghaziabad.
+                            </p>
+                            <button class="read-more-btn" onclick="openModal(1)">Read More →</button>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 3: GeoGebra Workshop -->
+                    <div class="event-slide">
+                        <div class="event-slide-img" onclick="openModal(2)">
+                            <img src="https://placehold.co/600x400/2d6a4f/ffffff?text=GeoGebra+Workshop" alt="GeoGebra Workshop" />
+                            <div class="img-overlay"><span>📸 Click to enlarge</span></div>
+                        </div>
+                        <div class="event-slide-content">
+                            <span class="event-badge">🖥️ Workshop</span>
+                            <div class="event-date">📅 28-29 December 2025</div>
+                            <h3>GeoGebra: Dynamic Mathematics Made Easy</h3>
+                            <p>
+                                Organized a two-day hands-on workshop on GeoGebra for faculty and students.
+                                Covered dynamic geometry, algebra, calculus, and 3D visualization tools
+                                for effective mathematics teaching and learning.
+                            </p>
+                            <button class="read-more-btn" onclick="openModal(2)">Read More →</button>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 4: YRC Blood Donation Camp -->
+                    <div class="event-slide">
+                        <div class="event-slide-img" onclick="openModal(3)">
+                            <img src="https://placehold.co/600x400/d94a32/ffffff?text=Blood+Donation+Camp" alt="Blood Donation Camp" />
+                            <div class="img-overlay"><span>📸 Click to enlarge</span></div>
+                        </div>
+                        <div class="event-slide-content">
+                            <span class="event-badge">🩸 Social</span>
+                            <div class="event-date">📅 15 August 2026</div>
+                            <h3>YRC Blood Donation Camp</h3>
+                            <p>
+                                Organized a mega blood donation camp in collaboration with district health
+                                authorities. Over 120 units of blood were collected, benefiting patients
+                                in need. A special awareness session on health and hygiene was also conducted.
+                            </p>
+                            <button class="read-more-btn" onclick="openModal(3)">Read More →</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Slider Controls -->
+            <div class="slider-controls">
+                <button id="prevSlide" aria-label="Previous">◀</button>
+                <div class="dots" id="dotsContainer">
+                    <button class="dot active" data-index="0" aria-label="Slide 1"></button>
+                    <button class="dot" data-index="1" aria-label="Slide 2"></button>
+                    <button class="dot" data-index="2" aria-label="Slide 3"></button>
+                    <button class="dot" data-index="3" aria-label="Slide 4"></button>
+                </div>
+                <button id="nextSlide" aria-label="Next">▶</button>
+            </div>
+
+            <!-- ===== MINI EVENT GRID ===== -->
+            <div class="events-grid-title">📌 <span>More</span> Events &amp; Activities</div>
+            <div class="events-mini-grid">
+
+                <div class="event-mini-card" onclick="openModal(0)">
+                    <div class="mini-img">
+                        <img src="bos.jfif" alt="BOS Meeting" />
+                        <span class="mini-badge">Meeting</span>
+                    </div>
+                    <div class="mini-body">
+                        <div class="mini-date">📅 15 Aug 2026</div>
+                        <h4>Board of Studies Meeting</h4>
+                        <p>Curriculum review &amp; new course planning.</p>
+                        <span class="mini-read">Read More →</span>
+                    </div>
+                </div>
+
+                <div class="event-mini-card" onclick="openModal(1)">
+                    <div class="mini-img">
+                        <img src="https://placehold.co/400x250/163b65/ffffff?text=IC+M3HPCST" alt="M3HPCST Conference" />
+                        <span class="mini-badge">Conference</span>
+                    </div>
+                    <div class="mini-body">
+                        <div class="mini-date">📅 9-11 Jan 2026</div>
+                        <h4>M3HPCST International Conference</h4>
+                        <p>Presented paper on MHD Prandtl fluid flow.</p>
+                        <span class="mini-read">Read More →</span>
+                    </div>
+                </div>
+
+                <div class="event-mini-card" onclick="openModal(2)">
+                    <div class="mini-img">
+                        <img src="https://placehold.co/400x250/2d6a4f/ffffff?text=GeoGebra" alt="GeoGebra Workshop" />
+                        <span class="mini-badge">Workshop</span>
+                    </div>
+                    <div class="mini-body">
+                        <div class="mini-date">📅 28-29 Dec 2025</div>
+                        <h4>GeoGebra Workshop</h4>
+                        <p>Dynamic mathematics made easy.</p>
+                        <span class="mini-read">Read More →</span>
+                    </div>
+                </div>
+
+                <div class="event-mini-card" onclick="openModal(3)">
+                    <div class="mini-img">
+                        <img src="https://placehold.co/400x250/d94a32/ffffff?text=Blood+Donation" alt="Blood Donation Camp" />
+                        <span class="mini-badge">Social</span>
+                    </div>
+                    <div class="mini-body">
+                        <div class="mini-date">📅 15 Aug 2026</div>
+                        <h4>YRC Blood Donation Camp</h4>
+                        <p>120+ units collected for patients.</p>
+                        <span class="mini-read">Read More →</span>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end mini grid -->
+
+        </div>
+        <!-- end container -->
+    </section>
+    <!-- end flash-news-section -->
 
     <!-- =====================================
     ABOUT ME
@@ -1196,7 +2077,6 @@
     <section class="research" id="research">
         <div class="container">
 
-            <!-- Research Interests -->
             <div id="research-interests">
                 <div class="section-title">
                     <h2>🔬 Research Interests</h2>
@@ -1230,7 +2110,6 @@
                 </div>
             </div>
 
-            <!-- Current Research -->
             <div id="current-research">
                 <h3 class="sub-section-title">⚡ Current Research</h3>
                 <div class="research-grid">
@@ -1249,7 +2128,6 @@
                 </div>
             </div>
 
-            <!-- Research Guidance -->
             <div id="research-guidance">
                 <h3 class="sub-section-title">👨‍🏫 Research Guidance</h3>
                 <ul class="guidance-list">
@@ -1566,9 +2444,9 @@
     </section>
 
     <!-- =====================================
-    EVENTS & PHOTO GALLERY
+    EVENTS & PHOTO GALLERY (legacy, kept for reference)
     ===================================== -->
-    <section class="events" id="events">
+    <section class="events" id="events-legacy" style="display:none;">
         <div class="container">
             <div class="section-title">
                 <h2>📸 Events &amp; Photo Gallery</h2>
@@ -1819,7 +2697,7 @@
         </div>
     </section>
 
-   <!-- =====================================
+    <!-- =====================================
     CONTACT
     ===================================== -->
     <section class="contact" id="contact">
@@ -1829,72 +2707,81 @@
                 <p>Send a Message</p>
             </div>
             <div class="contact-grid">
-                <!-- Contact Info -->
-                <div class="contact-info">
-                    <div class="contact-box">
-                        <p><strong>Dr. Mahadev Mallikarjun Biradar</strong></p>
-                        <p>Associate Professor, Department of Mathematics</p>
-                        <p>Basaveshwar Engineering College, Bagalkote, Karnataka, India</p>
-                        <div class="contact-row">
-                            <span>📧 <a href="mailto:mmbbec@gmail.com" class="email-link">mmbbec@gmail.com</a></span>
-                            <span>📞 <a href="tel:+919035246580">+91-9035246580</a></span>
-                            <span>🔗 <a href="https://linkedin.com/in/559214217" target="_blank">LinkedIn</a></span>
-                        </div>
-                        <div style="margin-top:12px;font-size:13px;color:#888;">
-                            <span>Orcid: 0000-0002-9897-8677 &nbsp;|&nbsp; Scopus: 57217004425</span>
-                        </div>
 
-                        <!-- Visitor Counter -->
-                        <div class="visitor-counter">
-                            <span class="counter-icon">👁️</span>
-                            <span>Total Visitors: </span>
-                            <span id="visitor-count">Loading...</span>
-                        </div>
+                <!-- Contact Info -->
+                <div class="contact-box">
+                    <p><strong>Dr. Mahadev Mallikarjun Biradar</strong></p>
+                    <p>Associate Professor, Department of Mathematics</p>
+                    <p>Basaveshwar Engineering College, Bagalkote, Karnataka, India</p>
+                    <div class="contact-row">
+                        <span>📧 <a href="mailto:mmbbec@gmail.com" class="email-link">mmbbec@gmail.com</a></span>
+                        <span>📞 <a href="tel:+919035246580">+91-9035246580</a></span>
+                        <span>🔗 <a href="https://linkedin.com/in/559214217" target="_blank">LinkedIn</a></span>
+                    </div>
+                    <div style="margin-top:12px;font-size:13px;color:#888;">
+                        <span>Orcid: 0000-0002-9897-8677 &nbsp;|&nbsp; Scopus: 57217004425</span>
+                    </div>
+                    <div class="visitor-counter">
+                        <span class="counter-icon">👁️</span>
+                        <span>Total Visitors: </span>
+                        <span id="visitor-count">Loading...</span>
                     </div>
                 </div>
 
                 <!-- Contact Form -->
                 <div class="contact-form-box">
-                    <h3 style="color:#163b65;margin-bottom:20px;text-align:center;">✉️ Send a Message</h3>
+                    <h3>✉️ Send a Message</h3>
                     <form id="contactForm" onsubmit="return handleFormSubmit(event)">
                         <div class="form-group">
                             <label for="fullName">Full Name *</label>
                             <input type="text" id="fullName" name="fullName" required placeholder="Your full name">
                         </div>
-
                         <div class="form-group">
                             <label for="email">Email Address *</label>
                             <input type="email" id="email" name="email" required placeholder="your.email@example.com">
                         </div>
-
                         <div class="form-group">
                             <label for="subject">Subject *</label>
                             <input type="text" id="subject" name="subject" required placeholder="Subject of your message">
                         </div>
-
                         <div class="form-group">
                             <label for="affiliation">Affiliation/Institution</label>
                             <input type="text" id="affiliation" name="affiliation" placeholder="Your institution or organization">
                         </div>
-
                         <div class="form-group">
                             <label for="message">Message *</label>
                             <textarea id="message" name="message" required rows="5" placeholder="Type your message here..."></textarea>
                         </div>
-
                         <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:16px;border:none;cursor:pointer;">
                             📤 Send Message
                         </button>
                     </form>
-
-                    <!-- Success message -->
                     <div id="formSuccess" style="display:none;text-align:center;padding:20px;background:#d4edda;border-radius:8px;color:#155724;margin-top:20px;">
                         ✅ Your message has been sent successfully! I will get back to you soon.
                     </div>
                 </div>
+
             </div>
         </div>
-    </section>    
+    </section>
+
+    <!-- =====================================
+    EVENT MODAL (Lightbox)
+    ===================================== -->
+    <div class="event-modal" id="eventModal">
+        <div class="event-modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <img class="modal-img" id="modalImg" src="" alt="Event" />
+            <div class="modal-body">
+                <div class="modal-date" id="modalDate"></div>
+                <h2 id="modalTitle"></h2>
+                <p id="modalDesc"></p>
+                <div class="modal-details" id="modalDetails">
+                    <strong>📌 Event Details:</strong> Full coverage and photo gallery available.
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- =====================================
     FOOTER
@@ -1907,8 +2794,13 @@
     <!-- BACK TO TOP -->
     <a href="#home" class="back-to-top" title="Back to Top">↑</a>
 
-    <!-- Mobile dropdown toggle script -->
+    <!-- =====================================
+    SCRIPTS
+    ===================================== -->
     <script>
+        // =============================================
+        // MOBILE DROPDOWN TOGGLE
+        // =============================================
         document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 if (window.innerWidth <= 600) {
@@ -1917,6 +2809,180 @@
                 }
             });
         });
+
+        // =============================================
+        // VISITOR COUNTER (simulated)
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            let count = localStorage.getItem('visitorCount');
+            if (!count) {
+                count = Math.floor(Math.random() * 1500) + 850;
+            } else {
+                count = parseInt(count) + 1;
+            }
+            localStorage.setItem('visitorCount', count);
+            document.getElementById('visitor-count').textContent = count.toLocaleString();
+        });
+
+        // =============================================
+        // CONTACT FORM HANDLER
+        // =============================================
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('contactForm');
+            const success = document.getElementById('formSuccess');
+            form.style.display = 'none';
+            success.style.display = 'block';
+            // Reset after 5 seconds
+            setTimeout(() => {
+                form.reset();
+                form.style.display = 'block';
+                success.style.display = 'none';
+            }, 5000);
+            return false;
+        }
+
+        // =============================================
+        // EVENTS SLIDER
+        // =============================================
+        const track = document.getElementById('sliderTrack');
+        const slides = track.querySelectorAll('.event-slide');
+        const dots = document.querySelectorAll('.dot');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+        let autoSlideInterval;
+
+        function goToSlide(index) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        // Dot clicks
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                goToSlide(index);
+                resetAutoSlide();
+            });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoSlide();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoSlide();
+        });
+
+        // Auto-slide
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        // Pause on hover
+        const sliderWrapper = document.querySelector('.events-slider-wrapper');
+        sliderWrapper.addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+        });
+        sliderWrapper.addEventListener('mouseleave', () => {
+            startAutoSlide();
+        });
+
+        // Initialize
+        goToSlide(0);
+        startAutoSlide();
+
+        // =============================================
+        // EVENT MODAL
+        // =============================================
+        const modal = document.getElementById('eventModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalDate = document.getElementById('modalDate');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalDetails = document.getElementById('modalDetails');
+
+        // Event data (matches slides)
+        const eventData = [{
+            img: 'bos.jfif',
+            date: '📅 15 August 2026',
+            title: 'Board of Studies (BOS) Meeting',
+            desc: 'Annual BOS meeting of the Department of Mathematics to review curriculum, discuss new course offerings, and plan for academic excellence. Key decisions on syllabus revision and research collaborations were taken.',
+            details: '📍 Venue: BEC Bagalkote Conference Hall | 👥 Attendees: All BOS members, Head of Department, and senior faculty.'
+        }, {
+            img: 'https://placehold.co/800x500/163b65/ffffff?text=International+Conference',
+            date: '📅 9-11 January 2026',
+            title: '3rd M3HPCST International Conference',
+            desc: 'Presented a research paper on "MHD Prandtl fluid flow with viscous dissipation and thermal radiation" at the 3rd International Conference on Modern Mathematical Methods and High Performance Computing, Ghaziabad.',
+            details: '📍 Venue: Inderprastha Engineering College, Ghaziabad | 🏷️ Session: Fluid Dynamics & Heat Transfer'
+        }, {
+            img: 'https://placehold.co/800x500/2d6a4f/ffffff?text=GeoGebra+Workshop',
+            date: '📅 28-29 December 2025',
+            title: 'GeoGebra: Dynamic Mathematics Made Easy',
+            desc: 'Organized a two-day hands-on workshop on GeoGebra for faculty and students. Covered dynamic geometry, algebra, calculus, and 3D visualization tools for effective mathematics teaching and learning.',
+            details: '📍 Venue: BEC Bagalkote Computer Lab | 👨‍🏫 Resource Persons: Dr. Mahadev Biradar & team | 🎯 Participants: 45+ faculty and students'
+        }, {
+            img: 'https://placehold.co/800x500/d94a32/ffffff?text=Blood+Donation+Camp',
+            date: '📅 15 August 2026',
+            title: 'YRC Blood Donation Camp',
+            desc: 'Organized a mega blood donation camp in collaboration with district health authorities. Over 120 units of blood were collected, benefiting patients in need. A special awareness session on health and hygiene was also conducted.',
+            details: '📍 Venue: BEC Bagalkote Campus | 🩸 Units Collected: 120+ | 🤝 Partners: District Health Department, Indian Red Cross Society'
+        }];
+
+        function openModal(index) {
+            const data = eventData[index];
+            if (!data) return;
+            modalImg.src = data.img;
+            modalImg.alt = data.title;
+            modalDate.textContent = data.date;
+            modalTitle.textContent = data.title;
+            modalDesc.textContent = data.desc;
+            modalDetails.innerHTML = `<strong>📌 Event Details:</strong> ${data.details}`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            clearInterval(autoSlideInterval);
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            startAutoSlide();
+        }
+
+        // Close modal on background click
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Expose modal functions globally
+        window.openModal = openModal;
+        window.closeModal = closeModal;
     </script>
 
 </body>
