@@ -7,6 +7,10 @@
     <meta name="description" content="Free online tools for students and faculty: SGPA, CGPA, Percentage, Age, Pomodoro, and many more." />
     <meta name="author" content="Dr. Mahadev Mallikarjun Biradar" />
 
+    <!-- Chart.js for Result Analysis -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
     <style>
         /* ================================
            GLOBAL RESET & BASE (from index)
@@ -93,7 +97,6 @@
             background: #f0f2f5;
         }
 
-        /* Dropdown (just in case) */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -680,6 +683,249 @@
             justify-content: center;
         }
 
+        /* ── Scientific Calculator ── */
+        .sci-calc-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 480px;
+            margin: 20px auto;
+        }
+
+        .sci-calc-grid button {
+            padding: 16px 8px;
+            font-size: 18px;
+            font-weight: 600;
+            border: 1px solid #d0dae6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .sci-calc-grid button:hover {
+            background: #eef5fb;
+            transform: scale(1.02);
+        }
+
+        .sci-calc-grid button:active {
+            transform: scale(0.95);
+        }
+
+        .sci-calc-grid .op-btn {
+            background: #f0f4fa;
+        }
+
+        .sci-calc-grid .op-btn:hover {
+            background: #dce6f0;
+        }
+
+        .sci-calc-grid .eq-btn {
+            background: #163b65;
+            color: white;
+        }
+
+        .sci-calc-grid .eq-btn:hover {
+            background: #1a4a7a;
+        }
+
+        .sci-calc-grid .func-btn {
+            background: #e8edf5;
+            font-size: 14px;
+        }
+
+        .sci-calc-grid .func-btn:hover {
+            background: #d0dae6;
+        }
+
+        .sci-calc-display {
+            max-width: 480px;
+            margin: 0 auto 16px;
+            padding: 18px 20px;
+            background: white;
+            border: 2px solid #d0dae6;
+            border-radius: 10px;
+            text-align: right;
+            font-size: 32px;
+            font-weight: 600;
+            color: #163b65;
+            min-height: 70px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .sci-calc-display .expr {
+            font-size: 16px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        /* ── QR Code ── */
+        .qr-output {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-output img {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+        }
+
+        .qr-output .qr-download-btn {
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        /* ── Image Resizer ── */
+        .resizer-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .resizer-preview .preview-box {
+            text-align: center;
+            background: white;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            min-width: 200px;
+        }
+
+        .resizer-preview .preview-box img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .resizer-preview .preview-box .label {
+            font-weight: 600;
+            color: #163b65;
+            margin-bottom: 8px;
+        }
+
+        .resizer-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin: 16px 0;
+            padding: 18px 20px;
+            background: #f8faff;
+            border-radius: 12px;
+            border: 1px solid #e6ecf3;
+        }
+
+        .resizer-input-group label {
+            font-weight: 600;
+            color: #163b65;
+        }
+
+        .resizer-input-group input[type="number"] {
+            padding: 9px 12px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            width: 100px;
+        }
+
+        .resizer-input-group input[type="file"] {
+            padding: 8px;
+        }
+
+        .resizer-input-group .checkbox-label {
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── Certificate Generator ── */
+        .cert-preview {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .cert-preview canvas {
+            max-width: 100%;
+            border: 2px solid #d0dae6;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .cert-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin: 16px 0;
+            padding: 18px 20px;
+            background: #f8faff;
+            border-radius: 12px;
+            border: 1px solid #e6ecf3;
+        }
+
+        .cert-input-group label {
+            font-weight: 600;
+            color: #163b65;
+            min-width: 80px;
+        }
+
+        .cert-input-group input {
+            padding: 9px 12px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* ── Result Analysis ── */
+        .result-analysis-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin: 8px 0;
+            padding: 10px 14px;
+            background: #f8faff;
+            border-radius: 10px;
+            border: 1px solid #e6ecf3;
+        }
+
+        .result-analysis-input input {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .result-analysis-input .sub-label {
+            font-weight: 600;
+            color: #163b65;
+            min-width: 60px;
+        }
+
+        .chart-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
         /* ─── TOAST ─── */
         .toast {
             position: fixed;
@@ -804,7 +1050,9 @@
             .attendance-input-group,
             .percent-input-group,
             .age-input-group,
-            .converter-input-group {
+            .converter-input-group,
+            .resizer-input-group,
+            .cert-input-group {
                 flex-direction: column;
                 align-items: stretch;
             }
@@ -813,8 +1061,36 @@
             .attendance-input-group label,
             .percent-input-group label,
             .age-input-group label,
-            .converter-input-group label {
+            .converter-input-group label,
+            .resizer-input-group label,
+            .cert-input-group label {
                 min-width: auto;
+            }
+
+            .sci-calc-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+
+            .sci-calc-grid button {
+                padding: 12px 4px;
+                font-size: 14px;
+            }
+
+            .sci-calc-display {
+                font-size: 24px;
+                padding: 12px 14px;
+                min-height: 56px;
+            }
+
+            .resizer-preview {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .result-analysis-input {
+                flex-direction: column;
+                align-items: stretch;
             }
         }
     </style>
@@ -913,21 +1189,42 @@
                     <div class="desc">Two‑way conversion</div>
                 </a>
 
-                <!-- Coming Soon (with badges) -->
+                <!-- NEW: Scientific Calculator -->
                 <a href="#" class="tool-card" data-tool="scientific">
                     <span class="icon">🔬</span>
                     <div class="name">Scientific Calculator</div>
-                    <div class="desc">Advanced math</div>
-                    <span class="coming-badge">Soon</span>
+                    <div class="desc">Advanced math with trig &amp; log</div>
                 </a>
 
+                <!-- NEW: QR Code Generator -->
+                <a href="#" class="tool-card" data-tool="qr-code">
+                    <span class="icon">📱</span>
+                    <div class="name">QR Code Generator</div>
+                    <div class="desc">Create QR codes instantly</div>
+                </a>
+
+                <!-- NEW: Image Resizer -->
+                <a href="#" class="tool-card" data-tool="image-resize">
+                    <span class="icon">↔️</span>
+                    <div class="name">Image Resizer</div>
+                    <div class="desc">Resize images to any dimension</div>
+                </a>
+
+                <!-- NEW: Result Analysis -->
                 <a href="#" class="tool-card" data-tool="result-analysis">
                     <span class="icon">📉</span>
                     <div class="name">Result Analysis</div>
-                    <div class="desc">Analyze marks</div>
-                    <span class="coming-badge">Soon</span>
+                    <div class="desc">Visualise marks with charts</div>
                 </a>
 
+                <!-- NEW: Certificate Generator -->
+                <a href="#" class="tool-card" data-tool="certificate">
+                    <span class="icon">📜</span>
+                    <div class="name">Certificate Generator</div>
+                    <div class="desc">Create &amp; download certificates</div>
+                </a>
+
+                <!-- Still Coming Soon -->
                 <a href="#" class="tool-card" data-tool="co-po">
                     <span class="icon">📋</span>
                     <div class="name">CO PO Attainment</div>
@@ -939,20 +1236,6 @@
                     <span class="icon">📝</span>
                     <div class="name">Question Paper Gen</div>
                     <div class="desc">Generate papers</div>
-                    <span class="coming-badge">Soon</span>
-                </a>
-
-                <a href="#" class="tool-card" data-tool="qr-code">
-                    <span class="icon">📱</span>
-                    <div class="name">QR Code Generator</div>
-                    <div class="desc">Create QR codes</div>
-                    <span class="coming-badge">Soon</span>
-                </a>
-
-                <a href="#" class="tool-card" data-tool="certificate">
-                    <span class="icon">📜</span>
-                    <div class="name">Certificate Generator</div>
-                    <div class="desc">Create certificates</div>
                     <span class="coming-badge">Soon</span>
                 </a>
 
@@ -1005,13 +1288,6 @@
                     <span class="coming-badge">Soon</span>
                 </a>
 
-                <a href="#" class="tool-card" data-tool="image-resize">
-                    <span class="icon">↔️</span>
-                    <div class="name">Image Resizer</div>
-                    <div class="desc">Resize images</div>
-                    <span class="coming-badge">Soon</span>
-                </a>
-
                 <a href="#" class="tool-card" data-tool="url-shortener">
                     <span class="icon">🔗</span>
                     <div class="name">URL Shortener</div>
@@ -1023,7 +1299,7 @@
         </div><!-- end dashboard -->
 
         <!-- ============================================================ -->
-        <!-- TOOL VIEWS (hidden by default)                              -->
+        <!-- TOOL VIEWS                                                   -->
         <!-- ============================================================ -->
 
         <!-- ─── TOOL 1: SGPA ─── -->
@@ -1304,17 +1580,204 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- PLACEHOLDER TOOLS (Coming Soon)                              -->
+        <!-- NEW FULLY IMPLEMENTED TOOLS                                  -->
         <!-- ============================================================ -->
+
+        <!-- ─── TOOL 11: SCIENTIFIC CALCULATOR ─── -->
         <div class="tool-view" id="tool-scientific">
             <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-            <div class="coming-soon-msg"><span class="big-icon">🔬</span>Scientific Calculator is coming soon!<br><span style="font-size:14px;">Stay tuned for advanced math functions.</span></div>
+            <div class="card">
+                <h2>🔬 Scientific Calculator</h2>
+                <p class="subhead">Advanced math with trigonometric, logarithmic &amp; power functions</p>
+                <div class="sci-calc-display" id="sciDisplay">
+                    <div class="expr" id="sciExpr"></div>
+                    <div id="sciResult">0</div>
+                </div>
+                <div class="sci-calc-grid">
+                    <!-- Row 1: Functions -->
+                    <button class="func-btn" onclick="sciAppend('Math.sin(')">sin</button>
+                    <button class="func-btn" onclick="sciAppend('Math.cos(')">cos</button>
+                    <button class="func-btn" onclick="sciAppend('Math.tan(')">tan</button>
+                    <button class="func-btn" onclick="sciAppend('Math.log(')">log</button>
+                    <button class="func-btn" onclick="sciAppend('Math.ln(')">ln</button>
+                    <!-- Row 2 -->
+                    <button class="func-btn" onclick="sciAppend('Math.sqrt(')">√</button>
+                    <button class="func-btn" onclick="sciAppend('Math.pow(')">x^y</button>
+                    <button class="func-btn" onclick="sciAppend('Math.PI')">π</button>
+                    <button class="func-btn" onclick="sciAppend('Math.E')">e</button>
+                    <button class="func-btn" onclick="sciAppend('Math.exp(')">e^x</button>
+                    <!-- Row 3: Numbers -->
+                    <button onclick="sciAppend('7')">7</button>
+                    <button onclick="sciAppend('8')">8</button>
+                    <button onclick="sciAppend('9')">9</button>
+                    <button class="op-btn" onclick="sciAppend('/')">÷</button>
+                    <button class="op-btn" onclick="sciAppend('*')">×</button>
+                    <!-- Row 4 -->
+                    <button onclick="sciAppend('4')">4</button>
+                    <button onclick="sciAppend('5')">5</button>
+                    <button onclick="sciAppend('6')">6</button>
+                    <button class="op-btn" onclick="sciAppend('-')">−</button>
+                    <button class="op-btn" onclick="sciAppend('+')">+</button>
+                    <!-- Row 5 -->
+                    <button onclick="sciAppend('1')">1</button>
+                    <button onclick="sciAppend('2')">2</button>
+                    <button onclick="sciAppend('3')">3</button>
+                    <button class="op-btn" onclick="sciAppend('(')">(</button>
+                    <button class="op-btn" onclick="sciAppend(')')">)</button>
+                    <!-- Row 6 -->
+                    <button onclick="sciAppend('0')">0</button>
+                    <button onclick="sciAppend('.')">.</button>
+                    <button class="func-btn" onclick="sciClear()">AC</button>
+                    <button class="op-btn" onclick="sciAppend('%')">%</button>
+                    <button class="eq-btn" onclick="sciCalculate()">=</button>
+                </div>
+                <div style="text-align:center;margin-top:12px;">
+                    <button class="btn btn-calc" onclick="sciClear()">⟲ Clear</button>
+                    <button class="btn btn-copy" onclick="sciCopyResult()">📋 Copy Result</button>
+                </div>
+            </div>
         </div>
 
+        <!-- ─── TOOL 12: QR CODE GENERATOR ─── -->
+        <div class="tool-view" id="tool-qr-code">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📱 QR Code Generator</h2>
+                <p class="subhead">Enter any text or URL to generate a QR code instantly</p>
+                <div class="predict-input-group">
+                    <label>Text / URL:</label>
+                    <input type="text" id="qrText" placeholder="e.g. https://mahadevbiradar.in" />
+                    <label>Size:</label>
+                    <select id="qrSize">
+                        <option value="150">150 px</option>
+                        <option value="200" selected>200 px</option>
+                        <option value="300">300 px</option>
+                        <option value="400">400 px</option>
+                    </select>
+                    <button class="btn btn-calc" onclick="generateQR()">🔲 Generate</button>
+                </div>
+                <div class="qr-output" id="qrOutput" style="display:none;">
+                    <img id="qrImage" src="" alt="QR Code" />
+                    <br />
+                    <a id="qrDownloadLink" class="btn btn-success qr-download-btn" download="qrcode.png">⬇ Download QR Code</a>
+                </div>
+                <div id="qrError" style="color:#d94a32;text-align:center;margin-top:10px;display:none;">Please enter some text.</div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 13: IMAGE RESIZER ─── -->
+        <div class="tool-view" id="tool-image-resize">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>↔️ Image Resizer</h2>
+                <p class="subhead">Upload an image and resize it to your desired dimensions</p>
+                <div class="resizer-input-group">
+                    <label>Choose Image:</label>
+                    <input type="file" id="resizeInput" accept="image/*" onchange="loadResizeImage()" />
+                </div>
+                <div class="resizer-input-group">
+                    <label>Width:</label>
+                    <input type="number" id="resizeWidth" placeholder="e.g. 800" min="10" />
+                    <label>Height:</label>
+                    <input type="number" id="resizeHeight" placeholder="e.g. 600" min="10" />
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="resizeAspect" checked /> Maintain aspect ratio
+                    </label>
+                    <button class="btn btn-calc" onclick="resizeImage()">📐 Resize</button>
+                </div>
+                <div class="resizer-preview" id="resizePreview">
+                    <div class="preview-box">
+                        <div class="label">📷 Original</div>
+                        <img id="resizeOriginal" src="#" alt="Original" />
+                    </div>
+                    <div class="preview-box">
+                        <div class="label">✅ Resized</div>
+                        <img id="resizeResult" src="#" alt="Resized" />
+                        <br />
+                        <a id="resizeDownload" class="btn btn-success" style="margin-top:10px;display:none;" download="resized-image.png">⬇ Download</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 14: RESULT ANALYSIS ─── -->
         <div class="tool-view" id="tool-result-analysis">
             <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-            <div class="coming-soon-msg"><span class="big-icon">📉</span>Result Analysis is coming soon!<br><span style="font-size:14px;">Visualise your marks and performance.</span></div>
+            <div class="card">
+                <h2>📉 Result Analysis</h2>
+                <p class="subhead">Enter subject-wise marks to visualise performance with a bar chart</p>
+                <div id="resultAnalysisContainer">
+                    <div class="result-analysis-input" id="raRow1">
+                        <span class="sub-label">Subject 1</span>
+                        <input type="text" class="ra-subject" placeholder="Subject name" value="Maths" />
+                        <input type="number" class="ra-marks" min="0" max="100" placeholder="Marks out of 100" value="85" />
+                        <button class="remove-btn" onclick="removeRARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    </div>
+                    <div class="result-analysis-input" id="raRow2">
+                        <span class="sub-label">Subject 2</span>
+                        <input type="text" class="ra-subject" placeholder="Subject name" value="Physics" />
+                        <input type="number" class="ra-marks" min="0" max="100" placeholder="Marks out of 100" value="78" />
+                        <button class="remove-btn" onclick="removeRARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    </div>
+                    <div class="result-analysis-input" id="raRow3">
+                        <span class="sub-label">Subject 3</span>
+                        <input type="text" class="ra-subject" placeholder="Subject name" value="Chemistry" />
+                        <input type="number" class="ra-marks" min="0" max="100" placeholder="Marks out of 100" value="92" />
+                        <button class="remove-btn" onclick="removeRARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    </div>
+                </div>
+                <button class="btn btn-add" onclick="addRARow()">＋ Add Subject</button>
+                <div class="btn-group">
+                    <button class="btn btn-calc" onclick="analyzeResults()">📊 Analyze</button>
+                    <button class="btn btn-reset" onclick="resetRA()">⟲ Reset</button>
+                </div>
+                <div class="result" id="raResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📊 Average</div><div class="value" id="raAvg">—</div></div>
+                        <div class="stat"><div class="label">🏆 Highest</div><div class="value" id="raMax">—</div></div>
+                        <div class="stat"><div class="label">📉 Lowest</div><div class="value" id="raMin">—</div></div>
+                        <div class="stat"><div class="label">📚 Total</div><div class="value" id="raTotal">—</div></div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="raChart"></canvas>
+                    </div>
+                    <div class="badge-row">
+                        <span class="badge">📌 All marks out of 100</span>
+                        <span class="badge">✅ Visualise your performance</span>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- ─── TOOL 15: CERTIFICATE GENERATOR ─── -->
+        <div class="tool-view" id="tool-certificate">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📜 Certificate Generator</h2>
+                <p class="subhead">Create a professional certificate – fill in the details and download</p>
+                <div class="cert-input-group">
+                    <label>Recipient Name:</label>
+                    <input type="text" id="certName" placeholder="e.g. John Doe" value="John Doe" />
+                    <label>Course / Event:</label>
+                    <input type="text" id="certCourse" placeholder="e.g. Python Workshop" value="Python Workshop" />
+                    <label>Date:</label>
+                    <input type="date" id="certDate" />
+                    <label>Organization:</label>
+                    <input type="text" id="certOrg" placeholder="e.g. BEC Bagalkote" value="Basaveshwar Engineering College" />
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-calc" onclick="generateCertificate()">📄 Generate Certificate</button>
+                    <button class="btn btn-success" onclick="downloadCertificate()">⬇ Download PNG</button>
+                </div>
+                <div class="cert-preview">
+                    <canvas id="certCanvas" width="800" height="550"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PLACEHOLDER TOOLS (Coming Soon)                              -->
+        <!-- ============================================================ -->
 
         <div class="tool-view" id="tool-co-po">
             <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
@@ -1324,16 +1787,6 @@
         <div class="tool-view" id="tool-qp-generator">
             <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
             <div class="coming-soon-msg"><span class="big-icon">📝</span>Question Paper Generator is coming soon!<br><span style="font-size:14px;">Create question papers automatically.</span></div>
-        </div>
-
-        <div class="tool-view" id="tool-qr-code">
-            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-            <div class="coming-soon-msg"><span class="big-icon">📱</span>QR Code Generator is coming soon!<br><span style="font-size:14px;">Generate QR codes for any text or link.</span></div>
-        </div>
-
-        <div class="tool-view" id="tool-certificate">
-            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-            <div class="coming-soon-msg"><span class="big-icon">📜</span>Certificate Generator is coming soon!<br><span style="font-size:14px;">Create beautiful certificates.</span></div>
         </div>
 
         <div class="tool-view" id="tool-feedback">
@@ -1369,11 +1822,6 @@
         <div class="tool-view" id="tool-pdf-compress">
             <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
             <div class="coming-soon-msg"><span class="big-icon">📦</span>PDF Compressor is coming soon!<br><span style="font-size:14px;">Compress PDF files.</span></div>
-        </div>
-
-        <div class="tool-view" id="tool-image-resize">
-            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-            <div class="coming-soon-msg"><span class="big-icon">↔️</span>Image Resizer is coming soon!<br><span style="font-size:14px;">Resize images to any dimension.</span></div>
         </div>
 
         <div class="tool-view" id="tool-url-shortener">
@@ -1445,9 +1893,11 @@
                 });
             });
 
-            // ================================================================
-            // TOOL 1: SGPA CALCULATOR
-            // ================================================================
+            // ─── SGPA, CGPA, Predictor, GPA→%, Attendance, Credits, Percentage, Age, Pomodoro, CGPA↔% ───
+            // (All existing functions from previous version – kept intact)
+            // ────────────────────────────────────────────────────────────────────────────────
+
+            // SGPA
             const tableBody = document.getElementById('tableBody');
             const sgpaResultDiv = document.getElementById('sgpaResult');
             const totalCreditsEl = document.getElementById('totalCredits');
@@ -1499,10 +1949,9 @@
             window.calculateSGPA = function() {
                 const creditInputs = document.querySelectorAll('.credits');
                 const gradeSelects = document.querySelectorAll('.grade');
-                let totalCredits = 0;
-                let totalPoints = 0;
-                let validCount = 0;
-
+                let totalCredits = 0,
+                    totalPoints = 0,
+                    validCount = 0;
                 for (let i = 0; i < creditInputs.length; i++) {
                     const credit = parseFloat(creditInputs[i].value);
                     const grade = parseFloat(gradeSelects[i].value);
@@ -1512,7 +1961,6 @@
                         validCount++;
                     }
                 }
-
                 if (totalCredits === 0 || validCount === 0) {
                     showToast('Please enter valid credits and grade points for at least one subject.');
                     sgpaResultDiv.style.display = 'none';
@@ -1520,10 +1968,8 @@
                     copyBtn.disabled = true;
                     return;
                 }
-
                 const sgpa = totalPoints / totalCredits;
                 const sgpaRounded = Math.round(sgpa * 100) / 100;
-
                 totalCreditsEl.textContent = totalCredits.toFixed(1);
                 sgpaEl.textContent = sgpaRounded.toFixed(2);
                 const gradeLetter = getGradeLetter(sgpa);
@@ -1532,7 +1978,6 @@
                 sgpaResultDiv.style.display = 'block';
                 printBtn.disabled = false;
                 copyBtn.disabled = false;
-
                 if (window.innerWidth < 600) {
                     sgpaResultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -1565,9 +2010,7 @@
                 inputs.forEach(inp => inp.value = '');
                 const selects = document.querySelectorAll('.grade');
                 selects.forEach(sel => sel.value = '');
-                while (tableBody.children.length > 1) {
-                    tableBody.lastChild.remove();
-                }
+                while (tableBody.children.length > 1) { tableBody.lastChild.remove(); }
                 const firstRow = tableBody.children[0];
                 if (firstRow) {
                     const nameInp = firstRow.querySelector('.subject-name');
@@ -1583,9 +2026,7 @@
                 showToast('Calculator reset.');
             };
 
-            window.printResult = function() {
-                window.print();
-            };
+            window.printResult = function() { window.print(); };
 
             window.copyResult = function() {
                 const sgpa = sgpaEl.textContent;
@@ -1606,9 +2047,7 @@
                 });
             };
 
-            // ================================================================
-            // TOOL 2: CGPA CALCULATOR
-            // ================================================================
+            // CGPA
             const cgpaContainer = document.getElementById('cgpaContainer');
             const cgpaResult = document.getElementById('cgpaResult');
 
@@ -1628,10 +2067,7 @@
 
             window.removeCGPARow = function(btn) {
                 const row = btn.closest('.sem-row');
-                if (cgpaContainer.children.length <= 1) {
-                    showToast('Keep at least one semester.');
-                    return;
-                }
+                if (cgpaContainer.children.length <= 1) { showToast('Keep at least one semester.'); return; }
                 row.remove();
                 cgpaResult.style.display = 'none';
             };
@@ -1639,10 +2075,9 @@
             window.calculateCGPA = function() {
                 const sgpas = document.querySelectorAll('.cgpa-sgpa');
                 const credits = document.querySelectorAll('.cgpa-credits');
-                let totalCredits = 0;
-                let totalPoints = 0;
-                let valid = 0;
-
+                let totalCredits = 0,
+                    totalPoints = 0,
+                    valid = 0;
                 for (let i = 0; i < sgpas.length; i++) {
                     const s = parseFloat(sgpas[i].value);
                     const c = parseFloat(credits[i].value);
@@ -1652,13 +2087,11 @@
                         valid++;
                     }
                 }
-
                 if (totalCredits === 0 || valid === 0) {
                     showToast('Please enter valid SGPA and credits for at least one semester.');
                     cgpaResult.style.display = 'none';
                     return;
                 }
-
                 const cgpa = totalPoints / totalCredits;
                 document.getElementById('cgpaTotalCredits').textContent = totalCredits.toFixed(1);
                 document.getElementById('cgpaValue').textContent = cgpa.toFixed(2);
@@ -1671,9 +2104,7 @@
 
             window.resetCGPA = function() {
                 document.querySelectorAll('.cgpa-sgpa, .cgpa-credits').forEach(inp => inp.value = '');
-                while (cgpaContainer.children.length > 1) {
-                    cgpaContainer.lastChild.remove();
-                }
+                while (cgpaContainer.children.length > 1) { cgpaContainer.lastChild.remove(); }
                 const first = cgpaContainer.children[0];
                 if (first) {
                     const s = first.querySelector('.cgpa-sgpa');
@@ -1685,15 +2116,12 @@
                 showToast('CGPA reset.');
             };
 
-            // ================================================================
-            // TOOL 3: GRADE PREDICTOR
-            // ================================================================
+            // Grade Predictor
             window.predictGrade = function() {
                 const current = parseFloat(document.getElementById('predictCurrent').value);
                 const target = parseFloat(document.getElementById('predictTarget').value);
                 const completed = parseFloat(document.getElementById('predictCompleted').value);
                 const remaining = parseFloat(document.getElementById('predictRemaining').value);
-
                 if (isNaN(current) || isNaN(target) || isNaN(completed) || isNaN(remaining) || completed < 0 || remaining <=
                     0) {
                     showToast('Please fill all fields with valid numbers.');
@@ -1707,7 +2135,6 @@
                     showToast('Target SGPA must be greater than current SGPA.');
                     return;
                 }
-
                 const total = completed + remaining;
                 const required = (target * total - current * completed) / remaining;
                 if (required > 10) {
@@ -1726,9 +2153,7 @@
                 document.getElementById('predictResult').style.display = 'block';
             };
 
-            // ================================================================
-            // TOOL 4: GPA → PERCENTAGE
-            // ================================================================
+            // GPA → %
             document.getElementById('gpaScale').addEventListener('change', function() {
                 const custom = document.getElementById('gpaCustomScale');
                 custom.style.display = this.value === 'custom' ? 'inline-block' : 'none';
@@ -1741,10 +2166,7 @@
                 if (scale === '4') maxGPA = 4;
                 else if (scale === 'custom') {
                     maxGPA = parseFloat(document.getElementById('gpaCustomScale').value);
-                    if (isNaN(maxGPA) || maxGPA <= 0) {
-                        showToast('Please enter a valid max GPA.');
-                        return;
-                    }
+                    if (isNaN(maxGPA) || maxGPA <= 0) { showToast('Please enter a valid max GPA.'); return; }
                 }
                 if (isNaN(gpa) || gpa < 0 || gpa > maxGPA) {
                     showToast(`Please enter a valid GPA between 0 and ${maxGPA}.`);
@@ -1759,48 +2181,38 @@
                 document.getElementById('gpaPercentResult').style.display = 'block';
             };
 
-            // ================================================================
-            // TOOL 5: ATTENDANCE
-            // ================================================================
+            // Attendance
             window.calculateAttendance = function() {
                 const total = parseFloat(document.getElementById('attendTotal').value);
                 const attended = parseFloat(document.getElementById('attendAttended').value);
                 const target = parseFloat(document.getElementById('attendTarget').value);
-
                 if (isNaN(total) || isNaN(attended) || isNaN(target) || total <= 0 || attended < 0 || target < 0 || target >
                     100) {
                     showToast('Please fill all fields with valid numbers.');
                     return;
                 }
                 const current = (attended / total) * 100;
-                let need = 0;
-                let canMiss = 0;
-
+                let need = 0,
+                    canMiss = 0;
                 if (current >= target) {
                     need = 0;
                     canMiss = Math.floor(total * (current - target) / 100);
                 } else {
                     const numerator = target * total - 100 * attended;
                     const denominator = 100 - target;
-                    if (denominator <= 0) {
-                        showToast('Target must be less than 100%.');
-                        return;
-                    }
+                    if (denominator <= 0) { showToast('Target must be less than 100%.'); return; }
                     need = Math.ceil(numerator / denominator);
                     if (need < 0) need = 0;
                     canMiss = Math.floor(total - attended - need);
                     if (canMiss < 0) canMiss = 0;
                 }
-
                 document.getElementById('attendCurrent').textContent = current.toFixed(2) + '%';
                 document.getElementById('attendNeed').textContent = need + ' classes';
                 document.getElementById('attendCanMiss').textContent = canMiss + ' classes';
                 document.getElementById('attendResult').style.display = 'block';
             };
 
-            // ================================================================
-            // TOOL 6: CREDIT TRACKER
-            // ================================================================
+            // Credit Tracker
             const creditContainer = document.getElementById('creditTrackerContainer');
             const creditResultDiv = document.getElementById('creditResult');
 
@@ -1820,10 +2232,7 @@
 
             window.removeCreditRow = function(btn) {
                 const row = btn.closest('.credit-tracker-row');
-                if (creditContainer.children.length <= 1) {
-                    showToast('Keep at least one semester.');
-                    return;
-                }
+                if (creditContainer.children.length <= 1) { showToast('Keep at least one semester.'); return; }
                 row.remove();
                 creditResultDiv.style.display = 'none';
             };
@@ -1831,10 +2240,9 @@
             window.calculateCredits = function() {
                 const names = document.querySelectorAll('.credit-sem-name');
                 const credits = document.querySelectorAll('.credit-credits');
-                let total = 0;
-                let valid = 0;
-                let breakdown = '';
-
+                let total = 0,
+                    valid = 0,
+                    breakdown = '';
                 for (let i = 0; i < names.length; i++) {
                     const c = parseFloat(credits[i].value);
                     const name = names[i].value || 'Sem ' + (i + 1);
@@ -1847,13 +2255,8 @@
                             </div>`;
                     }
                 }
-
-                if (valid === 0) {
-                    showToast('Please enter at least one valid credit value.');
-                    creditResultDiv.style.display = 'none';
-                    return;
-                }
-
+                if (valid === 0) { showToast('Please enter at least one valid credit value.');
+                    creditResultDiv.style.display = 'none'; return; }
                 document.getElementById('creditTotal').textContent = total.toFixed(1);
                 document.getElementById('creditSemCount').textContent = valid;
                 document.getElementById('creditBreakdown').innerHTML = breakdown;
@@ -1873,9 +2276,7 @@
                 showToast('Credit tracker reset.');
             };
 
-            // ================================================================
-            // TOOL 7: PERCENTAGE CALCULATOR
-            // ================================================================
+            // Percentage
             window.calcPercentage = function() {
                 const num = parseFloat(document.getElementById('percentNum').value);
                 const total = parseFloat(document.getElementById('percentTotal').value);
@@ -1892,41 +2293,27 @@
             window.calcValueFromPercent = function() {
                 const total = parseFloat(document.getElementById('percentOfTotal').value);
                 const rate = parseFloat(document.getElementById('percentRate').value);
-                if (isNaN(total) || isNaN(rate)) {
-                    showToast('Please enter valid numbers.');
-                    return;
-                }
+                if (isNaN(total) || isNaN(rate)) { showToast('Please enter valid numbers.'); return; }
                 const result = (rate / 100) * total;
                 document.getElementById('percentResultValue').textContent = result.toFixed(2);
                 document.getElementById('percentDetail').textContent = `${rate}% of ${total} = ${result.toFixed(2)}`;
                 document.getElementById('percentResult').style.display = 'block';
             };
 
-            // ================================================================
-            // TOOL 8: AGE CALCULATOR
-            // ================================================================
+            // Age
             window.calculateAge = function() {
                 const birth = document.getElementById('birthDate').value;
-                if (!birth) {
-                    showToast('Please select your birth date.');
-                    return;
-                }
+                if (!birth) { showToast('Please select your birth date.'); return; }
                 const birthDate = new Date(birth);
                 const now = new Date();
                 let years = now.getFullYear() - birthDate.getFullYear();
                 let months = now.getMonth() - birthDate.getMonth();
                 let days = now.getDate() - birthDate.getDate();
-
-                if (days < 0) {
-                    months--;
+                if (days < 0) { months--;
                     const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-                    days += prevMonth.getDate();
-                }
-                if (months < 0) {
-                    years--;
-                    months += 12;
-                }
-
+                    days += prevMonth.getDate(); }
+                if (months < 0) { years--;
+                    months += 12; }
                 document.getElementById('ageYears').textContent = years;
                 document.getElementById('ageMonths').textContent = months;
                 document.getElementById('ageDays').textContent = days;
@@ -1934,13 +2321,11 @@
                 document.getElementById('ageResult').style.display = 'block';
             };
 
-            // ================================================================
-            // TOOL 9: POMODORO TIMER
-            // ================================================================
-            let pomodoroInterval = null;
-            let pomodoroSeconds = 25 * 60;
-            let pomodoroRunning = false;
-            let pomodoroType = 'work';
+            // Pomodoro
+            let pomodoroInterval = null,
+                pomodoroSeconds = 25 * 60,
+                pomodoroRunning = false,
+                pomodoroType = 'work';
 
             function updatePomodoroDisplay() {
                 const mins = Math.floor(pomodoroSeconds / 60);
@@ -2006,9 +2391,7 @@
                 updatePomodoroDisplay();
             };
 
-            // ================================================================
-            // TOOL 10: PERCENTAGE ↔ CGPA CONVERTER
-            // ================================================================
+            // CGPA ↔ %
             document.getElementById('convScale').addEventListener('change', function() {
                 const custom = document.getElementById('convCustomScale');
                 custom.style.display = this.value === 'custom' ? 'inline-block' : 'none';
@@ -2046,7 +2429,404 @@
                 document.getElementById('convResult').style.display = 'block';
             };
 
-            // ── Keyboard shortcut: Ctrl+Enter to calculate ──
+            // ────────────────────────────────────────────────────────────────
+            // NEW TOOL: SCIENTIFIC CALCULATOR
+            // ────────────────────────────────────────────────────────────────
+            let sciExpression = '';
+
+            window.sciAppend = function(val) {
+                sciExpression += val;
+                document.getElementById('sciExpr').textContent = sciExpression;
+            };
+
+            window.sciClear = function() {
+                sciExpression = '';
+                document.getElementById('sciExpr').textContent = '';
+                document.getElementById('sciResult').textContent = '0';
+            };
+
+            window.sciCalculate = function() {
+                try {
+                    // Replace display symbols with JS equivalents
+                    let expr = sciExpression;
+                    // Replace ln with Math.log (since Math.log is natural log)
+                    // Already using Math.ln in the function, but we replace ln with Math.log
+                    expr = expr.replace(/Math\.ln\(/g, 'Math.log(');
+                    // Handle percentage: % means /100
+                    expr = expr.replace(/%/g, '/100');
+                    // Use Function constructor for safe eval
+                    const result = new Function(`return (${expr})`)();
+                    if (isNaN(result) || !isFinite(result)) {
+                        document.getElementById('sciResult').textContent = 'Error';
+                        showToast('Invalid calculation.');
+                    } else {
+                        document.getElementById('sciResult').textContent = parseFloat(result.toFixed(10)).toString();
+                    }
+                } catch (e) {
+                    document.getElementById('sciResult').textContent = 'Error';
+                    showToast('Invalid expression.');
+                }
+            };
+
+            window.sciCopyResult = function() {
+                const res = document.getElementById('sciResult').textContent;
+                if (res && res !== '0' && res !== 'Error') {
+                    navigator.clipboard.writeText(res).then(() => {
+                        showToast('📋 Result copied!');
+                    }).catch(() => {
+                        const ta = document.createElement('textarea');
+                        ta.value = res;
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        ta.remove();
+                        showToast('📋 Result copied!');
+                    });
+                } else {
+                    showToast('Nothing to copy.');
+                }
+            };
+
+            // ────────────────────────────────────────────────────────────────
+            // NEW TOOL: QR CODE GENERATOR
+            // ────────────────────────────────────────────────────────────────
+            window.generateQR = function() {
+                const text = document.getElementById('qrText').value.trim();
+                const size = document.getElementById('qrSize').value;
+                const output = document.getElementById('qrOutput');
+                const img = document.getElementById('qrImage');
+                const link = document.getElementById('qrDownloadLink');
+                const error = document.getElementById('qrError');
+
+                if (!text) {
+                    error.style.display = 'block';
+                    output.style.display = 'none';
+                    return;
+                }
+                error.style.display = 'none';
+                const url =
+                    `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`;
+                img.src = url;
+                img.onload = function() {
+                    output.style.display = 'block';
+                    link.href = url;
+                };
+                img.onerror = function() {
+                    showToast('Failed to generate QR code. Please try again.');
+                    output.style.display = 'none';
+                };
+            };
+
+            // ────────────────────────────────────────────────────────────────
+            // NEW TOOL: IMAGE RESIZER
+            // ────────────────────────────────────────────────────────────────
+            let resizeOriginalImg = null;
+
+            window.loadResizeImage = function() {
+                const file = document.getElementById('resizeInput').files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        resizeOriginalImg = img;
+                        document.getElementById('resizeOriginal').src = e.target.result;
+                        document.getElementById('resizeWidth').value = img.width;
+                        document.getElementById('resizeHeight').value = img.height;
+                        document.getElementById('resizeResult').src = '#';
+                        document.getElementById('resizeDownload').style.display = 'none';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
+            window.resizeImage = function() {
+                if (!resizeOriginalImg) {
+                    showToast('Please upload an image first.');
+                    return;
+                }
+                let w = parseInt(document.getElementById('resizeWidth').value);
+                let h = parseInt(document.getElementById('resizeHeight').value);
+                if (isNaN(w) || w < 1 || isNaN(h) || h < 1) {
+                    showToast('Please enter valid width and height.');
+                    return;
+                }
+                const aspect = document.getElementById('resizeAspect').checked;
+                if (aspect) {
+                    const ratio = resizeOriginalImg.width / resizeOriginalImg.height;
+                    if (w / h > ratio) {
+                        w = Math.round(h * ratio);
+                    } else {
+                        h = Math.round(w / ratio);
+                    }
+                    document.getElementById('resizeWidth').value = w;
+                    document.getElementById('resizeHeight').value = h;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(resizeOriginalImg, 0, 0, w, h);
+                const dataUrl = canvas.toDataURL('image/png');
+                document.getElementById('resizeResult').src = dataUrl;
+                const link = document.getElementById('resizeDownload');
+                link.href = dataUrl;
+                link.style.display = 'inline-block';
+                link.download = `resized-${w}x${h}.png`;
+                showToast(`✅ Image resized to ${w}x${h}`);
+            };
+
+            // ────────────────────────────────────────────────────────────────
+            // NEW TOOL: RESULT ANALYSIS (with Chart.js)
+            // ────────────────────────────────────────────────────────────────
+            let raChartInstance = null;
+
+            function getRAStats() {
+                const subjects = document.querySelectorAll('.ra-subject');
+                const marks = document.querySelectorAll('.ra-marks');
+                const data = [];
+                let total = 0,
+                    valid = 0,
+                    maxVal = -Infinity,
+                    minVal = Infinity;
+                for (let i = 0; i < subjects.length; i++) {
+                    const name = subjects[i].value.trim() || 'Subject ' + (i + 1);
+                    const mark = parseFloat(marks[i].value);
+                    if (!isNaN(mark) && mark >= 0 && mark <= 100) {
+                        data.push({ name, mark });
+                        total += mark;
+                        valid++;
+                        if (mark > maxVal) maxVal = mark;
+                        if (mark < minVal) minVal = mark;
+                    }
+                }
+                return { data, total, valid, maxVal, minVal };
+            }
+
+            window.addRARow = function() {
+                const container = document.getElementById('resultAnalysisContainer');
+                const count = container.children.length + 1;
+                const div = document.createElement('div');
+                div.className = 'result-analysis-input';
+                div.innerHTML = `
+                        <span class="sub-label">Subject ${count}</span>
+                        <input type="text" class="ra-subject" placeholder="Subject name" />
+                        <input type="number" class="ra-marks" min="0" max="100" placeholder="Marks out of 100" />
+                        <button class="remove-btn" onclick="removeRARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    `;
+                container.appendChild(div);
+                document.getElementById('raResult').style.display = 'none';
+            };
+
+            window.removeRARow = function(btn) {
+                const row = btn.closest('.result-analysis-input');
+                const container = document.getElementById('resultAnalysisContainer');
+                if (container.children.length <= 1) { showToast('Keep at least one subject.'); return; }
+                row.remove();
+                document.getElementById('raResult').style.display = 'none';
+            };
+
+            window.resetRA = function() {
+                document.querySelectorAll('.ra-subject, .ra-marks').forEach(inp => inp.value = '');
+                const container = document.getElementById('resultAnalysisContainer');
+                while (container.children.length > 1) { container.lastChild.remove(); }
+                const first = container.children[0];
+                if (first) {
+                    const s = first.querySelector('.ra-subject');
+                    const m = first.querySelector('.ra-marks');
+                    if (s) s.value = '';
+                    if (m) m.value = '';
+                }
+                document.getElementById('raResult').style.display = 'none';
+                if (raChartInstance) { raChartInstance.destroy();
+                    raChartInstance = null; }
+                showToast('Reset.');
+            };
+
+            window.analyzeResults = function() {
+                const stats = getRAStats();
+                if (stats.valid === 0) {
+                    showToast('Please enter at least one valid subject and mark (0-100).');
+                    return;
+                }
+                const avg = stats.total / stats.valid;
+                document.getElementById('raAvg').textContent = avg.toFixed(2);
+                document.getElementById('raMax').textContent = stats.maxVal;
+                document.getElementById('raMin').textContent = stats.minVal;
+                document.getElementById('raTotal').textContent = stats.total;
+                document.getElementById('raResult').style.display = 'block';
+
+                // Chart
+                const ctx = document.getElementById('raChart').getContext('2d');
+                if (raChartInstance) { raChartInstance.destroy(); }
+                const labels = stats.data.map(d => d.name);
+                const values = stats.data.map(d => d.mark);
+                const colors = values.map(v => v >= 75 ? '#1a8a4a' : v >= 50 ? '#d49b3a' : '#e74c5e');
+
+                raChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Marks (out of 100)',
+                            data: values,
+                            backgroundColor: colors,
+                            borderColor: '#163b65',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + '/100';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+                showToast('📊 Analysis complete!');
+            };
+
+            // ────────────────────────────────────────────────────────────────
+            // NEW TOOL: CERTIFICATE GENERATOR
+            // ────────────────────────────────────────────────────────────────
+            window.generateCertificate = function() {
+                const canvas = document.getElementById('certCanvas');
+                const ctx = canvas.getContext('2d');
+                const name = document.getElementById('certName').value.trim() || 'John Doe';
+                const course = document.getElementById('certCourse').value.trim() || 'Course';
+                const date = document.getElementById('certDate').value;
+                const org = document.getElementById('certOrg').value.trim() || 'Institution';
+
+                // Background
+                ctx.fillStyle = '#fdf8f0';
+                ctx.fillRect(0, 0, 800, 550);
+
+                // Border
+                ctx.strokeStyle = '#163b65';
+                ctx.lineWidth = 10;
+                ctx.strokeRect(20, 20, 760, 510);
+
+                // Inner border
+                ctx.strokeStyle = '#d94a32';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(40, 40, 720, 470);
+
+                // Decorative corner lines
+                ctx.strokeStyle = '#163b65';
+                ctx.lineWidth = 6;
+                // Top-left
+                ctx.beginPath();
+                ctx.moveTo(20, 60);
+                ctx.lineTo(20, 20);
+                ctx.lineTo(60, 20);
+                ctx.stroke();
+                // Top-right
+                ctx.beginPath();
+                ctx.moveTo(780, 60);
+                ctx.lineTo(780, 20);
+                ctx.lineTo(740, 20);
+                ctx.stroke();
+                // Bottom-left
+                ctx.beginPath();
+                ctx.moveTo(20, 490);
+                ctx.lineTo(20, 530);
+                ctx.lineTo(60, 530);
+                ctx.stroke();
+                // Bottom-right
+                ctx.beginPath();
+                ctx.moveTo(780, 490);
+                ctx.lineTo(780, 530);
+                ctx.lineTo(740, 530);
+                ctx.stroke();
+
+                // Title
+                ctx.fillStyle = '#163b65';
+                ctx.font = 'bold 36px "Segoe UI", serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('CERTIFICATE', 400, 100);
+
+                // Decorative line under title
+                ctx.beginPath();
+                ctx.moveTo(280, 115);
+                ctx.lineTo(520, 115);
+                ctx.strokeStyle = '#d94a32';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Body text
+                ctx.fillStyle = '#333';
+                ctx.font = '18px "Segoe UI", serif';
+                ctx.fillText('This is to certify that', 400, 170);
+
+                // Name
+                ctx.fillStyle = '#163b65';
+                ctx.font = 'bold 34px "Segoe UI", serif';
+                ctx.fillText(name, 400, 230);
+
+                // Course
+                ctx.fillStyle = '#333';
+                ctx.font = '18px "Segoe UI", serif';
+                ctx.fillText(`has successfully completed the course`, 400, 285);
+                ctx.fillStyle = '#d94a32';
+                ctx.font = 'bold 24px "Segoe UI", serif';
+                ctx.fillText(`"${course}"`, 400, 330);
+
+                // Organization
+                ctx.fillStyle = '#333';
+                ctx.font = '18px "Segoe UI", serif';
+                ctx.fillText(`organized by`, 400, 380);
+                ctx.fillStyle = '#163b65';
+                ctx.font = 'bold 22px "Segoe UI", serif';
+                ctx.fillText(org, 400, 415);
+
+                // Date
+                if (date) {
+                    const d = new Date(date);
+                    const dateStr = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    ctx.fillStyle = '#555';
+                    ctx.font = '14px "Segoe UI", serif';
+                    ctx.fillText(`Date: ${dateStr}`, 400, 470);
+                }
+
+                // Seal emoji
+                ctx.font = '48px "Segoe UI"';
+                ctx.fillText('🎓', 400, 530);
+
+                showToast('✅ Certificate generated! You can now download it.');
+            };
+
+            window.downloadCertificate = function() {
+                const canvas = document.getElementById('certCanvas');
+                const link = document.createElement('a');
+                link.download = 'certificate.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('⬇ Downloading certificate...');
+            };
+
+            // Set default date
+            document.addEventListener('DOMContentLoaded', function() {
+                const today = new Date().toISOString().split('T')[0];
+                const dateInput = document.getElementById('certDate');
+                if (dateInput) dateInput.value = today;
+                // Generate initial certificate
+                setTimeout(generateCertificate, 200);
+            });
+
+            // ────────────────────────────────────────────────────────────────
+            // KEYBOARD SHORTCUT: Ctrl+Enter
+            // ────────────────────────────────────────────────────────────────
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
                     e.preventDefault();
@@ -2068,12 +2848,15 @@
                         else if (id === 'tool-cgpa-percent') {
                             if (document.getElementById('convCGPA').value) convertCGPAtoPercent();
                             else if (document.getElementById('convPercent').value) convertPercentToCGPA();
-                        }
+                        } else if (id === 'tool-scientific') sciCalculate();
+                        else if (id === 'tool-qr-code') generateQR();
+                        else if (id === 'tool-image-resize') resizeImage();
+                        else if (id === 'tool-result-analysis') analyzeResults();
+                        else if (id === 'tool-certificate') generateCertificate();
                     }
                 }
             });
 
-            // ── Initialize ──
             window.showDashboard = showDashboard;
 
         })();
