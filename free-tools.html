@@ -1,1 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Tools – Dr. Mahadev Biradar</title>
+    <meta name="description" content="Free online tools for students and faculty: SGPA, CGPA, Percentage, Age, Pomodoro, and many more." />
+    <meta name="author" content="Dr. Mahadev Mallikarjun Biradar" />
 
+    <style>
+        /* ================================
+           GLOBAL RESET & BASE (from index)
+        ================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            color: #263238;
+            background: #f7f9fc;
+        }
+
+        a {
+            transition: 0.3s ease;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            padding: 75px 25px;
+        }
+
+        /* ================================
+           HEADER & NAV (copied from index)
+        ================================ */
+        header {
+            background: rgba(255, 255, 255, 0.97);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .navbar {
+            max-width: 1150px;
+            margin: auto;
+            padding: 17px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #163b65;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #d94a32;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            color: #d94a32;
+            background: #f0f2f5;
+        }
+
+        /* Dropdown (just in case) */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown .dropbtn {
+            cursor: pointer;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            background: none;
+            border: none;
+            font-family: inherit;
+            border-radius: 4px;
+        }
+
+        .dropdown .dropbtn:hover {
+            color: #d94a32;
+            background: #f0f2f5;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            z-index: 1;
+            padding: 8px 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 8px 18px;
+            text-decoration: none;
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 0;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f7f9fc;
+            color: #d94a32;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ================================
+           TOOLS PAGE SPECIFIC
+        ================================ */
+        .tools-dashboard {
+            display: block;
+        }
+
+        .tools-dashboard h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #163b65;
+            margin-bottom: 8px;
+        }
+
+        .tools-dashboard .subhead {
+            text-align: center;
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 40px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 22px;
+            margin-top: 10px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px 16px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            border-color: #163b65;
+        }
+
+        .tool-card .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .tool-card .name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #163b65;
+            margin-bottom: 4px;
+        }
+
+        .tool-card .desc {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .tool-card .coming-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #d94a32;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================================
+           TOOL VIEW (hidden by default)
+        ================================ */
+        .tool-view {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .tool-view.active {
+            display: block;
+        }
+
+        .tool-view .back-btn {
+            background: #b0bcca;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #1e2a3a;
+            margin-bottom: 20px;
+        }
+
+        .tool-view .back-btn:hover {
+            background: #9aa8b8;
+        }
+
+        .tool-view .tool-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #163b65;
+            margin-bottom: 6px;
+        }
+
+        .tool-view .coming-soon-msg {
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 20px;
+            color: #777;
+        }
+
+        .tool-view .coming-soon-msg .big-icon {
+            font-size: 72px;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        /* ── Shared calculator styles ── */
+        .card {
+            background: transparent;
+            padding: 0;
+        }
+
+        .card h2 {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 600;
+            color: #163b65;
+            margin-bottom: 4px;
+        }
+
+        .card .subhead {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            min-width: 400px;
+        }
+
+        th {
+            background: #163b65;
+            color: #fff;
+            padding: 12px 10px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e6ecf3;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #f8faff;
+        }
+
+        td input,
+        td select {
+            width: 100%;
+            padding: 9px 8px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        td input:focus,
+        td select:focus {
+            outline: none;
+            border-color: #163b65;
+            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.15);
+        }
+
+        td input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        td input[type="number"]::-webkit-inner-spin-button,
+        td input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .remove-btn {
+            background: #e74c5e;
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-add {
+            background: #1a8a4a;
+            color: #fff;
+        }
+        .btn-add:hover {
+            background: #147a3e;
+        }
+
+        .btn-calc {
+            background: #163b65;
+            color: #fff;
+        }
+        .btn-calc:hover {
+            background: #1a3a5a;
+        }
+
+        .btn-reset {
+            background: #b0bcca;
+            color: #1e2a3a;
+        }
+        .btn-reset:hover {
+            background: #9aa8b8;
+        }
+
+        .btn-print {
+            background: #5a6a8a;
+            color: #fff;
+        }
+        .btn-print:hover {
+            background: #4a5a7a;
+        }
+
+        .btn-copy {
+            background: #4a7a9a;
+            color: #fff;
+        }
+        .btn-copy:hover {
+            background: #3a6a8a;
+        }
+
+        .btn-success {
+            background: #1a8a4a;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #147a3e;
+        }
+
+        .btn-warning {
+            background: #d49b3a;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #b8852a;
+        }
+
+        .btn-danger {
+            background: #e74c5e;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .result {
+            margin-top: 28px;
+            padding: 24px 20px 28px;
+            background: #eef5fb;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px 50px;
+            margin-top: 6px;
+        }
+
+        .result .stat {
+            min-width: 120px;
+        }
+
+        .result .stat .label {
+            font-size: 14px;
+            color: #4a5a6e;
+            font-weight: 500;
+        }
+
+        .result .stat .value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #163b65;
+            margin-top: 2px;
+        }
+
+        .result .stat .value.sgpa {
+            color: #163b65;
+            font-size: 38px;
+        }
+
+        .result .grade-letter {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 8px;
+            background: #163b65;
+            color: #fff;
+        }
+
+        .result .grade-letter.O {
+            background: #1a8a4a;
+        }
+        .result .grade-letter.Ap {
+            background: #2a7a5a;
+        }
+        .result .grade-letter.A {
+            background: #3a7a7a;
+        }
+        .result .grade-letter.Bp {
+            background: #5a7a5a;
+        }
+        .result .grade-letter.B {
+            background: #7a7a4a;
+        }
+        .result .grade-letter.C {
+            background: #9a7a3a;
+        }
+        .result .grade-letter.P {
+            background: #b08a3a;
+        }
+        .result .grade-letter.F {
+            background: #b04a4a;
+        }
+
+        .result .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            background: #dce6f0;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #1e2a3a;
+            font-weight: 500;
+        }
+
+        /* ── CGPA specific ── */
+        .sem-row,
+        .credit-tracker-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            background: #f8faff;
+            border-radius: 10px;
+            border: 1px solid #e6ecf3;
+        }
+
+        .sem-row input,
+        .credit-tracker-row input {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .sem-row .sem-label,
+        .credit-tracker-row .sem-label {
+            font-weight: 600;
+            min-width: 70px;
+            color: #163b65;
+        }
+
+        /* ── Predictor, Attendance, etc. ── */
+        .predict-input-group,
+        .attendance-input-group,
+        .percent-input-group,
+        .age-input-group,
+        .converter-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin: 16px 0;
+            padding: 18px 20px;
+            background: #f8faff;
+            border-radius: 12px;
+            border: 1px solid #e6ecf3;
+        }
+
+        .predict-input-group label,
+        .attendance-input-group label,
+        .percent-input-group label,
+        .age-input-group label,
+        .converter-input-group label {
+            font-weight: 600;
+            color: #163b65;
+            min-width: 100px;
+        }
+
+        .predict-input-group input,
+        .predict-input-group select,
+        .attendance-input-group input,
+        .percent-input-group input,
+        .age-input-group input,
+        .converter-input-group input,
+        .converter-input-group select {
+            padding: 9px 12px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* Pomodoro */
+        .pomodoro-display {
+            text-align: center;
+            font-size: 64px;
+            font-weight: 700;
+            color: #163b65;
+            margin: 16px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .pomodoro-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .pomodoro-controls .btn {
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e2a3a;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transition: opacity 0.4s, transform 0.4s;
+            pointer-events: none;
+            z-index: 99999;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ================================
+           FOOTER (from index)
+        ================================ */
+        footer {
+            background: #102d4b;
+            color: white;
+            text-align: center;
+            padding: 32px 20px;
+        }
+
+        footer p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .footer-domain {
+            color: #ffb4a3;
+            font-weight: bold;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================ */
+        @media (max-width: 900px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a,
+            .dropdown .dropbtn {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 55px 18px;
+            }
+
+            .logo {
+                font-size: 19px;
+            }
+
+            nav a,
+            .dropdown .dropbtn {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+
+            .tools-dashboard h1 {
+                font-size: 28px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 14px;
+            }
+
+            .tool-card {
+                padding: 18px 12px 16px;
+            }
+
+            .tool-card .icon {
+                font-size: 32px;
+            }
+
+            .tool-card .name {
+                font-size: 14px;
+            }
+
+            .tool-card .desc {
+                font-size: 11px;
+            }
+
+            .pomodoro-display {
+                font-size: 48px;
+            }
+
+            .sem-row,
+            .credit-tracker-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sem-row .sem-label,
+            .credit-tracker-row .sem-label {
+                min-width: auto;
+            }
+
+            .predict-input-group,
+            .attendance-input-group,
+            .percent-input-group,
+            .age-input-group,
+            .converter-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .predict-input-group label,
+            .attendance-input-group label,
+            .percent-input-group label,
+            .age-input-group label,
+            .converter-input-group label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =============================================
+    HEADER (same as index)
+    ============================================= -->
+    <header>
+        <div class="navbar">
+            <div class="logo">Dr. Mahadev <span>Biradar</span></div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#education">Education</a>
+                <a href="index.html#teaching">Teaching</a>
+                <a href="index.html#research">Research</a>
+                <a href="index.html#publications">Publications</a>
+                <a href="index.html#contact">Contact</a>
+                <a href="free-tools.html" style="color:#d94a32;font-weight:700;">⚡ Free Tools</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- =============================================
+    MAIN CONTENT
+    ============================================= -->
+    <main class="container">
+
+        <!-- ─── DASHBOARD ─── -->
+        <div class="tools-dashboard" id="toolsDashboard">
+            <h1>🛠️ Free Tools</h1>
+            <p class="subhead">Choose a tool – all are 100% free for students &amp; faculty</p>
+
+            <div class="tools-grid">
+
+                <!-- Academic Tools -->
+                <a href="#" class="tool-card" data-tool="sgpa">
+                    <span class="icon">📊</span>
+                    <div class="name">SGPA Calculator</div>
+                    <div class="desc">Semester GPA with credits &amp; grades</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="cgpa">
+                    <span class="icon">🎓</span>
+                    <div class="name">CGPA Calculator</div>
+                    <div class="desc">Aggregate all semesters</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="predictor">
+                    <span class="icon">🎯</span>
+                    <div class="name">Grade Predictor</div>
+                    <div class="desc">What grade do you need?</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="gpa-percent">
+                    <span class="icon">📈</span>
+                    <div class="name">GPA → Percentage</div>
+                    <div class="desc">Convert GPA to % instantly</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="attendance">
+                    <span class="icon">📅</span>
+                    <div class="name">Attendance Calculator</div>
+                    <div class="desc">How many classes to attend?</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="credits">
+                    <span class="icon">📚</span>
+                    <div class="name">Credit Tracker</div>
+                    <div class="desc">Log completed credits</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="percentage">
+                    <span class="icon">🧮</span>
+                    <div class="name">Percentage Calculator</div>
+                    <div class="desc">Find % or value from %</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="age">
+                    <span class="icon">🎂</span>
+                    <div class="name">Age Calculator</div>
+                    <div class="desc">Calculate exact age</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="pomodoro">
+                    <span class="icon">⏳</span>
+                    <div class="name">Pomodoro Timer</div>
+                    <div class="desc">25/5 min focus timer</div>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="cgpa-percent">
+                    <span class="icon">🔄</span>
+                    <div class="name">Percentage ↔ CGPA</div>
+                    <div class="desc">Two‑way conversion</div>
+                </a>
+
+                <!-- Coming Soon (with badges) -->
+                <a href="#" class="tool-card" data-tool="scientific">
+                    <span class="icon">🔬</span>
+                    <div class="name">Scientific Calculator</div>
+                    <div class="desc">Advanced math</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="result-analysis">
+                    <span class="icon">📉</span>
+                    <div class="name">Result Analysis</div>
+                    <div class="desc">Analyze marks</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="co-po">
+                    <span class="icon">📋</span>
+                    <div class="name">CO PO Attainment</div>
+                    <div class="desc">Course outcomes</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="qp-generator">
+                    <span class="icon">📝</span>
+                    <div class="name">Question Paper Gen</div>
+                    <div class="desc">Generate papers</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="qr-code">
+                    <span class="icon">📱</span>
+                    <div class="name">QR Code Generator</div>
+                    <div class="desc">Create QR codes</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="certificate">
+                    <span class="icon">📜</span>
+                    <div class="name">Certificate Generator</div>
+                    <div class="desc">Create certificates</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="feedback">
+                    <span class="icon">📋</span>
+                    <div class="name">Feedback Form Gen</div>
+                    <div class="desc">Generate forms</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="pdf-merge">
+                    <span class="icon">📑</span>
+                    <div class="name">PDF Merge</div>
+                    <div class="desc">Combine PDFs</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="pdf-split">
+                    <span class="icon">✂️</span>
+                    <div class="name">PDF Split</div>
+                    <div class="desc">Split PDF pages</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="pdf-image">
+                    <span class="icon">🖼️</span>
+                    <div class="name">PDF to Image</div>
+                    <div class="desc">Convert PDF to images</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="image-pdf">
+                    <span class="icon">📄</span>
+                    <div class="name">Image to PDF</div>
+                    <div class="desc">Convert images to PDF</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="image-compress">
+                    <span class="icon">🗜️</span>
+                    <div class="name">Image Compressor</div>
+                    <div class="desc">Compress images</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="pdf-compress">
+                    <span class="icon">📦</span>
+                    <div class="name">PDF Compressor</div>
+                    <div class="desc">Compress PDFs</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="image-resize">
+                    <span class="icon">↔️</span>
+                    <div class="name">Image Resizer</div>
+                    <div class="desc">Resize images</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+                <a href="#" class="tool-card" data-tool="url-shortener">
+                    <span class="icon">🔗</span>
+                    <div class="name">URL Shortener</div>
+                    <div class="desc">Shorten long URLs</div>
+                    <span class="coming-badge">Soon</span>
+                </a>
+
+            </div><!-- end tools-grid -->
+        </div><!-- end dashboard -->
+
+        <!-- ============================================================ -->
+        <!-- TOOL VIEWS (hidden by default)                              -->
+        <!-- ============================================================ -->
+
+        <!-- ─── TOOL 1: SGPA ─── -->
+        <div class="tool-view" id="tool-sgpa">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📊 SGPA Calculator</h2>
+                <p class="subhead">Enter subject name, credits &amp; grade point</p>
+                <div class="table-wrap">
+                    <table id="subjectTable">
+                        <thead><tr><th>Subject</th><th>Credits</th><th>Grade Point</th><th style="width:52px;">Remove</th></tr></thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td><input type="text" class="subject-name" placeholder="e.g. Mathematics" /></td>
+                                <td><input type="number" class="credits" min="0" step="0.5" placeholder="4" /></td>
+                                <td>
+                                    <select class="grade">
+                                        <option value="">Select</option>
+                                        <option value="10">O / 10</option>
+                                        <option value="9">A+ / 9</option>
+                                        <option value="8">A / 8</option>
+                                        <option value="7">B+ / 7</option>
+                                        <option value="6">B / 6</option>
+                                        <option value="5">C / 5</option>
+                                        <option value="4">P / 4</option>
+                                        <option value="0">F / 0</option>
+                                    </select>
+                                </td>
+                                <td><button class="remove-btn" onclick="removeRow(this)" aria-label="Remove subject">✕</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-add" onclick="addRow()">＋ Add Subject</button>
+                    <button class="btn btn-calc" onclick="calculateSGPA()">📐 Calculate SGPA</button>
+                    <button class="btn btn-reset" onclick="resetCalculator()">⟲ Reset</button>
+                    <button class="btn btn-print" onclick="printResult()" id="printBtn" disabled>🖨️ Print</button>
+                    <button class="btn btn-copy" onclick="copyResult()" id="copyBtn" disabled>📋 Copy</button>
+                </div>
+                <div class="result" id="sgpaResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📘 Total Credits</div><div class="value" id="totalCredits">0.0</div></div>
+                        <div class="stat"><div class="label">🏅 SGPA</div><div class="value sgpa" id="sgpa">0.00</div></div>
+                        <div class="stat"><div class="label">📋 Grade</div><div class="grade-letter" id="gradeLetter">—</div></div>
+                    </div>
+                    <div class="badge-row"><span class="badge">📌 Based on standard 10‑point scale</span><span class="badge">✅ All subjects included</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 2: CGPA ─── -->
+        <div class="tool-view" id="tool-cgpa">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>🎓 CGPA Calculator</h2>
+                <p class="subhead">Enter SGPA for each semester to calculate Cumulative GPA</p>
+                <div id="cgpaContainer">
+                    <div class="sem-row" id="cgpaRow1">
+                        <span class="sem-label">Semester 1</span>
+                        <input type="number" class="cgpa-sgpa" min="0" max="10" step="0.01" placeholder="SGPA" />
+                        <input type="number" class="cgpa-credits" min="0" step="0.5" placeholder="Credits" value="20" />
+                        <button class="remove-btn" onclick="removeCGPARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    </div>
+                </div>
+                <button class="btn btn-add" onclick="addCGPARow()">＋ Add Semester</button>
+                <div class="btn-group">
+                    <button class="btn btn-calc" onclick="calculateCGPA()">📐 Calculate CGPA</button>
+                    <button class="btn btn-reset" onclick="resetCGPA()">⟲ Reset</button>
+                </div>
+                <div class="result" id="cgpaResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📘 Total Credits</div><div class="value" id="cgpaTotalCredits">0.0</div></div>
+                        <div class="stat"><div class="label">🏅 CGPA</div><div class="value sgpa" id="cgpaValue">0.00</div></div>
+                        <div class="stat"><div class="label">📋 Grade</div><div class="grade-letter" id="cgpaGrade">—</div></div>
+                    </div>
+                    <div class="badge-row"><span class="badge">📌 Weighted by semester credits</span><span class="badge">✅ All semesters included</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 3: GRADE PREDICTOR ─── -->
+        <div class="tool-view" id="tool-predictor">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>🎯 Grade Predictor</h2>
+                <p class="subhead">Find out what grade you need to reach your target SGPA</p>
+                <div class="predict-input-group">
+                    <label>Current SGPA:</label><input type="number" id="predictCurrent" min="0" max="10" step="0.01" placeholder="e.g. 7.5" />
+                    <label>Target SGPA:</label><input type="number" id="predictTarget" min="0" max="10" step="0.01" placeholder="e.g. 8.5" />
+                    <label>Completed Credits:</label><input type="number" id="predictCompleted" min="0" step="0.5" placeholder="e.g. 40" />
+                    <label>Remaining Credits:</label><input type="number" id="predictRemaining" min="0" step="0.5" placeholder="e.g. 20" />
+                </div>
+                <button class="btn btn-calc" onclick="predictGrade()">🔮 Predict</button>
+                <div class="result" id="predictResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">🎯 Required Grade Point</div><div class="value" id="predictRequired">—</div></div>
+                        <div class="stat"><div class="label">📋 Required Grade</div><div class="grade-letter" id="predictGradeLetter">—</div></div>
+                    </div>
+                    <div class="badge-row"><span class="badge">📌 Based on completed &amp; remaining credits</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 4: GPA → PERCENTAGE ─── -->
+        <div class="tool-view" id="tool-gpa-percent">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📈 GPA → Percentage Converter</h2>
+                <p class="subhead">Convert GPA into percentage using different scales</p>
+                <div class="predict-input-group">
+                    <label>Enter GPA:</label><input type="number" id="gpaToPercentInput" min="0" max="10" step="0.01" placeholder="e.g. 8.5" />
+                    <label>Scale:</label>
+                    <select id="gpaScale">
+                        <option value="10">10‑point (GPA × 10)</option>
+                        <option value="4">4‑point (GPA × 25)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="number" id="gpaCustomScale" min="1" max="20" step="0.5" placeholder="Max GPA" style="display:none;width:100px;" />
+                </div>
+                <button class="btn btn-calc" onclick="convertGPAToPercent()">🔄 Convert</button>
+                <div class="result" id="gpaPercentResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📊 Percentage</div><div class="value" id="gpaPercentValue">—</div></div>
+                        <div class="stat"><div class="label">📋 Grade</div><div class="grade-letter" id="gpaPercentGrade">—</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 5: ATTENDANCE ─── -->
+        <div class="tool-view" id="tool-attendance">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📅 Attendance Calculator</h2>
+                <p class="subhead">How many classes do you need to attend to reach your target %?</p>
+                <div class="attendance-input-group">
+                    <label>Total classes held:</label><input type="number" id="attendTotal" min="0" step="1" placeholder="e.g. 40" />
+                    <label>Classes attended:</label><input type="number" id="attendAttended" min="0" step="1" placeholder="e.g. 30" />
+                    <label>Target %:</label><input type="number" id="attendTarget" min="0" max="100" step="0.5" placeholder="e.g. 75" />
+                </div>
+                <button class="btn btn-calc" onclick="calculateAttendance()">📊 Calculate</button>
+                <div class="result" id="attendResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📊 Current %</div><div class="value" id="attendCurrent">—</div></div>
+                        <div class="stat"><div class="label">📅 Need to attend</div><div class="value" id="attendNeed">—</div></div>
+                        <div class="stat"><div class="label">📈 Can miss</div><div class="value" id="attendCanMiss">—</div></div>
+                    </div>
+                    <div class="badge-row"><span class="badge">📌 Assumes no more classes are added</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 6: CREDIT TRACKER ─── -->
+        <div class="tool-view" id="tool-credits">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>📚 Credit Tracker</h2>
+                <p class="subhead">Log your completed credits semester by semester</p>
+                <div id="creditTrackerContainer">
+                    <div class="credit-tracker-row" id="creditRow1">
+                        <span class="sem-label">Semester 1</span>
+                        <input type="text" class="credit-sem-name" placeholder="Sem name" value="Sem 1" style="flex:0.8;" />
+                        <input type="number" class="credit-credits" min="0" step="0.5" placeholder="Credits" />
+                        <button class="remove-btn" onclick="removeCreditRow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    </div>
+                </div>
+                <button class="btn btn-add" onclick="addCreditRow()">＋ Add Semester</button>
+                <div class="btn-group">
+                    <button class="btn btn-calc" onclick="calculateCredits()">📊 Show Summary</button>
+                    <button class="btn btn-reset" onclick="resetCredits()">⟲ Reset</button>
+                </div>
+                <div class="result" id="creditResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📚 Total Credits</div><div class="value" id="creditTotal">0.0</div></div>
+                        <div class="stat"><div class="label">📘 Semesters</div><div class="value" id="creditSemCount">0</div></div>
+                    </div>
+                    <div id="creditBreakdown" style="margin-top:16px;text-align:left;font-size:14px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 7: PERCENTAGE CALCULATOR ─── -->
+        <div class="tool-view" id="tool-percentage">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>🧮 Percentage Calculator</h2>
+                <p class="subhead">Find what percentage one number is of another, or find the value from a percentage</p>
+                <div class="percent-input-group">
+                    <label>Number:</label><input type="number" id="percentNum" step="any" placeholder="e.g. 50" />
+                    <label>Out of:</label><input type="number" id="percentTotal" step="any" placeholder="e.g. 200" />
+                    <button class="btn btn-calc" onclick="calcPercentage()">📊 Calculate %</button>
+                </div>
+                <div class="percent-input-group">
+                    <label>Total value:</label><input type="number" id="percentOfTotal" step="any" placeholder="e.g. 200" />
+                    <label>Percentage (%):</label><input type="number" id="percentRate" step="any" placeholder="e.g. 25" />
+                    <button class="btn btn-calc" onclick="calcValueFromPercent()">📊 Find Value</button>
+                </div>
+                <div class="result" id="percentResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📊 Result</div><div class="value" id="percentResultValue">—</div></div>
+                    </div>
+                    <div id="percentDetail" style="margin-top:12px;font-size:15px;color:#4a5a6e;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 8: AGE CALCULATOR ─── -->
+        <div class="tool-view" id="tool-age">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>🎂 Age Calculator</h2>
+                <p class="subhead">Enter your birth date and find your exact age</p>
+                <div class="age-input-group">
+                    <label>Birth Date:</label><input type="date" id="birthDate" />
+                    <button class="btn btn-calc" onclick="calculateAge()">📅 Calculate Age</button>
+                </div>
+                <div class="result" id="ageResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">🎂 Years</div><div class="value" id="ageYears">—</div></div>
+                        <div class="stat"><div class="label">📅 Months</div><div class="value" id="ageMonths">—</div></div>
+                        <div class="stat"><div class="label">📆 Days</div><div class="value" id="ageDays">—</div></div>
+                    </div>
+                    <div style="margin-top:12px;font-size:16px;" id="ageTotalDays"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 9: POMODORO TIMER ─── -->
+        <div class="tool-view" id="tool-pomodoro">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>⏳ Pomodoro Timer</h2>
+                <p class="subhead">25 minutes focus, 5 minutes break – stay productive!</p>
+                <div class="pomodoro-display" id="pomodoroDisplay">25:00</div>
+                <div class="pomodoro-controls">
+                    <button class="btn btn-success" onclick="startPomodoro()">▶ Start</button>
+                    <button class="btn btn-warning" onclick="pausePomodoro()">⏸ Pause</button>
+                    <button class="btn btn-danger" onclick="resetPomodoro()">⏹ Reset</button>
+                </div>
+                <div style="text-align:center;margin-top:8px;">
+                    <span id="pomodoroStatus" style="font-weight:600;color:#163b65;">⏸ Ready</span>
+                </div>
+                <div class="badge-row" style="margin-top:16px;">
+                    <span class="badge">🍅 25 min work</span>
+                    <span class="badge">☕ 5 min break</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TOOL 10: PERCENTAGE ↔ CGPA CONVERTER ─── -->
+        <div class="tool-view" id="tool-cgpa-percent">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="card">
+                <h2>🔄 Percentage ↔ CGPA Converter</h2>
+                <p class="subhead">Convert CGPA to Percentage and vice versa</p>
+                <div class="converter-input-group">
+                    <label>CGPA:</label><input type="number" id="convCGPA" min="0" max="10" step="0.01" placeholder="e.g. 8.5" />
+                    <label>Percentage:</label><input type="number" id="convPercent" min="0" max="100" step="0.01" placeholder="e.g. 85" />
+                    <label>Scale:</label>
+                    <select id="convScale">
+                        <option value="10">10‑point (CGPA × 10)</option>
+                        <option value="4">4‑point (CGPA × 25)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="number" id="convCustomScale" min="1" max="20" step="0.5" placeholder="Max CGPA" style="display:none;width:100px;" />
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-calc" onclick="convertCGPAtoPercent()">CGPA → %</button>
+                    <button class="btn btn-calc" onclick="convertPercentToCGPA()">% → CGPA</button>
+                </div>
+                <div class="result" id="convResult">
+                    <div class="row">
+                        <div class="stat"><div class="label">📊 Result</div><div class="value" id="convResultValue">—</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PLACEHOLDER TOOLS (Coming Soon)                              -->
+        <!-- ============================================================ -->
+        <div class="tool-view" id="tool-scientific">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">🔬</span>Scientific Calculator is coming soon!<br><span style="font-size:14px;">Stay tuned for advanced math functions.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-result-analysis">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📉</span>Result Analysis is coming soon!<br><span style="font-size:14px;">Visualise your marks and performance.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-co-po">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📋</span>CO PO Attainment Calculator is coming soon!<br><span style="font-size:14px;">Measure course outcome attainment.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-qp-generator">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📝</span>Question Paper Generator is coming soon!<br><span style="font-size:14px;">Create question papers automatically.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-qr-code">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📱</span>QR Code Generator is coming soon!<br><span style="font-size:14px;">Generate QR codes for any text or link.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-certificate">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📜</span>Certificate Generator is coming soon!<br><span style="font-size:14px;">Create beautiful certificates.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-feedback">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📋</span>Feedback Form Generator is coming soon!<br><span style="font-size:14px;">Build custom feedback forms.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-pdf-merge">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📑</span>PDF Merge is coming soon!<br><span style="font-size:14px;">Combine multiple PDFs into one.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-pdf-split">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">✂️</span>PDF Split is coming soon!<br><span style="font-size:14px;">Split PDF pages individually.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-pdf-image">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">🖼️</span>PDF to Image is coming soon!<br><span style="font-size:14px;">Convert PDF pages to images.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-image-pdf">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📄</span>Image to PDF is coming soon!<br><span style="font-size:14px;">Convert images to PDF format.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-image-compress">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">🗜️</span>Image Compressor is coming soon!<br><span style="font-size:14px;">Reduce image file sizes.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-pdf-compress">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">📦</span>PDF Compressor is coming soon!<br><span style="font-size:14px;">Compress PDF files.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-image-resize">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">↔️</span>Image Resizer is coming soon!<br><span style="font-size:14px;">Resize images to any dimension.</span></div>
+        </div>
+
+        <div class="tool-view" id="tool-url-shortener">
+            <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
+            <div class="coming-soon-msg"><span class="big-icon">🔗</span>URL Shortener is coming soon!<br><span style="font-size:14px;">Shorten long URLs instantly.</span></div>
+        </div>
+
+    </main>
+
+    <!-- ─── TOAST NOTIFICATION ─── -->
+    <div class="toast" id="toast"></div>
+
+    <!-- =============================================
+    FOOTER (same as index)
+    ============================================= -->
+    <footer>
+        <p>© 2026 Dr. Mahadev Mallikarjun Biradar. All Rights Reserved.</p>
+        <p class="footer-domain">mahadevbiradar.in</p>
+    </footer>
+
+    <!-- =============================================
+    SCRIPTS
+    ============================================= -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ── Toast ──
+            const toast = document.getElementById('toast');
+            let toastTimer = null;
+
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2800);
+            }
+            window.showToast = showToast;
+
+            // ── Dashboard / Tool navigation ──
+            const dashboard = document.getElementById('toolsDashboard');
+
+            window.showDashboard = function() {
+                document.querySelectorAll('.tool-view').forEach(v => v.classList.remove('active'));
+                if (dashboard) dashboard.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            function showTool(toolId) {
+                if (dashboard) dashboard.style.display = 'none';
+                document.querySelectorAll('.tool-view').forEach(v => v.classList.remove('active'));
+                const target = document.getElementById('tool-' + toolId);
+                if (target) {
+                    target.classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showToast('Tool not found.');
+                }
+            }
+
+            // ── Tool card clicks ──
+            document.querySelectorAll('.tool-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tool = this.dataset.tool;
+                    if (tool) showTool(tool);
+                });
+            });
+
+            // ================================================================
+            // TOOL 1: SGPA CALCULATOR
+            // ================================================================
+            const tableBody = document.getElementById('tableBody');
+            const sgpaResultDiv = document.getElementById('sgpaResult');
+            const totalCreditsEl = document.getElementById('totalCredits');
+            const sgpaEl = document.getElementById('sgpa');
+            const gradeLetterEl = document.getElementById('gradeLetter');
+            const printBtn = document.getElementById('printBtn');
+            const copyBtn = document.getElementById('copyBtn');
+
+            window.addRow = function() {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td><input type="text" class="subject-name" placeholder="Subject name" /></td>
+                        <td><input type="number" class="credits" min="0" step="0.5" placeholder="4" /></td>
+                        <td>
+                            <select class="grade">
+                                <option value="">Select</option>
+                                <option value="10">O / 10</option>
+                                <option value="9">A+ / 9</option>
+                                <option value="8">A / 8</option>
+                                <option value="7">B+ / 7</option>
+                                <option value="6">B / 6</option>
+                                <option value="5">C / 5</option>
+                                <option value="4">P / 4</option>
+                                <option value="0">F / 0</option>
+                            </select>
+                        </td>
+                        <td><button class="remove-btn" onclick="removeRow(this)" aria-label="Remove subject">✕</button></td>
+                    `;
+                tableBody.appendChild(tr);
+                const inp = tr.querySelector('.subject-name');
+                if (inp) setTimeout(() => inp.focus(), 50);
+                sgpaResultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+            };
+
+            window.removeRow = function(btn) {
+                const row = btn.closest('tr');
+                if (tableBody.children.length <= 1) {
+                    showToast('Keep at least one subject row.');
+                    return;
+                }
+                row.remove();
+                sgpaResultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+            };
+
+            window.calculateSGPA = function() {
+                const creditInputs = document.querySelectorAll('.credits');
+                const gradeSelects = document.querySelectorAll('.grade');
+                let totalCredits = 0;
+                let totalPoints = 0;
+                let validCount = 0;
+
+                for (let i = 0; i < creditInputs.length; i++) {
+                    const credit = parseFloat(creditInputs[i].value);
+                    const grade = parseFloat(gradeSelects[i].value);
+                    if (!isNaN(credit) && credit >= 0 && !isNaN(grade) && grade >= 0) {
+                        totalCredits += credit;
+                        totalPoints += credit * grade;
+                        validCount++;
+                    }
+                }
+
+                if (totalCredits === 0 || validCount === 0) {
+                    showToast('Please enter valid credits and grade points for at least one subject.');
+                    sgpaResultDiv.style.display = 'none';
+                    printBtn.disabled = true;
+                    copyBtn.disabled = true;
+                    return;
+                }
+
+                const sgpa = totalPoints / totalCredits;
+                const sgpaRounded = Math.round(sgpa * 100) / 100;
+
+                totalCreditsEl.textContent = totalCredits.toFixed(1);
+                sgpaEl.textContent = sgpaRounded.toFixed(2);
+                const gradeLetter = getGradeLetter(sgpa);
+                gradeLetterEl.textContent = gradeLetter;
+                gradeLetterEl.className = 'grade-letter ' + getGradeClass(sgpa);
+                sgpaResultDiv.style.display = 'block';
+                printBtn.disabled = false;
+                copyBtn.disabled = false;
+
+                if (window.innerWidth < 600) {
+                    sgpaResultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            function getGradeLetter(sgpa) {
+                if (sgpa >= 9.5) return 'O';
+                if (sgpa >= 8.5) return 'A+';
+                if (sgpa >= 7.5) return 'A';
+                if (sgpa >= 6.5) return 'B+';
+                if (sgpa >= 5.5) return 'B';
+                if (sgpa >= 4.5) return 'C';
+                if (sgpa >= 3.5) return 'P';
+                return 'F';
+            }
+
+            function getGradeClass(sgpa) {
+                if (sgpa >= 9.5) return 'O';
+                if (sgpa >= 8.5) return 'Ap';
+                if (sgpa >= 7.5) return 'A';
+                if (sgpa >= 6.5) return 'Bp';
+                if (sgpa >= 5.5) return 'B';
+                if (sgpa >= 4.5) return 'C';
+                if (sgpa >= 3.5) return 'P';
+                return 'F';
+            }
+
+            window.resetCalculator = function() {
+                const inputs = document.querySelectorAll('.credits, .subject-name');
+                inputs.forEach(inp => inp.value = '');
+                const selects = document.querySelectorAll('.grade');
+                selects.forEach(sel => sel.value = '');
+                while (tableBody.children.length > 1) {
+                    tableBody.lastChild.remove();
+                }
+                const firstRow = tableBody.children[0];
+                if (firstRow) {
+                    const nameInp = firstRow.querySelector('.subject-name');
+                    const credInp = firstRow.querySelector('.credits');
+                    const gradeSel = firstRow.querySelector('.grade');
+                    if (nameInp) nameInp.value = '';
+                    if (credInp) credInp.value = '';
+                    if (gradeSel) gradeSel.value = '';
+                }
+                sgpaResultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+                showToast('Calculator reset.');
+            };
+
+            window.printResult = function() {
+                window.print();
+            };
+
+            window.copyResult = function() {
+                const sgpa = sgpaEl.textContent;
+                const credits = totalCreditsEl.textContent;
+                const grade = gradeLetterEl.textContent;
+                const text =
+                    `SGPA: ${sgpa} | Total Credits: ${credits} | Grade: ${grade} — Calculated with SGPA Calculator by Dr. Mahadev Biradar`;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('📋 Result copied to clipboard!');
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                    showToast('📋 Result copied!');
+                });
+            };
+
+            // ================================================================
+            // TOOL 2: CGPA CALCULATOR
+            // ================================================================
+            const cgpaContainer = document.getElementById('cgpaContainer');
+            const cgpaResult = document.getElementById('cgpaResult');
+
+            window.addCGPARow = function() {
+                const count = cgpaContainer.children.length + 1;
+                const div = document.createElement('div');
+                div.className = 'sem-row';
+                div.innerHTML = `
+                        <span class="sem-label">Semester ${count}</span>
+                        <input type="number" class="cgpa-sgpa" min="0" max="10" step="0.01" placeholder="SGPA" />
+                        <input type="number" class="cgpa-credits" min="0" step="0.5" placeholder="Credits" value="20" />
+                        <button class="remove-btn" onclick="removeCGPARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    `;
+                cgpaContainer.appendChild(div);
+                cgpaResult.style.display = 'none';
+            };
+
+            window.removeCGPARow = function(btn) {
+                const row = btn.closest('.sem-row');
+                if (cgpaContainer.children.length <= 1) {
+                    showToast('Keep at least one semester.');
+                    return;
+                }
+                row.remove();
+                cgpaResult.style.display = 'none';
+            };
+
+            window.calculateCGPA = function() {
+                const sgpas = document.querySelectorAll('.cgpa-sgpa');
+                const credits = document.querySelectorAll('.cgpa-credits');
+                let totalCredits = 0;
+                let totalPoints = 0;
+                let valid = 0;
+
+                for (let i = 0; i < sgpas.length; i++) {
+                    const s = parseFloat(sgpas[i].value);
+                    const c = parseFloat(credits[i].value);
+                    if (!isNaN(s) && s >= 0 && !isNaN(c) && c > 0) {
+                        totalCredits += c;
+                        totalPoints += s * c;
+                        valid++;
+                    }
+                }
+
+                if (totalCredits === 0 || valid === 0) {
+                    showToast('Please enter valid SGPA and credits for at least one semester.');
+                    cgpaResult.style.display = 'none';
+                    return;
+                }
+
+                const cgpa = totalPoints / totalCredits;
+                document.getElementById('cgpaTotalCredits').textContent = totalCredits.toFixed(1);
+                document.getElementById('cgpaValue').textContent = cgpa.toFixed(2);
+                const grade = getGradeLetter(cgpa);
+                const el = document.getElementById('cgpaGrade');
+                el.textContent = grade;
+                el.className = 'grade-letter ' + getGradeClass(cgpa);
+                cgpaResult.style.display = 'block';
+            };
+
+            window.resetCGPA = function() {
+                document.querySelectorAll('.cgpa-sgpa, .cgpa-credits').forEach(inp => inp.value = '');
+                while (cgpaContainer.children.length > 1) {
+                    cgpaContainer.lastChild.remove();
+                }
+                const first = cgpaContainer.children[0];
+                if (first) {
+                    const s = first.querySelector('.cgpa-sgpa');
+                    const c = first.querySelector('.cgpa-credits');
+                    if (s) s.value = '';
+                    if (c) c.value = '20';
+                }
+                cgpaResult.style.display = 'none';
+                showToast('CGPA reset.');
+            };
+
+            // ================================================================
+            // TOOL 3: GRADE PREDICTOR
+            // ================================================================
+            window.predictGrade = function() {
+                const current = parseFloat(document.getElementById('predictCurrent').value);
+                const target = parseFloat(document.getElementById('predictTarget').value);
+                const completed = parseFloat(document.getElementById('predictCompleted').value);
+                const remaining = parseFloat(document.getElementById('predictRemaining').value);
+
+                if (isNaN(current) || isNaN(target) || isNaN(completed) || isNaN(remaining) || completed < 0 || remaining <=
+                    0) {
+                    showToast('Please fill all fields with valid numbers.');
+                    return;
+                }
+                if (current < 0 || current > 10 || target < 0 || target > 10) {
+                    showToast('SGPA values must be between 0 and 10.');
+                    return;
+                }
+                if (target <= current) {
+                    showToast('Target SGPA must be greater than current SGPA.');
+                    return;
+                }
+
+                const total = completed + remaining;
+                const required = (target * total - current * completed) / remaining;
+                if (required > 10) {
+                    document.getElementById('predictRequired').textContent = '❌ Impossible';
+                    document.getElementById('predictGradeLetter').textContent = '—';
+                    document.getElementById('predictGradeLetter').className = 'grade-letter';
+                    document.getElementById('predictResult').style.display = 'block';
+                    showToast('Target too high – even with all A+ you cannot reach it.');
+                    return;
+                }
+                document.getElementById('predictRequired').textContent = required.toFixed(2);
+                const g = getGradeLetter(required);
+                const el = document.getElementById('predictGradeLetter');
+                el.textContent = g;
+                el.className = 'grade-letter ' + getGradeClass(required);
+                document.getElementById('predictResult').style.display = 'block';
+            };
+
+            // ================================================================
+            // TOOL 4: GPA → PERCENTAGE
+            // ================================================================
+            document.getElementById('gpaScale').addEventListener('change', function() {
+                const custom = document.getElementById('gpaCustomScale');
+                custom.style.display = this.value === 'custom' ? 'inline-block' : 'none';
+            });
+
+            window.convertGPAToPercent = function() {
+                const gpa = parseFloat(document.getElementById('gpaToPercentInput').value);
+                const scale = document.getElementById('gpaScale').value;
+                let maxGPA = 10;
+                if (scale === '4') maxGPA = 4;
+                else if (scale === 'custom') {
+                    maxGPA = parseFloat(document.getElementById('gpaCustomScale').value);
+                    if (isNaN(maxGPA) || maxGPA <= 0) {
+                        showToast('Please enter a valid max GPA.');
+                        return;
+                    }
+                }
+                if (isNaN(gpa) || gpa < 0 || gpa > maxGPA) {
+                    showToast(`Please enter a valid GPA between 0 and ${maxGPA}.`);
+                    return;
+                }
+                const percent = (gpa / maxGPA) * 100;
+                document.getElementById('gpaPercentValue').textContent = percent.toFixed(2) + '%';
+                const g = getGradeLetter(gpa * (10 / maxGPA));
+                const el = document.getElementById('gpaPercentGrade');
+                el.textContent = g;
+                el.className = 'grade-letter ' + getGradeClass(gpa * (10 / maxGPA));
+                document.getElementById('gpaPercentResult').style.display = 'block';
+            };
+
+            // ================================================================
+            // TOOL 5: ATTENDANCE
+            // ================================================================
+            window.calculateAttendance = function() {
+                const total = parseFloat(document.getElementById('attendTotal').value);
+                const attended = parseFloat(document.getElementById('attendAttended').value);
+                const target = parseFloat(document.getElementById('attendTarget').value);
+
+                if (isNaN(total) || isNaN(attended) || isNaN(target) || total <= 0 || attended < 0 || target < 0 || target >
+                    100) {
+                    showToast('Please fill all fields with valid numbers.');
+                    return;
+                }
+                const current = (attended / total) * 100;
+                let need = 0;
+                let canMiss = 0;
+
+                if (current >= target) {
+                    need = 0;
+                    canMiss = Math.floor(total * (current - target) / 100);
+                } else {
+                    const numerator = target * total - 100 * attended;
+                    const denominator = 100 - target;
+                    if (denominator <= 0) {
+                        showToast('Target must be less than 100%.');
+                        return;
+                    }
+                    need = Math.ceil(numerator / denominator);
+                    if (need < 0) need = 0;
+                    canMiss = Math.floor(total - attended - need);
+                    if (canMiss < 0) canMiss = 0;
+                }
+
+                document.getElementById('attendCurrent').textContent = current.toFixed(2) + '%';
+                document.getElementById('attendNeed').textContent = need + ' classes';
+                document.getElementById('attendCanMiss').textContent = canMiss + ' classes';
+                document.getElementById('attendResult').style.display = 'block';
+            };
+
+            // ================================================================
+            // TOOL 6: CREDIT TRACKER
+            // ================================================================
+            const creditContainer = document.getElementById('creditTrackerContainer');
+            const creditResultDiv = document.getElementById('creditResult');
+
+            window.addCreditRow = function() {
+                const count = creditContainer.children.length + 1;
+                const div = document.createElement('div');
+                div.className = 'credit-tracker-row';
+                div.innerHTML = `
+                        <span class="sem-label">Semester ${count}</span>
+                        <input type="text" class="credit-sem-name" placeholder="Sem name" value="Sem ${count}" style="flex:0.8;" />
+                        <input type="number" class="credit-credits" min="0" step="0.5" placeholder="Credits" />
+                        <button class="remove-btn" onclick="removeCreditRow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                    `;
+                creditContainer.appendChild(div);
+                creditResultDiv.style.display = 'none';
+            };
+
+            window.removeCreditRow = function(btn) {
+                const row = btn.closest('.credit-tracker-row');
+                if (creditContainer.children.length <= 1) {
+                    showToast('Keep at least one semester.');
+                    return;
+                }
+                row.remove();
+                creditResultDiv.style.display = 'none';
+            };
+
+            window.calculateCredits = function() {
+                const names = document.querySelectorAll('.credit-sem-name');
+                const credits = document.querySelectorAll('.credit-credits');
+                let total = 0;
+                let valid = 0;
+                let breakdown = '';
+
+                for (let i = 0; i < names.length; i++) {
+                    const c = parseFloat(credits[i].value);
+                    const name = names[i].value || 'Sem ' + (i + 1);
+                    if (!isNaN(c) && c >= 0) {
+                        total += c;
+                        valid++;
+                        breakdown += `<div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #e6ecf3;">
+                                <span>${name}</span>
+                                <span><strong>${c.toFixed(1)}</strong> credits</span>
+                            </div>`;
+                    }
+                }
+
+                if (valid === 0) {
+                    showToast('Please enter at least one valid credit value.');
+                    creditResultDiv.style.display = 'none';
+                    return;
+                }
+
+                document.getElementById('creditTotal').textContent = total.toFixed(1);
+                document.getElementById('creditSemCount').textContent = valid;
+                document.getElementById('creditBreakdown').innerHTML = breakdown;
+                creditResultDiv.style.display = 'block';
+            };
+
+            window.resetCredits = function() {
+                document.querySelectorAll('.credit-sem-name, .credit-credits').forEach(inp => inp.value = '');
+                const first = creditContainer.children[0];
+                if (first) {
+                    const n = first.querySelector('.credit-sem-name');
+                    const c = first.querySelector('.credit-credits');
+                    if (n) n.value = 'Sem 1';
+                    if (c) c.value = '';
+                }
+                creditResultDiv.style.display = 'none';
+                showToast('Credit tracker reset.');
+            };
+
+            // ================================================================
+            // TOOL 7: PERCENTAGE CALCULATOR
+            // ================================================================
+            window.calcPercentage = function() {
+                const num = parseFloat(document.getElementById('percentNum').value);
+                const total = parseFloat(document.getElementById('percentTotal').value);
+                if (isNaN(num) || isNaN(total) || total === 0) {
+                    showToast('Please enter valid numbers (total cannot be zero).');
+                    return;
+                }
+                const result = (num / total) * 100;
+                document.getElementById('percentResultValue').textContent = result.toFixed(2) + '%';
+                document.getElementById('percentDetail').textContent = `${num} is ${result.toFixed(2)}% of ${total}`;
+                document.getElementById('percentResult').style.display = 'block';
+            };
+
+            window.calcValueFromPercent = function() {
+                const total = parseFloat(document.getElementById('percentOfTotal').value);
+                const rate = parseFloat(document.getElementById('percentRate').value);
+                if (isNaN(total) || isNaN(rate)) {
+                    showToast('Please enter valid numbers.');
+                    return;
+                }
+                const result = (rate / 100) * total;
+                document.getElementById('percentResultValue').textContent = result.toFixed(2);
+                document.getElementById('percentDetail').textContent = `${rate}% of ${total} = ${result.toFixed(2)}`;
+                document.getElementById('percentResult').style.display = 'block';
+            };
+
+            // ================================================================
+            // TOOL 8: AGE CALCULATOR
+            // ================================================================
+            window.calculateAge = function() {
+                const birth = document.getElementById('birthDate').value;
+                if (!birth) {
+                    showToast('Please select your birth date.');
+                    return;
+                }
+                const birthDate = new Date(birth);
+                const now = new Date();
+                let years = now.getFullYear() - birthDate.getFullYear();
+                let months = now.getMonth() - birthDate.getMonth();
+                let days = now.getDate() - birthDate.getDate();
+
+                if (days < 0) {
+                    months--;
+                    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                    days += prevMonth.getDate();
+                }
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                document.getElementById('ageYears').textContent = years;
+                document.getElementById('ageMonths').textContent = months;
+                document.getElementById('ageDays').textContent = days;
+                document.getElementById('ageTotalDays').textContent = `🎯 Total days alive: ${Math.floor((now - birthDate) / (1000 * 60 * 60 * 24))}`;
+                document.getElementById('ageResult').style.display = 'block';
+            };
+
+            // ================================================================
+            // TOOL 9: POMODORO TIMER
+            // ================================================================
+            let pomodoroInterval = null;
+            let pomodoroSeconds = 25 * 60;
+            let pomodoroRunning = false;
+            let pomodoroType = 'work';
+
+            function updatePomodoroDisplay() {
+                const mins = Math.floor(pomodoroSeconds / 60);
+                const secs = pomodoroSeconds % 60;
+                document.getElementById('pomodoroDisplay').textContent =
+                    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            function pomodoroTick() {
+                if (pomodoroSeconds <= 0) {
+                    clearInterval(pomodoroInterval);
+                    pomodoroRunning = false;
+                    if (pomodoroType === 'work') {
+                        pomodoroType = 'break';
+                        pomodoroSeconds = 5 * 60;
+                        document.getElementById('pomodoroStatus').textContent = '☕ Break time! (5 min)';
+                        showToast('☕ Time for a break!');
+                    } else {
+                        pomodoroType = 'work';
+                        pomodoroSeconds = 25 * 60;
+                        document.getElementById('pomodoroStatus').textContent = '🍅 Focus time! (25 min)';
+                        showToast('🍅 Back to work!');
+                    }
+                    updatePomodoroDisplay();
+                    pomodoroRunning = true;
+                    pomodoroInterval = setInterval(pomodoroTick, 1000);
+                    return;
+                }
+                pomodoroSeconds--;
+                updatePomodoroDisplay();
+            }
+
+            window.startPomodoro = function() {
+                if (pomodoroRunning) return;
+                if (pomodoroSeconds === 0) {
+                    pomodoroSeconds = 25 * 60;
+                    pomodoroType = 'work';
+                    document.getElementById('pomodoroStatus').textContent = '🍅 Focus time! (25 min)';
+                    updatePomodoroDisplay();
+                }
+                pomodoroRunning = true;
+                document.getElementById('pomodoroStatus').textContent = pomodoroType === 'work' ? '▶ Running...' :
+                    '☕ Break...';
+                pomodoroInterval = setInterval(pomodoroTick, 1000);
+            };
+
+            window.pausePomodoro = function() {
+                if (pomodoroInterval) {
+                    clearInterval(pomodoroInterval);
+                    pomodoroInterval = null;
+                    pomodoroRunning = false;
+                    document.getElementById('pomodoroStatus').textContent = '⏸ Paused';
+                }
+            };
+
+            window.resetPomodoro = function() {
+                clearInterval(pomodoroInterval);
+                pomodoroInterval = null;
+                pomodoroRunning = false;
+                pomodoroSeconds = 25 * 60;
+                pomodoroType = 'work';
+                document.getElementById('pomodoroStatus').textContent = '⏸ Ready';
+                updatePomodoroDisplay();
+            };
+
+            // ================================================================
+            // TOOL 10: PERCENTAGE ↔ CGPA CONVERTER
+            // ================================================================
+            document.getElementById('convScale').addEventListener('change', function() {
+                const custom = document.getElementById('convCustomScale');
+                custom.style.display = this.value === 'custom' ? 'inline-block' : 'none';
+            });
+
+            function getConvMaxScale() {
+                const scale = document.getElementById('convScale').value;
+                if (scale === '10') return 10;
+                if (scale === '4') return 4;
+                const custom = parseFloat(document.getElementById('convCustomScale').value);
+                return (isNaN(custom) || custom <= 0) ? 10 : custom;
+            }
+
+            window.convertCGPAtoPercent = function() {
+                const cgpa = parseFloat(document.getElementById('convCGPA').value);
+                const max = getConvMaxScale();
+                if (isNaN(cgpa) || cgpa < 0 || cgpa > max) {
+                    showToast(`Please enter a valid CGPA between 0 and ${max}.`);
+                    return;
+                }
+                const percent = (cgpa / max) * 100;
+                document.getElementById('convResultValue').textContent = percent.toFixed(2) + '%';
+                document.getElementById('convResult').style.display = 'block';
+            };
+
+            window.convertPercentToCGPA = function() {
+                const percent = parseFloat(document.getElementById('convPercent').value);
+                const max = getConvMaxScale();
+                if (isNaN(percent) || percent < 0 || percent > 100) {
+                    showToast('Please enter a valid percentage between 0 and 100.');
+                    return;
+                }
+                const cgpa = (percent / 100) * max;
+                document.getElementById('convResultValue').textContent = cgpa.toFixed(2) + ' (on ' + max + '-point scale)';
+                document.getElementById('convResult').style.display = 'block';
+            };
+
+            // ── Keyboard shortcut: Ctrl+Enter to calculate ──
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    const active = document.querySelector('.tool-view.active');
+                    if (active) {
+                        const id = active.id;
+                        if (id === 'tool-sgpa') calculateSGPA();
+                        else if (id === 'tool-cgpa') calculateCGPA();
+                        else if (id === 'tool-predictor') predictGrade();
+                        else if (id === 'tool-gpa-percent') convertGPAToPercent();
+                        else if (id === 'tool-attendance') calculateAttendance();
+                        else if (id === 'tool-credits') calculateCredits();
+                        else if (id === 'tool-percentage') {
+                            if (document.getElementById('percentNum').value && document.getElementById('percentTotal')
+                                .value) calcPercentage();
+                            else if (document.getElementById('percentOfTotal').value && document.getElementById(
+                                    'percentRate').value) calcValueFromPercent();
+                        } else if (id === 'tool-age') calculateAge();
+                        else if (id === 'tool-cgpa-percent') {
+                            if (document.getElementById('convCGPA').value) convertCGPAtoPercent();
+                            else if (document.getElementById('convPercent').value) convertPercentToCGPA();
+                        }
+                    }
+                }
+            });
+
+            // ── Initialize ──
+            window.showDashboard = showDashboard;
+
+        })();
+    </script>
+
+</body>
+</html>
