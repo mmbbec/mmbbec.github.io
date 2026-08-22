@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SGPA Calculator – Free Engineering Tool | Dr. Mahadev Biradar</title>
+    <meta name="description" content="Calculate your SGPA instantly with this free online tool. Supports O, A+, A, B+, B, C, P, F grade points. Made for engineering students by Dr. Mahadev Biradar." />
+    <meta name="keywords" content="SGPA calculator, engineering SGPA, grade point calculator, VTU SGPA, credit system calculator, free student tool" />
+    <meta name="author" content="Dr. Mahadev Biradar" />
+    <link rel="canonical" href="https://mahadevbiradar.in/sgpa-calculator" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SGPA Calculator – Free Engineering Tool" />
+    <meta property="og:description" content="Calculate your SGPA quickly with credits and grade points. Free for all students." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mahadevbiradar.in/sgpa-calculator" />
+    <meta property="og:image" content="https://mahadevbiradar.in/assets/og-sgpa.jpg" />
+
+    <!-- Schema.org structured data (SoftwareApplication) -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "SGPA Calculator",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "All",
+            "description": "Free online SGPA calculator for engineering students. Enter subject credits and grade points to get your SGPA instantly.",
+            "author": {
+                "@type": "Person",
+                "name": "Dr. Mahadev Biradar"
+            },
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
+
+    <style>
+        /* ── Reset & base ── */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f0f5fa;
+            color: #1e2a3a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ── Dark mode ── */
+        body.dark {
+            background: #121b26;
+            color: #e8edf2;
+        }
+
+        body.dark .card {
+            background: #1e2a3a;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark .header {
+            background: #0a1628;
+        }
+
+        body.dark th {
+            background: #0f1f33;
+        }
+
+        body.dark td {
+            border-color: #2a3a4e;
+        }
+
+        body.dark input,
+        body.dark select {
+            background: #253544;
+            color: #e8edf2;
+            border-color: #3a4a5e;
+        }
+
+        body.dark input::placeholder {
+            color: #8a9aae;
+        }
+
+        body.dark .result {
+            background: #162433;
+        }
+
+        body.dark .footer {
+            color: #8a9aae;
+        }
+
+        body.dark .sgpa {
+            color: #6ab0f7;
+        }
+
+        body.dark .badge {
+            background: #253544;
+            color: #c0d0e0;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #0b2a4a, #1a4a7a);
+            color: #fff;
+            text-align: center;
+            padding: 28px 20px 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }
+
+        .header h1 span {
+            color: #ffd966;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 16px;
+            opacity: 0.85;
+            font-weight: 300;
+        }
+
+        .header .tool-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-top: 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* dark toggle button */
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.12);
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 28px 26px 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 35px rgba(0, 20, 40, 0.08);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .card h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #0b2a4a;
+            margin-bottom: 6px;
+        }
+
+        body.dark .card h2 {
+            color: #c0d8f0;
+        }
+
+        .card .subhead {
+            text-align: center;
+            font-size: 14px;
+            color: #5a6a7e;
+            margin-bottom: 22px;
+        }
+
+        body.dark .card .subhead {
+            color: #8a9aae;
+        }
+
+        /* ── Table ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            min-width: 460px;
+        }
+
+        th {
+            background: #0b2a4a;
+            color: #fff;
+            padding: 12px 10px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e6ecf3;
+            vertical-align: middle;
+            transition: background 0.15s;
+        }
+
+        tr:hover td {
+            background: #f8faff;
+        }
+
+        body.dark tr:hover td {
+            background: #1f2f40;
+        }
+
+        td input,
+        td select {
+            width: 100%;
+            padding: 9px 8px;
+            border: 1px solid #d0dae6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        td input:focus,
+        td select:focus {
+            outline: none;
+            border-color: #1a4a7a;
+            box-shadow: 0 0 0 3px rgba(26, 74, 122, 0.15);
+        }
+
+        body.dark td input:focus,
+        body.dark td select:focus {
+            border-color: #4a8ac0;
+            box-shadow: 0 0 0 3px rgba(74, 138, 192, 0.2);
+        }
+
+        td input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        td input[type="number"]::-webkit-inner-spin-button,
+        td input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .remove-btn {
+            background: #e74c5e;
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .remove-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ── Buttons ── */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-add {
+            background: #1a8a4a;
+            color: #fff;
+        }
+        .btn-add:hover {
+            background: #147a3e;
+            box-shadow: 0 4px 12px rgba(26, 138, 74, 0.3);
+        }
+
+        .btn-calc {
+            background: #0b2a4a;
+            color: #fff;
+        }
+        .btn-calc:hover {
+            background: #1a3a5a;
+            box-shadow: 0 4px 12px rgba(11, 42, 74, 0.3);
+        }
+        body.dark .btn-calc {
+            background: #1a4a7a;
+        }
+        body.dark .btn-calc:hover {
+            background: #2a5a8a;
+        }
+
+        .btn-reset {
+            background: #b0bcca;
+            color: #1e2a3a;
+        }
+        .btn-reset:hover {
+            background: #9aa8b8;
+        }
+        body.dark .btn-reset {
+            background: #2a3a4e;
+            color: #c0d0e0;
+        }
+        body.dark .btn-reset:hover {
+            background: #3a4a5e;
+        }
+
+        .btn-print {
+            background: #5a6a8a;
+            color: #fff;
+        }
+        .btn-print:hover {
+            background: #4a5a7a;
+            box-shadow: 0 4px 12px rgba(90, 106, 138, 0.3);
+        }
+
+        .btn-copy {
+            background: #4a7a9a;
+            color: #fff;
+        }
+        .btn-copy:hover {
+            background: #3a6a8a;
+            box-shadow: 0 4px 12px rgba(74, 122, 154, 0.3);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* ── Result ── */
+        .result {
+            margin-top: 28px;
+            padding: 24px 20px 28px;
+            background: #eef5fb;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            animation: fadeUp 0.4s ease;
+            transition: background 0.3s;
+        }
+
+        body.dark .result {
+            background: #162433;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px 50px;
+            margin-top: 6px;
+        }
+
+        .result .stat {
+            min-width: 120px;
+        }
+
+        .result .stat .label {
+            font-size: 14px;
+            color: #4a5a6e;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        body.dark .result .stat .label {
+            color: #8a9aae;
+        }
+
+        .result .stat .value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #0b2a4a;
+            margin-top: 2px;
+        }
+
+        body.dark .result .stat .value {
+            color: #c0d8f0;
+        }
+
+        .result .stat .value.sgpa {
+            color: #0b2a4a;
+            font-size: 38px;
+        }
+
+        body.dark .result .stat .value.sgpa {
+            color: #6ab0f7;
+        }
+
+        .result .grade-letter {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 8px;
+            background: #0b2a4a;
+            color: #fff;
+        }
+
+        body.dark .result .grade-letter {
+            background: #1a4a7a;
+        }
+
+        .result .grade-letter.O {
+            background: #1a8a4a;
+        }
+        .result .grade-letter.Ap {
+            background: #2a7a5a;
+        }
+        .result .grade-letter.A {
+            background: #3a7a7a;
+        }
+        .result .grade-letter.Bp {
+            background: #5a7a5a;
+        }
+        .result .grade-letter.B {
+            background: #7a7a4a;
+        }
+        .result .grade-letter.C {
+            background: #9a7a3a;
+        }
+        .result .grade-letter.P {
+            background: #b08a3a;
+        }
+        .result .grade-letter.F {
+            background: #b04a4a;
+        }
+
+        .result .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .badge {
+            background: #dce6f0;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #1e2a3a;
+            font-weight: 500;
+        }
+
+        body.dark .badge {
+            background: #253544;
+            color: #c0d0e0;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 24px 20px 20px;
+            color: #6a7a8e;
+            font-size: 14px;
+            border-top: 1px solid #e0e8f0;
+            margin-top: 12px;
+            transition: border-color 0.3s;
+        }
+
+        body.dark .footer {
+            border-top-color: #1e2a3a;
+            color: #6a7a8e;
+        }
+
+        .footer a {
+            color: #1a4a7a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        body.dark .footer a {
+            color: #5a9ad0;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e2a3a;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transition: opacity 0.4s, transform 0.4s;
+            pointer-events: none;
+            z-index: 999;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        body.dark .toast {
+            background: #253544;
+            color: #e8edf2;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+            .theme-toggle {
+                right: 12px;
+                top: 12px;
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+            .card {
+                padding: 18px 14px 22px;
+            }
+            .card h2 {
+                font-size: 20px;
+            }
+            table {
+                font-size: 13px;
+                min-width: 340px;
+            }
+            th,
+            td {
+                padding: 6px 4px;
+            }
+            td input,
+            td select {
+                padding: 7px 5px;
+                font-size: 13px;
+            }
+            .btn {
+                padding: 9px 16px;
+                font-size: 13px;
+            }
+            .remove-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 17px;
+            }
+            .result .stat .value {
+                font-size: 24px;
+            }
+            .result .stat .value.sgpa {
+                font-size: 30px;
+            }
+            .result .row {
+                gap: 16px 30px;
+            }
+            .btn-group {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            .header .tool-badge {
+                font-size: 11px;
+                padding: 3px 12px;
+            }
+            .card {
+                padding: 12px 10px 16px;
+            }
+            table {
+                font-size: 12px;
+                min-width: 280px;
+            }
+            th {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
+            td {
+                padding: 4px 3px;
+            }
+            td input,
+            td select {
+                padding: 5px 4px;
+                font-size: 12px;
+                border-radius: 4px;
+            }
+            .btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+            .remove-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 15px;
+            }
+            .result .stat .value {
+                font-size: 20px;
+            }
+            .result .stat .value.sgpa {
+                font-size: 26px;
+            }
+            .result .grade-letter {
+                font-size: 16px;
+                padding: 4px 14px;
+            }
+        }
+
+        /* ── Scrollbar ── */
+        .table-wrap::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-wrap::-webkit-scrollbar-track {
+            background: #e6ecf3;
+            border-radius: 10px;
+        }
+        .table-wrap::-webkit-scrollbar-thumb {
+            background: #b0c0d0;
+            border-radius: 10px;
+        }
+        body.dark .table-wrap::-webkit-scrollbar-track {
+            background: #1a2a3a;
+        }
+        body.dark .table-wrap::-webkit-scrollbar-thumb {
+            background: #3a4a5e;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ─── HEADER ─── -->
+    <header class="header">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+            🌙
+        </button>
+        <h1>📊 SGPA <span>Calculator</span></h1>
+        <p>Free online tool for engineering students — by Dr. Mahadev Biradar</p>
+        <div class="tool-badge">⭐ Trusted by 10,000+ students</div>
+    </header>
+
+    <!-- ─── MAIN ─── -->
+    <main class="container">
+        <div class="card">
+
+            <h2>Calculate Your SGPA</h2>
+            <p class="subhead">Enter subject name, credits &amp; grade point</p>
+
+            <div class="table-wrap">
+                <table id="subjectTable">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Credits</th>
+                            <th>Grade Point</th>
+                            <th style="width:52px;">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- initial row -->
+                        <tr>
+                            <td>
+                                <input type="text" class="subject-name" placeholder="e.g. Mathematics" />
+                            </td>
+                            <td>
+                                <input type="number" class="credits" min="0" step="0.5" placeholder="4" />
+                            </td>
+                            <td>
+                                <select class="grade">
+                                    <option value="">Select</option>
+                                    <option value="10">O / 10</option>
+                                    <option value="9">A+ / 9</option>
+                                    <option value="8">A / 8</option>
+                                    <option value="7">B+ / 7</option>
+                                    <option value="6">B / 6</option>
+                                    <option value="5">C / 5</option>
+                                    <option value="4">P / 4</option>
+                                    <option value="0">F / 0</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="remove-btn" onclick="removeRow(this)" aria-label="Remove subject">✕</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-add" onclick="addRow()">＋ Add Subject</button>
+                <button class="btn btn-calc" onclick="calculateSGPA()">📐 Calculate SGPA</button>
+                <button class="btn btn-reset" onclick="resetCalculator()">⟲ Reset</button>
+                <button class="btn btn-print" onclick="printResult()" id="printBtn" disabled>🖨️ Print</button>
+                <button class="btn btn-copy" onclick="copyResult()" id="copyBtn" disabled>📋 Copy</button>
+            </div>
+
+            <!-- ─── RESULT ─── -->
+            <div class="result" id="result">
+                <div class="row">
+                    <div class="stat">
+                        <div class="label">📘 Total Credits</div>
+                        <div class="value" id="totalCredits">0.0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">🏅 SGPA</div>
+                        <div class="value sgpa" id="sgpa">0.00</div>
+                    </div>
+                    <div class="stat">
+                        <div class="label">📋 Grade</div>
+                        <div class="grade-letter" id="gradeLetter">—</div>
+                    </div>
+                </div>
+                <div class="badge-row" id="badgeRow">
+                    <span class="badge">📌 Based on standard 10‑point scale</span>
+                    <span class="badge">✅ All subjects included</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="footer">
+        © 2026 <a href="https://mahadevbiradar.in" target="_blank">Dr. Mahadev Biradar</a> &bull;
+        Free Student Tools &bull;
+        <a href="https://mahadevbiradar.in/about" target="_blank">About</a>
+    </footer>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── DOM refs ──
+            const tableBody = document.getElementById('tableBody');
+            const resultDiv = document.getElementById('result');
+            const totalCreditsEl = document.getElementById('totalCredits');
+            const sgpaEl = document.getElementById('sgpa');
+            const gradeLetterEl = document.getElementById('gradeLetter');
+            const printBtn = document.getElementById('printBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const toast = document.getElementById('toast');
+            let toastTimer = null;
+
+            // ── Theme ──
+            const themeToggle = document.getElementById('themeToggle');
+            const isDark = () => document.body.classList.contains('dark');
+            const setTheme = (dark) => {
+                document.body.classList.toggle('dark', dark);
+                themeToggle.textContent = dark ? '☀️' : '🌙';
+                try {
+                    localStorage.setItem('sgpa-theme', dark ? 'dark' : 'light');
+                } catch (_) { /* ignore */ }
+            };
+            // load saved theme
+            try {
+                const saved = localStorage.getItem('sgpa-theme');
+                if (saved === 'dark') setTheme(true);
+                else if (saved === 'light') setTheme(false);
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme(true);
+            } catch (_) { /* ignore */ }
+
+            themeToggle.addEventListener('click', () => setTheme(!isDark()));
+
+            // ── Add row ──
+            window.addRow = function() {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" class="subject-name" placeholder="Subject name" /></td>
+                    <td><input type="number" class="credits" min="0" step="0.5" placeholder="4" /></td>
+                    <td>
+                        <select class="grade">
+                            <option value="">Select</option>
+                            <option value="10">O / 10</option>
+                            <option value="9">A+ / 9</option>
+                            <option value="8">A / 8</option>
+                            <option value="7">B+ / 7</option>
+                            <option value="6">B / 6</option>
+                            <option value="5">C / 5</option>
+                            <option value="4">P / 4</option>
+                            <option value="0">F / 0</option>
+                        </select>
+                    </td>
+                    <td><button class="remove-btn" onclick="removeRow(this)" aria-label="Remove subject">✕</button></td>
+                `;
+                tableBody.appendChild(tr);
+                // auto-focus subject name
+                const inp = tr.querySelector('.subject-name');
+                if (inp) setTimeout(() => inp.focus(), 50);
+                // hide result when modifying
+                resultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+            };
+
+            // ── Remove row ──
+            window.removeRow = function(btn) {
+                const row = btn.closest('tr');
+                if (tableBody.children.length <= 1) {
+                    showToast('Keep at least one subject row.');
+                    return;
+                }
+                row.remove();
+                resultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+            };
+
+            // ── Calculate SGPA ──
+            window.calculateSGPA = function() {
+                const creditInputs = document.querySelectorAll('.credits');
+                const gradeSelects = document.querySelectorAll('.grade');
+
+                let totalCredits = 0;
+                let totalPoints = 0;
+                let validCount = 0;
+
+                for (let i = 0; i < creditInputs.length; i++) {
+                    const credit = parseFloat(creditInputs[i].value);
+                    const grade = parseFloat(gradeSelects[i].value);
+
+                    if (!isNaN(credit) && credit >= 0 && !isNaN(grade) && grade >= 0) {
+                        totalCredits += credit;
+                        totalPoints += credit * grade;
+                        validCount++;
+                    }
+                }
+
+                if (totalCredits === 0 || validCount === 0) {
+                    showToast('Please enter valid credits and grade points for at least one subject.');
+                    resultDiv.style.display = 'none';
+                    printBtn.disabled = true;
+                    copyBtn.disabled = true;
+                    return;
+                }
+
+                const sgpa = totalPoints / totalCredits;
+                const sgpaRounded = Math.round(sgpa * 100) / 100;
+
+                // Update UI
+                totalCreditsEl.textContent = totalCredits.toFixed(1);
+                sgpaEl.textContent = sgpaRounded.toFixed(2);
+                gradeLetterEl.textContent = getGradeLetter(sgpa);
+                gradeLetterEl.className = 'grade-letter ' + getGradeClass(sgpa);
+                resultDiv.style.display = 'block';
+                printBtn.disabled = false;
+                copyBtn.disabled = false;
+
+                // Scroll to result on mobile
+                if (window.innerWidth < 600) {
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            // ── Grade helpers ──
+            function getGradeLetter(sgpa) {
+                if (sgpa >= 9.5) return 'O';
+                if (sgpa >= 8.5) return 'A+';
+                if (sgpa >= 7.5) return 'A';
+                if (sgpa >= 6.5) return 'B+';
+                if (sgpa >= 5.5) return 'B';
+                if (sgpa >= 4.5) return 'C';
+                if (sgpa >= 3.5) return 'P';
+                return 'F';
+            }
+
+            function getGradeClass(sgpa) {
+                if (sgpa >= 9.5) return 'O';
+                if (sgpa >= 8.5) return 'Ap';
+                if (sgpa >= 7.5) return 'A';
+                if (sgpa >= 6.5) return 'Bp';
+                if (sgpa >= 5.5) return 'B';
+                if (sgpa >= 4.5) return 'C';
+                if (sgpa >= 3.5) return 'P';
+                return 'F';
+            }
+
+            // ── Reset ──
+            window.resetCalculator = function() {
+                // Clear all inputs
+                const inputs = document.querySelectorAll('.credits, .subject-name');
+                inputs.forEach(inp => inp.value = '');
+                const selects = document.querySelectorAll('.grade');
+                selects.forEach(sel => sel.value = '');
+                // Reset to one row
+                while (tableBody.children.length > 1) {
+                    tableBody.lastChild.remove();
+                }
+                // Clear first row fields
+                const firstRow = tableBody.children[0];
+                if (firstRow) {
+                    const nameInp = firstRow.querySelector('.subject-name');
+                    const credInp = firstRow.querySelector('.credits');
+                    const gradeSel = firstRow.querySelector('.grade');
+                    if (nameInp) nameInp.value = '';
+                    if (credInp) credInp.value = '';
+                    if (gradeSel) gradeSel.value = '';
+                }
+                resultDiv.style.display = 'none';
+                printBtn.disabled = true;
+                copyBtn.disabled = true;
+                showToast('Calculator reset.');
+            };
+
+            // ── Print ──
+            window.printResult = function() {
+                window.print();
+            };
+
+            // ── Copy result ──
+            window.copyResult = function() {
+                const sgpa = sgpaEl.textContent;
+                const credits = totalCreditsEl.textContent;
+                const grade = gradeLetterEl.textContent;
+                const text = `SGPA: ${sgpa} | Total Credits: ${credits} | Grade: ${grade} — Calculated with SGPA Calculator by Dr. Mahadev Biradar`;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('📋 Result copied to clipboard!');
+                }).catch(() => {
+                    // fallback
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                    showToast('📋 Result copied!');
+                });
+            };
+
+            // ── Toast ──
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2800);
+            }
+
+            // ── Keyboard shortcut: Enter to calculate ──
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    calculateSGPA();
+                }
+            });
+
+            // ── Auto-calculate on change (optional) ──
+            // We'll keep it manual to avoid confusion, but we add a small hint.
+            // ── Expose showToast for inline usage ──
+            window.showToast = showToast;
+
+        })();
+    </script>
+
+</body>
+</html>
