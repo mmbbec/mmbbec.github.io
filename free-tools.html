@@ -904,12 +904,11 @@
                     <div class="desc">Resize images to any dimension</div>
                 </a>
 
-               <!-- Income Tax Calculator Card -->
-<a href="#" class="tool-card" data-tool="tax-calc">
-    <span class="icon">💰</span>
-    <div class="name">Income Tax Calculator</div>
-    <div class="desc">Old vs New Regime (Salary, Business, Trader)</div>
-</a>
+                <a href="#" class="tool-card" data-tool="result-analysis">
+                    <span class="icon">📉</span>
+                    <div class="name">Result Analysis</div>
+                    <div class="desc">Visualise marks with charts</div>
+                </a>
 
                 <a href="#" class="tool-card" data-tool="certificate">
                     <span class="icon">📜</span>
@@ -2105,89 +2104,116 @@
                 showToast(`✅ Image resized to ${w}x${h}`);
             };
 
-           <!-- ─── TOOL: INCOME TAX CALCULATOR ─── -->
-<div class="tool-view" id="tool-tax-calc">
-    <button class="back-btn" onclick="showDashboard()">← Back to Tools</button>
-    <div class="card">
-        <h2>💰 Income Tax Calculator (Old vs. New Regime)</h2>
-        <p class="subhead">Compare tax liabilities for Salaried, Business, and Traders with instant savings analysis</p>
+            // 14. Result Analysis
+            let raChartInstance = null;
 
-        <!-- Profile Selector -->
-        <div class="predict-input-group" style="justify-content: center; gap: 20px;">
-            <label style="min-width: auto; font-weight: 700;">Taxpayer Category:</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
-                <input type="radio" name="taxProfile" value="salaried" checked onchange="toggleTaxFields()" /> 💼 Salaried
-            </label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
-                <input type="radio" name="taxProfile" value="business" onchange="toggleTaxFields()" /> 🏢 Business / Profession
-            </label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
-                <input type="radio" name="taxProfile" value="trader" onchange="toggleTaxFields()" /> 📈 Trader (F&O / Equity)
-            </label>
-        </div>
+            function getRAStats() {
+                const subjects = document.querySelectorAll('.ra-subject');
+                const marks = document.querySelectorAll('.ra-marks');
+                const data = [];
+                let total = 0, valid = 0, maxVal = -Infinity, minVal = Infinity;
+                for (let i = 0; i < subjects.length; i++) {
+                    const name = subjects[i].value.trim() || 'Subject ' + (i + 1);
+                    const mark = parseFloat(marks[i].value);
+                    if (!isNaN(mark) && mark >= 0 && mark <= 100) {
+                        data.push({ name, mark });
+                        total += mark;
+                        valid++;
+                        if (mark > maxVal) maxVal = mark;
+                        if (mark < minVal) minVal = mark;
+                    }
+                }
+                return { data, total, valid, maxVal, minVal };
+            }
 
-        <!-- Income Inputs -->
-        <div class="predict-input-group">
-            <label id="lblGrossIncome">Gross Annual Salary (₹):</label>
-            <input type="number" id="taxGrossIncome" min="0" step="5000" placeholder="e.g. 1500000" value="1500000" />
-            
-            <span id="grpBusinessExp" style="display:none; width: 100%; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
-                <label>Direct Business / Trading Expenses (₹):</label>
-                <input type="number" id="taxExpenses" min="0" step="1000" placeholder="e.g. 100000" value="0" />
-            </span>
-        </div>
+            window.addRARow = function() {
+                const container = document.getElementById('resultAnalysisContainer');
+                const count = container.children.length + 1;
+                const div = document.createElement('div');
+                div.className = 'result-analysis-input';
+                div.innerHTML = `
+                    <span class="sub-label">Subject ${count}</span>
+                    <input type="text" class="ra-subject" placeholder="Subject name" />
+                    <input type="number" class="ra-marks" min="0" max="100" placeholder="Marks out of 100" />
+                    <button class="remove-btn" onclick="removeRARow(this)" style="width:32px;height:32px;font-size:16px;">✕</button>
+                `;
+                container.appendChild(div);
+                document.getElementById('raResult').style.display = 'none';
+            };
 
-        <!-- Deductions Section (Old Regime) -->
-        <div style="background:#f8faff; border: 1px solid #e6ecf3; border-radius: 12px; padding: 18px 20px; margin: 16px 0;">
-            <h3 style="font-size:16px; color:#163b65; margin-bottom:12px;">📑 Old Regime Deductions &amp; Exemptions</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
-                <div>
-                    <label style="font-size:13px; font-weight:600; color:#163b65;">Section 80C (Max ₹1.5L):</label>
-                    <input type="number" id="ded80C" style="width:100%; padding:8px 10px; border:1px solid #d0dae6; border-radius:6px;" min="0" max="150000" value="150000" placeholder="PF, ELSS, LIC, PPF" />
-                </div>
-                <div>
-                    <label style="font-size:13px; font-weight:600; color:#163b65;">Section 80D (Health Ins.):</label>
-                    <input type="number" id="ded80D" style="width:100%; padding:8px 10px; border:1px solid #d0dae6; border-radius:6px;" min="0" value="25000" placeholder="Self & Parents" />
-                </div>
-                <div id="grpHRA">
-                    <label style="font-size:13px; font-weight:600; color:#163b65;">HRA / LTA Exemption:</label>
-                    <input type="number" id="dedHRA" style="width:100%; padding:8px 10px; border:1px solid #d0dae6; border-radius:6px;" min="0" value="50000" placeholder="Rent / LTA exemption" />
-                </div>
-                <div>
-                    <label style="font-size:13px; font-weight:600; color:#163b65;">Home Loan Int. (Sec 24b):</label>
-                    <input type="number" id="dedHomeLoan" style="width:100%; padding:8px 10px; border:1px solid #d0dae6; border-radius:6px;" min="0" max="200000" value="0" placeholder="Max ₹2L for SOP" />
-                </div>
-                <div>
-                    <label style="font-size:13px; font-weight:600; color:#163b65;">NPS 80CCD(1B) (Max ₹50k):</label>
-                    <input type="number" id="dedNPS" style="width:100%; padding:8px 10px; border:1px solid #d0dae6; border-radius:6px;" min="0" max="50000" value="50000" placeholder="Self contribution" />
-                </div>
-            </div>
-        </div>
+            window.removeRARow = function(btn) {
+                const row = btn.closest('.result-analysis-input');
+                const container = document.getElementById('resultAnalysisContainer');
+                if (container.children.length <= 1) { showToast('Keep at least one subject.'); return; }
+                row.remove();
+                document.getElementById('raResult').style.display = 'none';
+            };
 
-        <div class="btn-group">
-            <button class="btn btn-calc" onclick="calculateIncomeTax()">📊 Calculate Tax</button>
-            <button class="btn btn-reset" onclick="resetTaxCalculator()">⟲ Reset</button>
-        </div>
+            window.resetRA = function() {
+                document.querySelectorAll('.ra-subject, .ra-marks').forEach(inp => inp.value = '');
+                const container = document.getElementById('resultAnalysisContainer');
+                while (container.children.length > 1) { container.lastChild.remove(); }
+                const first = container.children[0];
+                if (first) {
+                    const s = first.querySelector('.ra-subject');
+                    const m = first.querySelector('.ra-marks');
+                    if (s) s.value = '';
+                    if (m) m.value = '';
+                }
+                document.getElementById('raResult').style.display = 'none';
+                if (raChartInstance) { raChartInstance.destroy(); raChartInstance = null; }
+                showToast('Reset.');
+            };
 
-        <!-- Result Box -->
-        <div class="result" id="taxResult" style="display:none; text-align:left;">
-            <div id="taxVerdictBanner" style="padding:14px 18px; border-radius:10px; font-weight:700; font-size:17px; text-align:center; margin-bottom:20px;"></div>
+            window.analyzeResults = function() {
+                const stats = getRAStats();
+                if (stats.valid === 0) {
+                    showToast('Please enter at least one valid subject and mark (0-100).');
+                    return;
+                }
+                const avg = stats.total / stats.valid;
+                document.getElementById('raAvg').textContent = avg.toFixed(2);
+                document.getElementById('raMax').textContent = stats.maxVal;
+                document.getElementById('raMin').textContent = stats.minVal;
+                document.getElementById('raTotal').textContent = stats.total;
+                document.getElementById('raResult').style.display = 'block';
 
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Component</th>
-                            <th>New Tax Regime</th>
-                            <th>Old Tax Regime</th>
-                        </tr>
-                    </thead>
-                    <tbody id="taxBreakdownBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+                const ctx = document.getElementById('raChart').getContext('2d');
+                if (raChartInstance) { raChartInstance.destroy(); }
+                const labels = stats.data.map(d => d.name);
+                const values = stats.data.map(d => d.mark);
+                const colors = values.map(v => v >= 75 ? '#1a8a4a' : v >= 50 ? '#d49b3a' : '#e74c5e');
+
+                raChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Marks (out of 100)',
+                            data: values,
+                            backgroundColor: colors,
+                            borderColor: '#163b65',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (c) => c.parsed.y + '/100'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+                showToast('📊 Analysis complete!');
+            };
 
             // 15. Certificate Generator
             window.generateCertificate = function() {
