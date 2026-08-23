@@ -143,7 +143,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 30px 50px;
+            gap: 20px 35px;
             margin-top: 20px;
             font-size: 14px;
             color: #0b2a4a;
@@ -181,7 +181,7 @@
         }
 
         /* ================================
-           COLORFUL BRANCH CARDS (Pink/Red Theme)
+           BRANCH CARDS (Pink/Red Theme)
         ================================ */
         .branch-grid {
             display: grid;
@@ -194,12 +194,12 @@
             background: #ffffff;
             border-radius: 16px;
             padding: 24px 18px 20px;
-            border: 2px solid #fce4ec;   /* soft pink border */
+            border: 2px solid #fce4ec;
             box-shadow: 0 4px 12px rgba(233, 30, 99, 0.06);
             transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             display: flex;
             flex-direction: column;
-            align-items: center;          /* center content for better visual */
+            align-items: center;
             text-align: center;
             text-decoration: none;
             color: #263238;
@@ -207,7 +207,6 @@
             overflow: hidden;
         }
 
-        /* subtle gradient overlay on hover */
         .branch-card::after {
             content: '';
             position: absolute;
@@ -229,11 +228,11 @@
         .branch-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 16px 40px rgba(233, 30, 99, 0.18);
-            border-color: #e91e63;        /* deep pink border on hover */
+            border-color: #e91e63;
         }
 
         .branch-card .card-icon {
-            font-size: 44px;              /* bigger icons */
+            font-size: 44px;
             margin-bottom: 8px;
             position: relative;
             z-index: 1;
@@ -245,9 +244,9 @@
         }
 
         .branch-card h3 {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 700;
-            color: #880e4f;               /* dark pinkish red */
+            color: #880e4f;
             margin-bottom: 4px;
             position: relative;
             z-index: 1;
@@ -255,22 +254,22 @@
 
         .branch-card p {
             font-size: 13px;
-            color: #6d4c5a;               /* muted pinkish grey */
-            margin: 4px 0 10px 0;
+            color: #6d4c5a;
+            margin: 4px 0 12px 0;
             line-height: 1.4;
             position: relative;
             z-index: 1;
+            flex: 1;
         }
 
         .branch-card .card-tag {
-            margin-top: 8px;
+            margin-top: auto;
             font-size: 12px;
             font-weight: 700;
             color: #ffffff;
             background: linear-gradient(135deg, #e91e63, #c2185b);
             padding: 4px 18px;
             border-radius: 30px;
-            align-self: center;
             position: relative;
             z-index: 1;
             box-shadow: 0 2px 8px rgba(233, 30, 99, 0.25);
@@ -278,7 +277,6 @@
             text-transform: uppercase;
         }
 
-        /* add a small decorative dot */
         .branch-card .card-tag::before {
             content: '✦ ';
             font-size: 10px;
@@ -299,13 +297,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-            transition: 0.3s;
+            transition: opacity 0.3s, transform 0.3s, background 0.3s;
             z-index: 999;
-            text-decoration: none;
             border: none;
             cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         .back-to-top:hover {
@@ -351,7 +355,7 @@
         /* ================================
            RESPONSIVE
         ================================ */
-        @media (max-width: 700px) {
+        @media (max-width: 768px) {
             .page-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -359,10 +363,7 @@
                 padding: 16px 18px;
             }
 
-            .page-header .header-left {
-                justify-content: center;
-            }
-
+            .page-header .header-left,
             .page-header .header-right {
                 justify-content: center;
             }
@@ -376,16 +377,8 @@
             }
 
             .branch-grid {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                 gap: 16px;
-            }
-
-            .branch-card .card-icon {
-                font-size: 34px;
-            }
-
-            .branch-card h3 {
-                font-size: 16px;
             }
 
             .section-title h2 {
@@ -395,29 +388,8 @@
 
         @media (max-width: 480px) {
             .branch-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: 14px;
-            }
-
-            .branch-card {
-                padding: 18px 12px;
-            }
-
-            .branch-card .card-icon {
-                font-size: 28px;
-            }
-
-            .branch-card h3 {
-                font-size: 14px;
-            }
-
-            .branch-card p {
-                font-size: 12px;
-            }
-
-            .hero-banner .quick-stats span {
-                font-size: 12px;
-                padding: 4px 14px;
             }
         }
     </style>
@@ -425,7 +397,7 @@
 <body>
 
     <!-- =============================================
-    STICKY HEADER
+         STICKY HEADER
     ============================================= -->
     <header class="page-header">
         <div class="header-left">
@@ -436,65 +408,80 @@
             <a href="index.html" class="home-btn">🏠 Home</a>
             <a href="free-tools.html">🛠️ Free Tools</a>
             <a href="vtu-resources.html">📚 VTU Resources</a>
+            <a href="mathematics-resources.html">📐 Math Resources</a>
             <a href="index.html#contact">📧 Contact</a>
         </div>
     </header>
 
     <!-- =============================================
-    HERO BANNER
+         HERO BANNER
     ============================================= -->
     <section class="hero-banner">
         <h2>📋 <span>Syllabus</span> at a Glance</h2>
-        <p>One‑stop hub for syllabus of BEC Bagalkote, VTU, GATE, and all major competitive exams.</p>
+        <p>Direct access to undergraduate, postgraduate, and basic science curriculum at BEC Bagalkote.</p>
         <div class="quick-stats">
             <span>🏛️ BEC Bagalkote</span>
-            <span>🎓 VTU</span>
-            <span>⚡ GATE</span>
-            <span>🇮🇳 IAS / IPS</span>
+            <span>🎓 UG &amp; PG Programmes</span>
+            <span>📑 Schemes &amp; Syllabi</span>
         </div>
     </section>
 
     <!-- =============================================
-    MAIN CONTENT
+         MAIN CONTENT
     ============================================= -->
-    <div class="container">
+    <main class="container">
 
         <!-- =============================================
-        BEC BAGALKOTE – BRANCH-WISE SYLLABUS (Colorful)
+             BASIC SCIENCE & HUMANITIES
         ============================================= -->
         <div class="section-title">
-            <span class="icon">🏛️</span>
-            <h2>BEC Bagalkote – Branch-wise Syllabus</h2>
+            <span class="icon">🔬</span>
+            <h2>Basic Science &amp; Humanities</h2>
         </div>
-
         <div class="branch-grid">
-
-             <!-- Mathematics -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/mathematics/curriculum" target="_blank" rel="noopener">
+            <!-- Mathematics -->
+            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/mathematics/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">➗</span>
                 <h3>Mathematics</h3>
-                <p>Mathematics (B.E.)</p>
+                <p>Engineering Mathematics (All Semesters)</p>
                 <span class="card-tag">Syllabus</span>
             </a>
+
             <!-- Physics -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/physics/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/physics/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">⚛️</span>
                 <h3>Physics</h3>
-                <p>Physics (B.E.)</p>
+                <p>Engineering Physics &amp; Labs</p>
                 <span class="card-tag">Syllabus</span>
             </a>
 
             <!-- Chemistry -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/chemistry/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/chemistry/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🧪</span>
                 <h3>Chemistry</h3>
-                <p>Chemistry (B.E.)</p>
+                <p>Engineering Chemistry &amp; Labs</p>
                 <span class="card-tag">Syllabus</span>
             </a>
 
-            
+            <!-- Humanities -->
+            <a class="branch-card" href="https://www.becbgk.edu/departments/regular/humanities/curriculum" target="_blank" rel="noopener noreferrer">
+                <span class="card-icon">📖</span>
+                <h3>Humanities</h3>
+                <p>Humanities, Social Sciences &amp; Management</p>
+                <span class="card-tag">Syllabus</span>
+            </a>
+        </div>
+
+        <!-- =============================================
+             UNDERGRADUATE (B.E.) ENGINEERING DEPARTMENTS
+        ============================================= -->
+        <div class="section-title">
+            <span class="icon">🏛️</span>
+            <h2>BEC Bagalkote – Undergraduate (B.E.) Programmes</h2>
+        </div>
+        <div class="branch-grid">
             <!-- AI & ML -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/ai-and-ml/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/ai-and-ml/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🤖</span>
                 <h3>AI &amp; ML</h3>
                 <p>Artificial Intelligence &amp; Machine Learning</p>
@@ -502,7 +489,7 @@
             </a>
 
             <!-- Automobile Engg. -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/automobile-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/automobile-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🚗</span>
                 <h3>Automobile Engg.</h3>
                 <p>Automobile Engineering</p>
@@ -510,7 +497,7 @@
             </a>
 
             <!-- Biotechnology -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/biotechnology/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/biotechnology/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🧬</span>
                 <h3>Biotechnology</h3>
                 <p>Biotechnology Engineering</p>
@@ -518,7 +505,7 @@
             </a>
 
             <!-- Civil Engg. -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/civil-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/civil-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🏗️</span>
                 <h3>Civil Engg.</h3>
                 <p>Civil Engineering</p>
@@ -526,7 +513,7 @@
             </a>
 
             <!-- Computer Science & Engg. -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/computer-science-and-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/computer-science-and-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">💻</span>
                 <h3>Computer Science &amp; Engg.</h3>
                 <p>Computer Science &amp; Engineering</p>
@@ -534,7 +521,7 @@
             </a>
 
             <!-- Electrical & Electronics Engg. -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/electrical-and-electronics-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/electrical-and-electronics-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">⚡</span>
                 <h3>Electrical &amp; Electronics Engg.</h3>
                 <p>Electrical &amp; Electronics Engineering</p>
@@ -542,7 +529,7 @@
             </a>
 
             <!-- Electronics & Communication Engg. -->
-            <a class="https://www.becbgk.edu/departments/ug/electrical-and-electronics-engg/curriculum" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/electronics-and-communication-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">📡</span>
                 <h3>Electronics &amp; Communication Engg.</h3>
                 <p>Electronics &amp; Communication Engineering</p>
@@ -550,7 +537,7 @@
             </a>
 
             <!-- Electronics & Computer Engg. -->
-            <a class="https://www.becbgk.edu/departments/ug/electronics-and-computer-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/electronics-and-computer-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🖥️</span>
                 <h3>Electronics &amp; Computer Engg.</h3>
                 <p>Electronics &amp; Computer Engineering</p>
@@ -558,7 +545,7 @@
             </a>
 
             <!-- Industrial & Production Engg. -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/industrial-and-production-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/industrial-and-production-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">🏭</span>
                 <h3>Industrial &amp; Production Engg.</h3>
                 <p>Industrial &amp; Production Engineering</p>
@@ -566,7 +553,7 @@
             </a>
 
             <!-- Information Science & Engg. -->
-            <a class="https://www.becbgk.edu/departments/ug/information-science-and-engg/curriculum" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/information-science-and-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">📊</span>
                 <h3>Information Science &amp; Engg.</h3>
                 <p>Information Science &amp; Engineering</p>
@@ -574,25 +561,24 @@
             </a>
 
             <!-- Mechanical Engg. -->
-            <a class="https://www.becbgk.edu/departments/ug/mechanical-engg/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/ug/mechanical-engg/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">⚙️</span>
                 <h3>Mechanical Engg.</h3>
                 <p>Mechanical Engineering</p>
                 <span class="card-tag">Syllabus</span>
             </a>
+        </div>
 
-           
-
-            <!-- Humanities -->
-            <a class="https://www.becbgk.edu/departments/regular/humanities/curriculum" target="_blank" rel="noopener">
-                <span class="card-icon">📖</span>
-                <h3>Humanities</h3>
-                <p>Humanities &amp; Social Sciences</p>
-                <span class="card-tag">Syllabus</span>
-            </a>
-
+        <!-- =============================================
+             POSTGRADUATE (PG) PROGRAMMES
+        ============================================= -->
+        <div class="section-title">
+            <span class="icon">🎓</span>
+            <h2>Postgraduate (PG) Programmes</h2>
+        </div>
+        <div class="branch-grid">
             <!-- MCA -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/pg/mca/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/pg/mca/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">💾</span>
                 <h3>MCA</h3>
                 <p>Master of Computer Applications</p>
@@ -600,36 +586,53 @@
             </a>
 
             <!-- MBA -->
-            <a class="branch-card" href="https://www.becbgk.edu/departments/pg/mba/curriculum" target="_blank" rel="noopener">
+            <a class="branch-card" href="https://www.becbgk.edu/departments/pg/mba/curriculum" target="_blank" rel="noopener noreferrer">
                 <span class="card-icon">📈</span>
                 <h3>MBA</h3>
                 <p>Master of Business Administration</p>
                 <span class="card-tag">Syllabus</span>
             </a>
-
         </div>
 
-        <!-- You can add more sections (VTU, GATE, etc.) here -->
-
-    </div>
+    </main>
 
     <!-- =============================================
-    BACK TO TOP BUTTON
+         BACK TO TOP BUTTON
     ============================================= -->
-    <a href="#" class="back-to-top" aria-label="Back to top">⬆</a>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
 
     <!-- =============================================
-    FOOTER
+         FOOTER
     ============================================= -->
     <footer class="page-footer">
         <p>&copy; 2026 Dr. Mahadev Mallikarjun Biradar. All rights reserved.</p>
         <div class="footer-links">
-            <a href="index.html">Home</a>
-            <a href="free-tools.html">Free Tools</a>
-            <a href="vtu-resources.html">VTU Resources</a>
-            <a href="index.html#contact">Contact</a>
+            <a href="index.html">🏠 Home</a>
+            <a href="free-tools.html">🛠️ Free Tools</a>
+            <a href="vtu-resources.html">📚 VTU Resources</a>
+            <a href="mathematics-resources.html">📐 Math Resources</a>
+            <a href="index.html#contact">📧 Contact</a>
         </div>
     </footer>
+
+    <!-- =============================================
+         SCRIPT (Back to Top)
+    ============================================= -->
+    <script>
+        (function() {
+            const btn = document.getElementById('backToTop');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            });
+            btn.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        })();
+    </script>
 
 </body>
 </html>
