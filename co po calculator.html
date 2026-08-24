@@ -4,7 +4,7 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator (No Backend)</title>
+    <title>CO-PO Attainment Calculator (5 COs, CO5 defaults to 0)</title>
 
     <!-- html2pdf for PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
@@ -349,7 +349,7 @@
             color: #64748b;
         }
 
-        /* PDF print styles (same as before) */
+        /* PDF styles */
         #pdfTempContainer {
             position: fixed;
             left: -9999px;
@@ -586,7 +586,7 @@
                 <span>📊 CIE, SEE & Indirect Assessment</span>
                 <span class="badge">Step 2</span>
             </h2>
-            <p>Enter average attainment percentages for CIE and SEE, and the indirect assessment level (0–3) for each CO.</p>
+            <p>Enter average attainment percentages for CIE and SEE, and the indirect assessment level (0–3) for each CO. If a CO is not applicable, leave values as 0 – the level will show 0.</p>
 
             <div class="data-table-wrap">
                 <table class="data-table" id="coInputTable">
@@ -607,6 +607,7 @@
                 <span class="level-3" style="padding:0 8px; border-radius:10px;">≥ 60% → Level 3</span>
                 <span class="level-2" style="padding:0 8px; border-radius:10px; margin-left:6px;">40% – 60% → Level 2</span>
                 <span class="level-1" style="padding:0 8px; border-radius:10px; margin-left:6px;">0% – 40% → Level 1</span>
+                <span class="level-0" style="padding:0 8px; border-radius:10px; margin-left:6px;">0% → Level 0 (No data)</span>
             </div>
 
             <div class="btn-group">
@@ -668,6 +669,7 @@
     <script>
         // ============================================================
         //  FULLY CLIENT-SIDE – No backend, no data storage
+        //  CO5 defaults to 0; level 0 for zero input
         // ============================================================
 
         const NUM_CO = 5;
@@ -679,10 +681,10 @@
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
-            // Default values (matching your example)
+            // Default values: CO1–CO4 from example, CO5 = 0
             const defaultCIE = [74, 57, 90, 69, 0];
             const defaultSEE = [59, 60, 47, 63, 0];
-            const defaultIndirect = [2.3, 2.7, 2.1, 1.9, 2.0];
+            const defaultIndirect = [2.3, 2.7, 2.1, 1.9, 0];
 
             for (let i = 1; i <= NUM_CO; i++) {
                 const tr = document.createElement('tr');
@@ -710,20 +712,23 @@
             }
         }
 
+        // Returns 0 if pct === 0, else 1/2/3 based on ranges
         function getLevel(pct) {
+            if (pct === 0) return 0;
             if (pct >= 60) return 3;
             if (pct >= 40) return 2;
             return 1;
         }
 
         function getLevelLabel(lvl) {
-            const labels = { 3: 'High', 2: 'Medium', 1: 'Low' };
+            const labels = { 3: 'High', 2: 'Medium', 1: 'Low', 0: 'No data' };
             return labels[lvl] || '-';
         }
 
         // ---------- MAPPING TABLE ----------
         function createMapping() {
             let html = "";
+            // Default mapping: CO1–CO4 as before, CO5 all zeros
             const defaultMapping = {
                 1: { po: [3, 2, 1, 2, 1, 2, 2, 0, 2, 2, 2, 2], pso: [1, 2] },
                 2: { po: [2, 3, 2, 2, 1, 2, 2, 0, 2, 2, 2, 2], pso: [2, 2] },
@@ -812,6 +817,7 @@
                 finalCOLevels.push(coAttain);
             }
 
+            // Average over all COs (including zeros)
             const avgCO = finalCOLevels.reduce((a, b) => a + b, 0) / finalCOLevels.length;
 
             coAttainmentData = { cieLevels, seeLevels, indirect, finalCOLevels, avgCO };
@@ -842,8 +848,8 @@
                 html += `
                     <tr>
                         <td><strong>CO${co}</strong></td>
-                        <td><span class="level-badge level-${cieLvl}">${cieLvl} (${getLevelLabel(cieLvl)})</span></td>
-                        <td><span class="level-badge level-${seeLvl}">${seeLvl} (${getLevelLabel(seeLvl)})</span></td>
+                        <td><span class="level-badge level-${cieLvl}">${cieLvl}${cieLvl > 0 ? ' ('+getLevelLabel(cieLvl)+')' : ''}</span></td>
+                        <td><span class="level-badge level-${seeLvl}">${seeLvl}${seeLvl > 0 ? ' ('+getLevelLabel(seeLvl)+')' : ''}</span></td>
                         <td>${ind.toFixed(1)}</td>
                         <td style="font-weight:700; color:#1e3a5f;">${finalVal.toFixed(2)}</td>
                     </tr>
@@ -854,7 +860,7 @@
                         </table>
                     </div>
                     <div style="margin-top:12px; padding:10px; background:#dbeafe; border-radius:6px; text-align:center;">
-                        <strong style="font-size:16px;">Final CO Average:</strong>
+                        <strong style="font-size:16px;">Final CO Average (over all ${NUM_CO} COs):</strong>
                         <span style="font-size:28px; font-weight:700; color:#1e3a5f; margin-left:12px;">${avgCO.toFixed(2)}</span>
                         <span style="font-size:14px; color:#64748b; margin-left:8px;">/ 3.00</span>
                     </div>
@@ -1155,7 +1161,7 @@
                         </tr>
                         ${coRows}
                         <tr style="background:#f8fafc; font-weight:bold;">
-                            <td colspan="4" style="text-align:right; padding-right:12px;">Average CO Attainment:</td>
+                            <td colspan="4" style="text-align:right; padding-right:12px;">Average CO Attainment (over ${NUM_CO} COs):</td>
                             <td style="background:#dbeafe; font-size:14px;">${avgCO.toFixed(2)}</td>
                         </tr>
                     </table>
