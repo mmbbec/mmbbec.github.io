@@ -49,6 +49,11 @@ body{
     font-weight:bold;
 }
 
+.section-title{
+    text-align:center;
+    margin:20px 0;
+}
+
 .tools{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -60,39 +65,28 @@ body{
     border-radius:14px;
     padding:25px;
     box-shadow:0 4px 15px rgba(0,0,0,.08);
-    transition:.2s;
-}
-
-.tool-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 8px 22px rgba(0,0,0,.12);
 }
 
 .icon{
     font-size:40px;
-    margin-bottom:10px;
 }
 
 .tool-card h2{
-    margin:5px 0 10px;
     color:#1e3a8a;
 }
 
 .tool-card p{
     color:#64748b;
     line-height:1.5;
-    min-height:48px;
 }
 
 .tool-button{
-    display:block;
     width:100%;
     padding:12px;
     border:0;
     border-radius:8px;
     background:#1e3a8a;
     color:white;
-    font-size:15px;
     font-weight:bold;
     cursor:pointer;
 }
@@ -101,9 +95,141 @@ body{
     background:#172554;
 }
 
-.section-title{
+
+/* TOOL PAGE */
+
+.tool-page{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.tool-page h2{
+    color:#1e3a8a;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.form-group input{
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    font-size:15px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+.primary{
+    background:#1e3a8a;
+    color:white;
+    border:0;
+    padding:12px 20px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.success{
+    background:#16a34a;
+    color:white;
+    border:0;
+    padding:12px 20px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.danger{
+    background:#dc2626;
+    color:white;
+    border:0;
+    padding:12px 20px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.result{
+    margin-top:25px;
+}
+
+.summary{
+    background:#eff6ff;
+    border-left:5px solid #1e3a8a;
+    padding:15px;
+    margin-bottom:20px;
+    line-height:1.7;
+}
+
+.room{
+    margin-bottom:30px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    overflow:hidden;
+    background:white;
+}
+
+.room-title{
+    background:#1e3a8a;
+    color:white;
+    padding:12px 15px;
+    font-weight:bold;
+}
+
+.seat-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+    padding:15px;
+}
+
+.seat{
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    padding:12px;
     text-align:center;
-    margin:35px 0 20px;
+    background:#f8fafc;
+}
+
+.seat span{
+    display:block;
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:5px;
+}
+
+.seat strong{
+    font-size:18px;
+}
+
+.empty{
+    padding:25px;
+    text-align:center;
+    color:#64748b;
 }
 
 .footer{
@@ -115,13 +241,54 @@ body{
 
 @media(max-width:600px){
 
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
     .header h1{
         font-size:23px;
     }
 
-    .tool-card{
-        padding:20px;
+    .tool-page{
+        padding:18px;
     }
+}
+
+
+/* PRINT */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    .header,
+    .back,
+    .actions,
+    #setup,
+    .footer{
+        display:none !important;
+    }
+
+    .container{
+        max-width:none;
+        margin:0;
+    }
+
+    .tool-page{
+        box-shadow:none;
+        padding:0;
+    }
+
+    .room{
+        break-inside:avoid;
+    }
+
 }
 </style>
 </head>
@@ -139,99 +306,205 @@ body{
     ← Back to Free Tools
 </a>
 
+
+<!-- MAIN MENU -->
+
+<div id="mainMenu">
+
 <h2 class="section-title">
     Examination Management Tools
 </h2>
 
 <div class="tools">
 
-    <!-- SEATING ARRANGEMENT -->
-
-    <div class="tool-card">
-
-        <div class="icon">🪑</div>
-
-        <h2>Seating Arrangement</h2>
-
-        <p>
-            Generate examination seating arrangements
-            based on students, rooms and seating capacity.
-        </p>
-
-        <button class="tool-button"
-                onclick="openTool('seating')">
-            Open Tool
-        </button>
-
-    </div>
+<div class="tool-card">
+    <div class="icon">🪑</div>
+    <h2>Seating Arrangement</h2>
+    <p>
+        Generate examination seating arrangements
+        based on register numbers and room capacity.
+    </p>
+    <button class="tool-button"
+            onclick="showSeating()">
+        Open Tool
+    </button>
+</div>
 
 
-    <!-- INVIGILATION -->
-
-    <div class="tool-card">
-
-        <div class="icon">👮</div>
-
-        <h2>Invigilation Duty</h2>
-
-        <p>
-            Generate faculty-wise examination
-            invigilation duty schedules.
-        </p>
-
-        <button class="tool-button"
-                onclick="openTool('invigilation')">
-            Open Tool
-        </button>
-
-    </div>
+<div class="tool-card">
+    <div class="icon">👮</div>
+    <h2>Invigilation Duty</h2>
+    <p>
+        Generate faculty-wise examination
+        invigilation duty schedules.
+    </p>
+    <button class="tool-button"
+            onclick="comingSoon('Invigilation Duty')">
+        Open Tool
+    </button>
+</div>
 
 
-    <!-- EXAM WORKLOAD -->
-
-    <div class="tool-card">
-
-        <div class="icon">📊</div>
-
-        <h2>Exam Workload</h2>
-
-        <p>
-            Calculate and analyse examination
-            workload for faculty members.
-        </p>
-
-        <button class="tool-button"
-                onclick="openTool('workload')">
-            Open Tool
-        </button>
-
-    </div>
+<div class="tool-card">
+    <div class="icon">📊</div>
+    <h2>Exam Workload</h2>
+    <p>
+        Calculate and analyse examination
+        workload for faculty members.
+    </p>
+    <button class="tool-button"
+            onclick="comingSoon('Exam Workload')">
+        Open Tool
+    </button>
+</div>
 
 
-    <!-- ROOM ALLOCATION -->
+<div class="tool-card">
+    <div class="icon">🏫</div>
+    <h2>Room Allocation</h2>
+    <p>
+        Allocate students to examination
+        rooms according to room capacity.
+    </p>
+    <button class="tool-button"
+            onclick="comingSoon('Room Allocation')">
+        Open Tool
+    </button>
+</div>
 
-    <div class="tool-card">
+</div>
+</div>
 
-        <div class="icon">🏫</div>
 
-        <h2>Room Allocation</h2>
+<!-- SEATING ARRANGEMENT -->
 
-        <p>
-            Allocate students to examination
-            rooms according to room capacity.
-        </p>
+<div id="seatingPage" style="display:none;">
 
-        <button class="tool-button"
-                onclick="openTool('rooms')">
-            Open Tool
-        </button>
+<div class="tool-page">
 
-    </div>
+<h2>🪑 Examination Seating Arrangement</h2>
+
+<p>
+Enter the examination details and generate
+a room-wise register-number seating arrangement.
+</p>
+
+
+<div id="setup">
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Examination Name</label>
+<input type="text"
+       id="examName"
+       placeholder="Example: SEE Examination">
+</div>
+
+
+<div class="form-group">
+<label>Exam Date</label>
+<input type="date"
+       id="examDate">
+</div>
+
+
+<div class="form-group">
+<label>Starting Register Number</label>
+<input type="number"
+       id="startReg"
+       placeholder="Example: 101">
+</div>
+
+
+<div class="form-group">
+<label>Ending Register Number</label>
+<input type="number"
+       id="endReg"
+       placeholder="Example: 150">
+</div>
+
+
+<div class="form-group">
+<label>Number of Rooms</label>
+<input type="number"
+       id="roomCount"
+       min="1"
+       placeholder="Example: 3">
+</div>
+
+
+<div class="form-group">
+<label>Students per Room</label>
+<input type="number"
+       id="roomCapacity"
+       min="1"
+       placeholder="Example: 20">
+</div>
+
+
+<div class="form-group">
+<label>Students per Bench</label>
+<input type="number"
+       id="studentsPerBench"
+       min="1"
+       max="4"
+       value="2">
+</div>
+
+
+<div class="form-group">
+<label>Room Starting Number</label>
+<input type="number"
+       id="roomStart"
+       value="101">
+</div>
 
 </div>
 
+
+<div class="actions">
+
+<button class="primary"
+        onclick="generateSeating()">
+    Generate Arrangement
+</button>
+
+<button class="danger"
+        onclick="resetSeating()">
+    Reset
+</button>
+
+<button class="success"
+        onclick="window.print()">
+    🖨 Print
+</button>
+
+<button class="primary"
+        onclick="showMenu()">
+    ← Back
+</button>
+
+</div>
+
+</div>
+
+
+<div id="result" class="result">
+
+<div class="empty">
+    Enter the details above and click
+    <strong>Generate Arrangement</strong>.
+</div>
+
+</div>
+
+</div>
+</div>
+
+
 <div class="footer">
-    © 2026 Mahadev Biradar | Examination Tools
+© 2026 Mahadev Biradar | Examination Tools
 </div>
 
 </div>
@@ -239,14 +512,270 @@ body{
 
 <script>
 
-function openTool(tool){
+
+function showSeating(){
+
+    document.getElementById("mainMenu").style.display="none";
+
+    document.getElementById("seatingPage").style.display="block";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+function showMenu(){
+
+    document.getElementById("seatingPage").style.display="none";
+
+    document.getElementById("mainMenu").style.display="block";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+function comingSoon(name){
 
     alert(
-        "The " +
-        tool +
-        " module will be added here."
+        name +
+        " will be added next."
     );
+}
 
+
+function generateSeating(){
+
+    const examName =
+        document.getElementById("examName").value.trim();
+
+    const examDate =
+        document.getElementById("examDate").value;
+
+    const startReg =
+        parseInt(document.getElementById("startReg").value);
+
+    const endReg =
+        parseInt(document.getElementById("endReg").value);
+
+    const roomCount =
+        parseInt(document.getElementById("roomCount").value);
+
+    const roomCapacity =
+        parseInt(document.getElementById("roomCapacity").value);
+
+    const studentsPerBench =
+        parseInt(
+            document.getElementById("studentsPerBench").value
+        );
+
+    const roomStart =
+        parseInt(
+            document.getElementById("roomStart").value
+        );
+
+
+    if(
+        isNaN(startReg) ||
+        isNaN(endReg) ||
+        isNaN(roomCount) ||
+        isNaN(roomCapacity) ||
+        isNaN(studentsPerBench) ||
+        isNaN(roomStart)
+    ){
+
+        alert("Please fill all required fields.");
+
+        return;
+    }
+
+
+    if(endReg < startReg){
+
+        alert(
+            "Ending register number must be greater than or equal to starting register number."
+        );
+
+        return;
+    }
+
+
+    if(studentsPerBench < 1 || studentsPerBench > 4){
+
+        alert(
+            "Students per bench should be between 1 and 4."
+        );
+
+        return;
+    }
+
+
+    const students =
+        endReg - startReg + 1;
+
+
+    const totalCapacity =
+        roomCount * roomCapacity;
+
+
+    if(students > totalCapacity){
+
+        alert(
+            "There are " +
+            students +
+            " students, but total room capacity is only " +
+            totalCapacity +
+            "."
+        );
+
+        return;
+    }
+
+
+    const result =
+        document.getElementById("result");
+
+
+    let html="";
+
+
+    html += `
+    <div class="summary">
+
+        <strong>Examination:</strong>
+        ${examName || "Examination"}<br>
+
+        <strong>Date:</strong>
+        ${examDate || "Not specified"}<br>
+
+        <strong>Total Students:</strong>
+        ${students}<br>
+
+        <strong>Rooms:</strong>
+        ${roomCount}<br>
+
+        <strong>Capacity per Room:</strong>
+        ${roomCapacity}
+
+    </div>
+    `;
+
+
+    let currentStudent=startReg;
+
+
+    for(
+        let room=1;
+        room<=roomCount;
+        room++
+    ){
+
+        if(currentStudent>endReg)
+            break;
+
+
+        const roomNumber =
+            roomStart + room - 1;
+
+
+        let roomStudents=[];
+
+
+        for(
+            let i=0;
+            i<roomCapacity &&
+            currentStudent<=endReg;
+            i++
+        ){
+
+            roomStudents.push(currentStudent);
+
+            currentStudent++;
+        }
+
+
+        html += `
+        <div class="room">
+
+            <div class="room-title">
+
+                Room ${roomNumber}
+
+                — ${roomStudents.length}
+                Students
+
+            </div>
+
+            <div class="seat-grid">
+        `;
+
+
+        for(
+            let i=0;
+            i<roomStudents.length;
+            i+=studentsPerBench
+        ){
+
+            const benchStudents =
+                roomStudents.slice(
+                    i,
+                    i+studentsPerBench
+                );
+
+
+            html += `
+            <div class="seat">
+
+                <span>
+                    Bench ${Math.floor(i/studentsPerBench)+1}
+                </span>
+
+                <strong>
+                    ${benchStudents.join(" &nbsp; | &nbsp; ")}
+                </strong>
+
+            </div>
+            `;
+        }
+
+
+        html += `
+            </div>
+        </div>
+        `;
+    }
+
+
+    result.innerHTML=html;
+
+}
+
+
+function resetSeating(){
+
+    document.getElementById("examName").value="";
+    document.getElementById("examDate").value="";
+    document.getElementById("startReg").value="";
+    document.getElementById("endReg").value="";
+    document.getElementById("roomCount").value="";
+    document.getElementById("roomCapacity").value="";
+    document.getElementById("studentsPerBench").value="2";
+    document.getElementById("roomStart").value="101";
+
+    document.getElementById("result").innerHTML=`
+
+    <div class="empty">
+
+        Enter the details above and click
+        <strong>Generate Arrangement</strong>.
+
+    </div>
+
+    `;
 }
 
 </script>
