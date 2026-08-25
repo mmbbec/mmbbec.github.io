@@ -4,7 +4,7 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator (Single Target in Step 1)</title>
+    <title>CO-PO Attainment Calculator (Auto Scale Conversion from Average %)</title>
 
     <!-- html2pdf for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -139,7 +139,7 @@
             display: block;
         }
 
-        .grid input {
+        .grid input, .grid select {
             width: 100%;
             padding: 9px 11px;
             border: 1.5px solid #cbd5e1;
@@ -151,7 +151,7 @@
             color: #1a1a1a;
         }
 
-        .grid input:focus {
+        .grid input:focus, .grid select:focus {
             border-color: #1e3a5f;
             outline: none;
             box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
@@ -256,7 +256,7 @@
         }
 
         .data-table input[type="number"], .mapping-table input[type="number"] {
-            width: 65px;
+            width: 72px;
             padding: 6px 4px;
             text-align: center;
             border: 1.5px solid #cbd5e1;
@@ -347,7 +347,7 @@
         /* ===== LIGHT-COLORED CALCULATION DETAILS ===== */
         .calc-subtext {
             display: block;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 400;
             color: #64748b;
             margin-top: 2px;
@@ -512,7 +512,7 @@
                     Basaveshwar Engineering College Bagalkote
                     <span>BEC</span>
                 </div>
-                <div class="calc-title">CO–PO Attainment Calculator</div>
+                <div class="calc-title">CO–PO Attainment Calculator (Auto Backend Conversion)</div>
             </div>
             <div class="header-right">
                 <span class="creator-label">created by</span>
@@ -523,10 +523,10 @@
 
     <div class="container">
 
-        <!-- ===== 1. SUBJECT & TARGET DETAILS ===== -->
+        <!-- ===== 1. SUBJECT DETAILS & TARGET SETTINGS ===== -->
         <div class="card">
             <h2>
-                <span>📋 Subject Details &amp; Target Value</span>
+                <span>📋 Subject Details &amp; Target Setup</span>
                 <span class="badge">Step 1</span>
             </h2>
             <div class="grid">
@@ -559,35 +559,43 @@
                     <input id="NameOfStaff" value="Dr M M Biradar">
                 </div>
                 <div>
-                    <label style="color:#1e3a5f;">Target Value (Scale 0–3)</label>
+                    <label style="color:#1e3a5f;">Target Level (Scale 0–3)</label>
                     <input id="targetValue" value="2.00" min="0" max="3" step="0.01" style="font-weight:700; border-color:#1e3a5f; background:#eff6ff;">
                 </div>
             </div>
         </div>
 
-        <!-- ===== 2. CIE, SEE & INDIRECT INPUTS ===== -->
+        <!-- ===== 2. AVERAGE ATTAINMENT INPUTS (CIE % & SEE %) ===== -->
         <div class="card">
             <h2>
-                <span>📊 Course Outcome Attainment Entry</span>
+                <span>📊 Course Outcome Average Attainment Entry</span>
                 <span class="badge">Step 2</span>
             </h2>
-            <p>Enter the CIE and SEE CO Attainment scores (0–3) and Indirect Exit Survey. Target comparison will use the target value set in Step 1.</p>
+            <p>Directly enter the <b>Average Attainment %</b> (or score out of 100) from your result sheet for CIE and SEE. The system automatically converts them into the <b>0–3 Scale Levels</b> in the backend.</p>
 
             <div class="data-table-wrap">
                 <table class="data-table" id="coInputTable">
                     <thead>
                         <tr>
                             <th style="min-width:55px;">CO</th>
-                            <th style="min-width:105px;">CIE CO (0–3)</th>
-                            <th style="min-width:105px;">SEE CO (0–3)</th>
-                            <th style="min-width:160px;">Direct CO (40%+60%)</th>
-                            <th style="min-width:105px;">Indirect (0–3)</th>
-                            <th style="min-width:170px;">Final CO (80%+20%)</th>
-                            <th style="min-width:120px;">Attainment Status</th>
+                            <th style="min-width:115px;">CIE Average (%)</th>
+                            <th style="min-width:115px;">SEE Average (%)</th>
+                            <th style="min-width:150px;">Direct CO (0–3 Scale)</th>
+                            <th style="min-width:105px;">Indirect Exit (0–3)</th>
+                            <th style="min-width:165px;">Final CO Attainment</th>
+                            <th style="min-width:115px;">Attainment Status</th>
                         </tr>
                     </thead>
                     <tbody id="coInputBody"></tbody>
                 </table>
+            </div>
+
+            <div style="font-size:12px; color:#475569; margin-top:6px;">
+                <span style="font-weight:600;">Backend Scale Rules:</span>
+                <span style="background:#d1fae5; color:#065f46; padding:1px 6px; border-radius:4px; margin-left:6px;">≥ 60% → Level 3</span>
+                <span style="background:#fef3c7; color:#92400e; padding:1px 6px; border-radius:4px; margin-left:4px;">40% – 59.9% → Level 2</span>
+                <span style="background:#fee2e2; color:#991b1b; padding:1px 6px; border-radius:4px; margin-left:4px;">1% – 39.9% → Level 1</span>
+                <span style="background:#f1f5f9; color:#475569; padding:1px 6px; border-radius:4px; margin-left:4px;">0% → Level 0</span>
             </div>
 
             <div class="btn-group">
@@ -653,21 +661,36 @@
         let mappingData = {};
         let lastCOPOResult = null;
 
+        // ---------- BACKEND SCALE CONVERSION (0 to 3) ----------
+        function convertToScale(pct) {
+            if (pct <= 0) return 0.0;
+            if (pct >= 60.0) return 3.0;
+            if (pct >= 40.0) return 2.0;
+            return 1.0;
+        }
+
         // ---------- INITIALIZE CO INPUT ROWS ----------
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
             
-            const defaultCIE = [3.00, 0.00, 1.00, 1.00, 0.00];
-            const defaultSEE = [3.00, 3.00, 0.00, 0.00, 0.00];
+            // Average CO attainment % defaults from your CIE & SEE results
+            const defaultCIE_Pct = [76.8, 14.3, 50.0, 51.8, 0.0];
+            const defaultSEE_Pct = [85.7, 71.4, 30.4, 14.3, 0.0];
             const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00];
 
             for (let i = 1; i <= NUM_CO; i++) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-weight:700; color:#1a1a1a;">CO${i}</td>
-                    <td><input type="number" id="cie_${i}" value="${defaultCIE[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
-                    <td><input type="number" id="see_${i}" value="${defaultSEE[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
+                    <td>
+                        <input type="number" id="cie_${i}" value="${defaultCIE_Pct[i-1]}" min="0" max="100" step="0.1">
+                        <span id="cieScaleText_${i}" class="calc-subtext">-</span>
+                    </td>
+                    <td>
+                        <input type="number" id="see_${i}" value="${defaultSEE_Pct[i-1]}" min="0" max="100" step="0.1">
+                        <span id="seeScaleText_${i}" class="calc-subtext">-</span>
+                    </td>
                     <td id="directDisplay_${i}" style="font-weight:600; color:#1e3a5f;">-</td>
                     <td><input type="number" id="indirect_${i}" value="${defaultIndirect[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
                     <td id="finalDisplay_${i}" style="font-weight:700; color:#0b5e3a;">-</td>
@@ -681,30 +704,37 @@
 
                 const liveCalc = () => {
                     const target = parseFloat(document.getElementById('targetValue').value) || 0;
-                    const cie = parseFloat(cieInput.value) || 0;
-                    const see = parseFloat(seeInput.value) || 0;
+                    const ciePct = parseFloat(cieInput.value) || 0;
+                    const seePct = parseFloat(seeInput.value) || 0;
                     const ind = parseFloat(indInput.value) || 0;
 
-                    const direct = (0.40 * cie) + (0.60 * see);
+                    // Backend Conversion to scale 0-3
+                    const cieScale = convertToScale(ciePct);
+                    const seeScale = convertToScale(seePct);
+
+                    document.getElementById(`cieScaleText_${i}`).textContent = ciePct > 0 ? `→ Level ${cieScale.toFixed(0)}` : `→ Level 0`;
+                    document.getElementById(`seeScaleText_${i}`).textContent = seePct > 0 ? `→ Level ${seeScale.toFixed(0)}` : `→ Level 0`;
+
+                    const direct = (0.40 * cieScale) + (0.60 * seeScale);
                     const finalCO = (0.80 * direct) + (0.20 * ind);
                     
                     const directEl = document.getElementById(`directDisplay_${i}`);
                     const finalEl = document.getElementById(`finalDisplay_${i}`);
                     const statusEl = document.getElementById(`statusDisplay_${i}`);
 
-                    if (cie > 0 || see > 0) {
-                        directEl.innerHTML = `${direct.toFixed(2)}<span class="calc-subtext">0.40(${cie.toFixed(1)}) + 0.60(${see.toFixed(1)})</span>`;
+                    if (ciePct > 0 || seePct > 0) {
+                        directEl.innerHTML = `${direct.toFixed(2)}<span class="calc-subtext">0.40(${cieScale}) + 0.60(${seeScale})</span>`;
                     } else {
                         directEl.innerHTML = `-`;
                     }
 
-                    if (cie > 0 || see > 0 || ind > 0) {
+                    if (ciePct > 0 || seePct > 0 || ind > 0) {
                         finalEl.innerHTML = `${finalCO.toFixed(2)}<span class="calc-subtext">0.80(${direct.toFixed(2)}) + 0.20(${ind.toFixed(1)})</span>`;
                     } else {
                         finalEl.innerHTML = `-`;
                     }
                     
-                    if (target > 0 && (cie > 0 || see > 0 || ind > 0)) {
+                    if (target > 0 && (ciePct > 0 || seePct > 0 || ind > 0)) {
                         if (finalCO >= target) {
                             statusEl.innerHTML = `<span class="status-badge status-attained">ATTAINED</span><span class="calc-subtext">${finalCO.toFixed(2)} ≥ ${target.toFixed(2)}</span>`;
                         } else {
@@ -784,8 +814,10 @@
         // ---------- CALCULATE CO ATTAINMENT ----------
         function calculateCOAttainment() {
             const target = parseFloat(document.getElementById('targetValue').value) || 2.00;
-            const cieVals = [];
-            const seeVals = [];
+            const ciePcts = [];
+            const seePcts = [];
+            const cieScales = [];
+            const seeScales = [];
             const directVals = [];
             const indirectVals = [];
             const finalCOLevels = [];
@@ -795,24 +827,29 @@
             let sumCO = 0;
 
             for (let i = 1; i <= NUM_CO; i++) {
-                const cie = parseFloat(document.getElementById(`cie_${i}`).value) || 0;
-                const see = parseFloat(document.getElementById(`see_${i}`).value) || 0;
+                const ciePct = parseFloat(document.getElementById(`cie_${i}`).value) || 0;
+                const seePct = parseFloat(document.getElementById(`see_${i}`).value) || 0;
                 const ind = parseFloat(document.getElementById(`indirect_${i}`).value) || 0;
 
-                const direct = (0.40 * cie) + (0.60 * see);
+                const cieScale = convertToScale(ciePct);
+                const seeScale = convertToScale(seePct);
+
+                const direct = (0.40 * cieScale) + (0.60 * seeScale);
                 const finalCO = (0.80 * direct) + (0.20 * ind);
-                const status = (target > 0 && (cie > 0 || see > 0 || ind > 0)) 
+                const status = (target > 0 && (ciePct > 0 || seePct > 0 || ind > 0)) 
                     ? (finalCO >= target ? "ATTAINED" : "NOT ATTAINED") 
                     : "-";
 
-                cieVals.push(cie);
-                seeVals.push(see);
+                ciePcts.push(ciePct);
+                seePcts.push(seePct);
+                cieScales.push(cieScale);
+                seeScales.push(seeScale);
                 directVals.push(direct);
                 indirectVals.push(ind);
                 finalCOLevels.push(finalCO);
                 statuses.push(status);
 
-                if (cie > 0 || see > 0 || ind > 0) {
+                if (ciePct > 0 || seePct > 0 || ind > 0) {
                     activeCOCount++;
                     sumCO += finalCO;
                 }
@@ -821,7 +858,7 @@
             const avgCO = activeCOCount > 0 ? (sumCO / activeCOCount) : 0;
             const overallStatus = target > 0 ? (avgCO >= target ? "ATTAINED" : "NOT ATTAINED") : "-";
 
-            coAttainmentData = { cieVals, seeVals, directVals, indirectVals, finalCOLevels, statuses, avgCO, target, overallStatus, activeCOCount };
+            coAttainmentData = { ciePcts, seePcts, cieScales, seeScales, directVals, indirectVals, finalCOLevels, statuses, avgCO, target, overallStatus, activeCOCount };
 
             let html = `
                 <div class="result-box">
@@ -831,10 +868,12 @@
                             <thead>
                                 <tr>
                                     <th>CO</th>
-                                    <th>CIE CO (0–3)</th>
-                                    <th>SEE CO (0–3)</th>
-                                    <th>Direct CO Attainment</th>
-                                    <th>Indirect Exit Survey</th>
+                                    <th>CIE Avg (%)</th>
+                                    <th>CIE Level (0–3)</th>
+                                    <th>SEE Avg (%)</th>
+                                    <th>SEE Level (0–3)</th>
+                                    <th>Direct CO (40%+60%)</th>
+                                    <th>Indirect Exit</th>
                                     <th>Final Attainment</th>
                                     <th>Status (Target: ${target.toFixed(2)})</th>
                                 </tr>
@@ -847,16 +886,18 @@
                     html += `
                         <tr>
                             <td><strong>CO${i+1}</strong></td>
-                            <td>${cieVals[i].toFixed(2)}</td>
-                            <td>${seeVals[i].toFixed(2)}</td>
+                            <td>${ciePcts[i].toFixed(1)}%</td>
+                            <td style="font-weight:600;">${cieScales[i].toFixed(0)}</td>
+                            <td>${seePcts[i].toFixed(1)}%</td>
+                            <td style="font-weight:600;">${seeScales[i].toFixed(0)}</td>
                             <td>
                                 <b>${directVals[i].toFixed(2)}</b>
-                                <span class="calc-subtext">0.40×${cieVals[i].toFixed(2)} + 0.60×${seeVals[i].toFixed(2)}</span>
+                                <span class="calc-subtext">0.40(${cieScales[i]}) + 0.60(${seeScales[i]})</span>
                             </td>
                             <td>${indirectVals[i].toFixed(2)}</td>
                             <td>
                                 <b style="color:#0b5e3a; font-size:14px;">${finalCOLevels[i].toFixed(2)}</b>
-                                <span class="calc-subtext">0.80×${directVals[i].toFixed(2)} + 0.20×${indirectVals[i].toFixed(2)}</span>
+                                <span class="calc-subtext">0.80(${directVals[i].toFixed(2)}) + 0.20(${indirectVals[i].toFixed(2)})</span>
                             </td>
                             <td><span class="status-badge ${badgeClass}">${statuses[i]}</span></td>
                         </tr>
@@ -1011,8 +1052,10 @@
 
             const mapping = readMappingFromUI();
             const coAttain = coAttainmentData.finalCOLevels;
-            const cieVals = coAttainmentData.cieVals;
-            const seeVals = coAttainmentData.seeVals;
+            const ciePcts = coAttainmentData.ciePcts;
+            const seePcts = coAttainmentData.seePcts;
+            const cieScales = coAttainmentData.cieScales;
+            const seeScales = coAttainmentData.seeScales;
             const directVals = coAttainmentData.directVals;
             const indirect = coAttainmentData.indirectVals;
             const statuses = coAttainmentData.statuses;
@@ -1025,11 +1068,11 @@
             rows.push(['Faculty Name:', staffName]);
             rows.push([]);
 
-            rows.push(['CO', 'CIE CO (0-3)', 'SEE CO (0-3)', 'Direct CO (40%+60%)', 'Indirect (0-3)', 'Final Attainment', 'Status']);
+            rows.push(['CO', 'CIE Avg %', 'CIE Level (0-3)', 'SEE Avg %', 'SEE Level (0-3)', 'Direct CO (40%+60%)', 'Indirect (0-3)', 'Final Attainment', 'Status']);
             for (let i = 0; i < NUM_CO; i++) {
-                rows.push([`CO${i+1}`, cieVals[i].toFixed(2), seeVals[i].toFixed(2), directVals[i].toFixed(2), indirect[i].toFixed(2), coAttain[i].toFixed(2), statuses[i]]);
+                rows.push([`CO${i+1}`, `${ciePcts[i].toFixed(1)}%`, cieScales[i].toFixed(0), `${seePcts[i].toFixed(1)}%`, seeScales[i].toFixed(0), directVals[i].toFixed(2), indirect[i].toFixed(2), coAttain[i].toFixed(2), statuses[i]]);
             }
-            rows.push(['Average CO Attainment:', '', '', '', '', coAttainmentData.avgCO.toFixed(2), coAttainmentData.overallStatus]);
+            rows.push(['Average CO Attainment:', '', '', '', '', '', '', coAttainmentData.avgCO.toFixed(2), coAttainmentData.overallStatus]);
             rows.push([]);
 
             rows.push(['CO-PO/PSO Articulation Mapping Matrix']);
@@ -1092,8 +1135,10 @@
             const staffName = document.getElementById('NameOfStaff').value || 'Dr M M Biradar';
             const target = coAttainmentData.target;
 
-            const cieVals = coAttainmentData.cieVals;
-            const seeVals = coAttainmentData.seeVals;
+            const ciePcts = coAttainmentData.ciePcts;
+            const seePcts = coAttainmentData.seePcts;
+            const cieScales = coAttainmentData.cieScales;
+            const seeScales = coAttainmentData.seeScales;
             const directVals = coAttainmentData.directVals;
             const indirect = coAttainmentData.indirectVals;
             const statuses = coAttainmentData.statuses;
@@ -1108,8 +1153,10 @@
                     coRows += `
                         <tr>
                             <td style="font-weight:700;">CO${i+1}</td>
-                            <td>${cieVals[i].toFixed(2)}</td>
-                            <td>${seeVals[i].toFixed(2)}</td>
+                            <td>${ciePcts[i].toFixed(1)}%</td>
+                            <td>${cieScales[i].toFixed(0)}</td>
+                            <td>${seePcts[i].toFixed(1)}%</td>
+                            <td>${seeScales[i].toFixed(0)}</td>
                             <td>${directVals[i].toFixed(2)}</td>
                             <td>${indirect[i].toFixed(2)}</td>
                             <td style="font-weight:700;">${coAttain[i].toFixed(2)}</td>
@@ -1174,17 +1221,19 @@
                         <div class="section-title">2. Course Outcome (CO) Attainment &amp; Status</div>
                         <table>
                             <tr>
-                                <th style="width:10%;">CO</th>
-                                <th style="width:14%;">CIE (0–3)</th>
-                                <th style="width:14%;">SEE (0–3)</th>
-                                <th style="width:18%;">Direct CO</th>
-                                <th style="width:14%;">Indirect</th>
-                                <th style="width:16%;">Final CO</th>
-                                <th style="width:14%;">Status</th>
+                                <th style="width:8%;">CO</th>
+                                <th style="width:11%;">CIE (%)</th>
+                                <th style="width:10%;">CIE Lvl</th>
+                                <th style="width:11%;">SEE (%)</th>
+                                <th style="width:10%;">SEE Lvl</th>
+                                <th style="width:14%;">Direct CO</th>
+                                <th style="width:11%;">Indirect</th>
+                                <th style="width:13%;">Final CO</th>
+                                <th style="width:12%;">Status</th>
                             </tr>
                             ${coRows}
                             <tr style="background:#f8fafc; font-weight:700;">
-                                <td colspan="5" style="text-align:right; padding-right:8px;">Average Attainment (Target: ${target.toFixed(2)}):</td>
+                                <td colspan="7" style="text-align:right; padding-right:8px;">Average Attainment (Target: ${target.toFixed(2)}):</td>
                                 <td style="background:#dbeafe; font-weight:700;">${avgCO.toFixed(2)}</td>
                                 <td style="font-weight:700;">${overallStatus}</td>
                             </tr>
