@@ -4,7 +4,7 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator (Direct CO Entry)</title>
+    <title>CO-PO Attainment Calculator (with Target Values & Attainment Status)</title>
 
     <!-- html2pdf for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -323,6 +323,27 @@
             margin: 10px 0 4px 0;
         }
 
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .status-attained {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-not-attained {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
         /* ===== PDF Print Styles ===== */
         #pdfTempContainer {
             position: fixed;
@@ -480,7 +501,7 @@
                     Basaveshwar Engineering College Bagalkote
                     <span>BEC</span>
                 </div>
-                <div class="calc-title">CO–PO Attainment Calculator (Direct CO Entry)</div>
+                <div class="calc-title">CO–PO Attainment Calculator (with Target Values & Attainment Status)</div>
             </div>
             <div class="header-right">
                 <span class="creator-label">created by</span>
@@ -529,24 +550,26 @@
             </div>
         </div>
 
-        <!-- ===== 2. CIE, SEE & INDIRECT INPUTS ===== -->
+        <!-- ===== 2. CIE, SEE, TARGET & INDIRECT INPUTS ===== -->
         <div class="card">
             <h2>
-                <span>📊 Direct CO Attainment Entry (CIE, SEE &amp; Indirect)</span>
+                <span>📊 Course Outcome Attainment &amp; Target Entry</span>
                 <span class="badge">Step 2</span>
             </h2>
-            <p>Directly enter the average Course Outcome attainment score (Scale 0.00 – 3.00) obtained from CIE and SEE, along with the Indirect Course Exit Survey. Leave unused COs as 0.</p>
+            <p>Enter the CIE and SEE CO Attainment scores (0–3), Indirect Exit Survey, and set your <b>Target Level</b> (Scale 0–3). Leave unused COs as 0.</p>
 
             <div class="data-table-wrap">
                 <table class="data-table" id="coInputTable">
                     <thead>
                         <tr>
-                            <th style="min-width:60px;">Course Outcome</th>
-                            <th style="min-width:110px;">CIE CO Attainment (0–3)</th>
-                            <th style="min-width:110px;">SEE CO Attainment (0–3)</th>
-                            <th style="min-width:110px;">Indirect Survey (0–3)</th>
-                            <th style="min-width:130px;">Direct CO (40% CIE + 60% SEE)</th>
-                            <th style="min-width:140px;">Final CO (80% Direct + 20% Ind.)</th>
+                            <th style="min-width:55px;">CO</th>
+                            <th style="min-width:100px;">CIE CO (0–3)</th>
+                            <th style="min-width:100px;">SEE CO (0–3)</th>
+                            <th style="min-width:100px;">Direct CO (40%+60%)</th>
+                            <th style="min-width:95px;">Indirect (0–3)</th>
+                            <th style="min-width:105px;">Final CO (80%+20%)</th>
+                            <th style="min-width:95px;">Target Level (0–3)</th>
+                            <th style="min-width:110px;">Attainment Status</th>
                         </tr>
                     </thead>
                     <tbody id="coInputBody"></tbody>
@@ -593,6 +616,11 @@
                 <span>🎯 Final Program Outcome (PO / PSO) Attainment</span>
                 <span class="badge">Step 4</span>
             </h2>
+            <div style="margin: 8px 0 14px 0; display:flex; align-items:center; gap:12px;">
+                <label style="font-weight:600; font-size:13.5px;">Global PO/PSO Target Attainment Threshold:</label>
+                <input type="number" id="globalPOTarget" value="2.00" min="0" max="3" step="0.01" style="width:70px; padding:5px 8px; border:1.5px solid #cbd5e1; border-radius:6px; font-weight:700; text-align:center;">
+            </div>
+
             <div class="btn-group">
                 <button class="btn" onclick="calculateCOPO()">🧮 Calculate PO / PSO Attainment</button>
                 <button class="btn btn-excel" onclick="exportExcel()">
@@ -615,15 +643,16 @@
         let mappingData = {};
         let lastCOPOResult = null;
 
-        // ---------- INITIALIZE CO INPUT ROWS ----------
+        // ---------- INITIALIZE CO INPUT ROWS WITH TARGET VALUES ----------
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
             
-           // Replace lines in initInputs() with your actual CIE and SEE data:
-const defaultCIE = [3.00, 0.00, 1.00, 1.00, 0.00]; // CO1 to CO5 CIE attainment levels
-const defaultSEE = [3.00, 3.00, 0.00, 0.00, 0.00]; // CO1 to CO5 SEE attainment levels
-const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey defaults
+            // Default CO values from your dataset
+            const defaultCIE = [3.00, 0.00, 1.00, 1.00, 0.00];
+            const defaultSEE = [3.00, 3.00, 0.00, 0.00, 0.00];
+            const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00];
+            const defaultTargets = [2.00, 2.00, 2.00, 2.00, 0.00];
 
             for (let i = 1; i <= NUM_CO; i++) {
                 const tr = document.createElement('tr');
@@ -631,30 +660,47 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                     <td style="font-weight:700; color:#1a1a1a;">CO${i}</td>
                     <td><input type="number" id="cie_${i}" value="${defaultCIE[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
                     <td><input type="number" id="see_${i}" value="${defaultSEE[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
-                    <td><input type="number" id="indirect_${i}" value="${defaultIndirect[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
                     <td id="directDisplay_${i}" style="font-weight:600; color:#1e3a5f;">-</td>
+                    <td><input type="number" id="indirect_${i}" value="${defaultIndirect[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
                     <td id="finalDisplay_${i}" style="font-weight:700; color:#0b5e3a;">-</td>
+                    <td><input type="number" id="target_${i}" value="${defaultTargets[i-1].toFixed(2)}" min="0" max="3" step="0.01"></td>
+                    <td id="statusDisplay_${i}">-</td>
                 `;
                 tbody.appendChild(tr);
 
                 const cieInput = document.getElementById(`cie_${i}`);
                 const seeInput = document.getElementById(`see_${i}`);
                 const indInput = document.getElementById(`indirect_${i}`);
+                const targetInput = document.getElementById(`target_${i}`);
 
                 const liveCalc = () => {
                     const cie = parseFloat(cieInput.value) || 0;
                     const see = parseFloat(seeInput.value) || 0;
                     const ind = parseFloat(indInput.value) || 0;
+                    const target = parseFloat(targetInput.value) || 0;
+
                     const direct = (0.40 * cie) + (0.60 * see);
                     const finalCO = (0.80 * direct) + (0.20 * ind);
                     
                     document.getElementById(`directDisplay_${i}`).textContent = (cie > 0 || see > 0) ? direct.toFixed(2) : '-';
                     document.getElementById(`finalDisplay_${i}`).textContent = (cie > 0 || see > 0 || ind > 0) ? finalCO.toFixed(2) : '-';
+                    
+                    const statusEl = document.getElementById(`statusDisplay_${i}`);
+                    if (target > 0 && (cie > 0 || see > 0 || ind > 0)) {
+                        if (finalCO >= target) {
+                            statusEl.innerHTML = `<span class="status-badge status-attained">ATTAINED</span>`;
+                        } else {
+                            statusEl.innerHTML = `<span class="status-badge status-not-attained">NOT ATTAINED</span>`;
+                        }
+                    } else {
+                        statusEl.textContent = '-';
+                    }
                 };
 
                 cieInput.addEventListener('input', liveCalc);
                 seeInput.addEventListener('input', liveCalc);
                 indInput.addEventListener('input', liveCalc);
+                targetInput.addEventListener('input', liveCalc);
                 liveCalc();
             }
         }
@@ -716,37 +762,50 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
             const seeVals = [];
             const directVals = [];
             const indirectVals = [];
+            const targetVals = [];
             const finalCOLevels = [];
+            const statuses = [];
 
             let activeCOCount = 0;
             let sumCO = 0;
+            let sumTarget = 0;
 
             for (let i = 1; i <= NUM_CO; i++) {
                 const cie = parseFloat(document.getElementById(`cie_${i}`).value) || 0;
                 const see = parseFloat(document.getElementById(`see_${i}`).value) || 0;
                 const ind = parseFloat(document.getElementById(`indirect_${i}`).value) || 0;
+                const target = parseFloat(document.getElementById(`target_${i}`).value) || 0;
 
                 const direct = (0.40 * cie) + (0.60 * see);
                 const finalCO = (0.80 * direct) + (0.20 * ind);
+                const status = (target > 0 && (cie > 0 || see > 0 || ind > 0)) 
+                    ? (finalCO >= target ? "ATTAINED" : "NOT ATTAINED") 
+                    : "-";
 
                 cieVals.push(cie);
                 seeVals.push(see);
                 directVals.push(direct);
                 indirectVals.push(ind);
+                targetVals.push(target);
                 finalCOLevels.push(finalCO);
+                statuses.push(status);
 
                 if (cie > 0 || see > 0 || ind > 0) {
                     activeCOCount++;
                     sumCO += finalCO;
+                    sumTarget += target;
                 }
             }
 
             const avgCO = activeCOCount > 0 ? (sumCO / activeCOCount) : 0;
-            coAttainmentData = { cieVals, seeVals, directVals, indirectVals, finalCOLevels, avgCO, activeCOCount };
+            const avgTarget = activeCOCount > 0 ? (sumTarget / activeCOCount) : 0;
+            const overallStatus = avgTarget > 0 ? (avgCO >= avgTarget ? "ATTAINED" : "NOT ATTAINED") : "-";
+
+            coAttainmentData = { cieVals, seeVals, directVals, indirectVals, targetVals, finalCOLevels, statuses, avgCO, avgTarget, overallStatus, activeCOCount };
 
             let html = `
                 <div class="result-box">
-                    <h3>📊 Course Outcome Attainment Consolidation</h3>
+                    <h3>📊 Course Outcome Attainment & Target Analysis</h3>
                     <div style="overflow-x:auto;">
                         <table>
                             <thead>
@@ -754,15 +813,18 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                                     <th>CO</th>
                                     <th>CIE CO (0–3)</th>
                                     <th>SEE CO (0–3)</th>
-                                    <th>Direct Attainment (40% CIE + 60% SEE)</th>
+                                    <th>Direct Attainment (40%+60%)</th>
                                     <th>Indirect Exit Survey</th>
-                                    <th>Final CO Attainment (80% Direct + 20% Ind.)</th>
+                                    <th>Final Attainment</th>
+                                    <th>Target Level</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
             `;
             for (let i = 0; i < NUM_CO; i++) {
                 if (finalCOLevels[i] > 0 || i < 4) {
+                    const badgeClass = statuses[i] === "ATTAINED" ? "status-attained" : (statuses[i] === "NOT ATTAINED" ? "status-not-attained" : "");
                     html += `
                         <tr>
                             <td><strong>CO${i+1}</strong></td>
@@ -771,6 +833,8 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                             <td style="font-weight:600; color:#1e3a5f;">${directVals[i].toFixed(2)}</td>
                             <td>${indirectVals[i].toFixed(2)}</td>
                             <td style="font-weight:700; color:#0b5e3a; font-size:14px;">${finalCOLevels[i].toFixed(2)}</td>
+                            <td style="font-weight:700; color:#4a5568;">${targetVals[i].toFixed(2)}</td>
+                            <td><span class="status-badge ${badgeClass}">${statuses[i]}</span></td>
                         </tr>
                     `;
                 }
@@ -779,10 +843,16 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                             </tbody>
                         </table>
                     </div>
-                    <div style="margin-top:12px; padding:10px; background:#dbeafe; border-radius:6px; text-align:center;">
-                        <strong style="font-size:15px; color:#1a1a1a;">Overall Course Average CO Attainment:</strong>
-                        <span style="font-size:26px; font-weight:700; color:#1e3a5f; margin-left:10px;">${avgCO.toFixed(2)}</span>
-                        <span style="font-size:13px; color:#1a1a1a; margin-left:6px;">/ 3.00</span>
+                    <div style="margin-top:12px; padding:10px 16px; background:#dbeafe; border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div>
+                            <span style="font-size:14.5px; font-weight:600; color:#1a1a1a;">Overall Course Average CO:</span>
+                            <span style="font-size:24px; font-weight:700; color:#1e3a5f; margin-left:8px;">${avgCO.toFixed(2)}</span>
+                            <span style="font-size:13px; color:#1a1a1a;"> / 3.00</span>
+                        </div>
+                        <div>
+                            <span style="font-size:14px; font-weight:600; color:#1a1a1a;">Average Target: <b>${avgTarget.toFixed(2)}</b></span>
+                            <span class="status-badge ${overallStatus === 'ATTAINED' ? 'status-attained' : 'status-not-attained'}" style="margin-left:10px; font-size:12px;">${overallStatus}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -790,7 +860,7 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
             setTimeout(() => calculateCOPO(), 150);
         }
 
-        // ---------- CALCULATE PO / PSO ATTAINMENT ----------
+        // ---------- CALCULATE PO / PSO ATTAINMENT & TARGETS ----------
         function calculateCOPO() {
             if (!coAttainmentData) {
                 calculateCOAttainment();
@@ -800,6 +870,7 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
 
             const mapping = readMappingFromUI();
             const coAttain = coAttainmentData.finalCOLevels;
+            const globalTarget = parseFloat(document.getElementById('globalPOTarget').value) || 2.00;
 
             const poResults = [];
             for (let p = 1; p <= 12; p++) {
@@ -812,7 +883,8 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                     }
                 }
                 const attainment = denominator > 0 ? (numerator / denominator) : 0;
-                poResults.push({ po: p, numerator, denominator, attainment });
+                const status = attainment > 0 ? (attainment >= globalTarget ? "ATTAINED" : "NOT ATTAINED") : "-";
+                poResults.push({ po: p, numerator, denominator, attainment, target: globalTarget, status });
             }
 
             const psoResults = [];
@@ -826,45 +898,73 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                     }
                 }
                 const attainment = denominator > 0 ? (numerator / denominator) : 0;
-                psoResults.push({ pso: p, numerator, denominator, attainment });
+                const status = attainment > 0 ? (attainment >= globalTarget ? "ATTAINED" : "NOT ATTAINED") : "-";
+                psoResults.push({ pso: p, numerator, denominator, attainment, target: globalTarget, status });
             }
 
-            lastCOPOResult = { poResults, psoResults, coAttain, avgCO: coAttainmentData.avgCO };
+            lastCOPOResult = { poResults, psoResults, coAttain, avgCO: coAttainmentData.avgCO, globalTarget };
 
             let html = `
                 <div class="result-box">
-                    <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin-bottom:12px; padding:10px 14px; background:#dbeafe; border-radius:6px;">
-                        <span style="font-weight:600; font-size:14.5px; color:#1a1a1a;">Consolidated Course CO Average:</span>
-                        <span style="font-size:24px; font-weight:700; color:#1e3a5f;">${coAttainmentData.avgCO.toFixed(2)}</span>
-                        <span style="font-size:13px; color:#1a1a1a;">/ 3.00</span>
-                    </div>
-
-                    <h3>📊 Program Outcome (PO) Attainment (Weighted by CO Mapping)</h3>
+                    <h3>📊 Program Outcome (PO) Attainment & Target Analysis</h3>
                     <div style="overflow-x:auto;">
                         <table>
-                            <thead><tr>
+                            <thead>
+                                <tr>
+                                    <th style="width:120px;">Metric</th>
             `;
             for (let i = 0; i < poResults.length; i++) html += `<th>PO${i+1}</th>`;
-            html += `</tr></thead><tbody><tr>`;
+            html += `</tr></thead><tbody>
+                <tr>
+                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Attainment (0–3)</td>`;
             for (let i = 0; i < poResults.length; i++) {
                 const val = poResults[i].attainment;
-                const color = val >= 2.0 ? '#d1fae5' : (val >= 1.0 ? '#fef3c7' : '#f1f5f9');
-                html += `<td style="background:${color}; font-weight:700; font-size:14px;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
+                const color = val >= globalTarget ? '#d1fae5' : (val > 0 ? '#fee2e2' : '#ffffff');
+                html += `<td style="background:${color}; font-weight:700; font-size:13.5px;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
+            }
+            html += `</tr><tr>
+                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Target Level</td>`;
+            for (let i = 0; i < poResults.length; i++) {
+                html += `<td style="font-weight:600; color:#64748b;">${poResults[i].attainment > 0 ? globalTarget.toFixed(2) : '-'}</td>`;
+            }
+            html += `</tr><tr>
+                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Status</td>`;
+            for (let i = 0; i < poResults.length; i++) {
+                const st = poResults[i].status;
+                const badge = st === "ATTAINED" ? "status-attained" : (st === "NOT ATTAINED" ? "status-not-attained" : "");
+                html += `<td>${st !== '-' ? `<span class="status-badge ${badge}" style="font-size:10px; padding:2px 6px;">${st}</span>` : '-'}</td>`;
             }
             html += `</tr></tbody></table></div>
 
-                    <h3 style="margin-top:14px;">📊 Program Specific Outcome (PSO) Attainment</h3>
+                    <h3 style="margin-top:16px;">📊 Program Specific Outcome (PSO) Attainment & Target</h3>
                     <div style="overflow-x:auto;">
                         <table>
-                            <thead><tr>`;
-            for (let i = 0; i < psoResults.length; i++) html += `<th>PSO${i+1}</th>`;
-            html += `</tr></thead><tbody><tr>`;
-            for (let i = 0; i < psoResults.length; i++) {
-                const val = psoResults[i].attainment;
-                const color = val >= 2.0 ? '#d1fae5' : (val >= 1.0 ? '#fef3c7' : '#f1f5f9');
-                html += `<td style="background:${color}; font-weight:700; font-size:14px;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
-            }
-            html += `</tr></tbody></table></div>
+                            <thead>
+                                <tr>
+                                    <th style="width:120px;">Metric</th>
+                                    <th>PSO1</th>
+                                    <th>PSO2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Attainment (0–3)</td>
+                                    <td style="font-weight:700; background:${psoResults[0].attainment >= globalTarget ? '#d1fae5' : '#fee2e2'}; font-size:14px;">${psoResults[0].attainment > 0 ? psoResults[0].attainment.toFixed(2) : '-'}</td>
+                                    <td style="font-weight:700; background:${psoResults[1].attainment >= globalTarget ? '#d1fae5' : '#fee2e2'}; font-size:14px;">${psoResults[1].attainment > 0 ? psoResults[1].attainment.toFixed(2) : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Target Level</td>
+                                    <td style="font-weight:600; color:#64748b;">${globalTarget.toFixed(2)}</td>
+                                    <td style="font-weight:600; color:#64748b;">${globalTarget.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:700; background:#f8fafc; text-align:left; padding-left:10px;">Status</td>
+                                    <td><span class="status-badge ${psoResults[0].status === 'ATTAINED' ? 'status-attained' : 'status-not-attained'}">${psoResults[0].status}</span></td>
+                                    <td><span class="status-badge ${psoResults[1].status === 'ATTAINED' ? 'status-attained' : 'status-not-attained'}">${psoResults[1].status}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             `;
             document.getElementById('finalResult').innerHTML = html;
@@ -888,20 +988,22 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
             const seeVals = coAttainmentData.seeVals;
             const directVals = coAttainmentData.directVals;
             const indirect = coAttainmentData.indirectVals;
+            const targetVals = coAttainmentData.targetVals;
+            const statuses = coAttainmentData.statuses;
 
             const rows = [];
             rows.push(['Basaveshwar Engineering College Bagalkote']);
-            rows.push(['CO-PO/PSO Attainment Report (Direct CO Calculation)']);
+            rows.push(['CO-PO/PSO Attainment Report (with Target Values & Attainment Status)']);
             rows.push(['Academic Year:', academicYear, 'Course Code:', courseCode]);
             rows.push(['Course Name:', courseName, 'Sem/Div:', `Sem ${semester} / Div ${division}`]);
             rows.push(['Faculty Name:', staffName]);
             rows.push([]);
 
-            rows.push(['CO', 'CIE CO (0-3)', 'SEE CO (0-3)', 'Direct CO (40% CIE + 60% SEE)', 'Indirect (0-3)', 'Final CO Attainment']);
+            rows.push(['CO', 'CIE CO (0-3)', 'SEE CO (0-3)', 'Direct CO (40%+60%)', 'Indirect (0-3)', 'Final Attainment', 'Target Level', 'Status']);
             for (let i = 0; i < NUM_CO; i++) {
-                rows.push([`CO${i+1}`, cieVals[i].toFixed(2), seeVals[i].toFixed(2), directVals[i].toFixed(2), indirect[i].toFixed(2), coAttain[i].toFixed(2)]);
+                rows.push([`CO${i+1}`, cieVals[i].toFixed(2), seeVals[i].toFixed(2), directVals[i].toFixed(2), indirect[i].toFixed(2), coAttain[i].toFixed(2), targetVals[i].toFixed(2), statuses[i]]);
             }
-            rows.push(['Average CO Attainment:', '', '', '', '', coAttainmentData.avgCO.toFixed(2)]);
+            rows.push(['Average CO Attainment:', '', '', '', '', coAttainmentData.avgCO.toFixed(2), coAttainmentData.avgTarget.toFixed(2), coAttainmentData.overallStatus]);
             rows.push([]);
 
             rows.push(['CO-PO/PSO Articulation Mapping Matrix']);
@@ -919,25 +1021,28 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
             rows.push([]);
 
             rows.push(['PO Attainment Results']);
-            const poHeader = ['PO'];
+            const poHeader = ['Metric'];
             for (let p = 1; p <= 12; p++) poHeader.push(`PO${p}`);
             rows.push(poHeader);
+            
             const poRow = ['Attainment'];
+            const targetRow = ['Target'];
+            const statusRow = ['Status'];
             for (let p = 0; p < 12; p++) {
-                poRow.push(lastCOPOResult.poResults[p].attainment.toFixed(2));
+                poRow.push(lastCOPOResult.poResults[p].attainment > 0 ? lastCOPOResult.poResults[p].attainment.toFixed(2) : '-');
+                targetRow.push(lastCOPOResult.poResults[p].attainment > 0 ? lastCOPOResult.globalTarget.toFixed(2) : '-');
+                statusRow.push(lastCOPOResult.poResults[p].status);
             }
             rows.push(poRow);
+            rows.push(targetRow);
+            rows.push(statusRow);
             rows.push([]);
 
             rows.push(['PSO Attainment Results']);
-            const psoHeader = ['PSO'];
-            for (let p = 1; p <= 2; p++) psoHeader.push(`PSO${p}`);
-            rows.push(psoHeader);
-            const psoRow = ['Attainment'];
-            for (let p = 0; p < 2; p++) {
-                psoRow.push(lastCOPOResult.psoResults[p].attainment.toFixed(2));
-            }
-            rows.push(psoRow);
+            rows.push(['Metric', 'PSO1', 'PSO2']);
+            rows.push(['Attainment', lastCOPOResult.psoResults[0].attainment.toFixed(2), lastCOPOResult.psoResults[1].attainment.toFixed(2)]);
+            rows.push(['Target', lastCOPOResult.globalTarget.toFixed(2), lastCOPOResult.globalTarget.toFixed(2)]);
+            rows.push(['Status', lastCOPOResult.psoResults[0].status, lastCOPOResult.psoResults[1].status]);
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -968,8 +1073,12 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
             const seeVals = coAttainmentData.seeVals;
             const directVals = coAttainmentData.directVals;
             const indirect = coAttainmentData.indirectVals;
+            const targetVals = coAttainmentData.targetVals;
+            const statuses = coAttainmentData.statuses;
             const coAttain = coAttainmentData.finalCOLevels;
             const avgCO = coAttainmentData.avgCO;
+            const avgTarget = coAttainmentData.avgTarget;
+            const overallStatus = coAttainmentData.overallStatus;
             const mapping = readMappingFromUI();
 
             let coRows = '';
@@ -980,9 +1089,11 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                             <td style="font-weight:700;">CO${i+1}</td>
                             <td>${cieVals[i].toFixed(2)}</td>
                             <td>${seeVals[i].toFixed(2)}</td>
-                            <td style="font-weight:600;">${directVals[i].toFixed(2)}</td>
+                            <td>${directVals[i].toFixed(2)}</td>
                             <td>${indirect[i].toFixed(2)}</td>
                             <td style="font-weight:700;">${coAttain[i].toFixed(2)}</td>
+                            <td style="font-weight:600;">${targetVals[i].toFixed(2)}</td>
+                            <td style="font-weight:700;">${statuses[i]}</td>
                         </tr>
                     `;
                 }
@@ -997,18 +1108,13 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                 mappingRows += `<tr>${cells}</tr>`;
             }
 
-            let poHeader = '', poData = '';
+            let poHeader = '<th style="width:14%;">Metric</th>', poData = '<td style="font-weight:700;">Attainment</td>', poTarget = '<td style="font-weight:600;">Target</td>', poStat = '<td style="font-weight:700;">Status</td>';
             for (let i = 0; i < 12; i++) {
-                poHeader += `<th style="width:8.33%;">PO${i+1}</th>`;
+                poHeader += `<th>PO${i+1}</th>`;
                 const val = lastCOPOResult.poResults[i].attainment;
                 poData += `<td style="font-weight:700;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
-            }
-
-            let psoHeader = '', psoData = '';
-            for (let i = 0; i < 2; i++) {
-                psoHeader += `<th style="width:50%;">PSO${i+1}</th>`;
-                const val = lastCOPOResult.psoResults[i].attainment;
-                psoData += `<td style="font-weight:700;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
+                poTarget += `<td>${val > 0 ? lastCOPOResult.globalTarget.toFixed(2) : '-'}</td>`;
+                poStat += `<td style="font-weight:700; font-size:8px;">${val > 0 ? lastCOPOResult.poResults[i].status : '-'}</td>`;
             }
 
             const now = new Date();
@@ -1044,20 +1150,24 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                     </div>
 
                     <div class="section">
-                        <div class="section-title">2. Course Outcome (CO) Attainment</div>
+                        <div class="section-title">2. Course Outcome (CO) Attainment &amp; Target Status</div>
                         <table>
                             <tr>
-                                <th style="width:10%;">CO</th>
-                                <th style="width:16%;">CIE (0–3)</th>
-                                <th style="width:16%;">SEE (0–3)</th>
-                                <th style="width:20%;">Direct CO (40% CIE + 60% SEE)</th>
-                                <th style="width:18%;">Indirect Exit</th>
-                                <th style="width:20%;">Final CO Attainment</th>
+                                <th style="width:9%;">CO</th>
+                                <th style="width:13%;">CIE (0–3)</th>
+                                <th style="width:13%;">SEE (0–3)</th>
+                                <th style="width:15%;">Direct CO</th>
+                                <th style="width:13%;">Indirect</th>
+                                <th style="width:15%;">Final CO</th>
+                                <th style="width:11%;">Target</th>
+                                <th style="width:11%;">Status</th>
                             </tr>
                             ${coRows}
                             <tr style="background:#f8fafc; font-weight:700;">
-                                <td colspan="5" style="text-align:right; padding-right:10px;">Average CO Attainment:</td>
-                                <td style="background:#dbeafe; font-size:12px; font-weight:700;">${avgCO.toFixed(2)}</td>
+                                <td colspan="5" style="text-align:right; padding-right:8px;">Average Attainment &amp; Target:</td>
+                                <td style="background:#dbeafe; font-weight:700;">${avgCO.toFixed(2)}</td>
+                                <td style="font-weight:700;">${avgTarget.toFixed(2)}</td>
+                                <td style="font-weight:700;">${overallStatus}</td>
                             </tr>
                         </table>
                     </div>
@@ -1079,15 +1189,35 @@ const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00]; // Course Exit Survey de
                     </div>
 
                     <div class="section">
-                        <div class="section-title">4. Final Program Outcome Attainment (Scale 0–3)</div>
+                        <div class="section-title">4. Program Outcome (PO &amp; PSO) Attainment &amp; Target Analysis</div>
                         <table>
                             <tr>${poHeader}</tr>
                             <tr>${poData}</tr>
+                            <tr>${poTarget}</tr>
+                            <tr>${poStat}</tr>
                         </table>
                         <div style="margin-top:6px;">
                             <table>
-                                <tr>${psoHeader}</tr>
-                                <tr>${psoData}</tr>
+                                <tr>
+                                    <th style="width:34%;">Metric</th>
+                                    <th style="width:33%;">PSO1</th>
+                                    <th style="width:33%;">PSO2</th>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:700;">Attainment (0–3)</td>
+                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[0].attainment.toFixed(2)}</td>
+                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[1].attainment.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:600;">Target Level</td>
+                                    <td>${lastCOPOResult.globalTarget.toFixed(2)}</td>
+                                    <td>${lastCOPOResult.globalTarget.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:700;">Status</td>
+                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[0].status}</td>
+                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[1].status}</td>
+                                </tr>
                             </table>
                         </div>
                     </div>
