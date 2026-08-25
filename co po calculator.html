@@ -4,9 +4,9 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator (Full-Page Vector PDF with Calculation Details)</title>
+    <title>CO-PO Attainment Calculator</title>
 
-    <!-- jsPDF & AutoTable for Direct Vector PDF Generation -->
+    <!-- jsPDF & AutoTable for Clean Vector PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <!-- SheetJS for Excel Generation -->
@@ -368,7 +368,7 @@
                     Basaveshwar Engineering College Bagalkote
                     <span>BEC</span>
                 </div>
-                <div class="calc-title">CO–PO Attainment Calculator (Full-Page Vector PDF)</div>
+                <div class="calc-title">CO–PO Attainment Calculator (No-Overlap PDF Engine)</div>
             </div>
             <div class="header-right">
                 <span class="creator-label">created by</span>
@@ -503,7 +503,7 @@
                 </button>
                 <button class="btn btn-pdf" onclick="downloadPDF()" id="pdfBtn">
                     <svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>
-                    Download Full-Page PDF Report
+                    Download Vector PDF (No Overlap)
                 </button>
             </div>
             <div id="finalResult"></div>
@@ -964,7 +964,7 @@
             XLSX.writeFile(wb, `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`);
         }
 
-        // ---------- DIRECT VECTOR PDF GENERATION (100% BLACK & WHITE, EXACT FULL A4 PORTRAIT FIT) ----------
+        // ---------- DIRECT VECTOR PDF GENERATION (NO OVERLAPPING, BALANCED A4 PORTRAIT) ----------
         function downloadPDF() {
             const btn = document.getElementById('pdfBtn');
             const originalText = btn.innerHTML;
@@ -1005,34 +1005,35 @@
 
                 // 1. Header Block
                 doc.setFont("helvetica", "bold");
-                doc.setFontSize(13);
+                doc.setFontSize(12.5);
                 doc.setTextColor(0, 0, 0);
-                doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 105, 13, { align: "center" });
+                doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 105, 12.5, { align: "center" });
 
                 doc.setFontSize(9.5);
-                doc.text(department, 105, 18, { align: "center" });
+                doc.text(department, 105, 17, { align: "center" });
 
-                doc.setFontSize(9);
+                doc.setFontSize(8.5);
                 doc.setDrawColor(0, 0, 0);
                 doc.setLineWidth(0.3);
-                doc.rect(55, 20.5, 100, 5.5);
-                doc.text("CO-PO / PSO ATTAINMENT REPORT", 105, 24.5, { align: "center" });
+                doc.rect(55, 19.5, 100, 5);
+                doc.text("CO-PO / PSO ATTAINMENT REPORT", 105, 23.2, { align: "center" });
 
-                doc.setLineWidth(0.4);
-                doc.line(10, 28, 200, 28);
+                doc.setLineWidth(0.35);
+                doc.line(10, 26.5, 200, 26.5);
 
-                // Common AutoTable Theme Settings (Solid Black Borders, White Fill, Black Text)
-                const baseTableStyles = {
+                // Base styling for crisp black & white vector tables
+                const baseStyles = {
                     theme: 'plain',
                     styles: {
                         textColor: [0, 0, 0],
-                        fontSize: 7.5,
+                        fontSize: 7.2,
                         lineColor: [0, 0, 0],
                         lineWidth: 0.2,
                         halign: 'center',
                         valign: 'middle',
-                        cellPadding: 1.2,
-                        font: 'helvetica'
+                        cellPadding: 1.0,
+                        font: 'helvetica',
+                        overflow: 'linebreak'
                     },
                     headStyles: {
                         fillColor: [255, 255, 255],
@@ -1043,35 +1044,43 @@
                     }
                 };
 
-                let currentY = 31;
+                let currentY = 29.5;
 
                 // 2. Section 1: Course Metadata Table
-                doc.setFontSize(8);
+                doc.setFontSize(7.8);
                 doc.setFont("helvetica", "bold");
                 doc.text("1. COURSE METADATA & TARGET SETTINGS", 10, currentY);
                 currentY += 1.5;
 
                 doc.autoTable({
-                    ...baseTableStyles,
+                    ...baseStyles,
                     startY: currentY,
                     margin: { left: 10, right: 10 },
                     head: [["Academic Year", "Course Code", "Course Title", "Sem / Div", "Faculty Name", "Target Level"]],
                     body: [
                         [academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staffName, target.toFixed(2)]
-                    ]
+                    ],
+                    columnStyles: {
+                        0: { cellWidth: 25 },
+                        1: { cellWidth: 25 },
+                        2: { cellWidth: 55 },
+                        3: { cellWidth: 25 },
+                        4: { cellWidth: 35 },
+                        5: { cellWidth: 25 }
+                    }
                 });
 
-                currentY = doc.lastAutoTable.finalY + 4;
+                currentY = doc.lastAutoTable.finalY + 3.5;
 
-                // 3. Section 2: CO Attainment Table with Full Formula Calculation Details
-                doc.text("2. COURSE OUTCOME (CO) ATTAINMENT WITH CALCULATION DETAILS", 10, currentY);
+                // 3. Section 2: CO Attainment Table with Calculation Breakdown
+                doc.text("2. COURSE OUTCOME (CO) ATTAINMENT & CALCULATION BREAKDOWN", 10, currentY);
                 currentY += 1.5;
 
                 const coBody = [];
                 for (let i = 0; i < NUM_CO; i++) {
                     if (coAttain[i] > 0 || i < 4) {
-                        const directDetail = `${directVals[i].toFixed(2)}\n[0.40(${cieScales[i].toFixed(0)})+0.60(${seeScales[i].toFixed(0)})]`;
-                        const finalDetail = `${coAttain[i].toFixed(2)}\n[0.80(${directVals[i].toFixed(2)})+0.20(${indirect[i].toFixed(2)})]`;
+                        const directDetail = `${directVals[i].toFixed(2)}\n(0.4×${cieScales[i].toFixed(0)}+0.6×${seeScales[i].toFixed(0)})`;
+                        const finalDetail = `${coAttain[i].toFixed(2)}\n(0.8×${directVals[i].toFixed(2)}+0.2×${indirect[i].toFixed(1)})`;
                         coBody.push([
                             `CO${i+1}`,
                             `${ciePcts[i].toFixed(1)}%`,
@@ -1086,27 +1095,38 @@
                     }
                 }
                 coBody.push([
-                    { content: `Average CO Attainment: Σ(Final CO)/${coAttainmentData.activeCOCount} (Target: ${target.toFixed(2)}):`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
+                    { content: `Overall Average CO Attainment (Target: ${target.toFixed(2)}):`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
                     { content: avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
                     { content: overallStatus, styles: { fontStyle: 'bold' } }
                 ]);
 
                 doc.autoTable({
-                    ...baseTableStyles,
+                    ...baseStyles,
                     startY: currentY,
                     margin: { left: 10, right: 10 },
                     head: [["CO", "CIE (%)", "CIE Lvl", "SEE (%)", "SEE Lvl", "Direct CO (40%+60%)", "Indirect", "Final CO (80%+20%)", "Status"]],
                     body: coBody,
+                    columnStyles: {
+                        0: { cellWidth: 12 },
+                        1: { cellWidth: 16 },
+                        2: { cellWidth: 14 },
+                        3: { cellWidth: 16 },
+                        4: { cellWidth: 14 },
+                        5: { cellWidth: 38 },
+                        6: { cellWidth: 16 },
+                        7: { cellWidth: 40 },
+                        8: { cellWidth: 24 }
+                    },
                     styles: {
-                        ...baseTableStyles.styles,
-                        fontSize: 7,
-                        cellPadding: 1.1
+                        ...baseStyles.styles,
+                        fontSize: 6.8,
+                        cellPadding: 0.9
                     }
                 });
 
-                currentY = doc.lastAutoTable.finalY + 4;
+                currentY = doc.lastAutoTable.finalY + 3.5;
 
-                // 4. Section 3: CO-PO Matrix Table
+                // 4. Section 3: CO-PO Mapping Matrix Table
                 doc.text("3. CO-PO & PSO ARTICULATION CORRELATION MATRIX", 10, currentY);
                 currentY += 1.5;
 
@@ -1123,23 +1143,30 @@
                     mappingBody.push(row);
                 }
 
+                // Explicit 15-column width calculation: CO(15mm) + 12 POs(12mm each = 144mm) + 2 PSOs(15.5mm each = 31mm) = 190mm
+                const matrixColStyles = { 0: { cellWidth: 15 } };
+                for (let p = 1; p <= 12; p++) matrixColStyles[p] = { cellWidth: 12 };
+                matrixColStyles[13] = { cellWidth: 15.5 };
+                matrixColStyles[14] = { cellWidth: 15.5 };
+
                 doc.autoTable({
-                    ...baseTableStyles,
+                    ...baseStyles,
                     startY: currentY,
                     margin: { left: 10, right: 10 },
                     head: [mappingHead],
                     body: mappingBody,
+                    columnStyles: matrixColStyles,
                     styles: {
-                        ...baseTableStyles.styles,
+                        ...baseStyles.styles,
                         fontSize: 7,
-                        cellPadding: 1.0
+                        cellPadding: 0.8
                     }
                 });
 
-                currentY = doc.lastAutoTable.finalY + 4;
+                currentY = doc.lastAutoTable.finalY + 3.5;
 
                 // 5. Section 4: PO & PSO Attainment Table with Formula Details
-                doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT WITH STEP-BY-STEP CALCULATION", 10, currentY);
+                doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT & STEP-BY-STEP CALCULATION", 10, currentY);
                 currentY += 1.5;
 
                 const poHead = ["Metric"];
@@ -1157,29 +1184,33 @@
                     poRow3.push(val > 0 ? (lastCOPOResult.poResults[p].status === "ATTAINED" ? "ATT" : "NOT ATT") : "-");
                 }
 
+                const poColStyles = { 0: { cellWidth: 26 } };
+                for (let p = 1; p <= 12; p++) poColStyles[p] = { cellWidth: 13.66 };
+
                 doc.autoTable({
-                    ...baseTableStyles,
+                    ...baseStyles,
                     startY: currentY,
                     margin: { left: 10, right: 10 },
                     head: [poHead],
                     body: [poRow1, poRow2, poRow3],
+                    columnStyles: poColStyles,
                     styles: {
-                        ...baseTableStyles.styles,
-                        fontSize: 6.5,
-                        cellPadding: 1.0
+                        ...baseStyles.styles,
+                        fontSize: 6.2,
+                        cellPadding: 0.8
                     }
                 });
 
-                currentY = doc.lastAutoTable.finalY + 2.5;
+                currentY = doc.lastAutoTable.finalY + 2;
 
-                // PSO Sub-table with calculation breakdown
+                // PSO Sub-table with clear steps
                 const pso1Num = lastCOPOResult.psoResults[0].numerator.toFixed(2);
                 const pso1Den = lastCOPOResult.psoResults[0].denominator;
                 const pso2Num = lastCOPOResult.psoResults[1].numerator.toFixed(2);
                 const pso2Den = lastCOPOResult.psoResults[1].denominator;
 
                 doc.autoTable({
-                    ...baseTableStyles,
+                    ...baseStyles,
                     startY: currentY,
                     margin: { left: 10, right: 10 },
                     head: [["Metric", "PSO1 Attainment & Calculation", "PSO2 Attainment & Calculation"]],
@@ -1187,36 +1218,41 @@
                         ["Attainment (0-3)", `${lastCOPOResult.psoResults[0].attainment.toFixed(2)}  [Σ(CO×W)/ΣW = ${pso1Num} / ${pso1Den}]`, `${lastCOPOResult.psoResults[1].attainment.toFixed(2)}  [Σ(CO×W)/ΣW = ${pso2Num} / ${pso2Den}]`],
                         [`Status (Target: ${target.toFixed(2)})`, lastCOPOResult.psoResults[0].status, lastCOPOResult.psoResults[1].status]
                     ],
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 75 },
+                        2: { cellWidth: 75 }
+                    },
                     styles: {
-                        ...baseTableStyles.styles,
-                        fontSize: 7,
-                        cellPadding: 1.1
+                        ...baseStyles.styles,
+                        fontSize: 6.8,
+                        cellPadding: 0.9
                     }
                 });
 
-                currentY = doc.lastAutoTable.finalY + 3.5;
+                currentY = doc.lastAutoTable.finalY + 3;
 
-                // 6. Section 5: Standard OBE Calculation Formula Reference Card
-                doc.setFontSize(6.8);
+                // 6. Section 5: Standard Formula Legend Box
+                doc.setFontSize(6.4);
                 doc.setFont("helvetica", "italic");
-                doc.text("Calculation Rules: (1) Direct CO = 0.40×CIE_Level + 0.60×SEE_Level; (2) Final CO = 0.80×Direct_CO + 0.20×Indirect_Exit;", 10, currentY);
-                doc.text("(3) PO/PSO Attainment = Σ(Final CO_i × Weight_ij) / Σ(Weight_ij); (4) Status = ATTAINED if Score >= Target Level else NOT ATTAINED.", 10, currentY + 3.2);
+                doc.text("Formula Legend: (1) Direct CO = 0.40×CIE_Level + 0.60×SEE_Level; (2) Final CO = 0.80×Direct_CO + 0.20×Indirect_Exit;", 10, currentY);
+                doc.text("(3) PO/PSO Attainment = Σ(Final CO_i × Mapping_Weight_ij) / Σ(Mapping_Weight_ij); (4) Attainment Status = ATTAINED if Score >= Target.", 10, currentY + 3.0);
 
-                currentY += 12;
+                // 7. Signature Block (Positioned cleanly before footer)
+                currentY = Math.max(currentY + 11, 252);
 
-                // 7. Signature Block
                 doc.setDrawColor(0, 0, 0);
                 doc.setLineDashPattern([1.5, 1.5], 0);
                 doc.line(20, currentY, 70, currentY);
                 doc.line(140, currentY, 190, currentY);
                 doc.setLineDashPattern([], 0); // reset solid line
 
-                doc.setFontSize(8);
+                doc.setFontSize(7.8);
                 doc.setFont("helvetica", "bold");
                 doc.text(staffName, 45, currentY + 3.5, { align: "center" });
                 doc.text("Head of Department", 165, currentY + 3.5, { align: "center" });
 
-                doc.setFontSize(7);
+                doc.setFontSize(6.8);
                 doc.setFont("helvetica", "normal");
                 doc.text("Course Coordinator / Faculty", 45, currentY + 7, { align: "center" });
                 doc.text(department, 165, currentY + 7, { align: "center" });
@@ -1227,11 +1263,11 @@
                 const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
                 doc.setLineWidth(0.3);
-                doc.line(10, 286, 200, 286);
-                doc.setFontSize(6.8);
-                doc.text(`OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`, 105, 290, { align: "center" });
+                doc.line(10, 287, 200, 287);
+                doc.setFontSize(6.5);
+                doc.text(`OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`, 105, 290.5, { align: "center" });
 
-                // Save PDF directly without blank screen issues
+                // Direct download
                 doc.save(`CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`);
 
                 btn.innerHTML = originalText;
