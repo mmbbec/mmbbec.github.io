@@ -4,7 +4,7 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator</title>
+    <title>CO-PO Attainment Calculator (Portrait A4)</title>
 
     <!-- html2pdf for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        /* ===== Screen Base Styles ===== */
+        /* ===== Screen UI Base Styles ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -341,59 +341,59 @@
             line-height: 1.2;
         }
 
-        /* ===== EXACT SINGLE-PAGE A4 PRINT STYLES (FULL BLACK THEME) ===== */
-        #pdfTempContainer {
+        /* ===== EXACT A4 PORTRAIT PRINT STYLES (PURE BLACK & WHITE) ===== */
+        #pdfCaptureWrapper {
             position: absolute;
             left: 0;
             top: 0;
-            width: 750px;
+            width: 190mm; /* Printable width of A4 portrait (210mm - 20mm margins) */
             background: #ffffff;
-            z-index: 99999;
-            box-sizing: border-box;
-            padding: 0;
             margin: 0;
-            display: block;
+            padding: 0;
+            box-sizing: border-box;
+            display: none;
+            z-index: 999999;
         }
 
-        .pdf-page {
-            width: 750px;
+        .pdf-page-container {
+            width: 100%;
             background: #ffffff !important;
             color: #000000 !important;
-            padding: 16px 20px 10px 20px;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 9.5px;
+            font-size: 9px;
+            line-height: 1.3;
             box-sizing: border-box;
-            line-height: 1.35;
+            padding: 4px 0;
         }
 
-        .pdf-page * {
+        .pdf-page-container * {
             color: #000000 !important;
             box-sizing: border-box;
         }
 
-        .pdf-header {
+        .pdf-page-container .pdf-header {
             border-bottom: 2px solid #000000;
-            padding-bottom: 6px;
+            padding-bottom: 5px;
             margin-bottom: 8px;
             text-align: center;
         }
 
-        .pdf-header .college-name {
-            font-size: 16px;
+        .pdf-page-container .college-name {
+            font-size: 15px;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
         }
 
-        .pdf-header .dept-name {
-            font-size: 11.5px;
+        .pdf-page-container .dept-name {
+            font-size: 11px;
             font-weight: 700;
             margin-top: 1px;
         }
 
-        .pdf-header .report-title {
-            font-size: 12.5px;
-            margin-top: 4px;
+        .pdf-page-container .report-title {
+            font-size: 12px;
+            margin-top: 3px;
             font-weight: 800;
             display: inline-block;
             padding: 2px 14px;
@@ -401,12 +401,12 @@
             text-transform: uppercase;
         }
 
-        .pdf-page .section {
+        .pdf-page-container .section {
             margin-bottom: 7px;
         }
 
-        .pdf-page .section-title {
-            font-size: 10px;
+        .pdf-page-container .section-title {
+            font-size: 9.5px;
             font-weight: 800;
             border-bottom: 1.5px solid #000000;
             padding-bottom: 2px;
@@ -415,7 +415,7 @@
             letter-spacing: 0.3px;
         }
 
-        .pdf-page table {
+        .pdf-page-container table {
             width: 100% !important;
             table-layout: fixed !important;
             border-collapse: collapse !important;
@@ -423,64 +423,64 @@
             border: 1px solid #000000 !important;
         }
 
-        .pdf-page th {
+        .pdf-page-container th {
             background: #ffffff !important;
             color: #000000 !important;
             border: 1px solid #000000 !important;
-            padding: 4px 2px !important;
+            padding: 3.5px 2px !important;
             text-align: center !important;
-            font-size: 8.5px !important;
+            font-size: 8px !important;
             font-weight: 800 !important;
             vertical-align: middle;
         }
 
-        .pdf-page td {
+        .pdf-page-container td {
             border: 1px solid #000000 !important;
-            padding: 3.5px 2px !important;
+            padding: 3px 2px !important;
             text-align: center !important;
             background: #ffffff !important;
             color: #000000 !important;
-            font-size: 8.5px !important;
+            font-size: 8px !important;
             font-weight: 600;
             vertical-align: middle;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
-        .pdf-signature-block {
-            margin-top: 18px;
+        .pdf-page-container .pdf-signature-block {
+            margin-top: 16px;
             display: flex;
             justify-content: space-between;
-            padding: 0 25px;
+            padding: 0 20px;
         }
 
-        .pdf-signature-item {
+        .pdf-page-container .pdf-signature-item {
             text-align: center;
-            width: 220px;
+            width: 200px;
         }
 
-        .pdf-signature-line {
+        .pdf-page-container .pdf-signature-line {
             border-top: 1.5px dashed #000000;
             margin-bottom: 4px;
         }
 
-        .pdf-signature-label {
-            font-size: 9.5px;
+        .pdf-page-container .pdf-signature-label {
+            font-size: 9px;
             font-weight: 800;
         }
 
-        .pdf-signature-sub {
-            font-size: 8.5px;
+        .pdf-page-container .pdf-signature-sub {
+            font-size: 8px;
             font-weight: 600;
         }
 
-        .pdf-page .footer {
+        .pdf-page-container .footer {
             margin-top: 10px;
             padding-top: 4px;
             border-top: 1px solid #000000;
             text-align: center;
-            font-size: 8px;
+            font-size: 7.5px;
             font-weight: 600;
         }
     </style>
@@ -495,7 +495,7 @@
                     Basaveshwar Engineering College Bagalkote
                     <span>BEC</span>
                 </div>
-                <div class="calc-title">CO–PO Attainment Calculator</div>
+                <div class="calc-title">CO–PO Attainment Calculator (Portrait A4 Export)</div>
             </div>
             <div class="header-right">
                 <span class="creator-label">created by</span>
@@ -637,6 +637,9 @@
         </div>
 
     </div>
+
+    <!-- Hidden Wrapper for PDF Canvas Capture (Rendered off DOM view with zero margins) -->
+    <div id="pdfCaptureWrapper"></div>
 
     <script>
         const NUM_CO = 5;
@@ -1091,7 +1094,7 @@
             XLSX.writeFile(wb, `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`);
         }
 
-        // ---------- PDF EXPORT (EXACT FIT & FULL BLACK THEME) ----------
+        // ---------- STRICT PORTRAIT A4 PDF EXPORT ----------
         function downloadPDF() {
             const btn = document.getElementById('pdfBtn');
             const originalText = btn.innerHTML;
@@ -1127,15 +1130,15 @@
                 if (coAttain[i] > 0 || i < 4) {
                     coRows += `
                         <tr>
-                            <td style="font-weight:700; width:10%;">CO${i+1}</td>
-                            <td style="width:12%;">${ciePcts[i].toFixed(1)}%</td>
-                            <td style="width:10%;">${cieScales[i].toFixed(0)}</td>
-                            <td style="width:12%;">${seePcts[i].toFixed(1)}%</td>
-                            <td style="width:10%;">${seeScales[i].toFixed(0)}</td>
+                            <td style="font-weight:700; width:9%;">CO${i+1}</td>
+                            <td style="width:11%;">${ciePcts[i].toFixed(1)}%</td>
+                            <td style="width:9%;">${cieScales[i].toFixed(0)}</td>
+                            <td style="width:11%;">${seePcts[i].toFixed(1)}%</td>
+                            <td style="width:9%;">${seeScales[i].toFixed(0)}</td>
                             <td style="width:15%;">${directVals[i].toFixed(2)}</td>
                             <td style="width:11%;">${indirect[i].toFixed(2)}</td>
-                            <td style="font-weight:800; width:10%;">${coAttain[i].toFixed(2)}</td>
-                            <td style="font-weight:700; width:10%;">${statuses[i]}</td>
+                            <td style="font-weight:800; width:12%;">${coAttain[i].toFixed(2)}</td>
+                            <td style="font-weight:700; width:13%;">${statuses[i]}</td>
                         </tr>
                     `;
                 }
@@ -1152,7 +1155,7 @@
 
             let poHeader = '<th style="width:16%;">Metric</th>', poData = '<td style="font-weight:800;">Attainment</td>', poStat = '<td style="font-weight:800;">Status</td>';
             for (let i = 0; i < 12; i++) {
-                poHeader += `<th style="width:7%; font-size:8px;">PO${i+1}</th>`;
+                poHeader += `<th style="width:7%; font-size:7.5px;">PO${i+1}</th>`;
                 const val = lastCOPOResult.poResults[i].attainment;
                 poData += `<td>${val > 0 ? val.toFixed(2) : '-'}</td>`;
                 poStat += `<td style="font-size:7px; font-weight:700;">${val > 0 ? (lastCOPOResult.poResults[i].status === 'ATTAINED' ? 'ATT' : 'NOT ATT') : '-'}</td>`;
@@ -1163,7 +1166,7 @@
             const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
             const pdfHTML = `
-                <div class="pdf-page">
+                <div class="pdf-page-container">
                     <div class="pdf-header">
                         <div class="college-name">Basaveshwar Engineering College, Bagalkote</div>
                         <div class="dept-name">${department}</div>
@@ -1196,15 +1199,15 @@
                         <div class="section-title">2. Course Outcome (CO) Attainment &amp; Status</div>
                         <table>
                             <tr>
-                                <th style="width:10%;">CO</th>
-                                <th style="width:12%;">CIE (%)</th>
-                                <th style="width:10%;">CIE Lvl</th>
-                                <th style="width:12%;">SEE (%)</th>
-                                <th style="width:10%;">SEE Lvl</th>
+                                <th style="width:9%;">CO</th>
+                                <th style="width:11%;">CIE (%)</th>
+                                <th style="width:9%;">CIE Lvl</th>
+                                <th style="width:11%;">SEE (%)</th>
+                                <th style="width:9%;">SEE Lvl</th>
                                 <th style="width:15%;">Direct CO</th>
                                 <th style="width:11%;">Indirect</th>
-                                <th style="width:10%;">Final CO</th>
-                                <th style="width:10%;">Status</th>
+                                <th style="width:12%;">Final CO</th>
+                                <th style="width:13%;">Status</th>
                             </tr>
                             ${coRows}
                             <tr>
@@ -1221,8 +1224,8 @@
                             <thead>
                                 <tr>
                                     <th style="width:8%;">CO</th>
-                                    ${Array.from({length:12}, (_,i) => `<th style="width:6.5%; font-size:8px;">PO${i+1}</th>`).join("")}
-                                    ${Array.from({length:2}, (_,i) => `<th style="width:7%; font-size:8px;">PSO${i+1}</th>`).join("")}
+                                    ${Array.from({length:12}, (_,i) => `<th style="width:6.5%; font-size:7.5px;">PO${i+1}</th>`).join("")}
+                                    ${Array.from({length:2}, (_,i) => `<th style="width:7%; font-size:7.5px;">PSO${i+1}</th>`).join("")}
                                 </tr>
                             </thead>
                             <tbody>
@@ -1278,46 +1281,43 @@
                 </div>
             `;
 
-            const oldContainer = document.getElementById('pdfTempContainer');
-            if (oldContainer) oldContainer.remove();
+            const captureWrapper = document.getElementById('pdfCaptureWrapper');
+            captureWrapper.innerHTML = pdfHTML;
+            captureWrapper.style.display = 'block';
 
-            const pdfContainer = document.createElement('div');
-            pdfContainer.id = 'pdfTempContainer';
-            pdfContainer.innerHTML = pdfHTML;
-            document.body.appendChild(pdfContainer);
-
-            // Ensure document scroll is at top before capturing to prevent coordinate offset
+            // Reset scroll to guarantee clean (0,0) coordinate capture
             window.scrollTo(0, 0);
 
             setTimeout(function() {
-                const element = document.querySelector('#pdfTempContainer .pdf-page');
                 const opt = {
-                    margin: [8, 8, 8, 8],
+                    margin: [10, 10, 10, 10], // 10mm margin on all sides of Portrait A4
                     filename: `CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`,
                     image: { type: 'jpeg', quality: 1.0 },
                     html2canvas: {
                         scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        width: 750,
-                        windowWidth: 750,
                         scrollX: 0,
-                        scrollY: 0
+                        scrollY: 0,
+                        x: 0,
+                        y: 0
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                html2pdf().set(opt).from(element).save().then(() => {
-                    pdfContainer.remove();
+                html2pdf().set(opt).from(captureWrapper).save().then(() => {
+                    captureWrapper.style.display = 'none';
+                    captureWrapper.innerHTML = '';
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }).catch(err => {
                     console.error('PDF export error:', err);
-                    pdfContainer.remove();
+                    captureWrapper.style.display = 'none';
+                    captureWrapper.innerHTML = '';
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });
-            }, 300);
+            }, 250);
         }
 
         initInputs();
