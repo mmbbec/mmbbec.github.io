@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        /* ===== Base Styles ===== */
+        /* ===== Screen Base Styles ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -273,18 +273,6 @@
             padding: 4px 2px;
         }
 
-        .data-table input[type="number"]:focus, .mapping-table input[type="number"]:focus {
-            border-color: #1e3a5f;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.10);
-            background: #fff;
-        }
-
-        .mapping-table .co-label {
-            font-weight: 700;
-            background: #f1f5f9;
-        }
-
         .result-box {
             margin-top: 14px;
             padding: 14px 18px;
@@ -344,7 +332,6 @@
             border: 1px solid #fecaca;
         }
 
-        /* ===== LIGHT-COLORED CALCULATION DETAILS ===== */
         .calc-subtext {
             display: block;
             font-size: 10px;
@@ -352,157 +339,149 @@
             color: #64748b;
             margin-top: 2px;
             line-height: 1.2;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ===== PDF Print Styles ===== */
+        /* ===== EXACT SINGLE-PAGE A4 PRINT STYLES (FULL BLACK THEME) ===== */
         #pdfTempContainer {
             position: absolute;
             left: 0;
             top: 0;
-            width: 794px;
+            width: 750px;
             background: #ffffff;
             z-index: 99999;
             box-sizing: border-box;
-            opacity: 1;
+            padding: 0;
+            margin: 0;
             display: block;
         }
 
         .pdf-page {
-            width: 794px;
-            min-height: 1123px;
+            width: 750px;
             background: #ffffff !important;
             color: #000000 !important;
-            padding: 24px 30px 18px 30px;
+            padding: 16px 20px 10px 20px;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 10.5px;
+            font-size: 9.5px;
             box-sizing: border-box;
-            line-height: 1.45;
-            display: flex;
-            flex-direction: column;
+            line-height: 1.35;
         }
 
         .pdf-page * {
             color: #000000 !important;
+            box-sizing: border-box;
         }
 
         .pdf-header {
-            border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
         .pdf-header .college-name {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .pdf-header .dept-name {
-            font-size: 12.5px;
-            font-weight: 600;
-            margin-top: 2px;
+            font-size: 11.5px;
+            font-weight: 700;
+            margin-top: 1px;
         }
 
         .pdf-header .report-title {
-            font-size: 14px;
+            font-size: 12.5px;
             margin-top: 4px;
-            font-weight: 700;
-            background: #f1f5f9;
+            font-weight: 800;
             display: inline-block;
-            padding: 3px 18px;
-            border-radius: 4px;
-            border: 1px solid #aaa;
+            padding: 2px 14px;
+            border: 1.5px solid #000000;
+            text-transform: uppercase;
         }
 
         .pdf-page .section {
-            margin-bottom: 10px;
+            margin-bottom: 7px;
         }
 
         .pdf-page .section-title {
-            font-size: 12px;
-            font-weight: 700;
-            border-bottom: 1.5px solid #aaa;
+            font-size: 10px;
+            font-weight: 800;
+            border-bottom: 1.5px solid #000000;
             padding-bottom: 2px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
         .pdf-page table {
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
+            width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
             margin-top: 2px;
+            border: 1px solid #000000 !important;
         }
 
         .pdf-page th {
-            background: #f1f5f9 !important;
-            border: 1px solid #888;
-            padding: 5px 3px;
-            text-align: center;
-            font-size: 9.5px;
-            font-weight: 700;
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 1px solid #000000 !important;
+            padding: 4px 2px !important;
+            text-align: center !important;
+            font-size: 8.5px !important;
+            font-weight: 800 !important;
+            vertical-align: middle;
         }
 
         .pdf-page td {
-            border: 1px solid #888;
-            padding: 5px 3px;
-            text-align: center;
+            border: 1px solid #000000 !important;
+            padding: 3.5px 2px !important;
+            text-align: center !important;
             background: #ffffff !important;
-            font-size: 9.5px;
+            color: #000000 !important;
+            font-size: 8.5px !important;
+            font-weight: 600;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .pdf-signature-block {
-            margin-top: 24px;
+            margin-top: 18px;
             display: flex;
             justify-content: space-between;
-            padding: 0 20px;
-            flex-shrink: 0;
+            padding: 0 25px;
         }
 
         .pdf-signature-item {
             text-align: center;
-            width: 200px;
+            width: 220px;
         }
 
         .pdf-signature-line {
-            border-top: 1.5px dashed #333;
+            border-top: 1.5px dashed #000000;
             margin-bottom: 4px;
         }
 
         .pdf-signature-label {
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 9.5px;
+            font-weight: 800;
         }
 
         .pdf-signature-sub {
-            font-size: 9px;
+            font-size: 8.5px;
+            font-weight: 600;
         }
 
         .pdf-page .footer {
-            margin-top: 14px;
-            padding-top: 5px;
-            border-top: 1px solid #aaa;
+            margin-top: 10px;
+            padding-top: 4px;
+            border-top: 1px solid #000000;
             text-align: center;
-            font-size: 8.5px;
-        }
-
-        @media (max-width: 640px) {
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .header-right {
-                text-align: left;
-                width: 100%;
-            }
-            .grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            font-size: 8px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -665,7 +644,6 @@
         let mappingData = {};
         let lastCOPOResult = null;
 
-        // ---------- BACKEND SCALE CONVERSION (0 to 3) ----------
         function convertToScale(pct) {
             if (pct <= 0) return 0.0;
             if (pct >= 60.0) return 3.0;
@@ -673,7 +651,6 @@
             return 1.0;
         }
 
-        // ---------- INITIALIZE CO INPUT ROWS ----------
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
@@ -762,7 +739,6 @@
             });
         }
 
-        // ---------- MAPPING MATRIX SETUP ----------
         function createMapping() {
             let html = "";
             const defaultMapping = {
@@ -813,7 +789,6 @@
             return mappingData;
         }
 
-        // ---------- CALCULATE CO ATTAINMENT ----------
         function calculateCOAttainment() {
             const target = parseFloat(document.getElementById('targetValue').value) || 2.00;
             const ciePcts = [];
@@ -929,7 +904,6 @@
             setTimeout(() => calculateCOPO(), 150);
         }
 
-        // ---------- CALCULATE PO / PSO ATTAINMENT ----------
         function calculateCOPO() {
             if (!coAttainmentData) {
                 calculateCOAttainment();
@@ -1039,7 +1013,6 @@
             document.getElementById('finalResult').innerHTML = html;
         }
 
-        // ---------- EXCEL EXPORT ----------
         function exportExcel() {
             if (!coAttainmentData) calculateCOAttainment();
             if (!lastCOPOResult) calculateCOPO();
@@ -1118,7 +1091,7 @@
             XLSX.writeFile(wb, `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`);
         }
 
-        // ---------- PDF EXPORT (FIXED FOR CLEAN CAPTURE) ----------
+        // ---------- PDF EXPORT (EXACT FIT & FULL BLACK THEME) ----------
         function downloadPDF() {
             const btn = document.getElementById('pdfBtn');
             const originalText = btn.innerHTML;
@@ -1154,15 +1127,15 @@
                 if (coAttain[i] > 0 || i < 4) {
                     coRows += `
                         <tr>
-                            <td style="font-weight:700;">CO${i+1}</td>
-                            <td>${ciePcts[i].toFixed(1)}%</td>
-                            <td>${cieScales[i].toFixed(0)}</td>
-                            <td>${seePcts[i].toFixed(1)}%</td>
-                            <td>${seeScales[i].toFixed(0)}</td>
-                            <td>${directVals[i].toFixed(2)}</td>
-                            <td>${indirect[i].toFixed(2)}</td>
-                            <td style="font-weight:700;">${coAttain[i].toFixed(2)}</td>
-                            <td style="font-weight:700;">${statuses[i]}</td>
+                            <td style="font-weight:700; width:10%;">CO${i+1}</td>
+                            <td style="width:12%;">${ciePcts[i].toFixed(1)}%</td>
+                            <td style="width:10%;">${cieScales[i].toFixed(0)}</td>
+                            <td style="width:12%;">${seePcts[i].toFixed(1)}%</td>
+                            <td style="width:10%;">${seeScales[i].toFixed(0)}</td>
+                            <td style="width:15%;">${directVals[i].toFixed(2)}</td>
+                            <td style="width:11%;">${indirect[i].toFixed(2)}</td>
+                            <td style="font-weight:800; width:10%;">${coAttain[i].toFixed(2)}</td>
+                            <td style="font-weight:700; width:10%;">${statuses[i]}</td>
                         </tr>
                     `;
                 }
@@ -1170,19 +1143,19 @@
 
             let mappingRows = '';
             for (let c = 1; c <= NUM_CO; c++) {
-                let cells = `<td style="font-weight:700; background:#f1f5f9; width:6%;">CO${c}</td>`;
+                let cells = `<td style="font-weight:800; width:8%;">CO${c}</td>`;
                 const m = mapping[c] || { po: Array(12).fill(0), pso: [0, 0] };
-                for (let p = 0; p < 12; p++) cells += `<td style="width:7%;">${m.po[p] || 0}</td>`;
-                for (let p = 0; p < 2; p++) cells += `<td style="width:7.5%;">${m.pso[p] || 0}</td>`;
+                for (let p = 0; p < 12; p++) cells += `<td style="width:6.5%;">${m.po[p] || 0}</td>`;
+                for (let p = 0; p < 2; p++) cells += `<td style="width:7%;">${m.pso[p] || 0}</td>`;
                 mappingRows += `<tr>${cells}</tr>`;
             }
 
-            let poHeader = '<th style="width:14%;">Metric</th>', poData = '<td style="font-weight:700;">Attainment</td>', poStat = '<td style="font-weight:700;">Status</td>';
+            let poHeader = '<th style="width:16%;">Metric</th>', poData = '<td style="font-weight:800;">Attainment</td>', poStat = '<td style="font-weight:800;">Status</td>';
             for (let i = 0; i < 12; i++) {
-                poHeader += `<th>PO${i+1}</th>`;
+                poHeader += `<th style="width:7%; font-size:8px;">PO${i+1}</th>`;
                 const val = lastCOPOResult.poResults[i].attainment;
-                poData += `<td style="font-weight:700;">${val > 0 ? val.toFixed(2) : '-'}</td>`;
-                poStat += `<td style="font-weight:700; font-size:8px;">${val > 0 ? lastCOPOResult.poResults[i].status : '-'}</td>`;
+                poData += `<td>${val > 0 ? val.toFixed(2) : '-'}</td>`;
+                poStat += `<td style="font-size:7px; font-weight:700;">${val > 0 ? (lastCOPOResult.poResults[i].status === 'ATTAINED' ? 'ATT' : 'NOT ATT') : '-'}</td>`;
             }
 
             const now = new Date();
@@ -1203,18 +1176,18 @@
                             <tr>
                                 <th style="width:14%;">Academic Year</th>
                                 <th style="width:14%;">Course Code</th>
-                                <th style="width:28%;">Course Title</th>
+                                <th style="width:30%;">Course Title</th>
                                 <th style="width:14%;">Sem / Div</th>
                                 <th style="width:16%;">Faculty</th>
-                                <th style="width:14%;">Target Value</th>
+                                <th style="width:12%;">Target</th>
                             </tr>
                             <tr>
-                                <td style="font-weight:600;">${academicYear}</td>
-                                <td style="font-weight:700;">${courseCode}</td>
-                                <td style="font-weight:600;">${courseName}</td>
+                                <td>${academicYear}</td>
+                                <td style="font-weight:800;">${courseCode}</td>
+                                <td>${courseName}</td>
                                 <td>Sem ${semester} / Div ${division}</td>
                                 <td>${staffName}</td>
-                                <td style="font-weight:700;">${target.toFixed(2)}</td>
+                                <td style="font-weight:800;">${target.toFixed(2)}</td>
                             </tr>
                         </table>
                     </div>
@@ -1223,21 +1196,21 @@
                         <div class="section-title">2. Course Outcome (CO) Attainment &amp; Status</div>
                         <table>
                             <tr>
-                                <th style="width:8%;">CO</th>
-                                <th style="width:11%;">CIE (%)</th>
+                                <th style="width:10%;">CO</th>
+                                <th style="width:12%;">CIE (%)</th>
                                 <th style="width:10%;">CIE Lvl</th>
-                                <th style="width:11%;">SEE (%)</th>
+                                <th style="width:12%;">SEE (%)</th>
                                 <th style="width:10%;">SEE Lvl</th>
-                                <th style="width:14%;">Direct CO</th>
+                                <th style="width:15%;">Direct CO</th>
                                 <th style="width:11%;">Indirect</th>
-                                <th style="width:13%;">Final CO</th>
-                                <th style="width:12%;">Status</th>
+                                <th style="width:10%;">Final CO</th>
+                                <th style="width:10%;">Status</th>
                             </tr>
                             ${coRows}
-                            <tr style="background:#f8fafc; font-weight:700;">
-                                <td colspan="7" style="text-align:right; padding-right:8px;">Average Attainment (Target: ${target.toFixed(2)}):</td>
-                                <td style="background:#dbeafe; font-weight:700;">${avgCO.toFixed(2)}</td>
-                                <td style="font-weight:700;">${overallStatus}</td>
+                            <tr>
+                                <td colspan="7" style="text-align:right; font-weight:800; padding-right:8px;">Average Attainment (Target: ${target.toFixed(2)}):</td>
+                                <td style="font-weight:800;">${avgCO.toFixed(2)}</td>
+                                <td style="font-weight:800;">${overallStatus}</td>
                             </tr>
                         </table>
                     </div>
@@ -1247,9 +1220,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="width:6%;">CO</th>
-                                    ${Array.from({length:12}, (_,i) => `<th style="width:7%;">PO${i+1}</th>`).join("")}
-                                    ${Array.from({length:2}, (_,i) => `<th style="width:7.5%;">PSO${i+1}</th>`).join("")}
+                                    <th style="width:8%;">CO</th>
+                                    ${Array.from({length:12}, (_,i) => `<th style="width:6.5%; font-size:8px;">PO${i+1}</th>`).join("")}
+                                    ${Array.from({length:2}, (_,i) => `<th style="width:7%; font-size:8px;">PSO${i+1}</th>`).join("")}
                                 </tr>
                             </thead>
                             <tbody>
@@ -1265,7 +1238,7 @@
                             <tr>${poData}</tr>
                             <tr>${poStat}</tr>
                         </table>
-                        <div style="margin-top:6px;">
+                        <div style="margin-top:4px;">
                             <table>
                                 <tr>
                                     <th style="width:34%;">Metric</th>
@@ -1273,14 +1246,14 @@
                                     <th style="width:33%;">PSO2</th>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight:700;">Attainment (0–3)</td>
-                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[0].attainment.toFixed(2)}</td>
-                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[1].attainment.toFixed(2)}</td>
+                                    <td style="font-weight:800;">Attainment (0–3)</td>
+                                    <td>${lastCOPOResult.psoResults[0].attainment.toFixed(2)}</td>
+                                    <td>${lastCOPOResult.psoResults[1].attainment.toFixed(2)}</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight:700;">Status (Target: ${target.toFixed(2)})</td>
-                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[0].status}</td>
-                                    <td style="font-weight:700;">${lastCOPOResult.psoResults[1].status}</td>
+                                    <td style="font-weight:800;">Status (Target: ${target.toFixed(2)})</td>
+                                    <td style="font-weight:800;">${lastCOPOResult.psoResults[0].status}</td>
+                                    <td style="font-weight:800;">${lastCOPOResult.psoResults[1].status}</td>
                                 </tr>
                             </table>
                         </div>
@@ -1313,21 +1286,25 @@
             pdfContainer.innerHTML = pdfHTML;
             document.body.appendChild(pdfContainer);
 
+            // Ensure document scroll is at top before capturing to prevent coordinate offset
+            window.scrollTo(0, 0);
+
             setTimeout(function() {
                 const element = document.querySelector('#pdfTempContainer .pdf-page');
                 const opt = {
-                    margin: 0,
+                    margin: [8, 8, 8, 8],
                     filename: `CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { type: 'jpeg', quality: 1.0 },
                     html2canvas: {
                         scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        windowWidth: 794,
+                        width: 750,
+                        windowWidth: 750,
                         scrollX: 0,
                         scrollY: 0
                     },
-                    jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
                 html2pdf().set(opt).from(element).save().then(() => {
@@ -1343,7 +1320,6 @@
             }, 300);
         }
 
-        // ---------- INITIAL EXECUTION ----------
         initInputs();
         createMapping();
         readMappingFromUI();
