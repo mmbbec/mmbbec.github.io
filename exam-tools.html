@@ -3,694 +3,916 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examination Tools | Mahadev Biradar</title>
+    <title>Examination & Academic Suite | Dr. Mahadev Biradar</title>
     <style>
         /* ─── RESET & BASE ─── */
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f3f6fa;
-            color: #1f2937;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+            line-height: 1.6;
         }
         .header {
-            background: #1e3a8a;
+            background: linear-gradient(135deg, #0f2b48 0%, #1e3a8a 100%);
             color: white;
             text-align: center;
-            padding: 25px 15px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
         .header h1 {
-            margin: 0 0 8px;
             font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
         .header p {
-            margin: 0;
-            opacity: .9;
+            font-size: 15px;
+            opacity: 0.88;
         }
         .container {
             max-width: 1200px;
             margin: 30px auto;
-            padding: 0 15px;
+            padding: 0 20px;
         }
 
-        /* ─── NAVIGATION ─── */
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #1e3a8a;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .back:hover {
-            text-decoration: underline;
-        }
-        .section-title {
+        /* ─── MAIN MENU GRID ─── */
+        .section-header {
             text-align: center;
-            margin: 20px 0;
+            margin-bottom: 25px;
         }
-        .tools {
+        .section-header h2 {
+            font-size: 24px;
+            color: #0f2b48;
+        }
+        .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
         }
         .tool-card {
             background: white;
-            border-radius: 14px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
-            transition: transform 0.2s;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .tool-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
         }
-        .icon {
-            font-size: 40px;
+        .tool-card .icon {
+            font-size: 36px;
+            margin-bottom: 12px;
         }
-        .tool-card h2 {
-            color: #1e3a8a;
+        .tool-card h3 {
+            font-size: 18px;
+            color: #0f2b48;
+            margin-bottom: 8px;
         }
         .tool-card p {
+            font-size: 14px;
             color: #64748b;
-            line-height: 1.5;
+            margin-bottom: 18px;
+            flex-grow: 1;
         }
-        .tool-button {
+        .tool-btn {
             width: 100%;
-            padding: 12px;
-            border: 0;
+            padding: 10px 16px;
+            border: none;
             border-radius: 8px;
             background: #1e3a8a;
             color: white;
-            font-weight: bold;
-            font-size: 16px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
+            transition: background 0.2s ease;
         }
-        .tool-button:hover {
-            background: #172554;
+        .tool-btn:hover {
+            background: #0f2b48;
         }
 
-        /* ─── TOOL PAGES ─── */
+        /* ─── TOOL PAGES & FORMS ─── */
         .tool-page {
             background: white;
-            padding: 25px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            display: none;
         }
-        .tool-page h2 {
-            color: #1e3a8a;
-            margin-top: 0;
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .tool-header h2 {
+            font-size: 22px;
+            color: #0f2b48;
         }
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 16px;
+        }
+        .form-grid.tri {
+            grid-template-columns: repeat(3, 1fr);
         }
         .form-group {
             display: flex;
             flex-direction: column;
         }
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
         .form-group label {
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 13px;
             margin-bottom: 6px;
+            color: #334155;
         }
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             padding: 10px 12px;
             border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 14px;
             font-family: inherit;
+            color: #1e293b;
         }
         .form-group textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 90px;
         }
-        .full {
-            grid-column: 1 / -1;
+        .range-helper {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 6px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .range-helper span {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .range-helper input {
+            padding: 6px 10px;
+            font-size: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 130px;
+        }
+        .range-helper button {
+            padding: 6px 14px;
+            font-size: 12px;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
+        /* ─── BUTTON ACTIONS ─── */
         .actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 20px;
-        }
-        .actions button {
-            padding: 12px 20px;
-            border: 0;
-            border-radius: 7px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .primary {
-            background: #1e3a8a;
-            color: white;
-        }
-        .primary:hover {
-            background: #172554;
-        }
-        .success {
-            background: #16a34a;
-            color: white;
-        }
-        .success:hover {
-            background: #15803d;
-        }
-        .danger {
-            background: #dc2626;
-            color: white;
-        }
-        .danger:hover {
-            background: #b91c1c;
-        }
-        .secondary {
-            background: #64748b;
-            color: white;
-        }
-        .secondary:hover {
-            background: #475569;
-        }
-
-        /* ─── RESULTS ─── */
-        .result {
             margin-top: 25px;
         }
-        .summary {
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background: #1e3a8a; color: white; }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-secondary { background: #64748b; color: white; }
+
+        /* ─── OUTPUT / REPORT STYLES ─── */
+        .result-container {
+            margin-top: 30px;
+        }
+        .summary-banner {
             background: #eff6ff;
-            border-left: 5px solid #1e3a8a;
-            padding: 15px;
+            border-left: 4px solid #1e3a8a;
+            padding: 15px 20px;
+            border-radius: 4px;
             margin-bottom: 20px;
-            line-height: 1.7;
+            font-size: 14px;
         }
-        .summary strong {
-            display: inline-block;
-            min-width: 140px;
+        .summary-banner strong {
+            color: #0f2b48;
+            margin-right: 6px;
         }
-        .room {
-            margin-bottom: 30px;
+        .room-block {
             border: 1px solid #cbd5e1;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 24px;
             background: white;
-            break-inside: avoid;
+            page-break-inside: avoid;
         }
-        .room-title {
+        .room-title-bar {
             background: #1e3a8a;
             color: white;
-            padding: 12px 15px;
-            font-weight: bold;
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 15px;
             display: flex;
             justify-content: space-between;
         }
-        .seat-grid {
+        .bench-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 10px;
             padding: 15px;
         }
-        .seat {
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            padding: 12px;
-            text-align: center;
+        .bench-card {
             background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
         }
-        .seat span {
-            display: block;
-            font-size: 12px;
+        .bench-card .bench-num {
+            font-size: 11px;
             color: #64748b;
-            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
-        .seat strong {
-            font-size: 15px;
-            word-break: break-word;
+        .bench-card .usn-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f2b48;
         }
 
-        .duty-table {
+        /* ─── REPORT TABLES ─── */
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin-top: 15px;
+            font-size: 14px;
         }
-        .duty-table th,
-        .duty-table td {
+        .data-table th,
+        .data-table td {
             border: 1px solid #cbd5e1;
-            padding: 10px;
+            padding: 10px 12px;
             text-align: left;
         }
-        .duty-table th {
+        .data-table th {
             background: #1e3a8a;
             color: white;
+            font-weight: 600;
         }
-        .duty-table tr:nth-child(even) {
-            background: #f8fafc;
+        .data-table tr:nth-child(even) { background: #f8fafc; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
         }
+        .badge-success { background: #dcfce7; color: #15803d; }
+        .badge-warning { background: #fef9c3; color: #a16207; }
+        .badge-danger { background: #fee2e2; color: #b91c1c; }
 
-        .workload-grid {
+        /* ─── BUNDLE SLIP FORMAT ─── */
+        .bundle-slip {
+            border: 2px solid #0f2b48;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            page-break-inside: avoid;
+        }
+        .bundle-slip h3 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+            text-decoration: underline;
+            color: #0f2b48;
+        }
+        .slip-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .workload-card {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        .workload-card strong {
-            font-size: 20px;
-            display: block;
-            color: #1e3a8a;
-        }
-
-        .empty {
-            padding: 25px;
-            text-align: center;
-            color: #64748b;
-        }
-
-        .footer {
-            text-align: center;
-            margin: 40px 0 20px;
-            color: #64748b;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
             font-size: 14px;
         }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 600px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            .full {
-                grid-column: auto;
-            }
-            .header h1 {
-                font-size: 23px;
-            }
-            .tool-page {
-                padding: 18px;
-            }
-            .seat-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .footer {
+            text-align: center;
+            margin: 50px 0 20px;
+            font-size: 13px;
+            color: #64748b;
         }
 
-        /* ─── PRINT / PDF ─── */
+        /* ─── PRINT OPTIMIZATIONS ─── */
         @media print {
-            body {
-                background: white;
-            }
-            .header,
-            .back,
-            .actions,
-            .no-print,
-            .footer {
-                display: none !important;
-            }
-            .container {
-                max-width: none;
-                margin: 0;
-                padding: 0;
-            }
-            .tool-page {
-                box-shadow: none;
-                padding: 10px 0;
-            }
-            .room {
-                break-inside: avoid;
-            }
-            .tool-page h2 {
-                font-size: 24px;
-            }
-            .summary {
-                background: #f0f4ff;
-            }
-            .duty-table th {
-                background: #1e3a8a !important;
-                color: white !important;
-            }
+            body { background: white; font-size: 12pt; }
+            .header, .no-print, .actions, .range-helper, .footer { display: none !important; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .tool-page { border: none; box-shadow: none; padding: 0; display: block !important; }
+            .room-title-bar { background: #1e3a8a !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .data-table th { background: #1e3a8a !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .bench-card { border: 1px solid #94a3b8; }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid, .form-grid.tri { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <h1>📝 Examination Tools</h1>
-        <p>Free Utilities for Engineering College Faculty</p>
+        <h1>📝 Academic &amp; Examination Portal</h1>
+        <p>Faculty &amp; Exam Coordination Utilities | Dr. Mahadev Biradar</p>
     </header>
 
     <div class="container">
 
-        <!-- ====== MAIN MENU ====== -->
-        <div id="mainMenu">
-            <h2 class="section-title">Examination Management Tools</h2>
-            <div class="tools">
+        <!-- ======================================================== -->
+        <!-- MAIN DASHBOARD MENU -->
+        <!-- ======================================================== -->
+        <div id="mainDashboard">
+            <div class="section-header">
+                <h2>Examination &amp; Evaluation Modules</h2>
+            </div>
+            <div class="tools-grid">
+                <!-- Tool 1 -->
                 <div class="tool-card">
-                    <div class="icon">🪑</div>
-                    <h2>Seating Arrangement</h2>
-                    <p>Room‑wise seating with register numbers (alphanumeric supported) and bench grouping.</p>
-                    <button class="tool-button" onclick="showTool('seating')">Open Tool</button>
+                    <div>
+                        <div class="icon">🪑</div>
+                        <h3>Seating Arrangement</h3>
+                        <p>Generate room-wise seating charts with bench allocation and USN range generation.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('seatingPage')">Launch Tool</button>
                 </div>
+
+                <!-- Tool 2 -->
                 <div class="tool-card">
-                    <div class="icon">👮</div>
-                    <h2>Invigilation Duty</h2>
-                    <p>Assign faculty to exam slots automatically.</p>
-                    <button class="tool-button" onclick="showTool('invigilation')">Open Tool</button>
+                    <div>
+                        <div class="icon">👮</div>
+                        <h3>Invigilation Roster</h3>
+                        <p>Balanced, fair round-robin faculty assignment across exam dates and morning/afternoon sessions.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('invigilationPage')">Launch Tool</button>
                 </div>
+
+                <!-- Tool 3 -->
                 <div class="tool-card">
-                    <div class="icon">📊</div>
-                    <h2>Exam Workload</h2>
-                    <p>Calculate total duty hours per faculty.</p>
-                    <button class="tool-button" onclick="showTool('workload')">Open Tool</button>
+                    <div>
+                        <div class="icon">💯</div>
+                        <h3>CIE / Internal Marks</h3>
+                        <p>Calculate normalized Internal Assessment marks out of 50 from 3 tests and assignments.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('ciePage')">Launch Tool</button>
                 </div>
+
+                <!-- Tool 4 -->
                 <div class="tool-card">
-                    <div class="icon">🏫</div>
-                    <h2>Room Allocation</h2>
-                    <p>Allocate students (alphanumeric list) to rooms by capacity.</p>
-                    <button class="tool-button" onclick="showTool('roomAlloc')">Open Tool</button>
+                    <div>
+                        <div class="icon">📈</div>
+                        <h3>SGPA &amp; CGPA Calculator</h3>
+                        <p>Calculate semester SGPA and cumulative CGPA based on VTU credit grading structure.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('gpaPage')">Launch Tool</button>
+                </div>
+
+                <!-- Tool 5 -->
+                <div class="tool-card">
+                    <div>
+                        <div class="icon">📋</div>
+                        <h3>Attendance Eligibility</h3>
+                        <p>Evaluate exam eligibility, percentage, condonation lists (75%–85%), and detentions.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('attendancePage')">Launch Tool</button>
+                </div>
+
+                <!-- Tool 6 -->
+                <div class="tool-card">
+                    <div>
+                        <div class="icon">📦</div>
+                        <h3>Bundle &amp; Dispatch Slips</h3>
+                        <p>Generate printable answer booklet bundle stickers and room dispatch records for the control room.</p>
+                    </div>
+                    <button class="tool-btn" onclick="openTool('bundlePage')">Launch Tool</button>
                 </div>
             </div>
         </div>
 
-        <!-- ========================================================== -->
-        <!-- TOOL 1: SEATING ARRANGEMENT                                 -->
-        <!-- ========================================================== -->
-        <div id="seatingPage" class="tool-page" style="display:none;">
-            <h2>🪑 Seating Arrangement</h2>
-            <p>Paste your register numbers (one per line) – supports alphanumeric like <strong>2BA26CS001</strong>.</p>
-            <div id="seatingSetup">
-                <div class="form-grid">
-                    <div class="form-group"><label>Examination Name</label><input type="text" id="seatExamName" placeholder="e.g. SEE Examination"></div>
-                    <div class="form-group"><label>Exam Date</label><input type="date" id="seatExamDate"></div>
-                    <div class="form-group full"><label>Register Numbers (one per line)</label><textarea id="seatRegList" rows="6" placeholder="2BA26CS001&#10;2BA26CS002&#10;2BA26CS003&#10;2BA26CS004&#10;2BA26CS005"></textarea></div>
-                    <div class="form-group"><label>Number of Rooms</label><input type="number" id="seatRoomCount" min="1" value="2"></div>
-                    <div class="form-group"><label>Students per Room (capacity)</label><input type="number" id="seatRoomCapacity" min="1" value="3"></div>
-                    <div class="form-group"><label>Students per Bench</label><input type="number" id="seatStudentsPerBench" min="1" max="4" value="2"></div>
-                    <div class="form-group"><label>Room Starting Number</label><input type="number" id="seatRoomStart" value="101"></div>
-                </div>
-                <div class="actions no-print">
-                    <button class="primary" onclick="generateSeating()">Generate Seating</button>
-                    <button class="danger" onclick="resetSeating()">Reset</button>
-                    <button class="success" onclick="window.print()">📄 Download PDF</button>
-                    <button class="secondary" onclick="showMenu()">← Back</button>
-                </div>
+        <!-- ======================================================== -->
+        <!-- MODULE 1: SEATING ARRANGEMENT -->
+        <!-- ======================================================== -->
+        <div id="seatingPage" class="tool-page">
+            <div class="tool-header">
+                <h2>🪑 Seating Arrangement Generator</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
             </div>
-            <div id="seatingResult" class="result">
-                <div class="empty">Enter details and click <strong>Generate Seating</strong>.</div>
+            
+            <div class="form-grid">
+                <div class="form-group"><label>Exam Name / Course Code</label><input type="text" id="seatExam" placeholder="e.g. 21MAT31 - Transform Calculus"></div>
+                <div class="form-group"><label>Exam Date &amp; Session</label><input type="text" id="seatDate" placeholder="e.g. 28-Aug-2026 (Morning: 9:30 AM - 12:30 PM)"></div>
+                
+                <div class="form-group full">
+                    <label>Student USN / Register Numbers (One per line or generate range below)</label>
+                    <textarea id="seatUsnList" placeholder="2BA26CS001&#10;2BA26CS002&#10;2BA26CS003"></textarea>
+                    
+                    <div class="range-helper no-print">
+                        <span>⚡ Fast USN Generator:</span>
+                        <input type="text" id="usnPrefix" placeholder="Prefix (e.g. 2BA26CS)" value="2BA26CS">
+                        <input type="number" id="usnStart" placeholder="From (1)" value="1" style="width: 70px;">
+                        <input type="number" id="usnEnd" placeholder="To (60)" value="60" style="width: 70px;">
+                        <button type="button" onclick="generateUsnRange('seatUsnList')">Populate List</button>
+                    </div>
+                </div>
+
+                <div class="form-group"><label>Room Start Number</label><input type="number" id="seatRoomStart" value="101"></div>
+                <div class="form-group"><label>Students Per Room</label><input type="number" id="seatRoomCap" value="30"></div>
+                <div class="form-group"><label>Students Per Bench</label><input type="number" id="seatBenchCap" value="2" min="1" max="3"></div>
+                <div class="form-group"><label>Total Rooms Available</label><input type="number" id="seatMaxRooms" value="5"></div>
+            </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="processSeating()">Generate Seating Plan</button>
+                <button class="btn btn-success" onclick="window.print()">🖨️ Print / Save PDF</button>
+                <button class="btn btn-danger" onclick="clearInput('seatUsnList', 'seatResult')">Clear</button>
+            </div>
+
+            <div id="seatResult" class="result-container">
+                <div class="empty-state">Enter configurations and click <strong>Generate Seating Plan</strong>.</div>
             </div>
         </div>
 
-        <!-- ========================================================== -->
-        <!-- TOOL 2: INVIGILATION DUTY                                  -->
-        <!-- ========================================================== -->
-        <div id="invigilationPage" class="tool-page" style="display:none;">
-            <h2>👮 Invigilation Duty</h2>
-            <p>Enter faculty names and exam slots to generate a duty roster.</p>
-            <div id="invigilationSetup">
-                <div class="form-grid">
-                    <div class="form-group full"><label>Faculty Names (one per line)</label><textarea id="invFacultyList" rows="4" placeholder="Dr. A. Sharma&#10;Prof. B. Kumar&#10;Dr. C. Patel"></textarea></div>
-                    <div class="form-group full"><label>Exam Slots (one per line, e.g. Day 1 Morning, Day 1 Afternoon)</label><textarea id="invSlotList" rows="4" placeholder="Day 1 : 9 AM - 12 PM&#10;Day 1 : 2 PM - 5 PM&#10;Day 2 : 9 AM - 12 PM"></textarea></div>
+        <!-- ======================================================== -->
+        <!-- MODULE 2: INVIGILATION ROSTER -->
+        <!-- ======================================================== -->
+        <div id="invigilationPage" class="tool-page">
+            <div class="tool-header">
+                <h2>👮 Invigilation Duty Roster</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Faculty Members List (One per line)</label>
+                    <textarea id="invFaculty" rows="4" placeholder="Dr. Mahadev Biradar&#10;Prof. A. S. Patil&#10;Dr. V. K. Joshi&#10;Prof. S. R. Kulkarni"></textarea>
                 </div>
-                <div class="actions no-print">
-                    <button class="primary" onclick="generateInvigilation()">Generate Duty</button>
-                    <button class="success" onclick="window.print()">📄 Download PDF</button>
-                    <button class="secondary" onclick="showMenu()">← Back</button>
+                <div class="form-group full">
+                    <label>Exam Sessions / Rooms (One per line)</label>
+                    <textarea id="invSessions" rows="4" placeholder="28-Aug-2026 FN (Room 101)&#10;28-Aug-2026 FN (Room 102)&#10;28-Aug-2026 AN (Room 101)&#10;29-Aug-2026 FN (Room 101)"></textarea>
                 </div>
             </div>
-            <div id="invigilationResult" class="result">
-                <div class="empty">Enter faculty and slots, then click <strong>Generate Duty</strong>.</div>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="processInvigilation()">Generate Duty Roster</button>
+                <button class="btn btn-success" onclick="window.print()">🖨️ Print Roster</button>
+            </div>
+
+            <div id="invResult" class="result-container">
+                <div class="empty-state">Enter faculty names and exam sessions to distribute duties.</div>
             </div>
         </div>
 
-        <!-- ========================================================== -->
-        <!-- TOOL 3: EXAM WORKLOAD                                      -->
-        <!-- ========================================================== -->
-        <div id="workloadPage" class="tool-page" style="display:none;">
-            <h2>📊 Exam Workload</h2>
-            <p>Paste duty assignments (faculty name, slot duration in hours) to calculate total load.</p>
-            <div id="workloadSetup">
-                <div class="form-grid">
-                    <div class="form-group full"><label>Duty Entries (Faculty, Hours per slot – one per line)</label><textarea id="workloadEntries" rows="6" placeholder="Dr. A. Sharma, 3&#10;Prof. B. Kumar, 3&#10;Dr. A. Sharma, 3&#10;Dr. C. Patel, 3"></textarea></div>
-                </div>
-                <div class="actions no-print">
-                    <button class="primary" onclick="generateWorkload()">Calculate Workload</button>
-                    <button class="success" onclick="window.print()">📄 Download PDF</button>
-                    <button class="secondary" onclick="showMenu()">← Back</button>
-                </div>
+        <!-- ======================================================== -->
+        <!-- MODULE 3: CIE / INTERNAL CALCULATOR -->
+        <!-- ======================================================== -->
+        <div id="ciePage" class="tool-page">
+            <div class="tool-header">
+                <h2>💯 Continuous Internal Evaluation (CIE) Calculator</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
             </div>
-            <div id="workloadResult" class="result">
-                <div class="empty">Enter duty entries and click <strong>Calculate Workload</strong>.</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Calculates internal marks out of 50 (Best 2 of 3 IA Tests scaled to 30 + Assignment / Quiz scaled to 20).</p>
+            
+            <div class="form-grid tri">
+                <div class="form-group"><label>IA Test 1 (Out of 50)</label><input type="number" id="ia1" placeholder="42" max="50" min="0"></div>
+                <div class="form-group"><label>IA Test 2 (Out of 50)</label><input type="number" id="ia2" placeholder="45" max="50" min="0"></div>
+                <div class="form-group"><label>IA Test 3 (Out of 50)</label><input type="number" id="ia3" placeholder="38" max="50" min="0"></div>
+                <div class="form-group"><label>Assignment 1 (Out of 10)</label><input type="number" id="ass1" placeholder="10" max="10" min="0"></div>
+                <div class="form-group"><label>Assignment 2 (Out of 10)</label><input type="number" id="ass2" placeholder="9" max="10" min="0"></div>
+                <div class="form-group"><label>Quiz / Activity (Out of 10)</label><input type="number" id="quiz" placeholder="10" max="10" min="0"></div>
             </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="calculateCIE()">Calculate Final CIE</button>
+            </div>
+
+            <div id="cieResult" class="result-container"></div>
         </div>
 
-        <!-- ========================================================== -->
-        <!-- TOOL 4: ROOM ALLOCATION                                    -->
-        <!-- ========================================================== -->
-        <div id="roomAllocPage" class="tool-page" style="display:none;">
-            <h2>🏫 Room Allocation</h2>
-            <p>Allocate students (alphanumeric) to rooms by capacity – no bench grouping.</p>
-            <div id="roomAllocSetup">
-                <div class="form-grid">
-                    <div class="form-group full"><label>Register Numbers (one per line)</label><textarea id="allocRegList" rows="6" placeholder="2BA26CS001&#10;2BA26CS002&#10;2BA26CS003&#10;2BA26CS004"></textarea></div>
-                    <div class="form-group"><label>Number of Rooms</label><input type="number" id="allocRoomCount" min="1" value="2"></div>
-                    <div class="form-group"><label>Students per Room (capacity)</label><input type="number" id="allocRoomCapacity" min="1" value="2"></div>
-                    <div class="form-group"><label>Room Starting Number</label><input type="number" id="allocRoomStart" value="101"></div>
-                </div>
-                <div class="actions no-print">
-                    <button class="primary" onclick="generateAllocation()">Allocate Rooms</button>
-                    <button class="success" onclick="window.print()">📄 Download PDF</button>
-                    <button class="secondary" onclick="showMenu()">← Back</button>
-                </div>
+        <!-- ======================================================== -->
+        <!-- MODULE 4: SGPA / CGPA CALCULATOR -->
+        <!-- ======================================================== -->
+        <div id="gpaPage" class="tool-page">
+            <div class="tool-header">
+                <h2>📈 VTU SGPA Calculator</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
             </div>
-            <div id="roomAllocResult" class="result">
-                <div class="empty">Enter details and click <strong>Allocate Rooms</strong>.</div>
+            
+            <table class="data-table" id="gpaTable">
+                <thead>
+                    <tr>
+                        <th>Subject / Course</th>
+                        <th style="width: 130px;">Credits</th>
+                        <th style="width: 180px;">Grade Secured</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Course 1</td><td><input type="number" class="cred-input" value="4" min="1" max="5" style="width: 100%;"></td><td><select class="grade-input" style="width: 100%;"><option value="10">O (90-100)</option><option value="9">A+ (80-89)</option><option value="8">A (70-79)</option><option value="7">B+ (60-69)</option><option value="6">B (55-59)</option><option value="0">F (&lt;40)</option></select></td></tr>
+                    <tr><td>Course 2</td><td><input type="number" class="cred-input" value="4" min="1" max="5" style="width: 100%;"></td><td><select class="grade-input" style="width: 100%;"><option value="10">O (90-100)</option><option value="9">A+ (80-89)</option><option value="8">A (70-79)</option><option value="7">B+ (60-69)</option><option value="6">B (55-59)</option><option value="0">F (&lt;40)</option></select></td></tr>
+                    <tr><td>Course 3</td><td><input type="number" class="cred-input" value="3" min="1" max="5" style="width: 100%;"></td><td><select class="grade-input" style="width: 100%;"><option value="10">O (90-100)</option><option value="9" selected>A+ (80-89)</option><option value="8">A (70-79)</option><option value="7">B+ (60-69)</option><option value="6">B (55-59)</option><option value="0">F (&lt;40)</option></select></td></tr>
+                    <tr><td>Course 4</td><td><input type="number" class="cred-input" value="3" min="1" max="5" style="width: 100%;"></td><td><select class="grade-input" style="width: 100%;"><option value="10">O (90-100)</option><option value="9">A+ (80-89)</option><option value="8" selected>A (70-79)</option><option value="7">B+ (60-69)</option><option value="6">B (55-59)</option><option value="0">F (&lt;40)</option></select></td></tr>
+                    <tr><td>Course 5 (Lab)</td><td><input type="number" class="cred-input" value="1.5" step="0.5" style="width: 100%;"></td><td><select class="grade-input" style="width: 100%;"><option value="10" selected>O (90-100)</option><option value="9">A+ (80-89)</option><option value="8">A (70-79)</option></select></td></tr>
+                </tbody>
+            </table>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="computeSGPA()">Compute SGPA</button>
+                <button class="btn btn-secondary" onclick="addGpaRow()">+ Add Course</button>
             </div>
+
+            <div id="gpaResult" class="result-container"></div>
         </div>
 
-        <div class="footer">© 2026 Mahadev Biradar | Examination Tools</div>
+        <!-- ======================================================== -->
+        <!-- MODULE 5: ATTENDANCE ELIGIBILITY -->
+        <!-- ======================================================== -->
+        <div id="attendancePage" class="tool-page">
+            <div class="tool-header">
+                <h2>📋 Attendance Eligibility &amp; Condonation Checker</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
+            </div>
+
+            <div class="form-grid tri">
+                <div class="form-group"><label>Total Classes Conducted</label><input type="number" id="attTotal" placeholder="e.g. 50"></div>
+                <div class="form-group"><label>Classes Attended</label><input type="number" id="attAttended" placeholder="e.g. 41"></div>
+                <div class="form-group"><label>Student Name / USN</label><input type="text" id="attUsn" placeholder="e.g. 2BA26CS001"></div>
+            </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="checkAttendance()">Check Status</button>
+            </div>
+
+            <div id="attResult" class="result-container"></div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- MODULE 6: BUNDLE & DISPATCH SLIP GENERATOR -->
+        <!-- ======================================================== -->
+        <div id="bundlePage" class="tool-page">
+            <div class="tool-header">
+                <h2>📦 Control Room Bundle &amp; Dispatch Slips</h2>
+                <button class="btn btn-secondary no-print" onclick="backToMenu()">← Back to Menu</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group"><label>College / Centre</label><input type="text" id="bunCentre" value="Basaveshwar Engineering College (Autonomous), Bagalkote"></div>
+                <div class="form-group"><label>Course Title &amp; Code</label><input type="text" id="bunCourse" placeholder="21CS301 - Data Structures"></div>
+                <div class="form-group"><label>Date of Examination</label><input type="text" id="bunDate" placeholder="28-Aug-2026"></div>
+                <div class="form-group"><label>Room / Hall Number</label><input type="text" id="bunRoom" placeholder="Room 101"></div>
+                <div class="form-group"><label>Total Booklets Present</label><input type="number" id="bunPresent" placeholder="28"></div>
+                <div class="form-group"><label>Absentees Count</label><input type="number" id="bunAbsent" placeholder="2"></div>
+                <div class="form-group full"><label>Absentee USN Numbers</label><input type="text" id="bunAbsentList" placeholder="2BA26CS012, 2BA26CS045"></div>
+            </div>
+
+            <div class="actions no-print">
+                <button class="btn btn-primary" onclick="generateBundleSlip()">Generate Bundle Slip</button>
+                <button class="btn btn-success" onclick="window.print()">🖨️ Print Slip</button>
+            </div>
+
+            <div id="bundleResult" class="result-container"></div>
+        </div>
+
+        <div class="footer">
+            © 2026 Dr. Mahadev Mallikarjun Biradar | Examination Support Suite
+        </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!-- LOGIC & SCRIPTS -->
+    <!-- ======================================================== -->
     <script>
-        // ================================================================
-        //  NAVIGATION
-        // ================================================================
-        function showTool(tool) {
-            document.getElementById('mainMenu').style.display = 'none';
-            const pages = ['seatingPage', 'invigilationPage', 'workloadPage', 'roomAllocPage'];
-            pages.forEach(id => document.getElementById(id).style.display = 'none');
-            document.getElementById(tool + 'Page').style.display = 'block';
+        // NAVIGATION
+        function openTool(pageId) {
+            document.getElementById('mainDashboard').style.display = 'none';
+            document.querySelectorAll('.tool-page').forEach(page => page.style.display = 'none');
+            document.getElementById(pageId).style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function showMenu() {
-            document.querySelectorAll('.tool-page').forEach(el => el.style.display = 'none');
-            document.getElementById('mainMenu').style.display = 'block';
+        function backToMenu() {
+            document.querySelectorAll('.tool-page').forEach(page => page.style.display = 'none');
+            document.getElementById('mainDashboard').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ================================================================
-        //  HELPERS
-        // ================================================================
-        function getRegList(textareaId) {
-            const raw = document.getElementById(textareaId).value;
-            return raw.split('\n')
-                .map(s => s.trim())
-                .filter(s => s.length > 0);
+        function clearInput(textId, resId) {
+            document.getElementById(textId).value = '';
+            document.getElementById(resId).innerHTML = '<div class="empty-state">Cleared. Enter details to generate anew.</div>';
         }
 
-        function getVal(id) { return parseFloat(document.getElementById(id).value); }
-        function getInt(id) { return parseInt(document.getElementById(id).value); }
+        // FAST USN RANGE GENERATOR
+        function generateUsnRange(targetTextareaId) {
+            const prefix = document.getElementById('usnPrefix').value.trim();
+            const start = parseInt(document.getElementById('usnStart').value);
+            const end = parseInt(document.getElementById('usnEnd').value);
 
-        // ================================================================
-        //  TOOL 1: SEATING ARRANGEMENT (alphanumeric supported)
-        // ================================================================
-        function generateSeating() {
-            const examName = document.getElementById('seatExamName').value.trim() || 'Examination';
-            const examDate = document.getElementById('seatExamDate').value || 'Not specified';
-            const regs = getRegList('seatRegList');
-            const roomCount = getInt('seatRoomCount');
-            const roomCapacity = getInt('seatRoomCapacity');
-            const studentsPerBench = getInt('seatStudentsPerBench');
-            const roomStart = getInt('seatRoomStart');
-
-            if (regs.length === 0) { alert('Please enter register numbers.'); return; }
-            if (isNaN(roomCount) || roomCount < 1) { alert('Enter valid number of rooms.'); return; }
-            if (isNaN(roomCapacity) || roomCapacity < 1) { alert('Enter valid room capacity.'); return; }
-            if (isNaN(studentsPerBench) || studentsPerBench < 1 || studentsPerBench > 4) { alert('Students per bench must be 1–4.'); return; }
-            if (regs.length > roomCount * roomCapacity) {
-                alert(`You have ${regs.length} students, but total capacity is only ${roomCount * roomCapacity}.`);
+            if (isNaN(start) || isNaN(end) || start > end) {
+                alert('Please enter a valid start and end number range.');
                 return;
             }
 
-            const resultDiv = document.getElementById('seatingResult');
+            let list = [];
+            for (let i = start; i <= end; i++) {
+                const pad = i < 10 ? '00' + i : (i < 100 ? '0' + i : i);
+                list.push(`${prefix}${pad}`);
+            }
+            document.getElementById(targetTextareaId).value = list.join('\n');
+        }
+
+        // TOOL 1: SEATING PLAN
+        function processSeating() {
+            const exam = document.getElementById('seatExam').value.trim() || 'Semester End Examination';
+            const date = document.getElementById('seatDate').value.trim() || 'Current Session';
+            const rawUsn = document.getElementById('seatUsnList').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            const startRoom = parseInt(document.getElementById('seatRoomStart').value) || 101;
+            const roomCap = parseInt(document.getElementById('seatRoomCap').value) || 30;
+            const benchCap = parseInt(document.getElementById('seatBenchCap').value) || 2;
+            const maxRooms = parseInt(document.getElementById('seatMaxRooms').value) || 10;
+
+            if (rawUsn.length === 0) {
+                alert('Please provide student USNs or generate a range.');
+                return;
+            }
+
             let html = `
-                <div class="summary">
-                    <strong>Examination:</strong> ${examName}<br>
-                    <strong>Date:</strong> ${examDate}<br>
-                    <strong>Total Students:</strong> ${regs.length}<br>
-                    <strong>Rooms:</strong> ${roomCount}<br>
-                    <strong>Capacity per Room:</strong> ${roomCapacity}<br>
-                    <strong>Students per Bench:</strong> ${studentsPerBench}
+                <div class="summary-banner">
+                    <strong>Exam:</strong> ${exam} &nbsp;|&nbsp; 
+                    <strong>Date/Session:</strong> ${date} &nbsp;|&nbsp; 
+                    <strong>Total Registered:</strong> ${rawUsn.length} &nbsp;|&nbsp;
+                    <strong>Bench Arrangement:</strong> ${benchCap} Student(s) / Bench
                 </div>
             `;
 
-            let idx = 0;
-            for (let r = 1; r <= roomCount; r++) {
-                if (idx >= regs.length) break;
-                const roomNumber = roomStart + r - 1;
+            let currentUsnIdx = 0;
+            let roomCount = 0;
+
+            while (currentUsnIdx < rawUsn.length && roomCount < maxRooms) {
+                const roomNumber = startRoom + roomCount;
                 const roomStudents = [];
-                for (let i = 0; i < roomCapacity && idx < regs.length; i++) {
-                    roomStudents.push(regs[idx++]);
+
+                for (let i = 0; i < roomCap && currentUsnIdx < rawUsn.length; i++) {
+                    roomStudents.push(rawUsn[currentUsnIdx++]);
                 }
 
-                html += `<div class="room"><div class="room-title">Room ${roomNumber} — ${roomStudents.length} Students</div><div class="seat-grid">`;
-                for (let i = 0; i < roomStudents.length; i += studentsPerBench) {
-                    const bench = roomStudents.slice(i, i + studentsPerBench);
-                    html += `<div class="seat"><span>Bench ${Math.floor(i / studentsPerBench) + 1}</span><strong>${bench.join(' &nbsp;|&nbsp; ')}</strong></div>`;
+                html += `
+                    <div class="room-block">
+                        <div class="room-title-bar">
+                            <span>🏛️ Room / Hall ${roomNumber}</span>
+                            <span>Count: ${roomStudents.length} Students</span>
+                        </div>
+                        <div class="bench-grid">
+                `;
+
+                for (let b = 0; b < roomStudents.length; b += benchCap) {
+                    const benchGroup = roomStudents.slice(b, b + benchCap);
+                    const benchNum = Math.floor(b / benchCap) + 1;
+                    html += `
+                        <div class="bench-card">
+                            <div class="bench-num">Bench ${benchNum}</div>
+                            <div class="usn-val">${benchGroup.join('<br>')}</div>
+                        </div>
+                    `;
                 }
+
                 html += `</div></div>`;
+                roomCount++;
             }
 
-            resultDiv.innerHTML = html;
+            if (currentUsnIdx < rawUsn.length) {
+                html += `<p style="color:#dc2626; font-weight:bold; margin-top:10px;">⚠️ Note: ${rawUsn.length - currentUsnIdx} students could not be accommodated. Increase room count or capacity.</p>`;
+            }
+
+            document.getElementById('seatResult').innerHTML = html;
         }
 
-        function resetSeating() {
-            document.getElementById('seatExamName').value = '';
-            document.getElementById('seatExamDate').value = '';
-            document.getElementById('seatRegList').value = '';
-            document.getElementById('seatRoomCount').value = '2';
-            document.getElementById('seatRoomCapacity').value = '3';
-            document.getElementById('seatStudentsPerBench').value = '2';
-            document.getElementById('seatRoomStart').value = '101';
-            document.getElementById('seatingResult').innerHTML =
-                `<div class="empty">Enter details and click <strong>Generate Seating</strong>.</div>`;
-        }
+        // TOOL 2: INVIGILATION
+        function processInvigilation() {
+            const faculty = document.getElementById('invFaculty').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            const sessions = document.getElementById('invSessions').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
 
-        // ================================================================
-        //  TOOL 2: INVIGILATION DUTY
-        // ================================================================
-        function generateInvigilation() {
-            const faculty = getRegList('invFacultyList');
-            const slots = getRegList('invSlotList');
-            if (faculty.length === 0 || slots.length === 0) {
-                alert('Please enter both faculty names and exam slots.');
+            if (faculty.length === 0 || sessions.length === 0) {
+                alert('Please enter both faculty members and examination sessions.');
                 return;
             }
 
-            const resultDiv = document.getElementById('invigilationResult');
-            let html = `<div class="summary"><strong>Invigilation Duty Roster</strong><br>Total Faculty: ${faculty.length} &nbsp;|&nbsp; Total Slots: ${slots.length}</div>`;
-            html += `<table class="duty-table"><thead><tr><th>#</th><th>Faculty Name</th><th>Assigned Slot</th></tr></thead><tbody>`;
+            let html = `
+                <div class="summary-banner">
+                    <strong>Total Sessions/Halls:</strong> ${sessions.length} &nbsp;|&nbsp; 
+                    <strong>Total Faculty:</strong> ${faculty.length}
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Sl No</th>
+                            <th>Exam Session / Room</th>
+                            <th>Assigned Invigilator</th>
+                            <th>Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-            let fIdx = 0;
-            for (let i = 0; i < slots.length; i++) {
-                const fac = faculty[fIdx % faculty.length];
-                html += `<tr><td>${i+1}</td><td>${fac}</td><td>${slots[i]}</td></tr>`;
-                fIdx++;
+            for (let i = 0; i < sessions.length; i++) {
+                const assigned = faculty[i % faculty.length];
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${sessions[i]}</strong></td>
+                        <td>${assigned}</td>
+                        <td style="width: 150px;"></td>
+                    </tr>
+                `;
             }
+
             html += `</tbody></table>`;
-            html += `<p style="font-size:14px;color:#64748b;"><em>Faculty are assigned in round‑robin order.</em></p>`;
-            resultDiv.innerHTML = html;
+            document.getElementById('invResult').innerHTML = html;
         }
 
-        // ================================================================
-        //  TOOL 3: EXAM WORKLOAD
-        // ================================================================
-        function generateWorkload() {
-            const entries = document.getElementById('workloadEntries').value.split('\n')
-                .map(s => s.trim()).filter(s => s.length > 0);
-            if (entries.length === 0) {
-                alert('Please enter duty entries (Faculty, Hours).');
-                return;
-            }
+        // TOOL 3: CIE CALCULATION
+        function calculateCIE() {
+            const t1 = parseFloat(document.getElementById('ia1').value) || 0;
+            const t2 = parseFloat(document.getElementById('ia2').value) || 0;
+            const t3 = parseFloat(document.getElementById('ia3').value) || 0;
+            const a1 = parseFloat(document.getElementById('ass1').value) || 0;
+            const a2 = parseFloat(document.getElementById('ass2').value) || 0;
+            const q = parseFloat(document.getElementById('quiz').value) || 0;
 
-            const workload = {};
-            let totalHours = 0;
-            for (const line of entries) {
-                const parts = line.split(',').map(s => s.trim());
-                if (parts.length < 2) continue;
-                const name = parts[0];
-                const hours = parseFloat(parts[1]);
-                if (isNaN(hours) || hours <= 0) continue;
-                workload[name] = (workload[name] || 0) + hours;
-                totalHours += hours;
-            }
+            const tests = [t1, t2, t3].sort((a, b) => b - a);
+            const bestTwoAvg = (tests[0] + tests[1]) / 2; // Average of top two (out of 50)
+            const scaledIa = (bestTwoAvg / 50) * 30; // Scaled to 30
 
-            const resultDiv = document.getElementById('workloadResult');
-            if (Object.keys(workload).length === 0) {
-                resultDiv.innerHTML = `<div class="empty">No valid entries found. Use format: <strong>Faculty Name, Hours</strong></div>`;
-                return;
-            }
+            const totalActivity = a1 + a2 + q; // Max 30
+            const scaledActivity = (totalActivity / 30) * 20; // Scaled to 20
 
-            let html = `<div class="summary"><strong>Exam Workload Summary</strong><br>Total Duty Hours: ${totalHours.toFixed(1)}</div><div class="workload-grid">`;
-            for (const [name, hours] of Object.entries(workload)) {
-                html += `<div class="workload-card"><strong>${hours.toFixed(1)} h</strong>${name}</div>`;
-            }
-            html += `</div>`;
-            resultDiv.innerHTML = html;
-        }
+            const finalCie = Math.round((scaledIa + scaledActivity) * 10) / 10;
 
-        // ================================================================
-        //  TOOL 4: ROOM ALLOCATION (alphanumeric supported)
-        // ================================================================
-        function generateAllocation() {
-            const regs = getRegList('allocRegList');
-            const roomCount = getInt('allocRoomCount');
-            const roomCapacity = getInt('allocRoomCapacity');
-            const roomStart = getInt('allocRoomStart');
-
-            if (regs.length === 0) { alert('Please enter register numbers.'); return; }
-            if (isNaN(roomCount) || roomCount < 1) { alert('Enter valid number of rooms.'); return; }
-            if (isNaN(roomCapacity) || roomCapacity < 1) { alert('Enter valid room capacity.'); return; }
-            if (regs.length > roomCount * roomCapacity) {
-                alert(`You have ${regs.length} students, but total capacity is only ${roomCount * roomCapacity}.`);
-                return;
-            }
-
-            const resultDiv = document.getElementById('roomAllocResult');
-            let html = `
-                <div class="summary">
-                    <strong>Room Allocation</strong><br>
-                    <strong>Total Students:</strong> ${regs.length}<br>
-                    <strong>Rooms:</strong> ${roomCount}<br>
-                    <strong>Capacity per Room:</strong> ${roomCapacity}
+            document.getElementById('cieResult').innerHTML = `
+                <div class="summary-banner">
+                    <strong>Best Two IA Average:</strong> ${bestTwoAvg.toFixed(2)} / 50 (${scaledIa.toFixed(2)} / 30)<br>
+                    <strong>Activity / Assignment Marks:</strong> ${totalActivity.toFixed(2)} / 30 (${scaledActivity.toFixed(2)} / 20)<br>
+                    <hr style="margin: 10px 0; border: none; border-top: 1px solid #cbd5e1;">
+                    <strong style="font-size: 17px; color: #1e3a8a;">Total Computed CIE: ${finalCie} / 50</strong>
+                    <span class="badge ${finalCie >= 20 ? 'badge-success' : 'badge-danger'}" style="margin-left: 10px;">
+                        ${finalCie >= 20 ? 'Eligible for SEE (Passed CIE)' : 'Shortage in CIE (< 20)'}
+                    </span>
                 </div>
             `;
-
-            let idx = 0;
-            for (let r = 1; r <= roomCount; r++) {
-                if (idx >= regs.length) break;
-                const roomNumber = roomStart + r - 1;
-                const roomStudents = [];
-                for (let i = 0; i < roomCapacity && idx < regs.length; i++) {
-                    roomStudents.push(regs[idx++]);
-                }
-                html += `<div class="room"><div class="room-title">Room ${roomNumber} — ${roomStudents.length} Students</div><div class="seat-grid">`;
-                roomStudents.forEach(reg => {
-                    html += `<div class="seat"><span>Student</span><strong>${reg}</strong></div>`;
-                });
-                html += `</div></div>`;
-            }
-
-            resultDiv.innerHTML = html;
         }
 
-        // ================================================================
-        //  KEYBOARD SHORTCUT: Escape to go back to menu
-        // ================================================================
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const anyToolOpen = document.querySelector('.tool-page[style*="display: block"]');
-                if (anyToolOpen) showMenu();
+        // TOOL 4: SGPA COMPUTATION
+        function addGpaRow() {
+            const tbody = document.querySelector('#gpaTable tbody');
+            const rowCount = tbody.rows.length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>Course ${rowCount}</td>
+                <td><input type="number" class="cred-input" value="3" min="1" max="5" style="width: 100%;"></td>
+                <td>
+                    <select class="grade-input" style="width: 100%;">
+                        <option value="10">O (90-100)</option>
+                        <option value="9">A+ (80-89)</option>
+                        <option value="8">A (70-79)</option>
+                        <option value="7">B+ (60-69)</option>
+                        <option value="6">B (55-59)</option>
+                        <option value="0">F (&lt;40)</option>
+                    </select>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function computeSGPA() {
+            const creds = document.querySelectorAll('.cred-input');
+            const grades = document.querySelectorAll('.grade-input');
+            let totalCredits = 0;
+            let weightedPoints = 0;
+
+            for (let i = 0; i < creds.length; i++) {
+                const c = parseFloat(creds[i].value) || 0;
+                const g = parseFloat(grades[i].value) || 0;
+                totalCredits += c;
+                weightedPoints += (c * g);
             }
-        });
 
-        // Initialize: ensure only main menu is visible
-        document.querySelectorAll('.tool-page').forEach(el => el.style.display = 'none');
-        document.getElementById('mainMenu').style.display = 'block';
+            const sgpa = totalCredits > 0 ? (weightedPoints / totalCredits).toFixed(2) : 0;
+            document.getElementById('gpaResult').innerHTML = `
+                <div class="summary-banner">
+                    <strong>Total Registered Credits:</strong> ${totalCredits}<br>
+                    <strong>Total Grade Points:</strong> ${weightedPoints}<br>
+                    <strong style="font-size: 18px; color: #1e3a8a;">Computed SGPA: ${sgpa}</strong>
+                </div>
+            `;
+        }
+
+        // TOOL 5: ATTENDANCE ELIGIBILITY
+        function checkAttendance() {
+            const total = parseInt(document.getElementById('attTotal').value);
+            const attended = parseInt(document.getElementById('attAttended').value);
+            const usn = document.getElementById('attUsn').value.trim() || 'Student';
+
+            if (isNaN(total) || isNaN(attended) || total <= 0) {
+                alert('Please enter valid total and attended classes.');
+                return;
+            }
+
+            const pct = ((attended / total) * 100).toFixed(2);
+            let statusBadge = '';
+            let remarks = '';
+
+            if (pct >= 85) {
+                statusBadge = '<span class="badge badge-success">Eligible (Normal)</span>';
+                remarks = 'Student satisfies the standard 85% attendance requirement.';
+            } else if (pct >= 75) {
+                statusBadge = '<span class="badge badge-warning">Condonation Required (75% - 85%)</span>';
+                remarks = 'Eligible only with Principal approval / Medical Certificate on prescribed condonation fees.';
+            } else {
+                statusBadge = '<span class="badge badge-danger">Detained / Not Eligible (< 75%)</span>';
+                remarks = 'Shortage of attendance. Student is strictly not permitted to appear for SEE.';
+            }
+
+            document.getElementById('attResult').innerHTML = `
+                <div class="summary-banner">
+                    <strong>USN / ID:</strong> ${usn}<br>
+                    <strong>Attendance:</strong> ${attended} / ${total} classes (${pct}%)<br>
+                    <strong>Status:</strong> ${statusBadge}<br>
+                    <p style="margin-top: 8px; font-size: 13px; color: #475569;">${remarks}</p>
+                </div>
+            `;
+        }
+
+        // TOOL 6: BUNDLE SLIP
+        function generateBundleSlip() {
+            const centre = document.getElementById('bunCentre').value;
+            const course = document.getElementById('bunCourse').value || 'Course Title Not Specified';
+            const date = document.getElementById('bunDate').value || 'Examination Session';
+            const room = document.getElementById('bunRoom').value || 'Control Room';
+            const present = document.getElementById('bunPresent').value || '0';
+            const absent = document.getElementById('bunAbsent').value || '0';
+            const absentList = document.getElementById('bunAbsentList').value || 'NIL';
+
+            const total = (parseInt(present) || 0) + (parseInt(absent) || 0);
+
+            document.getElementById('bundleResult').innerHTML = `
+                <div class="bundle-slip">
+                    <h3>EXAMINATION ANSWER BOOKLET BUNDLE RECORD</h3>
+                    <div class="slip-grid">
+                        <div><strong>Centre:</strong> ${centre}</div>
+                        <div><strong>Hall / Room No:</strong> ${room}</div>
+                        <div><strong>Course &amp; Code:</strong> ${course}</div>
+                        <div><strong>Date &amp; Session:</strong> ${date}</div>
+                        <div><strong>Total Candidates Allotted:</strong> ${total}</div>
+                        <div><strong>Answer Books Dispatched:</strong> ${present}</div>
+                        <div><strong>Number of Absentees:</strong> ${absent}</div>
+                        <div><strong>Absentee USNs:</strong> ${absentList}</div>
+                    </div>
+                    <div style="margin-top: 40px; display: flex; justify-content: space-between; font-weight: 600; font-size: 13px;">
+                        <span>Signature of Room Invigilator</span>
+                        <span>Signature of Chief Superintendent / Dean Exam</span>
+                    </div>
+                </div>
+            `;
+        }
     </script>
-
 </body>
 </html>
