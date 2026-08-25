@@ -4,15 +4,16 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator (Portrait A4)</title>
+    <title>CO-PO Attainment Calculator</title>
 
-    <!-- html2pdf for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- jsPDF & AutoTable for Direct Vector PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <!-- SheetJS for Excel Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        /* ===== Screen UI Base Styles ===== */
+        /* ===== Screen Base Styles ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -139,7 +140,7 @@
             display: block;
         }
 
-        .grid input, .grid select {
+        .grid input {
             width: 100%;
             padding: 9px 11px;
             border: 1.5px solid #cbd5e1;
@@ -151,7 +152,7 @@
             color: #1a1a1a;
         }
 
-        .grid input:focus, .grid select:focus {
+        .grid input:focus {
             border-color: #1e3a5f;
             outline: none;
             box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
@@ -341,147 +342,19 @@
             line-height: 1.2;
         }
 
-        /* ===== EXACT A4 PORTRAIT PRINT STYLES (PURE BLACK & WHITE) ===== */
-        #pdfCaptureWrapper {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 190mm; /* Printable width of A4 portrait (210mm - 20mm margins) */
-            background: #ffffff;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            display: none;
-            z-index: 999999;
-        }
-
-        .pdf-page-container {
-            width: 100%;
-            background: #ffffff !important;
-            color: #000000 !important;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 9px;
-            line-height: 1.3;
-            box-sizing: border-box;
-            padding: 4px 0;
-        }
-
-        .pdf-page-container * {
-            color: #000000 !important;
-            box-sizing: border-box;
-        }
-
-        .pdf-page-container .pdf-header {
-            border-bottom: 2px solid #000000;
-            padding-bottom: 5px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .pdf-page-container .college-name {
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-        }
-
-        .pdf-page-container .dept-name {
-            font-size: 11px;
-            font-weight: 700;
-            margin-top: 1px;
-        }
-
-        .pdf-page-container .report-title {
-            font-size: 12px;
-            margin-top: 3px;
-            font-weight: 800;
-            display: inline-block;
-            padding: 2px 14px;
-            border: 1.5px solid #000000;
-            text-transform: uppercase;
-        }
-
-        .pdf-page-container .section {
-            margin-bottom: 7px;
-        }
-
-        .pdf-page-container .section-title {
-            font-size: 9.5px;
-            font-weight: 800;
-            border-bottom: 1.5px solid #000000;
-            padding-bottom: 2px;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .pdf-page-container table {
-            width: 100% !important;
-            table-layout: fixed !important;
-            border-collapse: collapse !important;
-            margin-top: 2px;
-            border: 1px solid #000000 !important;
-        }
-
-        .pdf-page-container th {
-            background: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            padding: 3.5px 2px !important;
-            text-align: center !important;
-            font-size: 8px !important;
-            font-weight: 800 !important;
-            vertical-align: middle;
-        }
-
-        .pdf-page-container td {
-            border: 1px solid #000000 !important;
-            padding: 3px 2px !important;
-            text-align: center !important;
-            background: #ffffff !important;
-            color: #000000 !important;
-            font-size: 8px !important;
-            font-weight: 600;
-            vertical-align: middle;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .pdf-page-container .pdf-signature-block {
-            margin-top: 16px;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-        }
-
-        .pdf-page-container .pdf-signature-item {
-            text-align: center;
-            width: 200px;
-        }
-
-        .pdf-page-container .pdf-signature-line {
-            border-top: 1.5px dashed #000000;
-            margin-bottom: 4px;
-        }
-
-        .pdf-page-container .pdf-signature-label {
-            font-size: 9px;
-            font-weight: 800;
-        }
-
-        .pdf-page-container .pdf-signature-sub {
-            font-size: 8px;
-            font-weight: 600;
-        }
-
-        .pdf-page-container .footer {
-            margin-top: 10px;
-            padding-top: 4px;
-            border-top: 1px solid #000000;
-            text-align: center;
-            font-size: 7.5px;
-            font-weight: 600;
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .header-right {
+                text-align: left;
+                width: 100%;
+            }
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -495,7 +368,7 @@
                     Basaveshwar Engineering College Bagalkote
                     <span>BEC</span>
                 </div>
-                <div class="calc-title">CO–PO Attainment Calculator (Portrait A4 Export)</div>
+                <div class="calc-title">CO–PO Attainment Calculator (Direct Vector PDF Engine)</div>
             </div>
             <div class="header-right">
                 <span class="creator-label">created by</span>
@@ -630,16 +503,13 @@
                 </button>
                 <button class="btn btn-pdf" onclick="downloadPDF()" id="pdfBtn">
                     <svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>
-                    Download PDF Report
+                    Download Vector PDF (100% Black)
                 </button>
             </div>
             <div id="finalResult"></div>
         </div>
 
     </div>
-
-    <!-- Hidden Wrapper for PDF Canvas Capture (Rendered off DOM view with zero margins) -->
-    <div id="pdfCaptureWrapper"></div>
 
     <script>
         const NUM_CO = 5;
@@ -1094,7 +964,7 @@
             XLSX.writeFile(wb, `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`);
         }
 
-        // ---------- STRICT PORTRAIT A4 PDF EXPORT ----------
+        // ---------- DIRECT VECTOR PDF GENERATION (GUARANTEED NO BLANK, 100% BLACK & WHITE, EXACT A4 PORTRAIT) ----------
         function downloadPDF() {
             const btn = document.getElementById('pdfBtn');
             const originalText = btn.innerHTML;
@@ -1104,220 +974,250 @@
             if (!coAttainmentData) calculateCOAttainment();
             if (!lastCOPOResult) calculateCOPO();
 
-            const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
-            const courseName = document.getElementById('courseName').value || 'Engineering Mathematics-I';
-            const academicYear = document.getElementById('academicYear').value || '2026-27';
-            const department = document.getElementById('department').value || 'Department of Mathematics';
-            const semester = document.getElementById('Semester').value || 'I';
-            const division = document.getElementById('Division').value || 'A';
-            const staffName = document.getElementById('NameOfStaff').value || 'Dr M M Biradar';
-            const target = coAttainmentData.target;
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
 
-            const ciePcts = coAttainmentData.ciePcts;
-            const seePcts = coAttainmentData.seePcts;
-            const cieScales = coAttainmentData.cieScales;
-            const seeScales = coAttainmentData.seeScales;
-            const directVals = coAttainmentData.directVals;
-            const indirect = coAttainmentData.indirectVals;
-            const statuses = coAttainmentData.statuses;
-            const coAttain = coAttainmentData.finalCOLevels;
-            const avgCO = coAttainmentData.avgCO;
-            const overallStatus = coAttainmentData.overallStatus;
-            const mapping = readMappingFromUI();
+                const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
+                const courseName = document.getElementById('courseName').value || 'Engineering Mathematics-I';
+                const academicYear = document.getElementById('academicYear').value || '2026-27';
+                const department = document.getElementById('department').value || 'Department of Mathematics';
+                const semester = document.getElementById('Semester').value || 'I';
+                const division = document.getElementById('Division').value || 'A';
+                const staffName = document.getElementById('NameOfStaff').value || 'Dr M M Biradar';
+                const target = coAttainmentData.target;
 
-            let coRows = '';
-            for (let i = 0; i < NUM_CO; i++) {
-                if (coAttain[i] > 0 || i < 4) {
-                    coRows += `
-                        <tr>
-                            <td style="font-weight:700; width:9%;">CO${i+1}</td>
-                            <td style="width:11%;">${ciePcts[i].toFixed(1)}%</td>
-                            <td style="width:9%;">${cieScales[i].toFixed(0)}</td>
-                            <td style="width:11%;">${seePcts[i].toFixed(1)}%</td>
-                            <td style="width:9%;">${seeScales[i].toFixed(0)}</td>
-                            <td style="width:15%;">${directVals[i].toFixed(2)}</td>
-                            <td style="width:11%;">${indirect[i].toFixed(2)}</td>
-                            <td style="font-weight:800; width:12%;">${coAttain[i].toFixed(2)}</td>
-                            <td style="font-weight:700; width:13%;">${statuses[i]}</td>
-                        </tr>
-                    `;
-                }
-            }
+                const ciePcts = coAttainmentData.ciePcts;
+                const seePcts = coAttainmentData.seePcts;
+                const cieScales = coAttainmentData.cieScales;
+                const seeScales = coAttainmentData.seeScales;
+                const directVals = coAttainmentData.directVals;
+                const indirect = coAttainmentData.indirectVals;
+                const statuses = coAttainmentData.statuses;
+                const coAttain = coAttainmentData.finalCOLevels;
+                const avgCO = coAttainmentData.avgCO;
+                const overallStatus = coAttainmentData.overallStatus;
+                const mapping = readMappingFromUI();
 
-            let mappingRows = '';
-            for (let c = 1; c <= NUM_CO; c++) {
-                let cells = `<td style="font-weight:800; width:8%;">CO${c}</td>`;
-                const m = mapping[c] || { po: Array(12).fill(0), pso: [0, 0] };
-                for (let p = 0; p < 12; p++) cells += `<td style="width:6.5%;">${m.po[p] || 0}</td>`;
-                for (let p = 0; p < 2; p++) cells += `<td style="width:7%;">${m.pso[p] || 0}</td>`;
-                mappingRows += `<tr>${cells}</tr>`;
-            }
+                // 1. Header Block
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(13);
+                doc.setTextColor(0, 0, 0);
+                doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 105, 14, { align: "center" });
 
-            let poHeader = '<th style="width:16%;">Metric</th>', poData = '<td style="font-weight:800;">Attainment</td>', poStat = '<td style="font-weight:800;">Status</td>';
-            for (let i = 0; i < 12; i++) {
-                poHeader += `<th style="width:7%; font-size:7.5px;">PO${i+1}</th>`;
-                const val = lastCOPOResult.poResults[i].attainment;
-                poData += `<td>${val > 0 ? val.toFixed(2) : '-'}</td>`;
-                poStat += `<td style="font-size:7px; font-weight:700;">${val > 0 ? (lastCOPOResult.poResults[i].status === 'ATTAINED' ? 'ATT' : 'NOT ATT') : '-'}</td>`;
-            }
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.text(department, 105, 19, { align: "center" });
 
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                doc.setFontSize(9);
+                doc.rect(55, 22, 100, 6);
+                doc.text("CO-PO / PSO ATTAINMENT REPORT", 105, 26.2, { align: "center" });
 
-            const pdfHTML = `
-                <div class="pdf-page-container">
-                    <div class="pdf-header">
-                        <div class="college-name">Basaveshwar Engineering College, Bagalkote</div>
-                        <div class="dept-name">${department}</div>
-                        <div class="report-title">CO–PO / PSO ATTAINMENT REPORT</div>
-                    </div>
+                doc.setDrawColor(0, 0, 0);
+                doc.setLineWidth(0.4);
+                doc.line(10, 31, 200, 31);
 
-                    <div class="section">
-                        <div class="section-title">1. Course Metadata &amp; Target</div>
-                        <table>
-                            <tr>
-                                <th style="width:14%;">Academic Year</th>
-                                <th style="width:14%;">Course Code</th>
-                                <th style="width:30%;">Course Title</th>
-                                <th style="width:14%;">Sem / Div</th>
-                                <th style="width:16%;">Faculty</th>
-                                <th style="width:12%;">Target</th>
-                            </tr>
-                            <tr>
-                                <td>${academicYear}</td>
-                                <td style="font-weight:800;">${courseCode}</td>
-                                <td>${courseName}</td>
-                                <td>Sem ${semester} / Div ${division}</td>
-                                <td>${staffName}</td>
-                                <td style="font-weight:800;">${target.toFixed(2)}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">2. Course Outcome (CO) Attainment &amp; Status</div>
-                        <table>
-                            <tr>
-                                <th style="width:9%;">CO</th>
-                                <th style="width:11%;">CIE (%)</th>
-                                <th style="width:9%;">CIE Lvl</th>
-                                <th style="width:11%;">SEE (%)</th>
-                                <th style="width:9%;">SEE Lvl</th>
-                                <th style="width:15%;">Direct CO</th>
-                                <th style="width:11%;">Indirect</th>
-                                <th style="width:12%;">Final CO</th>
-                                <th style="width:13%;">Status</th>
-                            </tr>
-                            ${coRows}
-                            <tr>
-                                <td colspan="7" style="text-align:right; font-weight:800; padding-right:8px;">Average Attainment (Target: ${target.toFixed(2)}):</td>
-                                <td style="font-weight:800;">${avgCO.toFixed(2)}</td>
-                                <td style="font-weight:800;">${overallStatus}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">3. CO–PO &amp; PSO Articulation Correlation Matrix</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width:8%;">CO</th>
-                                    ${Array.from({length:12}, (_,i) => `<th style="width:6.5%; font-size:7.5px;">PO${i+1}</th>`).join("")}
-                                    ${Array.from({length:2}, (_,i) => `<th style="width:7%; font-size:7.5px;">PSO${i+1}</th>`).join("")}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${mappingRows}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">4. Program Outcome (PO &amp; PSO) Attainment &amp; Status</div>
-                        <table>
-                            <tr>${poHeader}</tr>
-                            <tr>${poData}</tr>
-                            <tr>${poStat}</tr>
-                        </table>
-                        <div style="margin-top:4px;">
-                            <table>
-                                <tr>
-                                    <th style="width:34%;">Metric</th>
-                                    <th style="width:33%;">PSO1</th>
-                                    <th style="width:33%;">PSO2</th>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:800;">Attainment (0–3)</td>
-                                    <td>${lastCOPOResult.psoResults[0].attainment.toFixed(2)}</td>
-                                    <td>${lastCOPOResult.psoResults[1].attainment.toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:800;">Status (Target: ${target.toFixed(2)})</td>
-                                    <td style="font-weight:800;">${lastCOPOResult.psoResults[0].status}</td>
-                                    <td style="font-weight:800;">${lastCOPOResult.psoResults[1].status}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="pdf-signature-block">
-                        <div class="pdf-signature-item">
-                            <div class="pdf-signature-line"></div>
-                            <div class="pdf-signature-label">${staffName}</div>
-                            <div class="pdf-signature-sub">Course Coordinator / Faculty</div>
-                        </div>
-                        <div class="pdf-signature-item">
-                            <div class="pdf-signature-line"></div>
-                            <div class="pdf-signature-label">Head of Department</div>
-                            <div class="pdf-signature-sub">${department}</div>
-                        </div>
-                    </div>
-
-                    <div class="footer">
-                        OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | BEC Bagalkote
-                    </div>
-                </div>
-            `;
-
-            const captureWrapper = document.getElementById('pdfCaptureWrapper');
-            captureWrapper.innerHTML = pdfHTML;
-            captureWrapper.style.display = 'block';
-
-            // Reset scroll to guarantee clean (0,0) coordinate capture
-            window.scrollTo(0, 0);
-
-            setTimeout(function() {
-                const opt = {
-                    margin: [10, 10, 10, 10], // 10mm margin on all sides of Portrait A4
-                    filename: `CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`,
-                    image: { type: 'jpeg', quality: 1.0 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        scrollX: 0,
-                        scrollY: 0,
-                        x: 0,
-                        y: 0
+                // Common AutoTable Theme Settings (Solid Black Borders, White Fill, Black Text)
+                const baseTableStyles = {
+                    theme: 'plain',
+                    styles: {
+                        textColor: [0, 0, 0],
+                        fontSize: 8,
+                        lineColor: [0, 0, 0],
+                        lineWidth: 0.25,
+                        halign: 'center',
+                        valign: 'middle',
+                        cellPadding: 1.5,
+                        font: 'helvetica'
                     },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    headStyles: {
+                        fillColor: [255, 255, 255],
+                        textColor: [0, 0, 0],
+                        fontStyle: 'bold',
+                        lineColor: [0, 0, 0],
+                        lineWidth: 0.25
+                    }
                 };
 
-                html2pdf().set(opt).from(captureWrapper).save().then(() => {
-                    captureWrapper.style.display = 'none';
-                    captureWrapper.innerHTML = '';
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }).catch(err => {
-                    console.error('PDF export error:', err);
-                    captureWrapper.style.display = 'none';
-                    captureWrapper.innerHTML = '';
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
+                let currentY = 34;
+
+                // 2. Section 1: Course Metadata Table
+                doc.setFontSize(8.5);
+                doc.setFont("helvetica", "bold");
+                doc.text("1. COURSE METADATA & TARGET", 10, currentY);
+                currentY += 2;
+
+                doc.autoTable({
+                    ...baseTableStyles,
+                    startY: currentY,
+                    margin: { left: 10, right: 10 },
+                    head: [["Academic Year", "Course Code", "Course Title", "Sem / Div", "Faculty", "Target"]],
+                    body: [
+                        [academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staffName, target.toFixed(2)]
+                    ]
                 });
-            }, 250);
+
+                currentY = doc.lastAutoTable.finalY + 5;
+
+                // 3. Section 2: CO Attainment Table
+                doc.text("2. COURSE OUTCOME (CO) ATTAINMENT & STATUS", 10, currentY);
+                currentY += 2;
+
+                const coBody = [];
+                for (let i = 0; i < NUM_CO; i++) {
+                    if (coAttain[i] > 0 || i < 4) {
+                        coBody.push([
+                            `CO${i+1}`,
+                            `${ciePcts[i].toFixed(1)}%`,
+                            cieScales[i].toFixed(0),
+                            `${seePcts[i].toFixed(1)}%`,
+                            seeScales[i].toFixed(0),
+                            directVals[i].toFixed(2),
+                            indirect[i].toFixed(2),
+                            coAttain[i].toFixed(2),
+                            statuses[i]
+                        ]);
+                    }
+                }
+                coBody.push([
+                    { content: `Average Attainment (Target: ${target.toFixed(2)}):`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
+                    { content: avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
+                    { content: overallStatus, styles: { fontStyle: 'bold' } }
+                ]);
+
+                doc.autoTable({
+                    ...baseTableStyles,
+                    startY: currentY,
+                    margin: { left: 10, right: 10 },
+                    head: [["CO", "CIE (%)", "CIE Lvl", "SEE (%)", "SEE Lvl", "Direct CO", "Indirect", "Final CO", "Status"]],
+                    body: coBody
+                });
+
+                currentY = doc.lastAutoTable.finalY + 5;
+
+                // 4. Section 3: CO-PO Matrix Table
+                doc.text("3. CO-PO & PSO ARTICULATION CORRELATION MATRIX", 10, currentY);
+                currentY += 2;
+
+                const mappingHead = ["CO"];
+                for (let p = 1; p <= 12; p++) mappingHead.push(`PO${p}`);
+                mappingHead.push("PSO1", "PSO2");
+
+                const mappingBody = [];
+                for (let c = 1; c <= NUM_CO; c++) {
+                    const row = [`CO${c}`];
+                    const m = mapping[c] || { po: Array(12).fill(0), pso: [0, 0] };
+                    for (let p = 0; p < 12; p++) row.push(m.po[p] || 0);
+                    for (let p = 0; p < 2; p++) row.push(m.pso[p] || 0);
+                    mappingBody.push(row);
+                }
+
+                doc.autoTable({
+                    ...baseTableStyles,
+                    startY: currentY,
+                    margin: { left: 10, right: 10 },
+                    head: [mappingHead],
+                    body: mappingBody,
+                    styles: {
+                        ...baseTableStyles.styles,
+                        fontSize: 7.5,
+                        cellPadding: 1.2
+                    }
+                });
+
+                currentY = doc.lastAutoTable.finalY + 5;
+
+                // 5. Section 4: PO & PSO Attainment Table
+                doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT & STATUS", 10, currentY);
+                currentY += 2;
+
+                const poHead = ["Metric"];
+                for (let p = 1; p <= 12; p++) poHead.push(`PO${p}`);
+
+                const poRow1 = ["Attainment"];
+                const poRow2 = ["Status"];
+                for (let p = 0; p < 12; p++) {
+                    const val = lastCOPOResult.poResults[p].attainment;
+                    poRow1.push(val > 0 ? val.toFixed(2) : "-");
+                    poRow2.push(val > 0 ? (lastCOPOResult.poResults[p].status === "ATTAINED" ? "ATT" : "NOT ATT") : "-");
+                }
+
+                doc.autoTable({
+                    ...baseTableStyles,
+                    startY: currentY,
+                    margin: { left: 10, right: 10 },
+                    head: [poHead],
+                    body: [poRow1, poRow2],
+                    styles: {
+                        ...baseTableStyles.styles,
+                        fontSize: 7,
+                        cellPadding: 1.2
+                    }
+                });
+
+                currentY = doc.lastAutoTable.finalY + 3;
+
+                // PSO Sub-table
+                doc.autoTable({
+                    ...baseTableStyles,
+                    startY: currentY,
+                    margin: { left: 10, right: 10 },
+                    head: [["Metric", "PSO1", "PSO2"]],
+                    body: [
+                        ["Attainment (0-3)", lastCOPOResult.psoResults[0].attainment.toFixed(2), lastCOPOResult.psoResults[1].attainment.toFixed(2)],
+                        [`Status (Target: ${target.toFixed(2)})`, lastCOPOResult.psoResults[0].status, lastCOPOResult.psoResults[1].status]
+                    ],
+                    styles: {
+                        ...baseTableStyles.styles,
+                        fontSize: 7.5,
+                        cellPadding: 1.2
+                    }
+                });
+
+                currentY = doc.lastAutoTable.finalY + 14;
+
+                // 6. Signature Block
+                doc.setDrawColor(0, 0, 0);
+                doc.setLineDashPattern([1.5, 1.5], 0);
+                doc.line(20, currentY, 70, currentY);
+                doc.line(140, currentY, 190, currentY);
+                doc.setLineDashPattern([], 0); // reset solid line
+
+                doc.setFontSize(8.5);
+                doc.setFont("helvetica", "bold");
+                doc.text(staffName, 45, currentY + 4, { align: "center" });
+                doc.text("Head of Department", 165, currentY + 4, { align: "center" });
+
+                doc.setFontSize(7.5);
+                doc.setFont("helvetica", "normal");
+                doc.text("Course Coordinator / Faculty", 45, currentY + 8, { align: "center" });
+                doc.text(department, 165, currentY + 8, { align: "center" });
+
+                // 7. Footer
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+                doc.setLineWidth(0.25);
+                doc.line(10, 285, 200, 285);
+                doc.setFontSize(7);
+                doc.text(`OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`, 105, 289, { align: "center" });
+
+                // Save PDF directly
+                doc.save(`CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`);
+
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            } catch (err) {
+                console.error("Direct PDF Export Error:", err);
+                alert("Direct PDF export error. Please check the browser console.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
 
         initInputs();
