@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Mahadev Biradar | MMB_Academic_Resources</title>
+    <title>Dr. Mahadev Biradar | Document & Resource Dashboard</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         body {
-            background: #f7f9fc;
+            background: #f4f7fb;
             color: #263238;
             line-height: 1.6;
             padding-bottom: 60px;
         }
 
+        /* Top Header */
         header {
             background: #163b65;
             color: white;
@@ -46,73 +47,79 @@
             opacity: 0.85;
         }
 
-        .back-btn {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
             padding: 8px 18px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .back-btn:hover {
+        .btn-nav-light {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-nav-light:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-nav-primary {
             background: #d94a32;
-            border-color: #d94a32;
+            color: white;
+            border: 1px solid #d94a32;
         }
 
-        .container {
+        .btn-nav-primary:hover {
+            background: #b53d28;
+            border-color: #b53d28;
+        }
+
+        /* Main Container */
+        .dashboard-container {
             max-width: 1150px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        .search-box {
-            background: white;
-            padding: 20px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-            position: relative;
+        /* Section Titles */
+        .section-heading {
+            font-size: 19px;
+            font-weight: 700;
+            color: #163b65;
+            margin: 35px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 42px;
-            border: 1.5px solid #d0d7de;
-            border-radius: 8px;
-            font-size: 15px;
-            outline: none;
-            transition: 0.3s;
+        .section-heading:first-of-type {
+            margin-top: 0;
         }
 
-        .search-box input:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 38px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            color: #888;
-        }
-
+        /* Sub Folders Grid */
         .folders-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 18px;
+            margin-bottom: 20px;
         }
 
         .folder-card {
             background: white;
             border-radius: 10px;
-            padding: 22px;
+            padding: 20px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
             transition: 0.3s ease;
@@ -122,24 +129,24 @@
         }
 
         .folder-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: #163b65;
-            box-shadow: 0 10px 25px rgba(22, 59, 101, 0.1);
+            box-shadow: 0 8px 22px rgba(22, 59, 101, 0.09);
         }
 
         .folder-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .folder-icon {
-            font-size: 26px;
+            font-size: 24px;
         }
 
         .folder-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: #163b65;
         }
@@ -147,42 +154,276 @@
         .folder-desc {
             font-size: 13px;
             color: #64748b;
-            margin-bottom: 18px;
-            line-height: 1.5;
+            margin-bottom: 16px;
+            line-height: 1.4;
         }
 
-        .btn-open {
-            background: #163b65;
-            color: white;
-            padding: 10px 16px;
+        .btn-folder-open {
+            background: #f1f5f9;
+            color: #163b65;
+            padding: 8px 14px;
             border-radius: 6px;
             text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             text-align: center;
+            border: 1px solid #cbd5e1;
+            transition: 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+        }
+
+        .folder-card:hover .btn-folder-open {
+            background: #163b65;
+            color: white;
+            border-color: #163b65;
+        }
+
+        /* Controls Panel */
+        .controls-card {
+            background: white;
+            padding: 20px 22px;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 11px 16px 11px 42px;
+            border: 1.5px solid #d0d7de;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-input-wrapper input:focus {
+            border-color: #163b65;
+            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #888;
+        }
+
+        .filter-select {
+            padding: 11px 16px;
+            border-radius: 8px;
+            border: 1.5px solid #d0d7de;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-select:focus {
+            border-color: #163b65;
+        }
+
+        /* Category Filter Chips */
+        .category-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid #edf2f7;
+            padding-top: 14px;
+        }
+
+        .chip {
+            padding: 5px 14px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
             transition: 0.2s;
         }
 
-        .btn-open:hover {
-            background: #d94a32;
+        .chip:hover {
+            background: #e2e8f0;
         }
 
-        #emptyState {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
+        .chip.active {
+            background: #163b65;
+            color: white;
+        }
+
+        /* File List Table */
+        .files-table-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 15px 22px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .table-header h2 {
             font-size: 15px;
-            grid-column: 1 / -1;
+            color: #163b65;
+            font-weight: 700;
+        }
+
+        .result-count {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #fafbfc;
+            padding: 13px 18px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 14px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .format-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .badge-pdf { background: #e53e3e; }
+        .badge-excel { background: #2f855a; }
+        .badge-doc { background: #2b6cb0; }
+
+        .file-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .file-category {
+            font-size: 12px;
+            color: #64748b;
+            display: block;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            white-space: nowrap;
+        }
+
+        .btn-action {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+        }
+
+        .btn-view {
+            background: #edf2f7;
+            color: #163b65;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-view:hover {
+            background: #163b65;
+            color: white;
+            border-color: #163b65;
+        }
+
+        .btn-download {
+            background: #d94a32;
+            color: white;
+            border: 1px solid #d94a32;
+        }
+
+        .btn-download:hover {
+            background: #b53d28;
+            border-color: #b53d28;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+            text-align: center;
+            color: #64748b;
+            display: none;
         }
 
         @media (max-width: 900px) {
             .folders-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            th:nth-child(2), td:nth-child(2),
+            th:nth-child(3), td:nth-child(3) {
+                display: none;
             }
         }
 
@@ -199,85 +440,200 @@
 </head>
 <body>
 
+    <!-- Header -->
     <header>
         <div class="header-container">
             <div class="header-title">
-                <h1>Dr. Mahadev Biradar | MMB_Academic_Resources</h1>
-                <p>Google Drive Direct Folder Access</p>
+                <h1>Dr. Mahadev Biradar | Resource & Document Hub</h1>
+                <p>Google Drive Directories & Important Academic Documents</p>
             </div>
-            <a href="index.html" class="back-btn">← Back to Profile</a>
+            <div class="header-actions">
+                <a href="index.html" class="btn-nav btn-nav-light">← Back to Profile</a>
+                <!-- Link to your main MMB_Academic_Resources Drive Folder -->
+                <a href="PASTE_MAIN_MMB_DRIVE_FOLDER_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn-nav btn-nav-primary">
+                    📁 Open MMB_Academic_Resources
+                </a>
+            </div>
         </div>
     </header>
 
-    <div class="container">
-        <!-- Search bar -->
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="folderSearch" placeholder="Search sub-folders (e.g., syllabus, notes, calculators, research)..." onkeyup="filterFolders()">
+    <div class="dashboard-container">
+
+        <!-- Section 1: Sub Folders in Drive -->
+        <h2 class="section-heading">📁 Google Drive Directories (MMB_Academic_Resources)</h2>
+        
+        <div class="folders-grid" id="foldersContainer">
+            <!-- Dynamically populated from subFolders array -->
         </div>
 
-        <!-- Grid -->
-        <div class="folders-grid" id="foldersContainer">
-            <!-- Dynamically populated -->
+        <!-- Section 2: Important Direct Files -->
+        <h2 class="section-heading">📄 Important Files & Quick Access</h2>
+
+        <!-- Search & Filter Controls -->
+        <div class="controls-card">
+            <div class="search-row">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search files by title, subject, or keyword..." onkeyup="filterFiles()">
+                </div>
+                <select id="typeFilter" class="filter-select" onchange="filterFiles()">
+                    <option value="ALL">All File Types</option>
+                    <option value="PDF">PDF Files (.pdf)</option>
+                    <option value="EXCEL">Excel Spreadsheets (.xlsx)</option>
+                    <option value="DOC">Word Documents (.docx)</option>
+                </select>
+            </div>
+
+            <div class="category-chips">
+                <button class="chip active" onclick="setCategory('ALL', this)">All Categories</button>
+                <button class="chip" onclick="setCategory('Syllabus', this)">Syllabus & Notes</button>
+                <button class="chip" onclick="setCategory('Calculators', this)">Calculators & Templates</button>
+                <button class="chip" onclick="setCategory('Research', this)">Research & Books</button>
+                <button class="chip" onclick="setCategory('YRC', this)">YRC & Admin</button>
+            </div>
         </div>
-        <div id="emptyState">📂 No sub-folders found matching your search.</div>
+
+        <!-- Files Table -->
+        <div class="files-table-wrapper">
+            <div class="table-header">
+                <h2>Highlighted Files</h2>
+                <span class="result-count" id="resultCount">Loading files...</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document Title</th>
+                        <th>Category</th>
+                        <th>File Size</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="filesTableBody">
+                    <!-- Dynamically populated from filesData array -->
+                </tbody>
+            </table>
+
+            <div id="emptyState" class="empty-state">
+                <p>📂 No files found matching your search.</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // -------------------------------------------------------------
-        // PASTE YOUR GOOGLE DRIVE SUB-FOLDER SHARING LINKS HERE
-        // -------------------------------------------------------------
+        // =========================================================================
+        // 1. GOOGLE DRIVE SUB-FOLDERS (Paste your share links here)
+        // =========================================================================
         const subFolders = [
             {
                 name: "01. Syllabus & Curriculum",
                 icon: "📚",
-                desc: "BEC syllabus schemes, VTU course curriculum, and competitive exam outlines.",
-                driveLink: "PASTE_YOUR_01_FOLDER_LINK_HERE"
+                desc: "BEC syllabus schemes, VTU course curriculum, and competitive exam guidelines.",
+                driveLink: "PASTE_SUBFOLDER_1_LINK_HERE"
             },
             {
                 name: "02. Lecture Notes & PPTs",
                 icon: "📝",
                 desc: "Engineering Maths I–IV module notes, tutorial sheets, and question banks.",
-                driveLink: "PASTE_YOUR_02_FOLDER_LINK_HERE"
+                driveLink: "PASTE_SUBFOLDER_2_LINK_HERE"
             },
             {
-                name: "03. Calculators & Automation Templates",
+                name: "03. Calculators & Templates",
                 icon: "📊",
                 desc: "CO–PO attainment spreadsheets, AutoCrat sheets, and grading templates.",
-                driveLink: "PASTE_YOUR_03_FOLDER_LINK_HERE"
+                driveLink: "PASTE_SUBFOLDER_3_LINK_HERE"
             },
             {
-                name: "04. Research Papers & Preprints",
+                name: "04. Research & Preprints",
                 icon: "🔬",
-                desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book drafts.",
-                driveLink: "PASTE_YOUR_04_FOLDER_LINK_HERE"
+                desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book chapters.",
+                driveLink: "PASTE_SUBFOLDER_4_LINK_HERE"
             },
             {
-                name: "05. YRC & Activity Reports",
+                name: "05. YRC & Social Reports",
                 icon: "🩸",
-                desc: "Youth Red Cross camp rosters, event photos, and social service reports.",
-                driveLink: "PASTE_YOUR_05_FOLDER_LINK_HERE"
+                desc: "Youth Red Cross camp rosters, blood donation files, and event photographs.",
+                driveLink: "PASTE_SUBFOLDER_5_LINK_HERE"
             },
             {
-                name: "06. Certificates & Admin Documents",
+                name: "06. Certificates & Admin Docs",
                 icon: "📋",
-                desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee records.",
-                driveLink: "PASTE_YOUR_06_FOLDER_LINK_HERE"
+                desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee files.",
+                driveLink: "PASTE_SUBFOLDER_6_LINK_HERE"
             }
         ];
 
-        function renderFolders(data) {
+        // =========================================================================
+        // 2. IMPORTANT FILES LIST (Direct links for View & Download)
+        // =========================================================================
+        const filesData = [
+            {
+                name: "Differential Equations: Methods & Applications (Textbook Preview)",
+                type: "PDF",
+                category: "Research",
+                size: "4.8 MB",
+                viewUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing",
+                downloadUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing"
+            },
+            {
+                name: "CO-PO Attainment Calculation Template",
+                type: "EXCEL",
+                category: "Calculators",
+                size: "245 KB",
+                viewUrl: "PASTE_GOOGLE_SHEET_OR_DRIVE_LINK_HERE",
+                downloadUrl: "PASTE_DIRECT_DOWNLOAD_OR_DRIVE_LINK_HERE"
+            },
+            {
+                name: "Engineering Mathematics-I Complete Syllabus & Notes",
+                type: "PDF",
+                category: "Syllabus",
+                size: "1.2 MB",
+                viewUrl: "PASTE_DRIVE_LINK_HERE",
+                downloadUrl: "PASTE_DRIVE_LINK_HERE"
+            },
+            {
+                name: "Perturbation Analysis of MHD Prandtl Fluid Flow - Preprint",
+                type: "PDF",
+                category: "Research",
+                size: "890 KB",
+                viewUrl: "https://doi.org/10.1080/02286203.2026.2708091",
+                downloadUrl: "https://doi.org/10.1080/02286203.2026.2708091"
+            },
+            {
+                name: "Dr. Mahadev Biradar Detailed Curriculum Vitae",
+                type: "PDF",
+                category: "Research",
+                size: "350 KB",
+                viewUrl: "CV.pdf",
+                downloadUrl: "CV.pdf"
+            },
+            {
+                name: "Youth Red Cross Blood Donation Donor Roster Sheet",
+                type: "EXCEL",
+                category: "YRC",
+                size: "180 KB",
+                viewUrl: "PASTE_DRIVE_LINK_HERE",
+                downloadUrl: "PASTE_DRIVE_LINK_HERE"
+            },
+            {
+                name: "Question Paper Scrutiny Checklist Format",
+                type: "DOC",
+                category: "Syllabus",
+                size: "115 KB",
+                viewUrl: "PASTE_DRIVE_LINK_HERE",
+                downloadUrl: "PASTE_DRIVE_LINK_HERE"
+            }
+        ];
+
+        let selectedCategory = "ALL";
+
+        // Render Sub-Folders
+        function renderFolders() {
             const container = document.getElementById("foldersContainer");
-            const emptyState = document.getElementById("emptyState");
             container.innerHTML = "";
 
-            if (data.length === 0) {
-                emptyState.style.display = "block";
-                return;
-            }
-            emptyState.style.display = "none";
-
-            data.forEach(folder => {
+            subFolders.forEach(folder => {
                 const card = document.createElement("div");
                 card.className = "folder-card";
                 card.innerHTML = `
@@ -288,25 +644,88 @@
                         </div>
                         <p class="folder-desc">${folder.desc}</p>
                     </div>
-                    <a href="${folder.driveLink}" target="_blank" rel="noopener noreferrer" class="btn-open">
-                        Open in Google Drive ↗
+                    <a href="${folder.driveLink}" target="_blank" rel="noopener noreferrer" class="btn-folder-open">
+                        Open Folder in Drive ↗
                     </a>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function filterFolders() {
-            const query = document.getElementById("folderSearch").value.toLowerCase();
-            const filtered = subFolders.filter(f => 
-                f.name.toLowerCase().includes(query) || 
-                f.desc.toLowerCase().includes(query)
-            );
-            renderFolders(filtered);
+        // Render Files Table
+        function renderTable(data) {
+            const tableBody = document.getElementById("filesTableBody");
+            const emptyState = document.getElementById("emptyState");
+            const resultCount = document.getElementById("resultCount");
+
+            tableBody.innerHTML = "";
+
+            if (data.length === 0) {
+                emptyState.style.display = "block";
+                resultCount.textContent = "0 files found";
+                return;
+            }
+
+            emptyState.style.display = "none";
+            resultCount.textContent = `Showing ${data.length} file${data.length > 1 ? 's' : ''}`;
+
+            data.forEach(file => {
+                let badgeClass = "badge-pdf";
+                if (file.type === "EXCEL") badgeClass = "badge-excel";
+                if (file.type === "DOC") badgeClass = "badge-doc";
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>
+                        <div class="file-info">
+                            <div class="format-badge ${badgeClass}">${file.type}</div>
+                            <div>
+                                <div class="file-title">${file.name}</div>
+                                <span class="file-category">${file.category}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${file.category}</td>
+                    <td>${file.size}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <a href="${file.viewUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-view">👁️ View</a>
+                            <a href="${file.downloadUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-download">⬇ Download</a>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
         }
 
+        // Search and Filter Function
+        function filterFiles() {
+            const searchVal = document.getElementById("searchInput").value.toLowerCase();
+            const typeVal = document.getElementById("typeFilter").value;
+
+            const filtered = filesData.filter(file => {
+                const matchesSearch = file.name.toLowerCase().includes(searchVal) || 
+                                      file.category.toLowerCase().includes(searchVal);
+                const matchesType = (typeVal === "ALL") || (file.type === typeVal);
+                const matchesCategory = (selectedCategory === "ALL") || (file.category === selectedCategory);
+
+                return matchesSearch && matchesType && matchesCategory;
+            });
+
+            renderTable(filtered);
+        }
+
+        function setCategory(category, buttonElement) {
+            selectedCategory = category;
+            document.querySelectorAll(".chip").forEach(el => el.classList.remove("active"));
+            buttonElement.classList.add("active");
+            filterFiles();
+        }
+
+        // Initial Load
         document.addEventListener("DOMContentLoaded", () => {
-            renderFolders(subFolders);
+            renderFolders();
+            renderTable(filesData);
         });
     </script>
 </body>
