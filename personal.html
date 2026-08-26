@@ -1,116 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Mahadev Biradar </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
 
-  <title>Personal Links</title>
+        body {
+            background: #f4f7fb;
+            color: #263238;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+        /* Top Header */
+        header {
+            background: #163b65;
+            color: white;
+            padding: 24px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #eef2ff, #f8fafc);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+        .header-container {
+            max-width: 1150px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.12);
-      text-align: center;
-    }
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
 
-    h1 {
-      margin-top: 0;
-      color: #1e293b;
-    }
+        .header-title p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
 
-    .subtitle {
-      color: #64748b;
-      margin-bottom: 25px;
-    }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+        }
 
-    .link-btn {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin: 14px 0;
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 17px;
-      font-weight: bold;
-      color: white;
-      transition: 0.2s;
-    }
+        .back-btn:hover {
+            background: #d94a32;
+            border-color: #d94a32;
+        }
 
-    .link-btn:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
-    }
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1150px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
 
-    .drive {
-      background: #4285F4;
-    }
+        /* Controls Panel */
+        .controls-card {
+            background: white;
+            padding: 22px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
 
-    .sheets {
-      background: #0F9D58;
-    }
+        .search-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
 
-    .back {
-      display: inline-block;
-      margin-top: 20px;
-      color: #475569;
-      text-decoration: none;
-      font-size: 14px;
-    }
-  </style>
+        .search-input-wrapper {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1.5px solid #d0d7de;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-input-wrapper input:focus {
+            border-color: #163b65;
+            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #888;
+        }
+
+        .filter-select {
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: 1.5px solid #d0d7de;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-select:focus {
+            border-color: #163b65;
+        }
+
+        /* Category Filter Chips */
+        .category-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid #edf2f7;
+            padding-top: 16px;
+        }
+
+        .chip {
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .chip:hover {
+            background: #e2e8f0;
+        }
+
+        .chip.active {
+            background: #163b65;
+            color: white;
+        }
+
+        /* File List Table Container */
+        .files-table-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfc;
+        }
+
+        .table-header h2 {
+            font-size: 16px;
+            color: #163b65;
+            font-weight: 700;
+        }
+
+        .result-count {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #fafbfc;
+            padding: 14px 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* File Name & Format Styling */
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .format-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .badge-pdf { background: #e53e3e; }
+        .badge-excel { background: #2f855a; }
+        .badge-doc { background: #2b6cb0; }
+        .badge-ppt { background: #dd6b20; }
+
+        .file-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .file-category {
+            font-size: 12px;
+            color: #64748b;
+            display: block;
+        }
+
+        /* Action Buttons */
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            white-space: nowrap;
+        }
+
+        .btn-action {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-view {
+            background: #edf2f7;
+            color: #163b65;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-view:hover {
+            background: #163b65;
+            color: white;
+            border-color: #163b65;
+        }
+
+        .btn-download {
+            background: #d94a32;
+            color: white;
+            border: 1px solid #d94a32;
+        }
+
+        .btn-download:hover {
+            background: #b53d28;
+            border-color: #b53d28;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 50px 20px;
+            text-align: center;
+            color: #64748b;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            th:nth-child(2), td:nth-child(2),
+            th:nth-child(3), td:nth-child(3) {
+                display: none;
+            }
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-  <div class="container">
+    <header>
+        <div class="header-container">
+            <div class="header-title">
+                <h1>Dr. Mahadev Biradar | Resource & Document Hub</h1>
+                <p>Curriculum, Attainment Templates, Research Preprints, and Department Notes</p>
+            </div>
+            <a href="index.html" class="back-btn">← Back to Main Profile</a>
+        </div>
+    </header>
 
-    <h1>🔐 Personal</h1>
+    <div class="dashboard-container">
+        <!-- Search & Filters -->
+        <div class="controls-card">
+            <div class="search-row">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search by file name, keyword, or topic..." onkeyup="filterFiles()">
+                </div>
+                <select id="typeFilter" class="filter-select" onchange="filterFiles()">
+                    <option value="ALL">All File Types</option>
+                    <option value="PDF">PDF Documents (.pdf)</option>
+                    <option value="EXCEL">Excel Spreadsheets (.xlsx / .csv)</option>
+                    <option value="DOC">Word Documents (.docx / .doc)</option>
+                </select>
+            </div>
 
-    <p class="subtitle">
-      My Personal Links
-    </p>
+            <!-- Category Chips -->
+            <div class="category-chips">
+                <button class="chip active" onclick="setCategory('ALL', this)">All Categories</button>
+                <button class="chip" onclick="setCategory('Syllabus', this)">Syllabus & Curriculum</button>
+                <button class="chip" onclick="setCategory('Calculators', this)">Calculators & Templates</button>
+                <button class="chip" onclick="setCategory('Research', this)">Research Papers</button>
+                <button class="chip" onclick="setCategory('Teaching', this)">Lecture Notes</button>
+                <button class="chip" onclick="setCategory('YRC', this)">YRC & Reports</button>
+            </div>
+        </div>
 
-    <!-- Google Drive -->
-    <a
-      class="link-btn drive"
-      href="YOUR_GOOGLE_DRIVE_LINK"
-      target="_blank"
-      rel="noopener noreferrer">
-      📁 My Google Drive
-    </a>
+        <!-- Files Table -->
+        <div class="files-table-wrapper">
+            <div class="table-header">
+                <h2>Available Documents</h2>
+                <span class="result-count" id="resultCount">Showing all files</span>
+            </div>
 
-    <!-- Google Sheets -->
-    <a
-      class="link-btn sheets"
-      href="https://script.google.com/macros/s/AKfycbwYnn2mCN3LzOmdj1pJDPtwmTGkrAfALmt02ROQrRFhGg1dsb9iBVRU07vRTVlJeWxS/exec"
-      target="_blank"
-      rel="noopener noreferrer">
-      📊 Blood Donar list 
-    </a>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document Title</th>
+                        <th>Category</th>
+                        <th>File Size</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="filesTableBody">
+                    <!-- Dynamic rendering via JavaScript -->
+                </tbody>
+            </table>
 
-    <a class="back" href="index.html">
-      ← Back to Website
-    </a>
+            <div id="emptyState" class="empty-state">
+                <p>📂 No files matched your search or filter criteria.</p>
+            </div>
+        </div>
+    </div>
 
-  </div>
+    <script>
+        // File Database - Add or update your Google Drive/Server URLs here
+        const filesData = [
+            {
+                name: "Differential Equations: Methods & Applications (Textbook Preview)",
+                type: "PDF",
+                category: "Research",
+                size: "4.8 MB",
+                viewUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing",
+                downloadUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing"
+            },
+            {
+                name: "CO-PO Attainment Calculation Template 2026",
+                type: "EXCEL",
+                category: "Calculators",
+                size: "245 KB",
+                viewUrl: "co po calculator.html",
+                downloadUrl: "files/CO_PO_Attainment_Template.xlsx"
+            },
+            {
+                name: "Engineering Mathematics-I Complete Syllabus & Notes",
+                type: "PDF",
+                category: "Syllabus",
+                size: "1.2 MB",
+                viewUrl: "files/Engg_Maths_I_Syllabus.pdf",
+                downloadUrl: "files/Engg_Maths_I_Syllabus.pdf"
+            },
+            {
+                name: "Perturbation Analysis of MHD Prandtl Fluid Flow - Paper Preprint",
+                type: "PDF",
+                category: "Research",
+                size: "890 KB",
+                viewUrl: "https://doi.org/10.1080/02286203.2026.2708091",
+                downloadUrl: "files/MHD_Prandtl_Preprint.pdf"
+            },
+            {
+                name: "Question Paper Scrutiny Checklist & Format",
+                type: "DOC",
+                category: "Teaching",
+                size: "115 KB",
+                viewUrl: "files/QP_Scrutiny_Checklist.docx",
+                downloadUrl: "files/QP_Scrutiny_Checklist.docx"
+            },
+            {
+                name: "Youth Red Cross Blood Donation Donor Roster Template",
+                type: "EXCEL",
+                category: "YRC",
+                size: "180 KB",
+                viewUrl: "files/YRC_Donor_Roster.xlsx",
+                downloadUrl: "files/YRC_Donor_Roster.xlsx"
+            },
+            {
+                name: "Dr. Mahadev Biradar Detailed Curriculum Vitae",
+                type: "PDF",
+                category: "Research",
+                size: "350 KB",
+                viewUrl: "CV.pdf",
+                downloadUrl: "CV.pdf"
+            },
+            {
+                name: "Casson Nanoliquid Taguchi Analysis Data Tables",
+                type: "EXCEL",
+                category: "Research",
+                size: "420 KB",
+                viewUrl: "files/Taguchi_Analysis_Data.xlsx",
+                downloadUrl: "files/Taguchi_Analysis_Data.xlsx"
+            }
+        ];
 
+        let selectedCategory = "ALL";
+
+        function renderTable(data) {
+            const tableBody = document.getElementById("filesTableBody");
+            const emptyState = document.getElementById("emptyState");
+            const resultCount = document.getElementById("resultCount");
+
+            tableBody.innerHTML = "";
+
+            if (data.length === 0) {
+                emptyState.style.display = "block";
+                resultCount.textContent = "0 files found";
+                return;
+            }
+
+            emptyState.style.display = "none";
+            resultCount.textContent = `Showing ${data.length} file${data.length > 1 ? 's' : ''}`;
+
+            data.forEach(file => {
+                let badgeClass = "badge-pdf";
+                if (file.type === "EXCEL") badgeClass = "badge-excel";
+                if (file.type === "DOC") badgeClass = "badge-doc";
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>
+                        <div class="file-info">
+                            <div class="format-badge ${badgeClass}">${file.type}</div>
+                            <div>
+                                <div class="file-title">${file.name}</div>
+                                <span class="file-category">${file.category}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${file.category}</td>
+                    <td>${file.size}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <a href="${file.viewUrl}" target="_blank" class="btn-action btn-view">👁️ View</a>
+                            <a href="${file.downloadUrl}" download class="btn-action btn-download">⬇ Download</a>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function filterFiles() {
+            const searchVal = document.getElementById("searchInput").value.toLowerCase();
+            const typeVal = document.getElementById("typeFilter").value;
+
+            const filtered = filesData.filter(file => {
+                const matchesSearch = file.name.toLowerCase().includes(searchVal) || 
+                                      file.category.toLowerCase().includes(searchVal);
+                const matchesType = (typeVal === "ALL") || (file.type === typeVal);
+                const matchesCategory = (selectedCategory === "ALL") || (file.category === selectedCategory);
+
+                return matchesSearch && matchesType && matchesCategory;
+            });
+
+            renderTable(filtered);
+        }
+
+        function setCategory(category, buttonElement) {
+            selectedCategory = category;
+            document.querySelectorAll(".chip").forEach(el => el.classList.remove("active"));
+            buttonElement.classList.add("active");
+            filterFiles();
+        }
+
+        // Initial render
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTable(filesData);
+        });
+    </script>
 </body>
 </html>
