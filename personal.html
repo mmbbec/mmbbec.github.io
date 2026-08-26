@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Mahadev Biradar | Academic Resource Hub</title>
+    <title>Dr. Mahadev Biradar | MMB_Academic_Resources</title>
     <style>
         * {
             margin: 0;
@@ -13,13 +13,12 @@
         }
 
         body {
-            background: #f4f7fb;
+            background: #f7f9fc;
             color: #263238;
             line-height: 1.6;
             padding-bottom: 60px;
         }
 
-        /* Top Header */
         header {
             background: #163b65;
             color: white;
@@ -47,109 +46,63 @@
             opacity: 0.85;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-nav {
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
             padding: 8px 18px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-nav-light {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
         }
 
-        .btn-nav-light:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-nav-primary {
+        .back-btn:hover {
             background: #d94a32;
-            color: white;
-            border: 1px solid #d94a32;
+            border-color: #d94a32;
         }
 
-        .btn-nav-primary:hover {
-            background: #b53d28;
-            border-color: #b53d28;
-        }
-
-        /* Main Container */
         .container {
             max-width: 1150px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        /* Primary Drive Banner */
-        .drive-main-banner {
-            background: linear-gradient(135deg, #ffffff 0%, #edf4fc 100%);
-            border: 2px solid #163b65;
-            border-radius: 12px;
-            padding: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            box-shadow: 0 6px 20px rgba(22, 59, 101, 0.08);
-            margin-bottom: 35px;
+        .search-box {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            position: relative;
         }
 
-        .banner-content h2 {
-            font-size: 22px;
-            color: #163b65;
-            margin-bottom: 6px;
-        }
-
-        .banner-content p {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .btn-drive-main {
-            background: #163b65;
-            color: white;
-            padding: 14px 28px;
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1.5px solid #d0d7de;
             border-radius: 8px;
-            text-decoration: none;
             font-size: 15px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            outline: none;
             transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(22, 59, 101, 0.2);
         }
 
-        .btn-drive-main:hover {
-            background: #d94a32;
-            transform: translateY(-2px);
+        .search-box input:focus {
+            border-color: #163b65;
+            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
         }
 
-        /* Section Title */
-        .section-title {
-            margin-bottom: 20px;
-            color: #163b65;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .search-icon {
+            position: absolute;
+            left: 38px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #888;
         }
 
-        /* Folders Grid */
         .folders-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -159,7 +112,7 @@
         .folder-card {
             background: white;
             border-radius: 10px;
-            padding: 24px;
+            padding: 22px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
             transition: 0.3s ease;
@@ -178,12 +131,11 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .folder-icon {
-            font-size: 28px;
-            line-height: 1;
+            font-size: 26px;
         }
 
         .folder-title {
@@ -195,31 +147,37 @@
         .folder-desc {
             font-size: 13px;
             color: #64748b;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             line-height: 1.5;
         }
 
-        .folder-btn {
-            background: #f1f5f9;
-            color: #163b65;
+        .btn-open {
+            background: #163b65;
+            color: white;
             padding: 10px 16px;
             border-radius: 6px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
             text-align: center;
-            border: 1px solid #cbd5e1;
-            transition: 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 6px;
+            transition: 0.2s;
         }
 
-        .folder-card:hover .folder-btn {
+        .btn-open:hover {
             background: #d94a32;
-            color: white;
-            border-color: #d94a32;
+        }
+
+        #emptyState {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-size: 15px;
+            grid-column: 1 / -1;
         }
 
         @media (max-width: 900px) {
@@ -232,7 +190,7 @@
             .folders-grid {
                 grid-template-columns: 1fr;
             }
-            .header-container, .drive-main-banner {
+            .header-container {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -244,115 +202,112 @@
     <header>
         <div class="header-container">
             <div class="header-title">
-                <h1>Dr. Mahadev Biradar | Academic Resource Hub</h1>
-                <p>Basaveshwar Engineering College, Bagalkote</p>
+                <h1>Dr. Mahadev Biradar | MMB_Academic_Resources</h1>
+                <p>Google Drive Direct Folder Access</p>
             </div>
-            <div class="header-actions">
-                <a href="index.html" class="btn-nav btn-nav-light">← Main Profile</a>
-                <a href="PASTE_MAIN_DRIVE_FOLDER_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn-nav btn-nav-primary">
-                    📁 Open Master Drive
-                </a>
-            </div>
+            <a href="index.html" class="back-btn">← Back to Profile</a>
         </div>
     </header>
 
     <div class="container">
-
-        <div class="drive-main-banner">
-            <div class="banner-content">
-                <h2>📂 MMB_Academic_Resources Master Repository</h2>
-                <p>Access all centralized spreadsheets, syllabus documents, research notes, and YRC files on Google Drive.</p>
-            </div>
-            <a href="PASTE_MAIN_DRIVE_FOLDER_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn-drive-main">
-                🚀 Open MMB_Academic_Resources
-            </a>
+        <!-- Search bar -->
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="folderSearch" placeholder="Search sub-folders (e.g., syllabus, notes, calculators, research)..." onkeyup="filterFolders()">
         </div>
 
-        <h2 class="section-title">📁 Sub-Repositories & Resource Categories</h2>
-
-        <div class="folders-grid">
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">📚</span>
-                        <div class="folder-title">01. Syllabus & Curriculum</div>
-                    </div>
-                    <p class="folder-desc">BEC departmental syllabus, VTU autonomous scheme, and competitive examination course guides.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_1_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">📝</span>
-                        <div class="folder-title">02. Lecture Notes & PPTs</div>
-                    </div>
-                    <p class="folder-desc">Engineering Mathematics I-IV lecture slides, class tutorial handouts, and solution sets.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_2_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">📊</span>
-                        <div class="folder-title">03. Calculators & Templates</div>
-                    </div>
-                    <p class="folder-desc">CO-PO attainment calculation sheets, grade entry templates, and automated assessment tools.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_3_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">🔬</span>
-                        <div class="folder-title">04. Research & Preprints</div>
-                    </div>
-                    <p class="folder-desc">MHD, Nanofluids, Casson liquid datasets, textbook review copies, and publication preprints.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_4_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">🩸</span>
-                        <div class="folder-title">05. YRC & Activity Reports</div>
-                    </div>
-                    <p class="folder-desc">Youth Red Cross event rosters, blood donation camp registers, and social outreach documents.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_5_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
-            <div class="folder-card">
-                <div>
-                    <div class="folder-header">
-                        <span class="folder-icon">📋</span>
-                        <div class="folder-title">06. Certificates & Admin Docs</div>
-                    </div>
-                    <p class="folder-desc">IDT & Science Day templates, BoS/BoE official communications, and academic committee circulars.</p>
-                </div>
-                <a href="PASTE_SUBFOLDER_6_LINK_HERE" target="_blank" rel="noopener noreferrer" class="folder-btn">
-                    Open Folder ↗
-                </a>
-            </div>
-
+        <!-- Grid -->
+        <div class="folders-grid" id="foldersContainer">
+            <!-- Dynamically populated -->
         </div>
-
+        <div id="emptyState">📂 No sub-folders found matching your search.</div>
     </div>
 
+    <script>
+        // -------------------------------------------------------------
+        // PASTE YOUR GOOGLE DRIVE SUB-FOLDER SHARING LINKS HERE
+        // -------------------------------------------------------------
+        const subFolders = [
+            {
+                name: "01. Syllabus & Curriculum",
+                icon: "📚",
+                desc: "BEC syllabus schemes, VTU course curriculum, and competitive exam outlines.",
+                driveLink: "PASTE_YOUR_01_FOLDER_LINK_HERE"
+            },
+            {
+                name: "02. Lecture Notes & PPTs",
+                icon: "📝",
+                desc: "Engineering Maths I–IV module notes, tutorial sheets, and question banks.",
+                driveLink: "PASTE_YOUR_02_FOLDER_LINK_HERE"
+            },
+            {
+                name: "03. Calculators & Automation Templates",
+                icon: "📊",
+                desc: "CO–PO attainment spreadsheets, AutoCrat sheets, and grading templates.",
+                driveLink: "PASTE_YOUR_03_FOLDER_LINK_HERE"
+            },
+            {
+                name: "04. Research Papers & Preprints",
+                icon: "🔬",
+                desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book drafts.",
+                driveLink: "PASTE_YOUR_04_FOLDER_LINK_HERE"
+            },
+            {
+                name: "05. YRC & Activity Reports",
+                icon: "🩸",
+                desc: "Youth Red Cross camp rosters, event photos, and social service reports.",
+                driveLink: "PASTE_YOUR_05_FOLDER_LINK_HERE"
+            },
+            {
+                name: "06. Certificates & Admin Documents",
+                icon: "📋",
+                desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee records.",
+                driveLink: "PASTE_YOUR_06_FOLDER_LINK_HERE"
+            }
+        ];
+
+        function renderFolders(data) {
+            const container = document.getElementById("foldersContainer");
+            const emptyState = document.getElementById("emptyState");
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                emptyState.style.display = "block";
+                return;
+            }
+            emptyState.style.display = "none";
+
+            data.forEach(folder => {
+                const card = document.createElement("div");
+                card.className = "folder-card";
+                card.innerHTML = `
+                    <div>
+                        <div class="folder-header">
+                            <span class="folder-icon">${folder.icon}</span>
+                            <div class="folder-title">${folder.name}</div>
+                        </div>
+                        <p class="folder-desc">${folder.desc}</p>
+                    </div>
+                    <a href="${folder.driveLink}" target="_blank" rel="noopener noreferrer" class="btn-open">
+                        Open in Google Drive ↗
+                    </a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterFolders() {
+            const query = document.getElementById("folderSearch").value.toLowerCase();
+            const filtered = subFolders.filter(f => 
+                f.name.toLowerCase().includes(query) || 
+                f.desc.toLowerCase().includes(query)
+            );
+            renderFolders(filtered);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderFolders(subFolders);
+        });
+    </script>
 </body>
 </html>
