@@ -1116,62 +1116,119 @@
 
         // ===== PDF EXPORT (simplified) =====
         function downloadPDF() {
-            const btn = document.getElementById('pdfBtn');
-            btn.innerHTML = '⏳ Generating...';
-            btn.disabled = true;
+    const btn = document.getElementById('pdfBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Generating PDF...';
+    btn.disabled = true;
 
-            if (!coAttainmentData) calculateCOAttainment();
-            if (!lastCOPOResult) calculateCOPO();
+    // Ensure data is computed
+    if (!coAttainmentData) calculateCOAttainment();
+    if (!lastCOPOResult) calculateCOPO();
 
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = 210;
+    // Small delay to allow calculations to finish
+    setTimeout(() => {
+        try {
+            // Check if jsPDF is available
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF library not loaded. Please check internet connection.');
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = 210;
 
-                doc.setFontSize(14);
-                doc.text('Basaveshwar Engineering College Bagalkote', pageWidth / 2, 15, { align: 'center' });
-                doc.setFontSize(11);
-                doc.text('CO-PO Attainment Report (CIE:40 Asg:10 SEE:50)', pageWidth / 2, 22, { align: 'center' });
-                doc.line(10, 25, 200, 25);
+            // ---- Header ----
+            doc.setFontSize(14);
+            doc.text('Basaveshwar Engineering College Bagalkote', pageWidth / 2, 15, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text('CO-PO Attainment Report (CIE:40 Asg:10 SEE:50)', pageWidth / 2, 22, { align: 'center' });
+            doc.line(10, 25, 200, 25);
 
-                doc.setFontSize(9);
-                let y = 32;
-                doc.text(`Course: ${document.getElementById('courseCode').value} | Year: ${document.getElementById('academicYear').value} | Target: ${coAttainmentData.target.toFixed(2)}`, 10, y);
-                y += 6;
+            // ---- Course Info ----
+            doc.setFontSize(9);
+            let y = 32;
+            const courseCode = document.getElementById('courseCode').value || 'N/A';
+            const academicYear = document.getElementById('academicYear').value || 'N/A';
+            const target = coAttainmentData.target.toFixed(2);
+            doc.text(`Course: ${courseCode} | Year: ${academicYear} | Target: ${target}`, 10, y);
+            y += 6;
+
+            // ---- CO Attainment Table ----
+            // Check if autoTable plugin is available
+            if (typeof doc.autoTable === 'function') {
+                const tableData = coAttainmentData.finalCOLevels.map((v, i) => [
+                    `CO${i+1}`,
+                    coAttainmentData.cieMarks[i].toFixed(1),
+                    coAttainmentData.asgMarks[i].toFixed(1),
+                    coAttainmentData.seeMarks[i].toFixed(1),
+                    coAttainmentData.directVals[i].toFixed(2),
+                    coAttainmentData.indirectVals[i].toFixed(2),
+                    v.toFixed(2),
+                    coAttainmentData.statuses[i]
+                ]);
 
                 doc.autoTable({
                     startY: y,
                     head: [
                         ['CO', 'CIE(40)', 'Asg(10)', 'SEE(50)', 'Direct', 'Indirect', 'Final', 'Status']
                     ],
-                    body: coAttainmentData.finalCOLevels.map((v, i) => [
-                        `CO${i+1}`,
-                        coAttainmentData.cieMarks[i].toFixed(1),
-                        coAttainmentData.asgMarks[i].toFixed(1),
-                        coAttainmentData.seeMarks[i].toFixed(1),
-                        coAttainmentData.directVals[i].toFixed(2),
-                        coAttainmentData.indirectVals[i].toFixed(2),
-                        v.toFixed(2),
-                        coAttainmentData.statuses[i]
-                    ]),
+                    body: tableData,
                     theme: 'grid',
                     styles: { fontSize: 8, cellPadding: 1.5 },
                     headStyles: { fillColor: [30, 58, 95], textColor: [255, 255, 255] },
                 });
-
                 y = doc.lastAutoTable.finalY + 5;
-                doc.text(`Overall Average CO: ${coAttainmentData.avgCO.toFixed(2)} (${coAttainmentData.overallStatus})`, 10, y);
-
-                doc.save(`CO_PO_Report_${document.getElementById('courseCode').value}.pdf`);
-                btn.innerHTML = '📄 Export PDF';
-                btn.disabled = false;
-            } catch (e) {
-                alert('PDF error: ' + e.message);
-                btn.innerHTML = '📄 Export PDF';
-                btn.disabled = false;
+            } else {
+                // Fallback: simple text list
+                doc.text('CO Attainment Data:', 10, y);
+                y += 5;
+                coAttainmentData.finalCOLevels.forEach((v, i) => {
+                    doc.text(`CO${i+1}: Final = ${v.toFixed(2)} (${coAttainmentData.statuses[i]})`, 12, y);
+                    y += 4;
+                });
+                y += 3;
             }
-        }
 
+            // ---- Overall Average ----
+            doc.text(`Overall Average CO: ${coAttainmentData.avgCO.toFixed(2)} (${coAttainmentData.overallStatus})`, 10, y);
+            y += 6;
+
+            // ---- PO Attainment (if available) ----
+            if (lastCOPOResult) {
+                doc.text('PO Attainment:', 10, y);
+                y += 5;
+                lastCOPOResult.poResults.forEach((r, idx) => {
+                    const val = r.attainment > 0 ? r.attainment.toFixed(2) : '-';
+                    doc.text(`PO${idx+1}: ${val} (${r.status})`, 12, y);
+                    y += 4;
+                });
+                y += 3;
+                doc.text('PSO Attainment:', 10, y);
+                y += 5;
+                lastCOPOResult.psoResults.forEach((r, idx) => {
+                    doc.text(`PSO${idx+1}: ${r.attainment.toFixed(2)} (${r.status})`, 12, y);
+                    y += 4;
+                });
+            }
+
+            // ---- Footer ----
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-IN');
+            doc.setFontSize(8);
+            doc.text(`Generated on ${dateStr} | BEC Bagalkote`, pageWidth / 2, 285, { align: 'center' });
+
+            // ---- Save ----
+            doc.save(`CO_PO_Report_${courseCode}.pdf`);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+        } catch (err) {
+            console.error('PDF Export Error:', err);
+            alert('PDF generation failed: ' + err.message + '\nPlease check console for details.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }, 300); // small delay to let data settle
+}
         // ----- Initialisation -----
         initInputs();
         createMapping();
