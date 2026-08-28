@@ -4,7 +4,7 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO-PO Attainment Calculator – NBA Compliant</title>
+    <title>CO-PO Attainment Calculator </title>
 
     <!-- jsPDF & AutoTable for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -273,7 +273,6 @@
             background: #f8fafc;
             color: #1a1a1a;
             font-weight: 600;
-            /* Remove spinners */
             -moz-appearance: textfield;
             appearance: textfield;
         }
@@ -385,6 +384,7 @@
             padding: 2px 6px;
             border-radius: 4px;
             display: inline-block;
+            margin: 2px 0;
         }
         .detail-block .highlight {
             font-weight: 700;
@@ -817,7 +817,7 @@
                 sumCO
             };
 
-            // Build result table with detailed breakdown
+            // --- Build main result table ---
             let html = `
                 <div class="result-box">
                     <h3>📊 Course Outcome Attainment & Target Summary</h3>
@@ -879,8 +879,54 @@
                             <span class="calc-subtext" style="color:#475569; margin-top:3px;">Comparison: ${avgCO.toFixed(2)} ${avgCO >= target ? '≥' : '<'} ${target.toFixed(2)}</span>
                         </div>
                     </div>
+
+                    <!-- ===== NEW: DETAILED STEP-BY-STEP PANEL FOR EACH CO ===== -->
+                    <div class="details-panel">
+                        <details>
+                            <summary>📘 Show detailed step-by-step calculation for each CO</summary>
+                            <div style="margin-top:12px;">
+            `;
+
+            for (let i = 0; i < NUM_CO; i++) {
+                if (ciePcts[i] > 0 || seePcts[i] > 0 || indirectVals[i] > 0) {
+                    const badgeClass = statuses[i] === "ATTAINED" ? "status-attained" : "status-not-attained";
+                    html += `
+                        <div class="detail-block">
+                            <strong>CO${i+1}</strong>
+                            <br>
+                            <span class="formula">CIE: ${ciePcts[i].toFixed(1)}% → Level ${cieScales[i].toFixed(0)}</span>
+                            <span style="margin:0 6px;">|</span>
+                            <span class="formula">SEE: ${seePcts[i].toFixed(1)}% → Level ${seeScales[i].toFixed(0)}</span>
+                            <br>
+                            <span class="formula">Direct CO = 0.40×${cieScales[i].toFixed(0)} + 0.60×${seeScales[i].toFixed(0)} = ${directVals[i].toFixed(2)}</span>
+                            <br>
+                            <span class="formula">Indirect Exit = ${indirectVals[i].toFixed(2)}</span>
+                            <br>
+                            <span class="formula">Final CO = 0.80×${directVals[i].toFixed(2)} + 0.20×${indirectVals[i].toFixed(2)} = <strong>${finalCOLevels[i].toFixed(2)}</strong></span>
+                            <br>
+                            Status: <span class="status-badge ${badgeClass}" style="font-size:10px; padding:2px 8px;">${statuses[i]}</span>
+                            <span style="color:#475569; font-size:11px;"> (${finalCOLevels[i].toFixed(2)} ${finalCOLevels[i] >= target ? '≥' : '<'} ${target.toFixed(2)})</span>
+                        </div>
+                    `;
+                }
+            }
+
+            // Overall Average CO calculation detail
+            html += `
+                                <div class="detail-block" style="border-left-color:#1e3a5f; background:#f0f5ff;">
+                                    <strong>Overall Average CO Attainment</strong>
+                                    <br>
+                                    <span class="formula">Σ(Final CO) / Active COs = ${sumCO.toFixed(2)} / ${activeCOCount} = <strong>${avgCO.toFixed(2)}</strong></span>
+                                    <br>
+                                    Status: <span class="status-badge ${overallStatus === 'ATTAINED' ? 'status-attained' : 'status-not-attained'}" style="font-size:10px; padding:2px 8px;">${overallStatus}</span>
+                                    <span style="color:#475569; font-size:11px;"> (${avgCO.toFixed(2)} ${avgCO >= target ? '≥' : '<'} ${target.toFixed(2)})</span>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
                 </div>
             `;
+
             document.getElementById('coAttainmentResult').innerHTML = html;
             // Auto‑trigger PO calculation
             setTimeout(() => calculateCOPO(), 150);
@@ -1019,7 +1065,7 @@
                         </table>
                     </div>
 
-                    <!-- ===== DETAILED CALCULATION PANEL ===== -->
+                    <!-- PO/PSO DETAILED PANEL (already existing) -->
                     <div class="details-panel">
                         <details>
                             <summary>📘 Show detailed step-by-step calculation for each PO / PSO</summary>
