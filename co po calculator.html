@@ -173,7 +173,7 @@
 
 <script>
 const NUM_CO = 5;
-const TARGET = 2.00;  // Fixed target value for ATTAINED / NOT ATTAINED status
+const TARGET = 2.00;
 
 let coAttainmentData = null;
 let mappingData = {};
@@ -302,7 +302,7 @@ function readMappingFromUI() {
     return mappingData;
 }
 
-// ----- Calculate CO Attainment (stores all data) -----
+// ----- Calculate CO Attainment -----
 function calculateCOAttainment() {
     const cieMarks=[], asgMarks=[], seeMarks=[];
     const ciePcts=[], asgPcts=[], seePcts=[];
@@ -369,7 +369,6 @@ function calculateCOAttainment() {
             <div style="text-align:right;"><span style="font-weight:600;">Target: ${TARGET.toFixed(2)}</span><span class="status-badge ${overallStatus==='ATTAINED'?'status-attained':'status-not-attained'}" style="margin-left:10px;">${overallStatus}</span><span class="calc-subtext">${avgCO.toFixed(2)} ${avgCO>=TARGET?'≥':'<'} ${TARGET.toFixed(2)}</span></div>
         </div>
 
-        <!-- CO DETAILS PANEL -->
         <div class="details-panel">
             <details>
                 <summary>📘 Show step-by-step calculation for each CO</summary>
@@ -498,7 +497,7 @@ function exportExcel() {
     XLSX.writeFile(wb, `CO_PO_${courseCode}_${academicYear}.xlsx`);
 }
 
-// ===== PDF EXPORT =====
+// ===== PDF EXPORT (shows ONLY entered values, no percentages, no formulas) =====
 function downloadPDF() {
     const btn = document.getElementById('pdfBtn');
     const originalText = btn.innerHTML;
@@ -529,12 +528,6 @@ function downloadPDF() {
             const cieMarks = coAttainmentData.cieMarks;
             const asgMarks = coAttainmentData.asgMarks;
             const seeMarks = coAttainmentData.seeMarks;
-            const ciePcts = coAttainmentData.ciePcts;
-            const asgPcts = coAttainmentData.asgPcts;
-            const seePcts = coAttainmentData.seePcts;
-            const cieScales = coAttainmentData.cieScales;
-            const asgScales = coAttainmentData.asgScales;
-            const seeScales = coAttainmentData.seeScales;
             const directVals = coAttainmentData.directVals;
             const indirect = coAttainmentData.indirectVals;
             const statuses = coAttainmentData.statuses;
@@ -543,7 +536,7 @@ function downloadPDF() {
             const overallStatus = coAttainmentData.overallStatus;
             const mapping = readMappingFromUI();
 
-            // Header
+            // ---- Header ----
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12.5);
             doc.setTextColor(0, 0, 0);
@@ -565,7 +558,7 @@ function downloadPDF() {
                 theme: 'plain',
                 styles: {
                     textColor: [0, 0, 0],
-                    fontSize: 7.0,
+                    fontSize: 7.5,
                     lineColor: [0, 0, 0],
                     lineWidth: 0.2,
                     halign: 'center',
@@ -585,7 +578,7 @@ function downloadPDF() {
 
             let currentY = 29.5;
 
-            // 1. Course Metadata
+            // ---- 1. Course Metadata ----
             doc.setFontSize(7.8);
             doc.setFont("helvetica", "bold");
             doc.text("1. COURSE METADATA & TARGET SETTINGS", 10, currentY);
@@ -610,31 +603,26 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 2. CO Attainment
-            doc.text("2. COURSE OUTCOME (CO) ATTAINMENT & CALCULATION BREAKDOWN", 10, currentY);
+            // ---- 2. CO Attainment (ONLY ENTERED VALUES - no %, no formulas) ----
+            doc.text("2. COURSE OUTCOME (CO) ATTAINMENT", 10, currentY);
             currentY += 1.5;
 
             const coBody = [];
             for (let i = 0; i < NUM_CO; i++) {
                 if (coAttain[i] > 0 || i < 4) {
-                    const cieDisplay = `${cieMarks[i].toFixed(1)}/40 (${ciePcts[i].toFixed(1)}%) → ${cieScales[i].toFixed(0)}`;
-                    const asgDisplay = `${asgMarks[i].toFixed(1)}/10 (${asgPcts[i].toFixed(1)}%) → ${asgScales[i].toFixed(0)}`;
-                    const seeDisplay = `${seeMarks[i].toFixed(1)}/50 (${seePcts[i].toFixed(1)}%) → ${seeScales[i].toFixed(0)}`;
-                    const directDisplay = `${directVals[i].toFixed(2)}\n(0.4×${cieScales[i].toFixed(0)} + 0.1×${asgScales[i].toFixed(0)} + 0.5×${seeScales[i].toFixed(0)})`;
-                    const finalDisplay = `${coAttain[i].toFixed(2)}\n(0.8×${directVals[i].toFixed(2)} + 0.2×${indirect[i].toFixed(1)})`;
-
                     coBody.push([
                         `CO${i+1}`,
-                        cieDisplay,
-                        asgDisplay,
-                        seeDisplay,
-                        directDisplay,
-                        indirect[i].toFixed(2),
-                        finalDisplay,
-                        statuses[i]
+                        cieMarks[i].toFixed(1),      // Only the entered marks
+                        asgMarks[i].toFixed(1),      // Only the entered marks
+                        seeMarks[i].toFixed(1),      // Only the entered marks
+                        directVals[i].toFixed(2),    // Calculated value
+                        indirect[i].toFixed(2),      // Entered value
+                        coAttain[i].toFixed(2),      // Calculated value
+                        statuses[i]                  // Status
                     ]);
                 }
             }
+            // Overall average row
             coBody.push([
                 { content: `Overall Average CO Attainment (Target: ${target.toFixed(2)}):`, colSpan: 6, styles: { halign: 'right', fontStyle: 'bold' } },
                 { content: avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
@@ -646,28 +634,28 @@ function downloadPDF() {
                 startY: currentY,
                 margin: { left: 10, right: 10 },
                 head: [
-                    ["CO", "CIE (40)", "Asg (10)", "SEE (50)", "Direct (40%+10%+50%)", "Indirect", "Final (80%+20%)", "Status"]
+                    ["CO", "CIE", "Asg", "SEE", "Direct", "Indirect", "Final", "Status"]
                 ],
                 body: coBody,
                 columnStyles: {
                     0: { cellWidth: 10 },
-                    1: { cellWidth: 24 },
-                    2: { cellWidth: 24 },
-                    3: { cellWidth: 24 },
-                    4: { cellWidth: 34 },
-                    5: { cellWidth: 14 },
-                    6: { cellWidth: 34 },
-                    7: { cellWidth: 20 }
+                    1: { cellWidth: 20 },
+                    2: { cellWidth: 20 },
+                    3: { cellWidth: 20 },
+                    4: { cellWidth: 28 },
+                    5: { cellWidth: 18 },
+                    6: { cellWidth: 28 },
+                    7: { cellWidth: 22 }
                 },
                 styles: {
                     ...baseStyles.styles,
-                    fontSize: 6.5,
-                    cellPadding: 0.7
+                    fontSize: 7.5,
+                    cellPadding: 0.8
                 }
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 3. CO-PO / PSO Mapping Matrix
+            // ---- 3. CO-PO / PSO Mapping Matrix ----
             doc.text("3. CO-PO & PSO ARTICULATION CORRELATION MATRIX", 10, currentY);
             currentY += 1.5;
 
@@ -704,23 +692,19 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 4. PO & PSO Attainment
-            doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT & STEP-BY-STEP CALCULATION", 10, currentY);
+            // ---- 4. PO & PSO Attainment (only values) ----
+            doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT", 10, currentY);
             currentY += 1.5;
 
             const poHead = ["Metric"];
             for (let p = 1; p <= 12; p++) poHead.push(`PO${p}`);
 
-            const poRow1 = ["Attainment (0-3)"];
-            const poRow2 = ["Step: Σ(CO×W)/ΣW"];
-            const poRow3 = ["Status"];
+            const poRow1 = ["Attainment"];
+            const poRow2 = ["Status"];
             for (let p = 0; p < 12; p++) {
                 const val = lastCOPOResult.poResults[p].attainment;
-                const num = lastCOPOResult.poResults[p].numerator;
-                const den = lastCOPOResult.poResults[p].denominator;
                 poRow1.push(val > 0 ? val.toFixed(2) : "-");
-                poRow2.push(val > 0 ? `${num.toFixed(1)}/${den}` : "-");
-                poRow3.push(val > 0 ? (lastCOPOResult.poResults[p].status === "ATTAINED" ? "ATT" : "NOT ATT") : "-");
+                poRow2.push(val > 0 ? lastCOPOResult.poResults[p].status : "-");
             }
 
             const poColStyles = { 0: { cellWidth: 24 } };
@@ -731,11 +715,11 @@ function downloadPDF() {
                 startY: currentY,
                 margin: { left: 10, right: 10 },
                 head: [poHead],
-                body: [poRow1, poRow2, poRow3],
+                body: [poRow1, poRow2],
                 columnStyles: poColStyles,
                 styles: {
                     ...baseStyles.styles,
-                    fontSize: 6.0,
+                    fontSize: 6.5,
                     cellPadding: 0.6
                 }
             });
@@ -746,45 +730,35 @@ function downloadPDF() {
                 ...baseStyles,
                 startY: currentY,
                 margin: { left: 10, right: 10 },
-                head: [
-                    ["Metric", "PSO1 Attainment & Calculation", "PSO2 Attainment & Calculation"]
-                ],
+                head: [["Metric", "PSO1", "PSO2"]],
                 body: [
-                    [
-                        "Attainment (0-3)",
-                        `${lastCOPOResult.psoResults[0].attainment.toFixed(2)}\n[Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[0].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[0].denominator}]`,
-                        `${lastCOPOResult.psoResults[1].attainment.toFixed(2)}\n[Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[1].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[1].denominator}]`
-                    ],
-                    [
-                        `Status (Target: ${target.toFixed(2)})`,
-                        lastCOPOResult.psoResults[0].status,
-                        lastCOPOResult.psoResults[1].status
-                    ]
+                    ["Attainment", lastCOPOResult.psoResults[0].attainment.toFixed(2), lastCOPOResult.psoResults[1].attainment.toFixed(2)],
+                    ["Status", lastCOPOResult.psoResults[0].status, lastCOPOResult.psoResults[1].status]
                 ],
                 columnStyles: {
                     0: { cellWidth: 38 },
-                    1: { cellWidth: 76 },
-                    2: { cellWidth: 76 }
+                    1: { cellWidth: 38 },
+                    2: { cellWidth: 38 }
                 },
                 styles: {
                     ...baseStyles.styles,
-                    fontSize: 6.5,
+                    fontSize: 7.0,
                     cellPadding: 0.8
                 }
             });
             currentY = doc.lastAutoTable.finalY + 3;
 
-            // Formula Legend
-            doc.setFontSize(6.4);
+            // ---- Formula Legend (brief) ----
+            doc.setFontSize(6.0);
             doc.setFont("helvetica", "italic");
             doc.text(
-                "Formula Legend: (1) Direct CO = 0.40×CIE_Level + 0.10×Asg_Level + 0.50×SEE_Level; (2) Final CO = 0.80×Direct_CO + 0.20×Indirect_Exit;",
+                "Formulas: Direct = 0.40×CIE_Level + 0.10×Asg_Level + 0.50×SEE_Level; Final = 0.80×Direct + 0.20×Indirect",
                 10, currentY);
             doc.text(
-                "(3) PO/PSO Attainment = Σ(Final CO_i × Mapping_Weight_ij) / Σ(Mapping_Weight_ij); (4) Attainment Status = ATTAINED if Score >= Target.",
+                "PO/PSO = Σ(Final CO × Mapping) / Σ(Mapping); Status = ATTAINED if Score >= Target.",
                 10, currentY + 3.0);
 
-            // Signature
+            // ---- Signature ----
             currentY = Math.max(currentY + 11, 252);
             doc.setDrawColor(0, 0, 0);
             doc.setLineDashPattern([1.5, 1.5], 0);
@@ -802,7 +776,7 @@ function downloadPDF() {
             doc.text("Course Coordinator / Faculty", 45, currentY + 7, { align: "center" });
             doc.text(department, 165, currentY + 7, { align: "center" });
 
-            // Footer
+            // ---- Footer ----
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
             const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
