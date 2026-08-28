@@ -230,6 +230,7 @@ function initInputs() {
             const asgScale = convertToScale(asgPct);
             const seeScale = convertToScale(seePct);
 
+            // Remove % from inside brackets
             document.getElementById(`cieScaleText_${i}`).textContent = cieMarks>0 ? `${ciePct.toFixed(1)}% → Lvl ${cieScale.toFixed(0)}` : '-';
             document.getElementById(`asgScaleText_${i}`).textContent = asgMarks>0 ? `${asgPct.toFixed(1)}% → Lvl ${asgScale.toFixed(0)}` : '-';
             document.getElementById(`seeScaleText_${i}`).textContent = seeMarks>0 ? `${seePct.toFixed(1)}% → Lvl ${seeScale.toFixed(0)}` : '-';
@@ -353,15 +354,16 @@ function calculateCOAttainment() {
         avgCO, target, overallStatus, activeCOCount, sumCO
     };
 
-    // Build result table (simplified for brevity – same as before)
+    // Build result table (no % inside brackets)
     let html = `<div class="result-box"><h3>📊 CO Attainment Summary (Target: ${target.toFixed(2)})</h3><div style="overflow-x:auto;"><table><thead><tr><th>CO</th><th>CIE (40)</th><th>Asg (10)</th><th>SEE (50)</th><th>Direct (40%+10%+50%)</th><th>Indirect</th><th>Final (80%+20%)</th><th>Status</th></tr></thead><tbody>`;
     for (let i=0; i<NUM_CO; i++) {
         if (finalCOLevels[i]>0 || i<4) {
             const badgeClass = statuses[i]==="ATTAINED" ? "status-attained" : (statuses[i]==="NOT ATTAINED" ? "status-not-attained" : "");
+            // Remove % from inside brackets
             html += `<tr><td><strong>CO${i+1}</strong></td>
-                <td>${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}%) → Lvl ${cieScales[i].toFixed(0)}</td>
-                <td>${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}%) → Lvl ${asgScales[i].toFixed(0)}</td>
-                <td>${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}%) → Lvl ${seeScales[i].toFixed(0)}</td>
+                <td>${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}) → Lvl ${cieScales[i].toFixed(0)}</td>
+                <td>${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}) → Lvl ${asgScales[i].toFixed(0)}</td>
+                <td>${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}) → Lvl ${seeScales[i].toFixed(0)}</td>
                 <td><b>${directVals[i].toFixed(2)}</b><span class="calc-subtext">0.40(${cieScales[i].toFixed(0)}) + 0.10(${asgScales[i].toFixed(0)}) + 0.50(${seeScales[i].toFixed(0)})</span></td>
                 <td>${indirectVals[i].toFixed(2)}</td>
                 <td><b style="color:#0b5e3a;">${finalCOLevels[i].toFixed(2)}</b><span class="calc-subtext">0.80(${directVals[i].toFixed(2)}) + 0.20(${indirectVals[i].toFixed(2)})</span></td>
@@ -372,7 +374,42 @@ function calculateCOAttainment() {
         <div style="margin-top:12px; padding:12px 18px; background:#dbeafe; border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div><span style="font-size:14.5px; font-weight:600;">Overall Average CO:</span><span style="font-size:24px; font-weight:700; color:#1e3a5f; margin-left:8px;">${avgCO.toFixed(2)}</span><span class="calc-subtext">Σ(Final CO) / ${activeCOCount} = ${sumCO.toFixed(2)} / ${activeCOCount}</span></div>
             <div style="text-align:right;"><span style="font-weight:600;">Target: ${target.toFixed(2)}</span><span class="status-badge ${overallStatus==='ATTAINED'?'status-attained':'status-not-attained'}" style="margin-left:10px;">${overallStatus}</span><span class="calc-subtext">${avgCO.toFixed(2)} ${avgCO>=target?'≥':'<'} ${target.toFixed(2)}</span></div>
-        </div>`;
+        </div>
+
+        <!-- CO DETAILS PANEL (no % in brackets) -->
+        <div class="details-panel">
+            <details>
+                <summary>📘 Show step-by-step calculation for each CO</summary>
+                <div style="margin-top:12px;">`;
+    for (let i=0; i<NUM_CO; i++) {
+        if (cieMarks[i]>0 || asgMarks[i]>0 || seeMarks[i]>0 || indirectVals[i]>0) {
+            const badgeClass = statuses[i]==="ATTAINED" ? "status-attained" : "status-not-attained";
+            html += `<div class="detail-block">
+                <strong>CO${i+1}</strong><br>
+                <span class="formula">CIE: ${cieMarks[i].toFixed(1)}/40 (${ciePcts[i].toFixed(0)}) → Lvl ${cieScales[i].toFixed(0)}</span>
+                <span style="margin:0 4px;">|</span>
+                <span class="formula">Asg: ${asgMarks[i].toFixed(1)}/10 (${asgPcts[i].toFixed(0)}) → Lvl ${asgScales[i].toFixed(0)}</span>
+                <span style="margin:0 4px;">|</span>
+                <span class="formula">SEE: ${seeMarks[i].toFixed(1)}/50 (${seePcts[i].toFixed(0)}) → Lvl ${seeScales[i].toFixed(0)}</span>
+                <br>
+                <span class="formula">Direct = 0.40×${cieScales[i].toFixed(0)} + 0.10×${asgScales[i].toFixed(0)} + 0.50×${seeScales[i].toFixed(0)} = ${directVals[i].toFixed(2)}</span>
+                <br>
+                <span class="formula">Final = 0.80×${directVals[i].toFixed(2)} + 0.20×${indirectVals[i].toFixed(2)} = <strong>${finalCOLevels[i].toFixed(2)}</strong></span>
+                <br>
+                Status: <span class="status-badge ${badgeClass}" style="font-size:10px; padding:2px 8px;">${statuses[i]}</span>
+                <span style="color:#475569; font-size:11px;"> (${finalCOLevels[i].toFixed(2)} ${finalCOLevels[i] >= target ? '≥' : '<'} ${target.toFixed(2)})</span>
+            </div>`;
+        }
+    }
+    html += `<div class="detail-block" style="border-left-color:#1e3a5f; background:#f0f5ff;">
+                <strong>Overall Average CO</strong><br>
+                <span class="formula">Σ(Final CO) / Active COs = ${sumCO.toFixed(2)} / ${activeCOCount} = <strong>${avgCO.toFixed(2)}</strong></span>
+                <br>Status: <span class="status-badge ${overallStatus==='ATTAINED'?'status-attained':'status-not-attained'}" style="font-size:10px; padding:2px 8px;">${overallStatus}</span>
+                <span style="color:#475569; font-size:11px;"> (${avgCO.toFixed(2)} ${avgCO >= target ? '≥' : '<'} ${target.toFixed(2)})</span>
+            </div>
+        </div>
+    </details></div>`;
+
     document.getElementById('coAttainmentResult').innerHTML = html;
     setTimeout(() => calculateCOPO(), 150);
 }
@@ -468,7 +505,7 @@ function exportExcel() {
     XLSX.writeFile(wb, `CO_PO_${courseCode}_${academicYear}.xlsx`);
 }
 
-// ===== PDF EXPORT (corrected for Assignment) =====
+// ===== PDF EXPORT (no % in brackets, black text, fit A4) =====
 function downloadPDF() {
     const btn = document.getElementById('pdfBtn');
     const originalText = btn.innerHTML;
@@ -557,9 +594,7 @@ function downloadPDF() {
 
             let currentY = 29.5;
 
-            // ============================================================
             // 1. COURSE METADATA
-            // ============================================================
             doc.setFontSize(7.8);
             doc.setFont("helvetica", "bold");
             doc.text("1. COURSE METADATA & TARGET SETTINGS", 10, currentY);
@@ -584,19 +619,16 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // ============================================================
-            // 2. CO ATTAINMENT (FIXED: separate columns, no concatenation)
-            // ============================================================
+            // 2. CO ATTAINMENT (no % inside brackets)
             doc.text("2. COURSE OUTCOME (CO) ATTAINMENT & CALCULATION BREAKDOWN", 10, currentY);
             currentY += 1.5;
 
             const coBody = [];
             for (let i = 0; i < NUM_CO; i++) {
                 if (coAttain[i] > 0 || i < 4) {
-                    // Each column gets its own properly formatted string
-                    const cieDisplay = `${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}%) → ${cieScales[i].toFixed(0)}`;
-                    const asgDisplay = `${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}%) → ${asgScales[i].toFixed(0)}`;
-                    const seeDisplay = `${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}%) → ${seeScales[i].toFixed(0)}`;
+                    const cieDisplay = `${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}) → ${cieScales[i].toFixed(0)}`;
+                    const asgDisplay = `${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}) → ${asgScales[i].toFixed(0)}`;
+                    const seeDisplay = `${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}) → ${seeScales[i].toFixed(0)}`;
                     const directDisplay = `${directVals[i].toFixed(2)}\n(0.4×${cieScales[i].toFixed(0)} + 0.1×${asgScales[i].toFixed(0)} + 0.5×${seeScales[i].toFixed(0)})`;
                     const finalDisplay = `${coAttain[i].toFixed(2)}\n(0.8×${directVals[i].toFixed(2)} + 0.2×${indirect[i].toFixed(1)})`;
 
@@ -612,8 +644,6 @@ function downloadPDF() {
                     ]);
                 }
             }
-
-            // Add overall average row
             coBody.push([
                 { content: `Overall Average CO Attainment (Target: ${target.toFixed(2)}):`, colSpan: 6, styles: { halign: 'right', fontStyle: 'bold' } },
                 { content: avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
@@ -646,9 +676,7 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // ============================================================
             // 3. CO-PO / PSO MAPPING MATRIX
-            // ============================================================
             doc.text("3. CO-PO & PSO ARTICULATION CORRELATION MATRIX", 10, currentY);
             currentY += 1.5;
 
@@ -685,13 +713,10 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // ============================================================
             // 4. PO & PSO ATTAINMENT
-            // ============================================================
             doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT & STEP-BY-STEP CALCULATION", 10, currentY);
             currentY += 1.5;
 
-            // PO table
             const poHead = ["Metric"];
             for (let p = 1; p <= 12; p++) poHead.push(`PO${p}`);
 
@@ -758,9 +783,7 @@ function downloadPDF() {
             });
             currentY = doc.lastAutoTable.finalY + 3;
 
-            // ============================================================
             // FORMULA LEGEND
-            // ============================================================
             doc.setFontSize(6.4);
             doc.setFont("helvetica", "italic");
             doc.text(
@@ -770,9 +793,7 @@ function downloadPDF() {
                 "(3) PO/PSO Attainment = Σ(Final CO_i × Mapping_Weight_ij) / Σ(Mapping_Weight_ij); (4) Attainment Status = ATTAINED if Score >= Target.",
                 10, currentY + 3.0);
 
-            // ============================================================
             // SIGNATURE
-            // ============================================================
             currentY = Math.max(currentY + 11, 252);
             doc.setDrawColor(0, 0, 0);
             doc.setLineDashPattern([1.5, 1.5], 0);
@@ -790,9 +811,7 @@ function downloadPDF() {
             doc.text("Course Coordinator / Faculty", 45, currentY + 7, { align: "center" });
             doc.text(department, 165, currentY + 7, { align: "center" });
 
-            // ============================================================
             // FOOTER
-            // ============================================================
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
             const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
@@ -803,7 +822,6 @@ function downloadPDF() {
                 `OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`,
                 105, 290.5, { align: "center" });
 
-            // ---- Save ----
             doc.save(`CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`);
 
             btn.innerHTML = originalText;
@@ -817,6 +835,7 @@ function downloadPDF() {
         }
     }, 400);
 }
+
 // ----- Initialisation -----
 initInputs();
 createMapping();
