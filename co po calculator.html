@@ -3,323 +3,167 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NBA CO-PO-PSO Attainment Calculator</title>
+    <title>NBA CO-PO-PSO Attainment Document</title>
 
-    <!-- Libraries for PDF & Excel export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- html2pdf library (CDN) for client-side PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer>
+    </script>
 
     <style>
-        /* ===== Global Reset ===== */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* =========================================
+           GLOBAL & RESET
+        ========================================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f4f6f9;
-            color: #1a1a1a;
-            line-height: 1.5;
-            padding: 20px 16px;
+            background: #f0f4f9;
+            color: #1a2634;
+            line-height: 1.4;
+            padding: 16px;
         }
 
-        /* ===== Header ===== */
-        .header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2b4c7e 60%, #3b629b 100%);
-            color: #fff;
-            padding: 20px 30px 16px 30px;
-            border-radius: 12px 12px 0 0;
-            box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+        /* =========================================
+           HEADER
+        ========================================= */
+        header {
+            background: linear-gradient(145deg, #0b2a4a, #1f4e78);
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
         }
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header-left .college-name {
-            font-size: 24px;
+        header h1 {
+            font-size: 22px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .header-left .college-name span {
-            font-weight: 300;
-            font-size: 15px;
-            opacity: 0.85;
-            margin-left: 10px;
-        }
-        .header-left .calc-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 2px;
-            opacity: 0.95;
-        }
-        .header-right {
-            text-align: right;
-            font-size: 14px;
-            font-weight: 400;
-            background: rgba(255,255,255,0.12);
-            padding: 6px 18px;
-            border-radius: 30px;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255,255,255,0.18);
-            white-space: nowrap;
-        }
-        .header-right .creator-label {
-            font-weight: 300;
-            font-size: 12px;
-            opacity: 0.85;
-        }
-        .header-right .creator-name {
-            font-weight: 600;
+        header p {
+            margin-top: 4px;
+            font-size: 13px;
+            opacity: 0.9;
         }
 
-        /* ===== Container & Cards ===== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 18px 20px 40px 20px;
-            background: #fff;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        .header-sub {
+            background: #e9f1f8;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #b6cde0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0b2a4a;
         }
+
+        /* =========================================
+           CONTAINER & CARDS
+        ========================================= */
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto 16px;
+        }
+
         .card {
-            background: #ffffff;
-            padding: 18px 22px 22px 22px;
-            margin-bottom: 20px;
+            background: white;
+            padding: 16px 18px;
+            margin-bottom: 16px;
             border-radius: 10px;
-            border-left: 4px solid #1e3a5f;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0, 20, 40, 0.04);
+            border: 1px solid #dce6f0;
         }
         .card h2 {
-            color: #1a1a1a;
-            font-size: 19px;
-            font-weight: 600;
+            color: #1f4e78;
+            border-bottom: 2px solid #eef3f8;
+            padding-bottom: 6px;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .card h2 .badge {
-            background: #1e3a5f;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 0 12px;
-            border-radius: 20px;
-            line-height: 24px;
-        }
-        .card p {
-            color: #4a5568;
-            font-size: 13.5px;
-            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 700;
         }
 
-        /* ===== Grid & Inputs ===== */
+        /* =========================================
+           FORM GRIDS
+        ========================================= */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 12px 18px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px 16px;
         }
-        .grid label {
-            font-weight: 600;
-            font-size: 13.5px;
-            color: #1a1a1a;
+        label {
             display: block;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #1f3a57;
         }
-        .grid input, .grid select {
+        input,
+        select {
             width: 100%;
-            padding: 9px 11px;
-            border: 1.5px solid #cbd5e1;
+            padding: 7px 10px;
+            border: 1px solid #cbd7e6;
             border-radius: 6px;
-            font-size: 13.5px;
-            background: #f8fafc;
-            transition: border 0.2s, box-shadow 0.2s;
-            margin-top: 4px;
-            color: #1a1a1a;
+            font-size: 13px;
+            background: #fafcfe;
         }
-        .grid input:focus, .grid select:focus {
-            border-color: #1e3a5f;
+        input:focus,
+        select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(30,58,95,0.12);
+            border-color: #1f4e78;
             background: #fff;
         }
 
-        /* ===== Buttons ===== */
-        .btn {
-            background: #1e3a5f;
-            color: #fff;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            margin-right: 8px;
-        }
-        .btn:hover { background: #162a45; box-shadow: 0 3px 10px rgba(30,58,95,0.25); }
-        .btn:active { transform: scale(0.98); }
-        .btn-success { background: #0b5e3a; }
-        .btn-success:hover { background: #084a2e; }
-        .btn-pdf { background: #2b4c7e; }
-        .btn-pdf:hover { background: #1e3a5f; }
-        .btn-excel { background: #1d6f42; }
-        .btn-excel:hover { background: #155732; }
-        .btn-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
-
-        /* ===== Tables ===== */
-        .table-wrap { overflow-x: auto; margin: 10px 0; }
-        .data-table, .mapping-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-        .data-table th, .mapping-table th {
-            background: #1e3a5f;
-            color: #fff;
-            font-weight: 600;
-            padding: 9px 8px;
-            font-size: 12px;
-            text-align: center;
-            border: 1px solid #1e3a5f;
-        }
-        .data-table td, .mapping-table td {
-            padding: 7px 6px;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-            border-left: 1px solid #e2e8f0;
-            background: #ffffff;
-            color: #1a1a1a;
-        }
-        .data-table input[type="number"], .mapping-table input[type="number"] {
-            width: 72px;
-            padding: 6px 4px;
-            text-align: center;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 13px;
-            background: #f8fafc;
-            color: #1a1a1a;
-            font-weight: 600;
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
-        .data-table input[type="number"]::-webkit-outer-spin-button,
-        .data-table input[type="number"]::-webkit-inner-spin-button,
-        .mapping-table input[type="number"]::-webkit-outer-spin-button,
-        .mapping-table input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .mapping-table input[type="number"] { width: 40px; font-size: 12px; padding: 4px 2px; }
-
-        /* ===== Status Badges ===== */
-        .status-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 11.5px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-        .status-attained { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .status-not-attained { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-
-        /* ===== Subtext ===== */
-        .calc-subtext {
-            display: block;
-            font-size: 10px;
-            font-weight: 400;
-            color: #64748b;
-            margin-top: 2px;
-            line-height: 1.2;
-        }
-
-        /* ===== Result Box ===== */
-        .result-box {
-            margin-top: 14px;
-            padding: 14px 18px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border-left: 4px solid #1e3a5f;
-        }
-        .result-box h3 {
-            color: #1a1a1a;
-            font-size: 15.5px;
-            font-weight: 600;
-            margin: 10px 0 4px 0;
-        }
-        .result-box table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
+        /* =========================================
+           TABLES
+        ========================================= */
+        .table-wrapper {
+            overflow-x: auto;
             margin-top: 6px;
         }
-        .result-box table th {
-            background: #1e3a5f;
-            color: #fff;
-            padding: 7px 10px;
-            font-weight: 600;
-            text-align: center;
-        }
-        .result-box table td {
-            padding: 7px 10px;
-            text-align: center;
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1a1a1a;
-        }
-
-        /* ===== Collapsible Details ===== */
-        .details-panel {
-            margin-top: 20px;
-            border-top: 2px dashed #d0dbe8;
-            padding-top: 16px;
-        }
-        .details-panel summary {
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            color: #1e3a5f;
-        }
-        .detail-block {
-            margin: 12px 0 6px 0;
-            background: #fff;
-            padding: 10px 14px;
-            border-radius: 6px;
-            border-left: 3px solid #2b4c7e;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 12.5px;
         }
-        .detail-block .formula {
-            font-family: 'Courier New', monospace;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-            margin: 2px 0;
+        th,
+        td {
+            border: 1px solid #cddbe9;
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
         }
-        .detail-block .highlight {
+        th {
+            background: #e9f1f8;
             font-weight: 700;
-            color: #0b5e3a;
+            color: #0b2a4a;
         }
-        .formula-badge {
-            background: #e9eff7;
-            padding: 1px 10px;
-            border-radius: 12px;
-            font-size: 11px;
+        td:first-child,
+        th:first-child {
             font-weight: 600;
-            color: #1e3a5f;
+            background: #f8fbfe;
+        }
+        .calculated {
+            background: #f2f7f4;
+            font-weight: 600;
+            color: #1b5e20;
         }
 
-        /* ===== Dashboard Metric Cards (for summary) ===== */
+        .legend {
+            background: #f8fbff;
+            padding: 6px 12px;
+            border-left: 3px solid #1f4e78;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #2c4966;
+        }
+
+        /* =========================================
+           DASHBOARD METRIC CARDS
+        ========================================= */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
@@ -331,7 +175,7 @@
             border-radius: 8px;
             padding: 8px 4px;
             text-align: center;
-            border: 1.5px solid #1e3a5f;
+            border: 1.5px solid #1f4e78;
             box-shadow: 0 2px 6px rgba(31, 78, 120, 0.06);
         }
         .metric-card h3 {
@@ -344,7 +188,7 @@
         .metric-card .score {
             font-size: 17px;
             font-weight: 800;
-            color: #1e3a5f;
+            color: #1f4e78;
         }
         .metric-card .out-of {
             font-size: 10.5px;
@@ -352,7 +196,31 @@
             color: #617d98;
         }
 
-        /* ===== Signature Section ===== */
+        /* Attainment Level Colors */
+        .level3 {
+            background: #2b7a4b !important;
+            color: white !important;
+            font-weight: 700;
+        }
+        .level2 {
+            background: #8fc9a0 !important;
+            color: #0b2a4a !important;
+            font-weight: 700;
+        }
+        .level1 {
+            background: #f7da8b !important;
+            color: #4a3600 !important;
+            font-weight: 700;
+        }
+        .level0 {
+            background: #f4b8b8 !important;
+            color: #5a0000 !important;
+            font-weight: 700;
+        }
+
+        /* =========================================
+           SIGNATURE
+        ========================================= */
         .signature-section {
             display: flex;
             justify-content: space-between;
@@ -378,865 +246,791 @@
             margin-top: 2px;
         }
 
-        /* ===== Print Styles (A4) ===== */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; color: black; font-size: 10pt; padding: 0; }
-            .container { box-shadow: none; border-radius: 0; padding: 10px; }
-            .card { border-left: none; box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
-            .header { background: transparent; color: black; box-shadow: none; border-bottom: 2px solid #000; border-radius: 0; padding: 10px 20px; }
-            .header-left .college-name { color: #000; }
-            .header-right { background: transparent; border: 1px solid #000; color: #000; }
-            .data-table th, .mapping-table th { background: #eee; color: #000; border-color: #000; }
-            .data-table td, .mapping-table td { border-color: #aaa; background: #fff; }
-            .result-box { border-left-color: #000; background: #f9f9f9; }
-            .result-box table th { background: #eee; color: #000; }
-            .status-badge { border: 1px solid #000; }
-            .btn-group, .btn { display: none; }
-            .signature-section { margin-top: 40px; }
-            .sig-line { border-top: 1.2px solid #000; }
+        /* =========================================
+           BUTTONS
+        ========================================= */
+        .button-area {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            border: none;
+            padding: 10px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13.5px;
+            transition: 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .btn-calc {
+            background: #1f4e78;
+            color: white;
+        }
+        .btn-save {
+            background: #2a7a4b;
+            color: white;
+        }
+        .btn-pdf {
+            background: #5c3a93;
+            color: white;
+        }
+        .btn-reset {
+            background: #b13e3e;
+            color: white;
         }
 
-        /* ===== Responsive ===== */
-        @media (max-width: 640px) {
-            .header-content { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .header-right { text-align: left; width: 100%; }
-            .grid { grid-template-columns: 1fr 1fr; }
+        #message {
+            text-align: center;
+            font-weight: 600;
+            margin: 8px auto 16px;
+            font-size: 13px;
+            color: #1f4e78;
+        }
+
+        /* =========================================
+           PDF EXPORT TARGET – exactly matches A4 print style
+        ========================================= */
+        #pdfContent {
+            background: white;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        /* =========================================
+           PRINT / PDF STYLES (for html2pdf & print)
+        ========================================= */
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: #000 !important;
+                font-size: 10pt;
+                padding: 0 !important;
+            }
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            header {
+                background: transparent !important;
+                color: #000 !important;
+                border-bottom: 2px solid #000 !important;
+                padding: 4px 0 8px !important;
+                border-radius: 0 !important;
+            }
+            header h1 {
+                font-size: 15pt !important;
+            }
+            header p {
+                font-size: 9pt !important;
+                color: #333 !important;
+            }
+            .header-sub {
+                background: transparent !important;
+                border-bottom: 1.5px solid #000 !important;
+                padding: 4px 0 !important;
+                font-size: 9pt !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #777 !important;
+                border-radius: 0 !important;
+                margin-bottom: 10px !important;
+                padding: 8px 10px !important;
+                page-break-inside: avoid;
+                background: white !important;
+            }
+            .card h2 {
+                font-size: 10.5pt !important;
+                margin-bottom: 6px !important;
+                padding-bottom: 3px !important;
+                border-bottom: 1px solid #999 !important;
+                color: #000 !important;
+            }
+            table {
+                font-size: 8.5pt !important;
+            }
+            th,
+            td {
+                border: 1px solid #333 !important;
+                padding: 4px 2px !important;
+            }
+            th {
+                background: #eee !important;
+                color: #000 !important;
+            }
+            .metric-card {
+                border: 1.2px solid #000 !important;
+                box-shadow: none !important;
+                padding: 4px 2px !important;
+                border-radius: 4px !important;
+            }
+            .metric-card .score {
+                color: #000 !important;
+                font-size: 12pt !important;
+            }
+            .metric-card h3 {
+                font-size: 8.5pt !important;
+                color: #000 !important;
+            }
+            .signature-section {
+                margin-top: 35px !important;
+                padding: 0 20px !important;
+                page-break-inside: avoid;
+            }
+            .sig-line {
+                border-top: 1.2px solid #000 !important;
+            }
+            .sig-title,
+            .sig-name {
+                color: #000 !important;
+            }
+        }
+
+        /* =========================================
+           PDF GENERATION SPINNER
+        ========================================= */
+        #pdfLoader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-weight: 600;
+            color: #1f4e78;
+        }
+        #pdfLoader .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #e9f1f8;
+            border-top: 4px solid #1f4e78;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
-<header class="header">
-    <div class="header-content">
-        <div class="header-left">
-            <div class="college-name">Basaveshwar Engineering College Bagalkote <span>BEC</span></div>
-            <div class="calc-title">NBA OBE – CO-PO-PSO Attainment Calculator</div>
-        </div>
-        <div class="header-right">
-            <span class="creator-label">created by</span>
-            <span class="creator-name">Dr Mahadev Biradar</span>
-        </div>
-    </div>
-</header>
+    <!-- ========================================
+    MAIN APPLICATION
+    ======================================== -->
+    <div id="appContainer">
 
-<div class="container">
+        <header>
+            <h1>BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE</h1>
+            <p>NBA Outcome-Based Education (OBE) · Course &amp; Program Attainment Document</p>
+        </header>
 
-    <!-- ===== CARD 1: Course & Faculty Info ===== -->
-    <div class="card">
-        <h2><span>📋 Course &amp; Faculty Information</span><span class="badge">Step 1</span></h2>
-        <div class="grid">
-            <div><label>Academic Year</label><input id="academicYear" value="2026-27" oninput="calculateAll()"></div>
-            <div><label>Department</label><input id="department" value="Department of Mathematics" oninput="calculateAll()"></div>
-            <div><label>Course Code</label><input id="courseCode" value="BMAS101C" oninput="calculateAll()"></div>
-            <div><label>Course Name</label><input id="courseName" value="Engineering Mathematics-I" oninput="calculateAll()"></div>
-            <div><label>Semester</label><input id="Semester" value="I" oninput="calculateAll()"></div>
-            <div><label>Division</label><input id="Division" value="A" oninput="calculateAll()"></div>
-            <div><label>Faculty Name</label><input id="NameOfStaff" value="Dr M M Biradar" oninput="calculateAll()"></div>
-            <div>
-                <label>Indirect Assessment</label>
-                <select id="useIndirect" onchange="toggleIndirect(); calculateAll();">
-                    <option value="NO">NO</option>
-                    <option value="YES" selected>YES</option>
-                </select>
+        <div class="header-sub">
+            <span>🏛️ Autonomous Institution Affiliated to VTU</span>
+            <span id="subHeaderStaff">👨‍🏫 Faculty: —</span>
+        </div>
+
+        <div class="container">
+
+            <!-- ========== CARD 1: COURSE INFO ========== -->
+            <div class="card">
+                <h2>1. Course &amp; Faculty Information</h2>
+                <div class="grid">
+                    <div>
+                        <label>Faculty / Staff Name</label>
+                        <input id="staffName" placeholder="Faculty Name" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Course Name</label>
+                        <input id="courseName" placeholder="e.g. Data Structures" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Course Code</label>
+                        <input id="courseCode" placeholder="e.g. 22CS32" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Academic Year</label>
+                        <input id="academicYear" placeholder="2026-27" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Semester / Term</label>
+                        <input id="semester" placeholder="Odd / Even" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Department</label>
+                        <input id="department" placeholder="Computer Science &amp; Engg." oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Branch / Division</label>
+                        <input id="branchDiv" placeholder="CSE - A" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>Indirect Assessment</label>
+                        <select id="useIndirect" onchange="toggleIndirect()">
+                            <option value="NO">NO</option>
+                            <option value="YES">YES</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>CIE Weight %</label>
+                        <input id="cieWeight" type="number" value="50" min="0" max="100" oninput="calculate()" />
+                    </div>
+                    <div>
+                        <label>SEE Weight %</label>
+                        <input id="seeWeight" type="number" value="50" min="0" max="100" oninput="calculate()" />
+                    </div>
+                    <div id="directWeightBox" style="display:none;">
+                        <label>Direct Weight %</label>
+                        <input id="directWeight" type="number" value="80" min="0" max="100" oninput="calculate()" />
+                    </div>
+                    <div id="indirectWeightBox" style="display:none;">
+                        <label>Indirect Weight %</label>
+                        <input id="indirectWeight" type="number" value="20" min="0" max="100" oninput="calculate()" />
+                    </div>
+                </div>
             </div>
-            <div>
-                <label>CIE Weight %</label>
-                <input id="cieWeight" type="number" value="40" min="0" max="100" oninput="calculateAll()">
+
+            <!-- ========== CARD 2: CO ATTAINMENT ========== -->
+            <div class="card">
+                <h2>2. CO Attainment Computation (Direct &amp; Indirect)</h2>
+                <div class="legend">
+                    <b>Attainment Levels:</b> ≥ 70% → Level 3 &nbsp;|&nbsp; 60%–69% → Level 2 &nbsp;|&nbsp; 50%–59% → Level 1 &nbsp;|&nbsp; &lt; 50% → Level 0
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>CO</th>
+                                <th>CIE % Students &gt; Target</th>
+                                <th>CIE Level</th>
+                                <th>SEE % Students &gt; Target</th>
+                                <th>SEE Level</th>
+                                <th>Direct CO</th>
+                                <th>Indirect Survey (0-3)</th>
+                                <th>Final CO (Scale 0-3)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coTable"></tbody>
+                    </table>
+                </div>
             </div>
-            <div>
-                <label>Assignment Weight %</label>
-                <input id="asgWeight" type="number" value="10" min="0" max="100" oninput="calculateAll()">
+
+            <!-- ========== CARD 3: ARTICULATION MATRICES ========== -->
+            <div class="card">
+                <h2>3. Articulation Matrices (CO–PO &amp; CO–PSO)</h2>
+                <div class="legend"><b>Mapping Levels:</b> 3 = High · 2 = Medium · 1 = Low · 0 = None</div>
+
+                <div class="table-wrapper" style="margin-bottom: 12px;">
+                    <table>
+                        <thead>
+                            <tr id="poHeaderRow">
+                                <th>CO / PO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coPoMapping"></tbody>
+                    </table>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>CO / PSO</th>
+                                <th>PSO1</th>
+                                <th>PSO2</th>
+                                <th>PSO3</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coPsoMapping"></tbody>
+                    </table>
+                </div>
             </div>
-            <div>
-                <label>SEE Weight %</label>
-                <input id="seeWeight" type="number" value="50" min="0" max="100" oninput="calculateAll()">
+
+            <!-- ========== CARD 4: PO & PSO ATTAINMENT ========== -->
+            <div class="card">
+                <h2>4. Program Outcomes (PO &amp; PSO) Attainment</h2>
+                <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 14px;">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>PO</th>
+                                    <th>Attainment (0-3)</th>
+                                    <th>Mapping Count</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="poResult"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>PSO</th>
+                                    <th>Attainment (0-3)</th>
+                                    <th>Mapping Count</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="psoResult"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div id="directWeightBox" style="display:block;">
-                <label>Direct Weight %</label>
-                <input id="directWeight" type="number" value="80" min="0" max="100" oninput="calculateAll()">
+
+            <!-- ========== CARD 5: FINAL SUMMARY + SIGNATURE ========== -->
+            <div class="card" id="pdfContent">
+                <h2>5. Final Attainment Summary (Scale: 0.00 – 3.00)</h2>
+
+                <div style="font-size: 13px; font-weight: 700; color:#1f4e78; margin-bottom: 4px;">Course Outcomes (CO)</div>
+                <div class="dashboard" id="coDashboard"></div>
+
+                <div style="font-size: 13px; font-weight: 700; color:#1f4e78; margin: 8px 0 4px;">Program Outcomes (PO)</div>
+                <div class="dashboard" id="poDashboard"></div>
+
+                <div style="font-size: 13px; font-weight: 700; color:#1f4e78; margin: 8px 0 4px;">Program Specific Outcomes (PSO)</div>
+                <div class="dashboard" id="psoDashboard"></div>
+
+                <div class="signature-section">
+                    <div class="sig-block">
+                        <div class="sig-line"></div>
+                        <div class="sig-title">Course Instructor (Faculty)</div>
+                        <div class="sig-name" id="sigStaffName">Signature &amp; Name</div>
+                    </div>
+                    <div class="sig-block">
+                        <div class="sig-line"></div>
+                        <div class="sig-title">Head of the Department (HOD)</div>
+                        <div class="sig-name" id="sigDept">Department Seal &amp; Signature</div>
+                    </div>
+                </div>
             </div>
-            <div id="indirectWeightBox" style="display:block;">
-                <label>Indirect Weight %</label>
-                <input id="indirectWeight" type="number" value="20" min="0" max="100" oninput="calculateAll()">
+
+            <!-- ========== BUTTONS ========== -->
+            <div class="button-area no-print">
+                <button class="btn-calc" onclick="calculate()">🧮 Calculate</button>
+                <button class="btn-save" onclick="saveData()">💾 Save Record</button>
+                <button class="btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
+                <button class="btn-reset" onclick="resetPage()">🔄 Reset</button>
             </div>
-        </div>
-        <div style="font-size:12px; color:#475569; margin-top:8px; padding:8px 12px; background:#f0f4f9; border-radius:6px;">
-            <span style="font-weight:600;">Target Level (fixed):</span> <b>2.00</b> (on 0–3 scale) — Status: ATTAINED if final CO ≥ 2.00
-        </div>
-    </div>
 
-    <!-- ===== CARD 2: CO Attainment Inputs ===== -->
-    <div class="card">
-        <h2><span>📊 Course Outcome (CO) Attainment Input</span><span class="badge">Step 2</span></h2>
-        <p>Enter the <b>average marks</b> for each component. The tool converts to levels (0–3) using: <br>
-            <span class="formula-badge">≥60% → 3</span>
-            <span class="formula-badge">40–59.9% → 2</span>
-            <span class="formula-badge">1–39.9% → 1</span>
-            <span class="formula-badge">0% → 0</span>
-        </p>
-        <div class="table-wrap">
-            <table class="data-table" id="coInputTable">
-                <thead>
-                    <tr>
-                        <th>CO</th>
-                        <th>CIE (avg marks)</th>
-                        <th>Asg (avg marks)</th>
-                        <th>SEE (avg marks)</th>
-                        <th>Direct CO</th>
-                        <th>Indirect (0–3)</th>
-                        <th>Final CO</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="coInputBody"></tbody>
-            </table>
-        </div>
-        <div style="font-size:12px; color:#475569; margin-top:6px;">
-            <span style="font-weight:600;">Formulas:</span>
-            <span class="formula">Direct = (CIE_W×CIE_Lvl + Asg_W×Asg_Lvl + SEE_W×SEE_Lvl)</span>
-            <span class="formula" style="margin-left:8px;">Final = (Direct_W×Direct + Indirect_W×Indirect)</span>
-        </div>
-        <div class="btn-group">
-            <button class="btn" onclick="calculateAll()">📈 Compute CO Attainment</button>
-        </div>
-        <div id="coAttainmentResult"></div>
-    </div>
+            <div id="message" class="no-print">✅ Ready · Enter values and click Calculate</div>
 
-    <!-- ===== CARD 3: Articulation Matrices ===== -->
-    <div class="card">
-        <h2><span>🔗 CO–PO &amp; CO–PSO Correlation Mapping</span><span class="badge">Step 3</span></h2>
-        <p>3=High · 2=Medium · 1=Low · 0=No Mapping</p>
-        <div class="table-wrap">
-            <table class="mapping-table" id="mappingTable">
-                <thead>
-                    <tr>
-                        <th>CO</th>
-                        <script>
-                            for (let i=1; i<=12; i++) document.write(`<th>PO${i}</th>`);
-                            document.write(`<th>PSO1</th><th>PSO2</th>`);
-                        </script>
-                    </tr>
-                </thead>
-                <tbody id="mappingBody"></tbody>
-            </table>
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="loadDefaultMapping()">↺ Load Default Mapping</button>
-        </div>
-    </div>
-
-    <!-- ===== CARD 4: PO/PSO Attainment & Summary ===== -->
-    <div class="card">
-        <h2><span>🎯 Final PO / PSO Attainment</span><span class="badge">Step 4</span></h2>
-        <div class="btn-group">
-            <button class="btn" onclick="calculateAll()">🧮 Calculate PO / PSO</button>
-            <button class="btn btn-excel" onclick="exportExcel()">📊 Export Excel</button>
-            <button class="btn btn-pdf" id="pdfBtn" onclick="downloadPDF()">📄 Export PDF</button>
-            <button class="btn" onclick="window.print()">🖨️ Print A4</button>
-        </div>
-        <div id="finalResult"></div>
-        <!-- Dashboard for summary cards -->
-        <div id="summaryDashboard" style="margin-top:20px;"></div>
-        <!-- Signatures -->
-        <div class="signature-section">
-            <div class="sig-block">
-                <div class="sig-line"></div>
-                <div class="sig-title">Course Instructor (Faculty)</div>
-                <div class="sig-name" id="sigStaffName">Dr M M Biradar</div>
+            <!-- PDF loader overlay -->
+            <div id="pdfLoader" class="no-print">
+                <span class="spinner"></span> Generating PDF, please wait…
             </div>
-            <div class="sig-block">
-                <div class="sig-line"></div>
-                <div class="sig-title">Head of the Department (HOD)</div>
-                <div class="sig-name" id="sigDept">Department of Mathematics</div>
-            </div>
-        </div>
-    </div>
 
-</div>
+        </div><!-- /.container -->
+    </div><!-- /#appContainer -->
 
-<script>
-// =============================================================
-//  CONFIGURATION
-// =============================================================
-const CO_COUNT = 5;
-const PO_COUNT = 12;
-const PSO_COUNT = 2;
-const TARGET = 2.00;
 
-let coAttainmentData = null;
-let lastCOPOResult = null;
-let mappingData = {};
+    <!-- ========================================
+    JAVASCRIPT — All logic + PDF export
+    ======================================== -->
+    <script>
+        // ============================
+        // CONFIG
+        // ============================
+        const CO_COUNT = 4;
+        const PO_COUNT = 12;
+        const PSO_COUNT = 3;
 
-// =============================================================
-//  HELPER FUNCTIONS
-// =============================================================
-function parseNum(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
-
-function marksToPct(marks, max) { return (marks <= 0 || max <= 0) ? 0 : (marks / max) * 100; }
-
-function convertToScale(pct) {
-    if (pct <= 0) return 0.0;
-    if (pct >= 60.0) return 3.0;
-    if (pct >= 40.0) return 2.0;
-    return 1.0;
-}
-
-function getStatus(score, target) {
-    if (score === 0) return '-';
-    return score >= target ? 'ATTAINED' : 'NOT ATTAINED';
-}
-
-// =============================================================
-//  INITIALISE TABLES
-// =============================================================
-function initInputs() {
-    const tbody = document.getElementById('coInputBody');
-    tbody.innerHTML = '';
-    // Default sample data (avg marks)
-    const defaultCIE = [30.7, 5.7, 20.0, 20.7, 0.0];
-    const defaultAsg = [8.0, 6.0, 5.0, 4.5, 0.0];
-    const defaultSEE = [42.9, 35.7, 15.2, 7.1, 0.0];
-    const defaultIndirect = [2.50, 2.60, 2.70, 2.40, 0.00];
-
-    for (let i=1; i<=CO_COUNT; i++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td style="font-weight:700; color:#1a1a1a;">CO${i}</td>
-            <td><input type="number" id="cie_${i}" value="${defaultCIE[i-1]}" min="0" max="40" step="0.1" style="width:80px;"></td>
-            <td><input type="number" id="asg_${i}" value="${defaultAsg[i-1]}" min="0" max="10" step="0.1" style="width:80px;"></td>
-            <td><input type="number" id="see_${i}" value="${defaultSEE[i-1]}" min="0" max="50" step="0.1" style="width:80px;"></td>
-            <td id="directDisplay_${i}" class="calculated">-</td>
-            <td><input type="number" id="indirect_${i}" value="${defaultIndirect[i-1].toFixed(2)}" min="0" max="3" step="0.01" style="width:70px;"></td>
-            <td id="finalDisplay_${i}" class="calculated" style="font-weight:700;">-</td>
-            <td id="statusDisplay_${i}">-</td>
-        `;
-        tbody.appendChild(tr);
-    }
-}
-
-function initMapping() {
-    const tbody = document.getElementById('mappingBody');
-    tbody.innerHTML = '';
-    const defaultMapping = {
-        1: { po:[3,2,1,1,0,0,0,0,1,1,0,2], pso:[3,1] },
-        2: { po:[3,3,2,2,1,0,0,0,0,1,0,2], pso:[3,2] },
-        3: { po:[2,3,3,2,2,1,1,0,0,0,1,2], pso:[2,3] },
-        4: { po:[2,2,3,3,2,1,1,1,1,2,2,3], pso:[2,3] },
-        5: { po:[0,0,0,0,0,0,0,0,0,0,0,0], pso:[0,0] }
-    };
-    for (let c=1; c<=CO_COUNT; c++) {
-        const def = defaultMapping[c] || { po: Array(12).fill(0), pso:[0,0] };
-        let row = `<tr><td>CO${c}</td>`;
-        for (let p=1; p<=12; p++) {
-            row += `<td><input type="number" min="0" max="3" value="${def.po[p-1]}" id="co${c}po${p}" style="width:36px;"></td>`;
-        }
-        for (let p=1; p<=2; p++) {
-            row += `<td><input type="number" min="0" max="3" value="${def.pso[p-1]}" id="co${c}pso${p}" style="width:36px;"></td>`;
-        }
-        row += '</tr>';
-        tbody.innerHTML += row;
-    }
-}
-
-function loadDefaultMapping() {
-    initMapping();
-    readMappingFromUI();
-    calculateAll();
-    alert('Default mapping reloaded.');
-}
-
-function readMappingFromUI() {
-    mappingData = {};
-    for (let c=1; c<=CO_COUNT; c++) {
-        const po = [];
-        for (let p=1; p<=12; p++) {
-            const el = document.getElementById(`co${c}po${p}`);
-            po.push(el ? parseNum(el.value) : 0);
-        }
-        const pso = [];
-        for (let p=1; p<=2; p++) {
-            const el = document.getElementById(`co${c}pso${p}`);
-            pso.push(el ? parseNum(el.value) : 0);
-        }
-        mappingData[c] = { po, pso };
-    }
-}
-
-// =============================================================
-//  TOGGLE INDIRECT (show/hide weight inputs)
-// =============================================================
-function toggleIndirect() {
-    const enabled = document.getElementById('useIndirect').value === 'YES';
-    document.getElementById('directWeightBox').style.display = enabled ? 'block' : 'none';
-    document.getElementById('indirectWeightBox').style.display = enabled ? 'block' : 'none';
-}
-
-// =============================================================
-//  MAIN CALCULATION ENGINE
-// =============================================================
-function calculateAll() {
-    // 1. Gather weights
-    const cieW = parseNum(document.getElementById('cieWeight').value) / 100;
-    const asgW = parseNum(document.getElementById('asgWeight').value) / 100;
-    const seeW = parseNum(document.getElementById('seeWeight').value) / 100;
-    const useIndirect = document.getElementById('useIndirect').value === 'YES';
-    const directW = parseNum(document.getElementById('directWeight').value) / 100;
-    const indirectW = parseNum(document.getElementById('indirectWeight').value) / 100;
-
-    // 2. Update signature names
-    const staff = document.getElementById('NameOfStaff').value.trim() || 'Course Instructor';
-    const dept = document.getElementById('department').value.trim() || 'Department';
-    document.getElementById('sigStaffName').innerText = staff;
-    document.getElementById('sigDept').innerText = dept;
-
-    // 3. Compute each CO
-    const cieMarks = [], asgMarks = [], seeMarks = [];
-    const ciePcts = [], asgPcts = [], seePcts = [];
-    const cieLevels = [], asgLevels = [], seeLevels = [];
-    const directVals = [], indirectVals = [], finalVals = [], statuses = [];
-
-    for (let i=1; i<=CO_COUNT; i++) {
-        const cie = parseNum(document.getElementById(`cie_${i}`).value);
-        const asg = parseNum(document.getElementById(`asg_${i}`).value);
-        const see = parseNum(document.getElementById(`see_${i}`).value);
-        const ind = parseNum(document.getElementById(`indirect_${i}`).value);
-
-        const cieP = marksToPct(cie, 40);
-        const asgP = marksToPct(asg, 10);
-        const seeP = marksToPct(see, 50);
-
-        const cieL = convertToScale(cieP);
-        const asgL = convertToScale(asgP);
-        const seeL = convertToScale(seeP);
-
-        const direct = cieL * cieW + asgL * asgW + seeL * seeW;
-        const final = useIndirect ? direct * directW + ind * indirectW : direct;
-        const status = getStatus(final, TARGET);
-
-        cieMarks.push(cie); asgMarks.push(asg); seeMarks.push(see);
-        ciePcts.push(cieP); asgPcts.push(asgP); seePcts.push(seeP);
-        cieLevels.push(cieL); asgLevels.push(asgL); seeLevels.push(seeL);
-        directVals.push(direct); indirectVals.push(ind); finalVals.push(final); statuses.push(status);
-
-        // Update table cells with details
-        const directEl = document.getElementById(`directDisplay_${i}`);
-        const finalEl = document.getElementById(`finalDisplay_${i}`);
-        const statusEl = document.getElementById(`statusDisplay_${i}`);
-
-        if (cie>0 || asg>0 || see>0) {
-            directEl.innerHTML = `${direct.toFixed(2)}<span class="calc-subtext">${cieW*100}%×${cieL.toFixed(0)} + ${asgW*100}%×${asgL.toFixed(0)} + ${seeW*100}%×${seeL.toFixed(0)}</span>`;
-        } else {
-            directEl.innerText = '-';
+        // ============================
+        // HELPERS
+        // ============================
+        function parseNum(v) {
+            const n = parseFloat(v);
+            return isNaN(n) ? 0 : n;
         }
 
-        if (cie>0 || asg>0 || see>0 || ind>0) {
-            const detail = useIndirect ? `${directW*100}%×${direct.toFixed(2)} + ${indirectW*100}%×${ind.toFixed(2)}` : 'No indirect';
-            finalEl.innerHTML = `${final.toFixed(2)}<span class="calc-subtext">${detail}</span>`;
-            const badge = status==='ATTAINED' ? 'status-attained' : 'status-not-attained';
-            statusEl.innerHTML = `<span class="status-badge ${badge}">${status}</span>`;
-        } else {
-            finalEl.innerText = '-';
-            statusEl.innerText = '-';
+        function getLevel(p) {
+            p = parseNum(p);
+            if (p >= 70) return 3;
+            if (p >= 60) return 2;
+            if (p >= 50) return 1;
+            return 0;
         }
-    }
 
-    // 4. Compute average CO
-    let activeCount = 0, sumCO = 0;
-    for (let i=0; i<CO_COUNT; i++) {
-        if (cieMarks[i]>0 || asgMarks[i]>0 || seeMarks[i]>0 || indirectVals[i]>0) {
-            activeCount++;
-            sumCO += finalVals[i];
+        function setLevelStyle(el, level) {
+            if (!el) return;
+            el.classList.remove('level3', 'level2', 'level1', 'level0');
+            el.classList.add('level' + level);
+            el.innerText = level;
         }
-    }
-    const avgCO = activeCount > 0 ? sumCO / activeCount : 0;
-    const overallStatus = getStatus(avgCO, TARGET);
 
-    // 5. Store data
-    coAttainmentData = {
-        cieMarks, asgMarks, seeMarks,
-        ciePcts, asgPcts, seePcts,
-        cieLevels, asgLevels, seeLevels,
-        directVals, indirectVals, finalVals, statuses,
-        avgCO, target: TARGET, overallStatus, activeCount, sumCO
-    };
-
-    // 6. Render detailed CO result
-    renderCOResult();
-
-    // 7. Read mapping and compute PO/PSO
-    readMappingFromUI();
-    computePOPSO();
-
-    // 8. Update dashboard
-    updateDashboard();
-}
-
-// =============================================================
-//  RENDER CO RESULT (with collapsible details)
-// =============================================================
-function renderCOResult() {
-    const data = coAttainmentData;
-    if (!data) return;
-    let html = `<div class="result-box"><h3>📊 CO Attainment Summary (Target: ${TARGET.toFixed(2)})</h3>
-        <div class="table-wrap"><table><thead><tr>
-        <th>CO</th><th>CIE (avg marks)</th><th>Asg (avg marks)</th><th>SEE (avg marks)</th>
-        <th>Direct CO</th><th>Indirect</th><th>Final CO</th><th>Status</th>
-        </tr></thead><tbody>`;
-    for (let i=0; i<CO_COUNT; i++) {
-        if (data.finalVals[i] > 0 || i<4) {
-            const badge = data.statuses[i]==='ATTAINED' ? 'status-attained' : 'status-not-attained';
-            html += `<tr>
-                <td><strong>CO${i+1}</strong></td>
-                <td>${data.cieMarks[i].toFixed(1)} (${data.ciePcts[i].toFixed(1)}%) → Lvl ${data.cieLevels[i].toFixed(0)}</td>
-                <td>${data.asgMarks[i].toFixed(1)} (${data.asgPcts[i].toFixed(1)}%) → Lvl ${data.asgLevels[i].toFixed(0)}</td>
-                <td>${data.seeMarks[i].toFixed(1)} (${data.seePcts[i].toFixed(1)}%) → Lvl ${data.seeLevels[i].toFixed(0)}</td>
-                <td><b>${data.directVals[i].toFixed(2)}</b></td>
-                <td>${data.indirectVals[i].toFixed(2)}</td>
-                <td><b style="color:#0b5e3a;">${data.finalVals[i].toFixed(2)}</b></td>
-                <td><span class="status-badge ${badge}">${data.statuses[i]}</span></td>
-            </tr>`;
-        }
-    }
-    html += `</tbody></table></div>
-        <div style="margin-top:12px; padding:12px 18px; background:#dbeafe; border-radius:6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div><span style="font-size:14.5px; font-weight:600;">Overall Average CO:</span>
-            <span style="font-size:24px; font-weight:700; color:#1e3a5f; margin-left:8px;">${data.avgCO.toFixed(2)}</span>
-            <span class="calc-subtext">Σ(Final CO) / ${data.activeCount} = ${data.sumCO.toFixed(2)} / ${data.activeCount}</span></div>
-            <div style="text-align:right;"><span style="font-weight:600;">Target: ${TARGET.toFixed(2)}</span>
-            <span class="status-badge ${data.overallStatus==='ATTAINED'?'status-attained':'status-not-attained'}" style="margin-left:10px;">${data.overallStatus}</span>
-            <span class="calc-subtext">${data.avgCO.toFixed(2)} ${data.avgCO>=TARGET?'≥':'<'} ${TARGET.toFixed(2)}</span></div>
-        </div>`;
-
-    // Collapsible step-by-step details
-    html += `<div class="details-panel"><details><summary>📘 Show step-by-step calculation for each CO</summary>`;
-    for (let i=0; i<CO_COUNT; i++) {
-        if (data.finalVals[i] > 0 || i<4) {
-            const badge = data.statuses[i]==='ATTAINED' ? 'status-attained' : 'status-not-attained';
-            html += `<div class="detail-block">
-                <strong>CO${i+1}</strong><br>
-                <span class="formula">CIE: ${data.cieMarks[i].toFixed(1)}/40 (${data.ciePcts[i].toFixed(1)}%) → Lvl ${data.cieLevels[i].toFixed(0)}</span> |
-                <span class="formula">Asg: ${data.asgMarks[i].toFixed(1)}/10 (${data.asgPcts[i].toFixed(1)}%) → Lvl ${data.asgLevels[i].toFixed(0)}</span> |
-                <span class="formula">SEE: ${data.seeMarks[i].toFixed(1)}/50 (${data.seePcts[i].toFixed(1)}%) → Lvl ${data.seeLevels[i].toFixed(0)}</span><br>
-                <span class="formula">Direct = ${(parseNum(document.getElementById('cieWeight').value)/100).toFixed(2)}×${data.cieLevels[i].toFixed(0)} + ${(parseNum(document.getElementById('asgWeight').value)/100).toFixed(2)}×${data.asgLevels[i].toFixed(0)} + ${(parseNum(document.getElementById('seeWeight').value)/100).toFixed(2)}×${data.seeLevels[i].toFixed(0)} = ${data.directVals[i].toFixed(2)}</span><br>
-                <span class="formula">Final = 0.80×${data.directVals[i].toFixed(2)} + 0.20×${data.indirectVals[i].toFixed(2)} = <strong>${data.finalVals[i].toFixed(2)}</strong></span><br>
-                Status: <span class="status-badge ${badge}" style="font-size:10px; padding:2px 8px;">${data.statuses[i]}</span>
-                <span style="color:#475569; font-size:11px;"> (${data.finalVals[i].toFixed(2)} ${data.finalVals[i]>=TARGET?'≥':'<'} ${TARGET.toFixed(2)})</span>
-            </div>`;
-        }
-    }
-    html += `<div class="detail-block" style="border-left-color:#1e3a5f; background:#f0f5ff;">
-        <strong>Overall Average CO</strong><br>
-        <span class="formula">Σ(Final CO) / Active COs = ${data.sumCO.toFixed(2)} / ${data.activeCount} = <strong>${data.avgCO.toFixed(2)}</strong></span>
-        <br>Status: <span class="status-badge ${data.overallStatus==='ATTAINED'?'status-attained':'status-not-attained'}" style="font-size:10px; padding:2px 8px;">${data.overallStatus}</span>
-        <span style="color:#475569; font-size:11px;"> (${data.avgCO.toFixed(2)} ${data.avgCO>=TARGET?'≥':'<'} ${TARGET.toFixed(2)})</span>
-    </div></details></div>`;
-
-    document.getElementById('coAttainmentResult').innerHTML = html;
-}
-
-// =============================================================
-//  COMPUTE PO & PSO
-// =============================================================
-function computePOPSO() {
-    if (!coAttainmentData) return;
-    const coAttain = coAttainmentData.finalVals;
-    const target = TARGET;
-
-    const poResults = [];
-    for (let p=1; p<=PO_COUNT; p++) {
-        let num=0, den=0, details=[];
-        for (let c=1; c<=CO_COUNT; c++) {
-            const w = mappingData[c]?.po?.[p-1] || 0;
-            if (w>0) {
-                num += coAttain[c-1] * w;
-                den += w;
-                details.push(`CO${c}(${coAttain[c-1].toFixed(2)}×${w})`);
+        // ============================
+        // INIT TABLES
+        // ============================
+        function initTables() {
+            // CO Table
+            let coHtml = '';
+            for (let c = 1; c <= CO_COUNT; c++) {
+                const defCie = c === 1 ? 82 : (c === 4 ? 62 : 30);
+                const defSee = c === 1 || c === 4 ? 50 : 25;
+                coHtml += `<tr>
+                        <td>CO${c}</td>
+                        <td><input id="cie${c}" type="number" min="0" max="100" value="${defCie}" oninput="calculate()" /></td>
+                        <td id="cieLevel${c}" class="calculated">0</td>
+                        <td><input id="see${c}" type="number" min="0" max="100" value="${defSee}" oninput="calculate()" /></td>
+                        <td id="seeLevel${c}" class="calculated">0</td>
+                        <td id="directCO${c}" class="calculated">0.00</td>
+                        <td><input id="indirectCO${c}" type="number" min="0" max="3" step="0.1" value="0" oninput="calculate()" /></td>
+                        <td id="finalCO${c}" class="calculated" style="font-weight:700;">0.00</td>
+                    </tr>`;
             }
-        }
-        const att = den>0 ? num/den : 0;
-        const status = att>0 ? getStatus(att, target) : '-';
-        poResults.push({ po:p, num, den, att, status, details: details.join(', ') });
-    }
+            document.getElementById('coTable').innerHTML = coHtml;
 
-    const psoResults = [];
-    for (let p=1; p<=PSO_COUNT; p++) {
-        let num=0, den=0, details=[];
-        for (let c=1; c<=CO_COUNT; c++) {
-            const w = mappingData[c]?.pso?.[p-1] || 0;
-            if (w>0) {
-                num += coAttain[c-1] * w;
-                den += w;
-                details.push(`CO${c}(${coAttain[c-1].toFixed(2)}×${w})`);
+            // PO Header
+            let poHead = '<th>CO / PO</th>';
+            for (let p = 1; p <= PO_COUNT; p++) poHead += `<th>PO${p}</th>`;
+            document.getElementById('poHeaderRow').innerHTML = poHead;
+
+            // PO Mapping
+            let poMapHtml = '';
+            for (let c = 1; c <= CO_COUNT; c++) {
+                poMapHtml += `<tr><td>CO${c}</td>`;
+                for (let p = 1; p <= PO_COUNT; p++) {
+                    const sel = p <= 3 ? 'selected' : '';
+                    poMapHtml += `<td><select class="poMap" data-co="${c}" data-po="${p}" onchange="calculate()">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" ${sel}>3</option>
+                        </select></td>`;
+                }
+                poMapHtml += `</tr>`;
             }
+            document.getElementById('coPoMapping').innerHTML = poMapHtml;
+
+            // PSO Mapping
+            let psoMapHtml = '';
+            for (let c = 1; c <= CO_COUNT; c++) {
+                psoMapHtml += `<tr><td>CO${c}</td>`;
+                for (let p = 1; p <= PSO_COUNT; p++) {
+                    const sel = p === 1 ? 'selected' : '';
+                    psoMapHtml += `<td><select class="psoMap" data-co="${c}" data-pso="${p}" onchange="calculate()">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" ${sel}>3</option>
+                        </select></td>`;
+                }
+                psoMapHtml += `</tr>`;
+            }
+            document.getElementById('coPsoMapping').innerHTML = psoMapHtml;
         }
-        const att = den>0 ? num/den : 0;
-        const status = att>0 ? getStatus(att, target) : '-';
-        psoResults.push({ pso:p, num, den, att, status, details: details.join(', ') });
-    }
 
-    lastCOPOResult = { poResults, psoResults, coAttain, avgCO:coAttainmentData.avgCO, target };
-
-    // Render PO/PSO result
-    let html = `<div class="result-box"><h3>📊 PO Attainment (Target: ${target.toFixed(2)})</h3>
-        <div class="table-wrap"><table><thead><tr><th>PO</th><th>Attainment</th><th>Status</th><th>Mapping Details</th></tr></thead><tbody>`;
-    for (let i=0; i<poResults.length; i++) {
-        const r = poResults[i];
-        const badge = r.status==='ATTAINED' ? 'status-attained' : (r.status==='NOT ATTAINED' ? 'status-not-attained' : '');
-        html += `<tr>
-            <td><strong>PO${i+1}</strong></td>
-            <td style="font-weight:700;">${r.att>0 ? r.att.toFixed(2) : '-'}</td>
-            <td>${r.status!=='-' ? `<span class="status-badge ${badge}">${r.status}</span>` : '-'}</td>
-            <td style="font-size:11px; text-align:left;">${r.details || 'No mapping'}</td>
-        </tr>`;
-    }
-    html += `</tbody></table></div>
-        <h3 style="margin-top:16px;">📊 PSO Attainment</h3>
-        <div class="table-wrap"><table><thead><tr><th>PSO</th><th>Attainment</th><th>Status</th><th>Mapping Details</th></tr></thead><tbody>`;
-    for (let i=0; i<psoResults.length; i++) {
-        const r = psoResults[i];
-        const badge = r.status==='ATTAINED' ? 'status-attained' : (r.status==='NOT ATTAINED' ? 'status-not-attained' : '');
-        html += `<tr>
-            <td><strong>PSO${i+1}</strong></td>
-            <td style="font-weight:700;">${r.att>0 ? r.att.toFixed(2) : '-'}</td>
-            <td>${r.status!=='-' ? `<span class="status-badge ${badge}">${r.status}</span>` : '-'}</td>
-            <td style="font-size:11px; text-align:left;">${r.details || 'No mapping'}</td>
-        </tr>`;
-    }
-    html += `</tbody></table></div>
-        <div class="details-panel"><details><summary>📘 Show detailed PO/PSO calculation</summary>
-        <div style="margin-top:12px;">`;
-    for (let i=0; i<poResults.length; i++) {
-        const r = poResults[i];
-        if (r.att>0) {
-            html += `<div class="detail-block"><strong>PO${i+1}</strong> = <span class="highlight">${r.att.toFixed(2)}</span><br>
-                <span class="formula">(${r.details}) / ${r.den}</span><br>
-                Status: ${r.status} (${r.att.toFixed(2)} ${r.att>=target?'≥':'<'} ${target.toFixed(2)})</div>`;
+        // ============================
+        // TOGGLE INDIRECT
+        // ============================
+        function toggleIndirect() {
+            const enabled = document.getElementById('useIndirect').value === 'YES';
+            document.getElementById('directWeightBox').style.display = enabled ? 'block' : 'none';
+            document.getElementById('indirectWeightBox').style.display = enabled ? 'block' : 'none';
+            calculate();
         }
-    }
-    for (let i=0; i<psoResults.length; i++) {
-        const r = psoResults[i];
-        if (r.att>0) {
-            html += `<div class="detail-block"><strong>PSO${i+1}</strong> = <span class="highlight">${r.att.toFixed(2)}</span><br>
-                <span class="formula">(${r.details}) / ${r.den}</span><br>
-                Status: ${r.status} (${r.att.toFixed(2)} ${r.att>=target?'≥':'<'} ${target.toFixed(2)})</div>`;
+
+        // ============================
+        // MAIN CALCULATE
+        // ============================
+        function calculate() {
+            const cieWeight = parseNum(document.getElementById('cieWeight').value) / 100;
+            const seeWeight = parseNum(document.getElementById('seeWeight').value) / 100;
+            const useIndirect = document.getElementById('useIndirect').value === 'YES';
+            const directWeight = parseNum(document.getElementById('directWeight').value) / 100;
+            const indirectWeight = parseNum(document.getElementById('indirectWeight').value) / 100;
+
+            const staff = document.getElementById('staffName').value.trim() || '—';
+            const dept = document.getElementById('department').value.trim() || 'Department of Computer Science & Engg.';
+
+            // Sync header & signatures
+            document.getElementById('subHeaderStaff').innerText = '👨‍🏫 Faculty: ' + staff;
+            document.getElementById('sigStaffName').innerText = staff !== '—' ? staff : 'Course Instructor';
+            document.getElementById('sigDept').innerText = dept;
+
+            const finalCO = [];
+
+            for (let c = 1; c <= CO_COUNT; c++) {
+                const cie = parseNum(document.getElementById('cie' + c).value);
+                const see = parseNum(document.getElementById('see' + c).value);
+                const cieLevel = getLevel(cie);
+                const seeLevel = getLevel(see);
+
+                const directCO = (cieLevel * cieWeight) + (seeLevel * seeWeight);
+                const indirect = parseNum(document.getElementById('indirectCO' + c).value);
+                const final = useIndirect ? ((directCO * directWeight) + (indirect * indirectWeight)) : directCO;
+                finalCO.push(final);
+
+                setLevelStyle(document.getElementById('cieLevel' + c), cieLevel);
+                setLevelStyle(document.getElementById('seeLevel' + c), seeLevel);
+
+                document.getElementById('directCO' + c).innerText = directCO.toFixed(2);
+                document.getElementById('finalCO' + c).innerText = final.toFixed(2);
+            }
+
+            calculatePO(finalCO);
+            calculatePSO(finalCO);
+            updateCODashboard(finalCO);
+
+            // Update message
+            document.getElementById('message').innerHTML = '✅ Calculated · ' + new Date().toLocaleTimeString();
         }
-    }
-    html += `</div></details></div></div>`;
-    document.getElementById('finalResult').innerHTML = html;
-}
 
-// =============================================================
-//  DASHBOARD (Summary Cards)
-// =============================================================
-function updateDashboard() {
-    if (!coAttainmentData || !lastCOPOResult) return;
-    let html = `<div style="font-size:13px; font-weight:700; color:#1e3a5f; margin:10px 0 4px;">CO Attainment</div>
-        <div class="dashboard">`;
-    for (let i=0; i<CO_COUNT; i++) {
-        const v = coAttainmentData.finalVals[i];
-        html += `<div class="metric-card"><h3>CO${i+1}</h3>
-            <div><span class="score">${v.toFixed(2)}</span><span class="out-of">/3.0</span></div>
-            <div class="calc-subtext">${coAttainmentData.statuses[i]}</div>
-        </div>`;
-    }
-    html += `</div><div style="font-size:13px; font-weight:700; color:#1e3a5f; margin:10px 0 4px;">PO Attainment</div>
-        <div class="dashboard">`;
-    for (let i=0; i<PO_COUNT; i++) {
-        const v = lastCOPOResult.poResults[i].att;
-        html += `<div class="metric-card"><h3>PO${i+1}</h3>
-            <div><span class="score">${v>0 ? v.toFixed(2) : '-'}</span><span class="out-of">/3.0</span></div>
-        </div>`;
-    }
-    html += `</div><div style="font-size:13px; font-weight:700; color:#1e3a5f; margin:10px 0 4px;">PSO Attainment</div>
-        <div class="dashboard">`;
-    for (let i=0; i<PSO_COUNT; i++) {
-        const v = lastCOPOResult.psoResults[i].att;
-        html += `<div class="metric-card"><h3>PSO${i+1}</h3>
-            <div><span class="score">${v>0 ? v.toFixed(2) : '-'}</span><span class="out-of">/3.0</span></div>
-        </div>`;
-    }
-    html += `</div>`;
-    document.getElementById('summaryDashboard').innerHTML = html;
-}
+        // ============================
+        // CALCULATE PO
+        // ============================
+        function calculatePO(finalCO) {
+            let html = '',
+                values = [];
+            for (let p = 1; p <= PO_COUNT; p++) {
+                let numerator = 0,
+                    denominator = 0;
+                for (let c = 1; c <= CO_COUNT; c++) {
+                    const sel = document.querySelector(`.poMap[data-co="${c}"][data-po="${p}"]`);
+                    const mapVal = parseNum(sel ? sel.value : 0);
+                    numerator += finalCO[c - 1] * mapVal;
+                    denominator += mapVal;
+                }
+                const attainment = denominator === 0 ? 0 : (numerator / denominator);
+                values.push(attainment);
+                html += `<tr>
+                        <td>PO${p}</td>
+                        <td class="calculated">${attainment.toFixed(2)}</td>
+                        <td>${denominator}</td>
+                        <td>${denominator > 0 ? 'Mapped' : 'Not Mapped'}</td>
+                    </tr>`;
+            }
+            document.getElementById('poResult').innerHTML = html;
 
-// =============================================================
-//  EXCEL EXPORT
-// =============================================================
-function exportExcel() {
-    if (!coAttainmentData) { calculateAll(); }
-    if (!lastCOPOResult) { calculateAll(); }
-    const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
-    const academicYear = document.getElementById('academicYear').value || '2026-27';
+            let dash = '';
+            values.forEach((v, i) => {
+                dash += `<div class="metric-card">
+                        <h3>PO${i + 1}</h3>
+                        <div><span class="score">${v.toFixed(2)}</span><span class="out-of">/3.0</span></div>
+                    </div>`;
+            });
+            document.getElementById('poDashboard').innerHTML = dash;
+            window.poValues = values;
+        }
 
-    const rows = [];
-    rows.push(['Basaveshwar Engineering College Bagalkote']);
-    rows.push(['CO-PO-PSO Attainment Report']);
-    rows.push(['Course:', courseCode, 'Year:', academicYear]);
-    rows.push([]);
-    rows.push(['CO', 'CIE (avg)', 'Asg (avg)', 'SEE (avg)', 'Direct', 'Indirect', 'Final', 'Status']);
-    for (let i=0; i<CO_COUNT; i++) {
-        rows.push([`CO${i+1}`,
-            coAttainmentData.cieMarks[i].toFixed(1),
-            coAttainmentData.asgMarks[i].toFixed(1),
-            coAttainmentData.seeMarks[i].toFixed(1),
-            coAttainmentData.directVals[i].toFixed(2),
-            coAttainmentData.indirectVals[i].toFixed(2),
-            coAttainmentData.finalVals[i].toFixed(2),
-            coAttainmentData.statuses[i]
-        ]);
-    }
-    rows.push([]);
-    rows.push(['PO Attainment']);
-    const poHead = ['PO'];
-    for (let i=0; i<PO_COUNT; i++) poHead.push(`PO${i+1}`);
-    rows.push(poHead);
-    const poVals = ['Attainment'];
-    for (let i=0; i<PO_COUNT; i++) poVals.push(lastCOPOResult.poResults[i].att.toFixed(2));
-    rows.push(poVals);
-    rows.push([]);
-    rows.push(['PSO Attainment']);
-    rows.push(['PSO1', lastCOPOResult.psoResults[0].att.toFixed(2)]);
-    rows.push(['PSO2', lastCOPOResult.psoResults[1].att.toFixed(2)]);
+        // ============================
+        // CALCULATE PSO
+        // ============================
+        function calculatePSO(finalCO) {
+            let html = '',
+                values = [];
+            for (let p = 1; p <= PSO_COUNT; p++) {
+                let numerator = 0,
+                    denominator = 0;
+                for (let c = 1; c <= CO_COUNT; c++) {
+                    const sel = document.querySelector(`.psoMap[data-co="${c}"][data-pso="${p}"]`);
+                    const mapVal = parseNum(sel ? sel.value : 0);
+                    numerator += finalCO[c - 1] * mapVal;
+                    denominator += mapVal;
+                }
+                const attainment = denominator === 0 ? 0 : (numerator / denominator);
+                values.push(attainment);
+                html += `<tr>
+                        <td>PSO${p}</td>
+                        <td class="calculated">${attainment.toFixed(2)}</td>
+                        <td>${denominator}</td>
+                        <td>${denominator > 0 ? 'Mapped' : 'Not Mapped'}</td>
+                    </tr>`;
+            }
+            document.getElementById('psoResult').innerHTML = html;
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    XLSX.utils.book_append_sheet(wb, ws, 'CO_PO_PSO');
-    XLSX.writeFile(wb, `CO_PO_PSO_${courseCode}_${academicYear}.xlsx`);
-}
+            let dash = '';
+            values.forEach((v, i) => {
+                dash += `<div class="metric-card">
+                        <h3>PSO${i + 1}</h3>
+                        <div><span class="score">${v.toFixed(2)}</span><span class="out-of">/3.0</span></div>
+                    </div>`;
+            });
+            document.getElementById('psoDashboard').innerHTML = dash;
+            window.psoValues = values;
+        }
 
-// =============================================================
-//  PDF EXPORT (using jsPDF + autoTable)
-// =============================================================
-function downloadPDF() {
-    const btn = document.getElementById('pdfBtn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '⏳ Generating PDF…';
-    btn.disabled = true;
+        // ============================
+        // UPDATE CO DASHBOARD
+        // ============================
+        function updateCODashboard(finalCO) {
+            let html = '';
+            finalCO.forEach((v, i) => {
+                html += `<div class="metric-card">
+                        <h3>CO${i + 1}</h3>
+                        <div><span class="score">${v.toFixed(2)}</span><span class="out-of">/3.0</span></div>
+                    </div>`;
+            });
+            document.getElementById('coDashboard').innerHTML = html;
+        }
 
-    if (!coAttainmentData) calculateAll();
-    if (!lastCOPOResult) calculateAll();
-
-    setTimeout(() => {
-        try {
-            if (typeof window.jspdf === 'undefined') throw new Error('jsPDF not loaded');
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-            const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
-            const courseName = document.getElementById('courseName').value || 'Course';
-            const academicYear = document.getElementById('academicYear').value || '2026-27';
-            const department = document.getElementById('department').value || 'Department';
-            const semester = document.getElementById('Semester').value || 'I';
-            const division = document.getElementById('Division').value || 'A';
-            const staff = document.getElementById('NameOfStaff').value || 'Faculty';
-            const target = TARGET;
-
-            const data = coAttainmentData;
-            const poRes = lastCOPOResult.poResults;
-            const psoRes = lastCOPOResult.psoResults;
-
-            // Header
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(12);
-            doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 105, 12, { align: "center" });
-            doc.setFontSize(9);
-            doc.text(department, 105, 17, { align: "center" });
-            doc.setFontSize(8);
-            doc.setDrawColor(0);
-            doc.rect(55, 19, 100, 5);
-            doc.text("CO-PO / PSO ATTAINMENT REPORT", 105, 22.7, { align: "center" });
-            doc.line(10, 26, 200, 26);
-
-            const baseStyles = {
-                theme: 'plain',
-                styles: { textColor: [0,0,0], fontSize: 7.5, lineColor: [0,0,0], lineWidth: 0.2,
-                          halign: 'center', valign: 'middle', cellPadding: 0.8, font: 'helvetica' },
-                headStyles: { fillColor: [255,255,255], textColor: [0,0,0], fontStyle: 'bold',
-                              lineColor: [0,0,0], lineWidth: 0.2 }
+        // ============================
+        // SAVE DATA (local / Google Script fallback)
+        // ============================
+        function saveData() {
+            calculate();
+            const payload = {
+                staffName: document.getElementById('staffName').value,
+                courseName: document.getElementById('courseName').value,
+                courseCode: document.getElementById('courseCode').value,
+                academicYear: document.getElementById('academicYear').value,
+                semester: document.getElementById('semester').value,
+                department: document.getElementById('department').value,
+                branchDiv: document.getElementById('branchDiv').value,
+                po: window.poValues || [],
+                pso: window.psoValues || []
             };
 
-            let y = 28.5;
+            const msgEl = document.getElementById('message');
+            msgEl.innerText = '⏳ Saving data...';
 
-            // 1. Metadata
-            doc.setFontSize(7.5);
-            doc.setFont("helvetica", "bold");
-            doc.text("1. COURSE METADATA", 10, y);
-            y += 1.5;
-            doc.autoTable({
-                ...baseStyles,
-                startY: y,
-                margin: { left: 10, right: 10 },
-                head: [["Academic Year", "Course Code", "Course Title", "Sem/Div", "Faculty", "Target"]],
-                body: [[academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staff, target.toFixed(2)]],
-                columnStyles: { 0:{cellWidth:22},1:{cellWidth:25},2:{cellWidth:50},3:{cellWidth:22},4:{cellWidth:35},5:{cellWidth:22} }
-            });
-            y = doc.lastAutoTable.finalY + 3;
-
-            // 2. CO Attainment
-            doc.text("2. COURSE OUTCOME ATTAINMENT", 10, y);
-            y += 1.5;
-            const coBody = [];
-            for (let i=0; i<CO_COUNT; i++) {
-                if (data.finalVals[i] > 0 || i<4) {
-                    coBody.push([
-                        `CO${i+1}`,
-                        data.cieMarks[i].toFixed(1),
-                        data.asgMarks[i].toFixed(1),
-                        data.seeMarks[i].toFixed(1),
-                        data.directVals[i].toFixed(2),
-                        data.indirectVals[i].toFixed(2),
-                        data.finalVals[i].toFixed(2),
-                        data.statuses[i]
-                    ]);
+            // If Google Apps Script is available, use it; otherwise log locally
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(() => { msgEl.innerText = '✅ Saved successfully to Google Sheet'; })
+                    .withFailureHandler((e) => { msgEl.innerText = '❌ Error: ' + e.message; })
+                    .saveData(payload);
+            } else {
+                console.log('📦 OBE Data Payload:', payload);
+                // Store in localStorage for demo persistence
+                try {
+                    localStorage.setItem('nbaAttainmentData', JSON.stringify(payload));
+                    msgEl.innerText = '✅ Saved locally (use PDF export for permanent record)';
+                } catch (e) {
+                    msgEl.innerText = '⚠️ Could not save locally: ' + e.message;
                 }
             }
-            // Overall average
-            coBody.push([
-                { content: `Overall Avg (Target: ${target.toFixed(2)}):`, colSpan: 6, styles: { halign:'right', fontStyle:'bold' } },
-                { content: data.avgCO.toFixed(2), styles: { fontStyle:'bold' } },
-                { content: data.overallStatus, styles: { fontStyle:'bold' } }
-            ]);
-            doc.autoTable({
-                ...baseStyles,
-                startY: y,
-                margin: { left: 10, right: 10 },
-                head: [["CO","CIE","Asg","SEE","Direct","Indirect","Final","Status"]],
-                body: coBody,
-                columnStyles: { 0:{cellWidth:10},1:{cellWidth:20},2:{cellWidth:20},3:{cellWidth:20},
-                                4:{cellWidth:28},5:{cellWidth:18},6:{cellWidth:28},7:{cellWidth:22} },
-                styles: { fontSize: 7.5 }
-            });
-            y = doc.lastAutoTable.finalY + 3;
-
-            // 3. Mapping Matrix
-            doc.text("3. CO-PO / PSO ARTICULATION MATRIX", 10, y);
-            y += 1.5;
-            const mapHead = ["CO"];
-            for (let p=1; p<=12; p++) mapHead.push(`PO${p}`);
-            mapHead.push("PSO1","PSO2");
-            const mapBody = [];
-            for (let c=1; c<=CO_COUNT; c++) {
-                const row = [`CO${c}`];
-                const m = mappingData[c] || { po: Array(12).fill(0), pso:[0,0] };
-                for (let p=0; p<12; p++) row.push(m.po[p] || 0);
-                for (let p=0; p<2; p++) row.push(m.pso[p] || 0);
-                mapBody.push(row);
-            }
-            const colStyles = { 0:{cellWidth:12} };
-            for (let p=1; p<=12; p++) colStyles[p] = { cellWidth:11 };
-            colStyles[13] = { cellWidth:13 }; colStyles[14] = { cellWidth:13 };
-            doc.autoTable({
-                ...baseStyles,
-                startY: y,
-                margin: { left: 10, right: 10 },
-                head: [mapHead],
-                body: mapBody,
-                columnStyles: colStyles,
-                styles: { fontSize: 6.8, cellPadding: 0.6 }
-            });
-            y = doc.lastAutoTable.finalY + 3;
-
-            // 4. PO & PSO Attainment
-            doc.text("4. PROGRAM OUTCOME & PSO ATTAINMENT", 10, y);
-            y += 1.5;
-            // PO
-            const poHead2 = ["Metric"];
-            for (let p=1; p<=12; p++) poHead2.push(`PO${p}`);
-            const poRow1 = ["Attainment"];
-            const poRow2 = ["Status"];
-            for (let i=0; i<12; i++) {
-                const val = poRes[i].att;
-                poRow1.push(val > 0 ? val.toFixed(2) : "-");
-                poRow2.push(val > 0 ? poRes[i].status : "-");
-            }
-            const poCols = { 0:{cellWidth:24} };
-            for (let p=1; p<=12; p++) poCols[p] = { cellWidth:13.5 };
-            doc.autoTable({
-                ...baseStyles,
-                startY: y,
-                margin: { left: 10, right: 10 },
-                head: [poHead2],
-                body: [poRow1, poRow2],
-                columnStyles: poCols,
-                styles: { fontSize: 6.5, cellPadding: 0.6 }
-            });
-            y = doc.lastAutoTable.finalY + 2;
-            // PSO
-            doc.autoTable({
-                ...baseStyles,
-                startY: y,
-                margin: { left: 10, right: 10 },
-                head: [["Metric","PSO1","PSO2"]],
-                body: [
-                    ["Attainment", psoRes[0].att.toFixed(2), psoRes[1].att.toFixed(2)],
-                    ["Status", psoRes[0].status, psoRes[1].status]
-                ],
-                columnStyles: { 0:{cellWidth:38},1:{cellWidth:38},2:{cellWidth:38} },
-                styles: { fontSize: 7.0 }
-            });
-            y = doc.lastAutoTable.finalY + 4;
-
-            // Formula legend
-            doc.setFontSize(6);
-            doc.setFont("helvetica", "italic");
-            doc.text("Formulas: Direct = Σ(Weight × Level); Final = Direct Weight × Direct + Indirect Weight × Indirect", 10, y);
-            doc.text("PO/PSO = Σ(Final CO × Mapping) / Σ(Mapping); Status = ATTAINED if Score ≥ Target.", 10, y+3);
-
-            // Signatures
-            y = Math.max(y + 10, 252);
-            doc.setDrawColor(0);
-            doc.setLineDashPattern([1.5,1.5], 0);
-            doc.line(20, y, 70, y);
-            doc.line(140, y, 190, y);
-            doc.setLineDashPattern([], 0);
-            doc.setFontSize(7.8);
-            doc.setFont("helvetica", "bold");
-            doc.text(staff, 45, y+4, { align: "center" });
-            doc.text("Head of Department", 165, y+4, { align: "center" });
-            doc.setFontSize(6.8);
-            doc.setFont("helvetica", "normal");
-            doc.text("Course Coordinator / Faculty", 45, y+7.5, { align: "center" });
-            doc.text(department, 165, y+7.5, { align: "center" });
-
-            // Footer
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-            const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
-            doc.setLineWidth(0.3);
-            doc.line(10, 287, 200, 287);
-            doc.setFontSize(6.5);
-            doc.text(`OBE Document | Generated ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`, 105, 290.5, { align:"center" });
-
-            doc.save(`CO_PO_PSO_${courseCode}_${academicYear}.pdf`);
-
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        } catch (err) {
-            console.error(err);
-            alert('PDF error: ' + err.message);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
         }
-    }, 400);
-}
 
-// =============================================================
-//  ON LOAD
-// =============================================================
-window.onload = function() {
-    initInputs();
-    initMapping();
-    toggleIndirect();
-    // Add live input listeners
-    document.querySelectorAll('input, select').forEach(el => {
-        el.addEventListener('input', calculateAll);
-        el.addEventListener('change', calculateAll);
-    });
-    calculateAll();
-};
-</script>
+        // ============================
+        // RESET
+        // ============================
+        function resetPage() {
+            if (confirm('Are you sure you want to reset all data?')) {
+                location.reload();
+            }
+        }
+
+        // ============================
+        // DOWNLOAD PDF — using html2pdf
+        // ============================
+        function downloadPDF() {
+            // First ensure calculations are up-to-date
+            calculate();
+
+            const loader = document.getElementById('pdfLoader');
+            const msg = document.getElementById('message');
+
+            // Show loader
+            loader.style.display = 'block';
+            msg.innerText = '⏳ Generating PDF...';
+
+            // The element to export — we wrap the entire container including header
+            // but we want a clean A4 layout. We'll clone the whole app container
+            // and strip out buttons, loaders, etc.
+            const originalContainer = document.getElementById('appContainer');
+
+            // Build a clean clone for PDF
+            const clone = originalContainer.cloneNode(true);
+            // Remove all .no-print elements from clone
+            clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+            // Remove any extra button areas that might have been left
+            // Also ensure the clone is styled properly
+            clone.style.background = 'white';
+            clone.style.padding = '0';
+            clone.style.margin = '0';
+            clone.style.width = '100%';
+            clone.style.maxWidth = '100%';
+
+            // Create a temporary container in the document to render the PDF from
+            const tempDiv = document.createElement('div');
+            tempDiv.id = 'pdfTempContainer';
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.style.width = '210mm'; // A4 width
+            tempDiv.style.background = 'white';
+            tempDiv.style.padding = '10mm 10mm';
+            tempDiv.appendChild(clone);
+            document.body.appendChild(tempDiv);
+
+            // Now generate PDF from the temporary container
+            const opt = {
+                margin: [8, 10, 8, 10], // top, right, bottom, left (mm)
+                filename: 'NBA_Attainment_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true,
+                    width: 794, // A4 width in pixels at 96dpi
+                    height: 1123
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // Use html2pdf to generate and download
+            html2pdf()
+                .set(opt)
+                .from(tempDiv)
+                .save()
+                .then(function() {
+                    // Clean up
+                    document.body.removeChild(tempDiv);
+                    loader.style.display = 'none';
+                    msg.innerText = '✅ PDF downloaded successfully!';
+                })
+                .catch(function(err) {
+                    console.error('PDF generation error:', err);
+                    document.body.removeChild(tempDiv);
+                    loader.style.display = 'none';
+                    msg.innerText = '❌ PDF generation failed: ' + err.message;
+                });
+        }
+
+        // ============================
+        // ON LOAD
+        // ============================
+        window.onload = function() {
+            initTables();
+            toggleIndirect();
+            // Pre-fill with sample data for demonstration
+            document.getElementById('staffName').value = 'Dr. Mahadev Biradar';
+            document.getElementById('courseName').value = 'Engineering Mathematics-I';
+            document.getElementById('courseCode').value = '1BMAS101C';
+            document.getElementById('academicYear').value = '2025-26';
+            document.getElementById('semester').value = 'I';
+            document.getElementById('department').value = 'Mathematics';
+            document.getElementById('branchDiv').value = 'C';
+            calculate();
+        };
+    </script>
 
 </body>
 </html>
