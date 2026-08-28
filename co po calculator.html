@@ -578,9 +578,7 @@
 
             </div>
 
-            <button class="btn btn-success" onclick="loadDefaultMapping()">
-                ↺ Load Default Mapping
-            </button>
+            <!-- No button to load default mapping – all values default to 0 -->
 
         </div>
 
@@ -904,113 +902,40 @@
 
 
         /* =========================================================
-           DEFAULT CO-PO MAPPING
+           CREATE MAPPING TABLE – ALL ZEROS
         ========================================================= */
 
         function createMapping() {
 
-            const defaultMapping = {
-
-                1: {
-                    po: [3, 2, 1, 1, 0, 0, 0, 0, 1, 1, 0, 2],
-                    pso: [3, 1]
-                },
-
-                2: {
-                    po: [3, 3, 2, 2, 1, 0, 0, 0, 0, 1, 0, 2],
-                    pso: [3, 2]
-                },
-
-                3: {
-                    po: [2, 3, 3, 2, 2, 1, 1, 0, 0, 0, 1, 2],
-                    pso: [2, 3]
-                },
-
-                4: {
-                    po: [2, 2, 3, 3, 2, 1, 1, 1, 1, 2, 2, 3],
-                    pso: [2, 3]
-                },
-
-                5: {
-                    po: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    pso: [0, 0]
-                }
-
-            };
-
-
             let html = "";
-
 
             for (let c = 1; c <= NUM_CO; c++) {
 
                 html += `<tr>
-                                <td>
-                                    <strong>CO${c}</strong>
-                                </td>`;
+                            <td>
+                                <strong>CO${c}</strong>
+                            </td>`;
 
-
-                const def =
-                    defaultMapping[c];
-
-
+                // 12 PO columns – all zero
                 for (let p = 1; p <= 12; p++) {
-
-                    const value =
-                        def.po[p - 1] || 0;
-
                     html += `
-
-                                <td>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="3"
-                                        step="1"
-                                        value="${value}"
-                                        id="co${c}po${p}">
-
-                                </td>
-
-                            `;
-
+                            <td>
+                                <input type="number" min="0" max="3" step="1" value="0" id="co${c}po${p}">
+                            </td>`;
                 }
 
-
+                // 2 PSO columns – all zero
                 for (let p = 1; p <= 2; p++) {
-
-                    const value =
-                        def.pso[p - 1] || 0;
-
                     html += `
-
-                                <td>
-
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="3"
-                                        step="1"
-                                        value="${value}"
-                                        id="co${c}pso${p}">
-
-                                </td>
-
-                            `;
-
+                            <td>
+                                <input type="number" min="0" max="3" step="1" value="0" id="co${c}pso${p}">
+                            </td>`;
                 }
-
 
                 html += "</tr>";
-
             }
 
-
-            document.getElementById(
-                "mappingBody"
-            ).innerHTML = html;
-
+            document.getElementById("mappingBody").innerHTML = html;
         }
 
 
@@ -1022,72 +947,25 @@
 
             mappingData = {};
 
-
             for (let c = 1; c <= NUM_CO; c++) {
 
                 const po = [];
-
                 const pso = [];
 
-
                 for (let p = 1; p <= 12; p++) {
-
-                    const el =
-                        document.getElementById(
-                            `co${c}po${p}`
-                        );
-
-                    po.push(
-                        el ?
-                        Number(el.value) || 0 :
-                        0
-                    );
-
+                    const el = document.getElementById(`co${c}po${p}`);
+                    po.push(el ? Number(el.value) || 0 : 0);
                 }
-
 
                 for (let p = 1; p <= 2; p++) {
-
-                    const el =
-                        document.getElementById(
-                            `co${c}pso${p}`
-                        );
-
-                    pso.push(
-                        el ?
-                        Number(el.value) || 0 :
-                        0
-                    );
-
+                    const el = document.getElementById(`co${c}pso${p}`);
+                    pso.push(el ? Number(el.value) || 0 : 0);
                 }
 
-
-                mappingData[c] = {
-                    po,
-                    pso
-                };
-
+                mappingData[c] = { po, pso };
             }
 
-
             return mappingData;
-
-        }
-
-
-        /* =========================================================
-           LOAD DEFAULT
-        ========================================================= */
-
-        function loadDefaultMapping() {
-
-            createMapping();
-
-            readMappingFromUI();
-
-            alert(
-                "Default CO-PO/PSO mapping loaded successfully."
-            );
 
         }
 
@@ -1552,9 +1430,7 @@
                 for (let c = 1; c <= NUM_CO; c++) {
 
                     const mapVal =
-                        mapping[c] ?
-                        .po ? .[p - 1] || 0 :
-                        0;
+                        mapping[c]?.po?.[p - 1] || 0;
 
 
                     if (mapVal > 0) {
@@ -1619,9 +1495,7 @@
                 for (let c = 1; c <= NUM_CO; c++) {
 
                     const mapVal =
-                        mapping[c] ?
-                        .pso ? .[p - 1] || 0 :
-                        0;
+                        mapping[c]?.pso?.[p - 1] || 0;
 
 
                     if (mapVal > 0) {
@@ -3107,7 +2981,7 @@
 
         initInputs();
 
-        createMapping();
+        createMapping(); // all zeros
 
         readMappingFromUI();
 
