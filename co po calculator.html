@@ -7,11 +7,14 @@
     <title>CO-PO Attainment Calculator</title>
 
     <!-- jsPDF & AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js">
+    </script>
 
     <!-- SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    </script>
 
     <style>
         * {
@@ -64,10 +67,10 @@
         .header-right {
             text-align: right;
             font-size: 14px;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             padding: 7px 16px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.18);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
         .creator-label {
@@ -91,7 +94,7 @@
             padding: 20px 24px 24px;
             margin-bottom: 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
             border-left: 4px solid #1e3a5f;
         }
 
@@ -159,7 +162,7 @@
         .grid input:focus {
             border-color: #1e3a5f;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(30,58,95,0.12);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
             background: #fff;
         }
 
@@ -343,958 +346,211 @@
 
 <body>
 
-<header class="header">
-    <div class="header-content">
+    <header class="header">
+        <div class="header-content">
 
-        <div>
-            <div class="college-name">
-                Basaveshwar Engineering College Bagalkote
-                <span>BEC</span>
+            <div>
+                <div class="college-name">
+                    Basaveshwar Engineering College Bagalkote
+                    <span>BEC</span>
+                </div>
+
+                <div class="calc-title">
+                    CO–PO Attainment Calculator
+                </div>
             </div>
 
-            <div class="calc-title">
-                CO–PO Attainment Calculator
+            <div class="header-right">
+                <span class="creator-label">created by</span>
+                <span class="creator-name">Dr Mahadev Biradar</span>
             </div>
+
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <!-- =====================================================
+        STEP 1
+        ===================================================== -->
+
+        <div class="card">
+
+            <h2>
+                📋 Subject Details & Target Setup
+                <span class="badge">Step 1</span>
+            </h2>
+
+            <div class="grid">
+
+                <div>
+                    <label>Academic Year</label>
+                    <input id="academicYear" value="2026-27">
+                </div>
+
+                <div>
+                    <label>Department / Program</label>
+                    <input id="department" value="Department of Mathematics">
+                </div>
+
+                <div>
+                    <label>Course Code</label>
+                    <input id="courseCode" value="BMAS101C">
+                </div>
+
+                <div>
+                    <label>Course Name</label>
+                    <input id="courseName" value="Engineering Mathematics-I">
+                </div>
+
+                <div>
+                    <label>Semester</label>
+                    <input id="Semester" value="I">
+                </div>
+
+                <div>
+                    <label>Division</label>
+                    <input id="Division" value="A">
+                </div>
+
+                <div>
+                    <label>Name of Faculty</label>
+                    <input id="NameOfStaff" value="Dr M M Biradar">
+                </div>
+
+                <div>
+                    <label>Target Level (0–3)</label>
+                    <input id="targetValue" type="number" value="2.00" min="0" max="3" step="0.01">
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="header-right">
-            <span class="creator-label">created by</span>
-            <span class="creator-name">Dr Mahadev Biradar</span>
+
+        <!-- =====================================================
+        STEP 2
+        ===================================================== -->
+
+        <div class="card">
+
+            <h2>
+                📊 CO Average Attainment Entry
+                <span class="badge">Step 2</span>
+            </h2>
+
+            <p>
+                Enter the already calculated average attainment percentage
+                for each CO from CIE and SEE.
+            </p>
+
+            <div class="weight-card">
+
+                <div class="weight-item">
+                    <strong>CIE = 50%</strong>
+                    CIE-1 + CIE-2 + Assignment
+                </div>
+
+                <div class="weight-item">
+                    <strong>SEE = 50%</strong>
+                    SEE conducted for 100 marks
+                </div>
+
+                <div class="weight-item">
+                    <strong>Final CO</strong>
+                    50% CIE + 50% SEE
+                </div>
+
+            </div>
+
+            <div class="formula-box">
+                <strong>Final CO Formula:</strong><br>
+                Final CO = 0.50 × CIE CO Attainment + 0.50 × SEE CO Attainment
+            </div>
+
+            <div class="data-table-wrap">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>CO</th>
+                            <th>CIE Average (%)</th>
+                            <th>SEE Average (%)</th>
+                            <th>CIE Contribution (50%)</th>
+                            <th>SEE Contribution (50%)</th>
+                            <th>Final CO Attainment (%)</th>
+                            <th>Final CO Level</th>
+                            <th>Indirect Exit (Optional)</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="coInputBody"></tbody>
+
+                </table>
+
+            </div>
+
+            <div class="formula-box">
+
+                <b>Assessment Structure:</b><br>
+
+                CIE = CIE-1 (20) + CIE-2 (20) + Assignment (10)
+                = 50 marks
+
+                <br><br>
+
+                SEE = 100 marks, scaled to 50 marks.
+
+                <br><br>
+
+                <b>Final CO:</b>
+
+                \[
+                CO = 0.50(CIE) + 0.50(SEE)
+                \]
+
+            </div>
+
+            <div class="btn-group">
+
+                <button class="btn" onclick="calculateCOAttainment()">
+                    📈 Compute CO Attainment
+                </button>
+
+            </div>
+
+            <div id="coAttainmentResult"></div>
+
         </div>
 
-    </div>
-</header>
 
+        <!-- =====================================================
+        STEP 3
+        ===================================================== -->
 
-<div class="container">
+        <div class="card">
 
-<!-- =====================================================
-     STEP 1
-===================================================== -->
+            <h2>
+                🔗 CO–PO / PSO Correlation Mapping Matrix
+                <span class="badge">Step 3</span>
+            </h2>
 
-<div class="card">
+            <p>
+                Mapping Scale:
+                <b>3</b> = High &nbsp;·&nbsp;
+                <b>2</b> = Medium &nbsp;·&nbsp;
+                <b>1</b> = Low &nbsp;·&nbsp;
+                <b>0</b> = No Mapping
+            </p>
 
-    <h2>
-        📋 Subject Details & Target Setup
-        <span class="badge">Step 1</span>
-    </h2>
+            <div class="mapping-wrap">
 
-    <div class="grid">
-
-        <div>
-            <label>Academic Year</label>
-            <input id="academicYear" value="2026-27">
-        </div>
-
-        <div>
-            <label>Department / Program</label>
-            <input id="department" value="Department of Mathematics">
-        </div>
-
-        <div>
-            <label>Course Code</label>
-            <input id="courseCode" value="BMAS101C">
-        </div>
-
-        <div>
-            <label>Course Name</label>
-            <input id="courseName" value="Engineering Mathematics-I">
-        </div>
-
-        <div>
-            <label>Semester</label>
-            <input id="Semester" value="I">
-        </div>
-
-        <div>
-            <label>Division</label>
-            <input id="Division" value="A">
-        </div>
-
-        <div>
-            <label>Name of Faculty</label>
-            <input id="NameOfStaff" value="Dr M M Biradar">
-        </div>
-
-        <div>
-            <label>Target Level (0–3)</label>
-            <input
-                id="targetValue"
-                type="number"
-                value="2.00"
-                min="0"
-                max="3"
-                step="0.01">
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     STEP 2
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        📊 CO Average Attainment Entry
-        <span class="badge">Step 2</span>
-    </h2>
-
-    <p>
-        Enter the already calculated average attainment percentage
-        for each CO from CIE and SEE.
-    </p>
-
-    <div class="weight-card">
-
-        <div class="weight-item">
-            <strong>CIE = 50%</strong>
-            CIE-1 + CIE-2 + Assignment
-        </div>
-
-        <div class="weight-item">
-            <strong>SEE = 50%</strong>
-            SEE conducted for 100 marks
-        </div>
-
-        <div class="weight-item">
-            <strong>Final CO</strong>
-            50% CIE + 50% SEE
-        </div>
-
-    </div>
-
-    <div class="formula-box">
-        <strong>Final CO Formula:</strong><br>
-        Final CO = 0.50 × CIE CO Attainment + 0.50 × SEE CO Attainment
-    </div>
-
-    <div class="data-table-wrap">
-
-        <table class="data-table">
-
-            <thead>
-
-                <tr>
-                    <th>CO</th>
-                    <th>CIE Average (%)</th>
-                    <th>SEE Average (%)</th>
-                    <th>CIE Contribution (50%)</th>
-                    <th>SEE Contribution (50%)</th>
-                    <th>Final CO Attainment (%)</th>
-                    <th>Final CO Level</th>
-                    <th>Indirect Exit (Optional)</th>
-                    <th>Status</th>
-                </tr>
-
-            </thead>
-
-            <tbody id="coInputBody"></tbody>
-
-        </table>
-
-    </div>
-
-    <div class="formula-box">
-
-        <b>Assessment Structure:</b><br>
-
-        CIE = CIE-1 (20) + CIE-2 (20) + Assignment (10)
-        = 50 marks
-
-        <br><br>
-
-        SEE = 100 marks, scaled to 50 marks.
-
-        <br><br>
-
-        <b>Final CO:</b>
-
-        \[
-        CO = 0.50(CIE) + 0.50(SEE)
-        \]
-
-    </div>
-
-    <div class="btn-group">
-
-        <button class="btn" onclick="calculateCOAttainment()">
-            📈 Compute CO Attainment
-        </button>
-
-    </div>
-
-    <div id="coAttainmentResult"></div>
-
-</div>
-
-
-<!-- =====================================================
-     STEP 3
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        🔗 CO–PO / PSO Correlation Mapping Matrix
-        <span class="badge">Step 3</span>
-    </h2>
-
-    <p>
-        Mapping Scale:
-        <b>3</b> = High &nbsp;·&nbsp;
-        <b>2</b> = Medium &nbsp;·&nbsp;
-        <b>1</b> = Low &nbsp;·&nbsp;
-        <b>0</b> = No Mapping
-    </p>
-
-    <div class="mapping-wrap">
-
-        <table class="mapping-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>CO</th>
-
-                    <script>
-                        for(let i=1;i<=12;i++){
-                            document.write(`<th>PO${i}</th>`);
-                        }
-
-                        for(let i=1;i<=2;i++){
-                            document.write(`<th>PSO${i}</th>`);
-                        }
-                    </script>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="mappingBody"></tbody>
-
-        </table>
-
-    </div>
-
-    <button class="btn btn-success" onclick="loadDefaultMapping()">
-        ↺ Load Default Mapping
-    </button>
-
-</div>
-
-
-<!-- =====================================================
-     STEP 4
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        🎯 Final PO / PSO Attainment
-        <span class="badge">Step 4</span>
-    </h2>
-
-    <div class="formula-box">
-
-        <strong>CO–PO Attainment Formula:</strong><br>
-
-        \[
-        PO_j =
-        \frac{
-        \sum CO_i M_{ij}
-        }{
-        \sum M_{ij}
-        }
-        \]
-
-        <br>
-
-        where
-        \(M_{ij}=0,1,2,3\).
-
-    </div>
-
-    <div class="btn-group">
-
-        <button class="btn" onclick="calculateCOPO()">
-            🧮 Calculate PO / PSO
-        </button>
-
-        <button class="btn btn-excel" onclick="exportExcel()">
-            📊 Export Excel
-        </button>
-
-        <button class="btn btn-pdf" onclick="downloadPDF()" id="pdfBtn">
-            📄 Download PDF
-        </button>
-
-    </div>
-
-    <div id="finalResult"></div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
-   GLOBAL SETTINGS
-========================================================= */
-
-const NUM_CO = 5;
-
-let coAttainmentData = null;
-let mappingData = {};
-let lastCOPOResult = null;
-
-
-/* =========================================================
-   CO PERCENTAGE → LEVEL
-========================================================= */
-
-function convertToScale(pct){
-
-    pct = Number(pct) || 0;
-
-    if(pct <= 0)
-        return 0;
-
-    if(pct >= 70)
-        return 3;
-
-    if(pct >= 60)
-        return 2;
-
-    if(pct >= 50)
-        return 1;
-
-    return 0;
-}
-
-
-/* =========================================================
-   INITIALIZE CO INPUTS
-========================================================= */
-
-function initInputs(){
-
-    const tbody =
-        document.getElementById("coInputBody");
-
-    tbody.innerHTML = "";
-
-    /*
-       Sample values only.
-       User can replace them.
-    */
-
-    const defaultCIE = [
-        76.8,
-        14.3,
-        50.0,
-        51.8,
-        0.0
-    ];
-
-    const defaultSEE = [
-        85.7,
-        71.4,
-        30.4,
-        14.3,
-        0.0
-    ];
-
-    const defaultIndirect = [
-        2.50,
-        2.60,
-        2.70,
-        2.40,
-        0.00
-    ];
-
-
-    for(let i=1;i<=NUM_CO;i++){
-
-        const tr =
-            document.createElement("tr");
-
-        tr.innerHTML = `
-
-            <td>
-                <strong>CO${i}</strong>
-            </td>
-
-            <td>
-                <input
-                    type="number"
-                    id="cie_${i}"
-                    value="${defaultCIE[i-1]}"
-                    min="0"
-                    max="100"
-                    step="0.1">
-            </td>
-
-            <td>
-                <input
-                    type="number"
-                    id="see_${i}"
-                    value="${defaultSEE[i-1]}"
-                    min="0"
-                    max="100"
-                    step="0.1">
-            </td>
-
-            <td id="cieContribution_${i}">
-                -
-            </td>
-
-            <td id="seeContribution_${i}">
-                -
-            </td>
-
-            <td
-                id="finalDisplay_${i}"
-                style="
-                    font-weight:700;
-                    color:#0b5e3a;
-                ">
-                -
-            </td>
-
-            <td
-                id="levelDisplay_${i}"
-                style="font-weight:700;">
-                -
-            </td>
-
-            <td>
-
-                <input
-                    type="number"
-                    id="indirect_${i}"
-                    value="${defaultIndirect[i-1]}"
-                    min="0"
-                    max="3"
-                    step="0.01">
-
-                <span class="calc-subtext">
-                    Optional; does not change direct CO
-                </span>
-
-            </td>
-
-            <td id="statusDisplay_${i}">
-                -
-            </td>
-
-        `;
-
-        tbody.appendChild(tr);
-
-
-        const cie =
-            document.getElementById(`cie_${i}`);
-
-        const see =
-            document.getElementById(`see_${i}`);
-
-        const indirect =
-            document.getElementById(`indirect_${i}`);
-
-
-        function liveCalculate(){
-
-            const ciePct =
-                Number(cie.value) || 0;
-
-            const seePct =
-                Number(see.value) || 0;
-
-            const finalCO =
-                (0.50 * ciePct)
-                +
-                (0.50 * seePct);
-
-            const level =
-                convertToScale(finalCO);
-
-            const target =
-                Number(
-                    document.getElementById(
-                        "targetValue"
-                    ).value
-                ) || 0;
-
-
-            document.getElementById(
-                `cieContribution_${i}`
-            ).innerHTML = `
-                <b>${(0.50 * ciePct).toFixed(2)}%</b>
-                <span class="calc-subtext">
-                    0.50 × ${ciePct.toFixed(1)}
-                </span>
-            `;
-
-
-            document.getElementById(
-                `seeContribution_${i}`
-            ).innerHTML = `
-                <b>${(0.50 * seePct).toFixed(2)}%</b>
-                <span class="calc-subtext">
-                    0.50 × ${seePct.toFixed(1)}
-                </span>
-            `;
-
-
-            document.getElementById(
-                `finalDisplay_${i}`
-            ).innerHTML = `
-                ${finalCO.toFixed(2)}%
-                <span class="calc-subtext">
-                    0.50(${ciePct.toFixed(1)})
-                    +
-                    0.50(${seePct.toFixed(1)})
-                </span>
-            `;
-
-
-            document.getElementById(
-                `levelDisplay_${i}`
-            ).innerHTML =
-                level;
-
-
-            const status =
-                finalCO >= target
-                ? "ATTAINED"
-                : "NOT ATTAINED";
-
-
-            document.getElementById(
-                `statusDisplay_${i}`
-            ).innerHTML = `
-
-                <span class="status-badge ${
-                    finalCO >= target
-                    ? "status-attained"
-                    : "status-not-attained"
-                }">
-
-                    ${status}
-
-                </span>
-
-            `;
-
-        }
-
-
-        cie.addEventListener(
-            "input",
-            liveCalculate
-        );
-
-        see.addEventListener(
-            "input",
-            liveCalculate
-        );
-
-        indirect.addEventListener(
-            "input",
-            liveCalculate
-        );
-
-        liveCalculate();
-
-    }
-
-}
-
-
-/* =========================================================
-   DEFAULT CO-PO MAPPING
-========================================================= */
-
-function createMapping(){
-
-    const defaultMapping = {
-
-        1:{
-            po:[3,2,1,1,0,0,0,0,1,1,0,2],
-            pso:[3,1]
-        },
-
-        2:{
-            po:[3,3,2,2,1,0,0,0,0,1,0,2],
-            pso:[3,2]
-        },
-
-        3:{
-            po:[2,3,3,2,2,1,1,0,0,0,1,2],
-            pso:[2,3]
-        },
-
-        4:{
-            po:[2,2,3,3,2,1,1,1,1,2,2,3],
-            pso:[2,3]
-        },
-
-        5:{
-            po:[0,0,0,0,0,0,0,0,0,0,0,0],
-            pso:[0,0]
-        }
-
-    };
-
-
-    let html = "";
-
-
-    for(let c=1;c<=NUM_CO;c++){
-
-        html += `<tr>
-                    <td>
-                        <strong>CO${c}</strong>
-                    </td>`;
-
-
-        const def =
-            defaultMapping[c];
-
-
-        for(let p=1;p<=12;p++){
-
-            const value =
-                def.po[p-1] || 0;
-
-            html += `
-
-                <td>
-
-                    <input
-                        type="number"
-                        min="0"
-                        max="3"
-                        step="1"
-                        value="${value}"
-                        id="co${c}po${p}">
-
-                </td>
-
-            `;
-
-        }
-
-
-        for(let p=1;p<=2;p++){
-
-            const value =
-                def.pso[p-1] || 0;
-
-            html += `
-
-                <td>
-
-                    <input
-                        type="number"
-                        min="0"
-                        max="3"
-                        step="1"
-                        value="${value}"
-                        id="co${c}pso${p}">
-
-                </td>
-
-            `;
-
-        }
-
-
-        html += "</tr>";
-
-    }
-
-
-    document.getElementById(
-        "mappingBody"
-    ).innerHTML = html;
-
-}
-
-
-/* =========================================================
-   READ MAPPING
-========================================================= */
-
-function readMappingFromUI(){
-
-    mappingData = {};
-
-
-    for(let c=1;c<=NUM_CO;c++){
-
-        const po = [];
-
-        const pso = [];
-
-
-        for(let p=1;p<=12;p++){
-
-            const el =
-                document.getElementById(
-                    `co${c}po${p}`
-                );
-
-            po.push(
-                el
-                ? Number(el.value) || 0
-                : 0
-            );
-
-        }
-
-
-        for(let p=1;p<=2;p++){
-
-            const el =
-                document.getElementById(
-                    `co${c}pso${p}`
-                );
-
-            pso.push(
-                el
-                ? Number(el.value) || 0
-                : 0
-            );
-
-        }
-
-
-        mappingData[c] = {
-            po,
-            pso
-        };
-
-    }
-
-
-    return mappingData;
-
-}
-
-
-/* =========================================================
-   LOAD DEFAULT
-========================================================= */
-
-function loadDefaultMapping(){
-
-    createMapping();
-
-    readMappingFromUI();
-
-    alert(
-        "Default CO-PO/PSO mapping loaded successfully."
-    );
-
-}
-
-
-/* =========================================================
-   CALCULATE FINAL CO ATTAINMENT
-========================================================= */
-
-function calculateCOAttainment(){
-
-    const target =
-        Number(
-            document.getElementById(
-                "targetValue"
-            ).value
-        ) || 2;
-
-
-    const ciePcts = [];
-    const seePcts = [];
-
-    const cieContributions = [];
-    const seeContributions = [];
-
-    const finalCOPcts = [];
-    const finalCOLevels = [];
-
-    const indirectVals = [];
-    const statuses = [];
-
-
-    let activeCount = 0;
-
-    let sumCO = 0;
-
-
-    for(let i=1;i<=NUM_CO;i++){
-
-        const ciePct =
-            Number(
-                document.getElementById(
-                    `cie_${i}`
-                ).value
-            ) || 0;
-
-
-        const seePct =
-            Number(
-                document.getElementById(
-                    `see_${i}`
-                ).value
-            ) || 0;
-
-
-        const indirect =
-            Number(
-                document.getElementById(
-                    `indirect_${i}`
-                ).value
-            ) || 0;
-
-
-        /*
-           CORRECT FORMULA
-
-           Final CO %
-           =
-           50% CIE
-           +
-           50% SEE
-        */
-
-        const cieContribution =
-            0.50 * ciePct;
-
-        const seeContribution =
-            0.50 * seePct;
-
-        const finalPct =
-            cieContribution
-            +
-            seeContribution;
-
-
-        const finalLevel =
-            convertToScale(finalPct);
-
-
-        const active =
-            ciePct > 0 ||
-            seePct > 0;
-
-
-        const status =
-            active
-            ? (
-                finalLevel >= target
-                ? "ATTAINED"
-                : "NOT ATTAINED"
-              )
-            : "-";
-
-
-        ciePcts.push(ciePct);
-        seePcts.push(seePct);
-
-        cieContributions.push(
-            cieContribution
-        );
-
-        seeContributions.push(
-            seeContribution
-        );
-
-        finalCOPcts.push(finalPct);
-
-        finalCOLevels.push(
-            finalLevel
-        );
-
-        indirectVals.push(
-            indirect
-        );
-
-        statuses.push(status);
-
-
-        if(active){
-
-            activeCount++;
-
-            sumCO += finalLevel;
-
-        }
-
-    }
-
-
-    /*
-       Average CO level
-    */
-
-    const avgCO =
-        activeCount > 0
-        ? sumCO / activeCount
-        : 0;
-
-
-    const overallStatus =
-        avgCO >= target
-        ? "ATTAINED"
-        : "NOT ATTAINED";
-
-
-    coAttainmentData = {
-
-        ciePcts,
-        seePcts,
-
-        cieContributions,
-        seeContributions,
-
-        finalCOPcts,
-        finalCOLevels,
-
-        indirectVals,
-        statuses,
-
-        avgCO,
-        target,
-
-        overallStatus,
-        activeCOCount:activeCount
-
-    };
-
-
-    /* -----------------------------------------------------
-       DISPLAY RESULT
-    ----------------------------------------------------- */
-
-    let html = `
-
-        <div class="result-box">
-
-            <h3>
-                📊 Final Course Outcome Attainment
-            </h3>
-
-            <div style="overflow-x:auto">
-
-                <table>
+                <table class="mapping-table">
 
                     <thead>
 
@@ -1302,1847 +558,2573 @@ function calculateCOAttainment(){
 
                             <th>CO</th>
 
-                            <th>CIE (%)</th>
+                            <script>
+                                for (let i = 1; i <= 12; i++) {
+                                    document.write(`<th>PO${i}</th>`);
+                                }
 
-                            <th>CIE 50%</th>
-
-                            <th>SEE (%)</th>
-
-                            <th>SEE 50%</th>
-
-                            <th>Final CO (%)</th>
-
-                            <th>CO Level</th>
-
-                            <th>Target</th>
-
-                            <th>Status</th>
+                                for (let i = 1; i <= 2; i++) {
+                                    document.write(`<th>PSO${i}</th>`);
+                                }
+                            </script>
 
                         </tr>
 
                     </thead>
 
-                    <tbody>
-    `;
-
-
-    for(let i=0;i<NUM_CO;i++){
-
-        if(
-            ciePcts[i] > 0 ||
-            seePcts[i] > 0
-        ){
-
-            html += `
-
-                <tr>
-
-                    <td>
-                        <strong>
-                            CO${i+1}
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${ciePcts[i].toFixed(2)}%
-                    </td>
-
-                    <td>
-                        ${cieContributions[i].toFixed(2)}%
-                        <span class="calc-subtext">
-                            0.50 × ${ciePcts[i].toFixed(2)}
-                        </span>
-                    </td>
-
-                    <td>
-                        ${seePcts[i].toFixed(2)}%
-                    </td>
-
-                    <td>
-                        ${seeContributions[i].toFixed(2)}%
-                        <span class="calc-subtext">
-                            0.50 × ${seePcts[i].toFixed(2)}
-                        </span>
-                    </td>
-
-                    <td>
-
-                        <strong style="
-                            color:#0b5e3a;
-                            font-size:14px;
-                        ">
-
-                            ${finalCOPcts[i].toFixed(2)}%
-
-                        </strong>
-
-                        <span class="calc-subtext">
-
-                            0.50(${ciePcts[i].toFixed(2)})
-                            +
-                            0.50(${seePcts[i].toFixed(2)})
-
-                        </span>
-
-                    </td>
-
-                    <td>
-                        <strong>
-                            ${finalCOLevels[i]}
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${target.toFixed(2)}
-                    </td>
-
-                    <td>
-
-                        <span class="status-badge ${
-                            statuses[i] === "ATTAINED"
-                            ? "status-attained"
-                            : "status-not-attained"
-                        }">
-
-                            ${statuses[i]}
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
-
-    }
-
-
-    html += `
-
-                    </tbody>
+                    <tbody id="mappingBody"></tbody>
 
                 </table>
 
             </div>
 
-
-            <div class="formula-box">
-
-                <b>Final CO Calculation:</b><br>
-
-                Final CO =
-                0.50 × CIE CO +
-                0.50 × SEE CO
-
-            </div>
-
-
-            <div style="
-                margin-top:12px;
-                padding:12px 18px;
-                background:#dbeafe;
-                border-radius:6px;
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                flex-wrap:wrap;
-                gap:10px;
-            ">
-
-                <div>
-
-                    <span style="
-                        font-size:14px;
-                        font-weight:600;
-                    ">
-                        Average CO Level:
-                    </span>
-
-                    <span style="
-                        font-size:24px;
-                        font-weight:700;
-                        color:#1e3a5f;
-                        margin-left:8px;
-                    ">
-
-                        ${avgCO.toFixed(2)}
-
-                    </span>
-
-                    <span>
-                        / 3.00
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    Target:
-                    <b>
-                        ${target.toFixed(2)}
-                    </b>
-
-                    <span class="status-badge ${
-                        overallStatus === "ATTAINED"
-                        ? "status-attained"
-                        : "status-not-attained"
-                    }"
-                    style="margin-left:8px">
-
-                        ${overallStatus}
-
-                    </span>
-
-                </div>
-
-            </div>
+            <button class="btn btn-success" onclick="loadDefaultMapping()">
+                ↺ Load Default Mapping
+            </button>
 
         </div>
 
-    `;
 
+        <!-- =====================================================
+        STEP 4
+        ===================================================== -->
 
-    document.getElementById(
-        "coAttainmentResult"
-    ).innerHTML = html;
+        <div class="card">
 
-
-    setTimeout(
-        calculateCOPO,
-        100
-    );
-
-}
-
-
-/* =========================================================
-   CALCULATE PO / PSO
-========================================================= */
-
-function calculateCOPO(){
-
-    if(!coAttainmentData){
-
-        calculateCOAttainment();
-
-        return;
-
-    }
-
-
-    const mapping =
-        readMappingFromUI();
-
-
-    /*
-       IMPORTANT:
-
-       PO calculation uses FINAL CO LEVELS,
-       not CIE level + SEE level separately.
-    */
-
-    const coLevels =
-        coAttainmentData.finalCOLevels;
-
-
-    const target =
-        coAttainmentData.target;
-
-
-    const poResults = [];
-
-
-    /* -----------------------------------------------------
-       PO1 - PO12
-    ----------------------------------------------------- */
-
-    for(let p=1;p<=12;p++){
-
-        let numerator = 0;
-        let denominator = 0;
-
-
-        for(let c=1;c<=NUM_CO;c++){
-
-            const mapVal =
-                mapping[c]
-                ?.po?.[p-1] || 0;
-
-
-            if(mapVal > 0){
-
-                numerator +=
-                    coLevels[c-1]
-                    *
-                    mapVal;
-
-
-                denominator +=
-                    mapVal;
-
-            }
-
-        }
-
-
-        const attainment =
-            denominator > 0
-            ? numerator / denominator
-            : 0;
-
-
-        const status =
-            attainment >= target
-            ? "ATTAINED"
-            : "NOT ATTAINED";
-
-
-        poResults.push({
-
-            po:p,
-
-            numerator,
-
-            denominator,
-
-            attainment,
-
-            target,
-
-            status
-
-        });
-
-    }
-
-
-    /* -----------------------------------------------------
-       PSO1 - PSO2
-    ----------------------------------------------------- */
-
-    const psoResults = [];
-
-
-    for(let p=1;p<=2;p++){
-
-        let numerator = 0;
-        let denominator = 0;
-
-
-        for(let c=1;c<=NUM_CO;c++){
-
-            const mapVal =
-                mapping[c]
-                ?.pso?.[p-1] || 0;
-
-
-            if(mapVal > 0){
-
-                numerator +=
-                    coLevels[c-1]
-                    *
-                    mapVal;
-
-
-                denominator +=
-                    mapVal;
-
-            }
-
-        }
-
-
-        const attainment =
-            denominator > 0
-            ? numerator / denominator
-            : 0;
-
-
-        const status =
-            attainment >= target
-            ? "ATTAINED"
-            : "NOT ATTAINED";
-
-
-        psoResults.push({
-
-            pso:p,
-
-            numerator,
-
-            denominator,
-
-            attainment,
-
-            target,
-
-            status
-
-        });
-
-    }
-
-
-    lastCOPOResult = {
-
-        poResults,
-
-        psoResults,
-
-        coAttain:coLevels,
-
-        avgCO:
-            coAttainmentData.avgCO,
-
-        target
-
-    };
-
-
-    displayCOPOResults();
-
-}
-
-
-/* =========================================================
-   DISPLAY PO / PSO
-========================================================= */
-
-function displayCOPOResults(){
-
-    const results =
-        lastCOPOResult;
-
-
-    const target =
-        results.target;
-
-
-    let html = `
-
-        <div class="result-box">
-
-            <h3>
-                📊 Program Outcome (PO) Attainment
-            </h3>
-
-            <div style="overflow-x:auto">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Metric</th>
-
-    `;
-
-
-    for(let p=1;p<=12;p++){
-
-        html += `<th>PO${p}</th>`;
-
-    }
-
-
-    html += `
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>
-                                <strong>
-                                    Attainment (0–3)
-                                </strong>
-                            </td>
-
-    `;
-
-
-    results.poResults.forEach(
-        r => {
-
-            html += `
-
-                <td style="
-                    font-weight:700;
-                    background:${
-                        r.attainment >= target
-                        ? "#d1fae5"
-                        : "#fee2e2"
-                    };
-                ">
-
-                    ${
-                        r.denominator > 0
-                        ? r.attainment.toFixed(2)
-                        : "-"
-                    }
-
-                    ${
-                        r.denominator > 0
-                        ? `
-                        <span class="calc-subtext">
-
-                            ${r.numerator.toFixed(2)}
-                            /
-                            ${r.denominator}
-
-                        </span>
-                        `
-                        : ""
-                    }
-
-                </td>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-                        </tr>
-
-                        <tr>
-
-                            <td>
-                                <strong>
-                                    Status
-                                </strong>
-                            </td>
-
-    `;
-
-
-    results.poResults.forEach(
-        r => {
-
-            html += `
-
-                <td>
-
-                    ${
-                        r.denominator > 0
-                        ? `
-                        <span class="status-badge ${
-                            r.status === "ATTAINED"
-                            ? "status-attained"
-                            : "status-not-attained"
-                        }">
-
-                            ${r.status}
-
-                        </span>
-                        `
-                        : "-"
-                    }
-
-                </td>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
+            <h2>
+                🎯 Final PO / PSO Attainment
+                <span class="badge">Step 4</span>
+            </h2>
 
             <div class="formula-box">
 
-                PO Attainment =
-                Σ(Final CO × Mapping) /
-                Σ(Mapping)
+                <strong>CO–PO Attainment Formula:</strong><br>
+
+                \[
+                PO_j =
+                \frac{
+                \sum CO_i M_{ij}
+                }{
+                \sum M_{ij}
+                }
+                \]
+
+                <br>
+
+                where
+                \(M_{ij}=0,1,2,3\).
 
             </div>
 
+            <div class="btn-group">
 
-            <h3>
-                📊 Program Specific Outcome (PSO) Attainment
-            </h3>
+                <button class="btn" onclick="calculateCOPO()">
+                    🧮 Calculate PO / PSO
+                </button>
 
+                <button class="btn btn-excel" onclick="exportExcel()">
+                    📊 Export Excel
+                </button>
 
-            <div style="overflow-x:auto">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Metric</th>
-                            <th>PSO1</th>
-                            <th>PSO2</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>
-                                <strong>
-                                    Attainment (0–3)
-                                </strong>
-                            </td>
-
-    `;
-
-
-    results.psoResults.forEach(
-        r => {
-
-            html += `
-
-                <td style="
-                    font-weight:700;
-                    background:${
-                        r.attainment >= target
-                        ? "#d1fae5"
-                        : "#fee2e2"
-                    };
-                ">
-
-                    ${
-                        r.denominator > 0
-                        ? r.attainment.toFixed(2)
-                        : "-"
-                    }
-
-                    ${
-                        r.denominator > 0
-                        ? `
-                        <span class="calc-subtext">
-
-                            ${r.numerator.toFixed(2)}
-                            /
-                            ${r.denominator}
-
-                        </span>
-                        `
-                        : ""
-                    }
-
-                </td>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-                                <strong>
-                                    Status
-                                </strong>
-                            </td>
-
-    `;
-
-
-    results.psoResults.forEach(
-        r => {
-
-            html += `
-
-                <td>
-
-                    ${
-                        r.denominator > 0
-                        ? `
-                        <span class="status-badge ${
-                            r.status === "ATTAINED"
-                            ? "status-attained"
-                            : "status-not-attained"
-                        }">
-
-                            ${r.status}
-
-                        </span>
-                        `
-                        : "-"
-                    }
-
-                </td>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                <button class="btn btn-pdf" onclick="downloadPDF()" id="pdfBtn">
+                    📄 Download PDF
+                </button>
 
             </div>
+
+            <div id="finalResult"></div>
 
         </div>
 
-    `;
+    </div>
+
+
+    <script>
+        /* =========================================================
+           GLOBAL SETTINGS
+        ========================================================= */
+
+        const NUM_CO = 5;
+
+        let coAttainmentData = null;
+        let mappingData = {};
+        let lastCOPOResult = null;
+
+
+        /* =========================================================
+           CO PERCENTAGE → LEVEL  (UPDATED THRESHOLDS)
+        ========================================================= */
+
+        function convertToScale(pct) {
+            pct = Number(pct) || 0;
+
+            if (pct <= 0) return 0;
+            if (pct >= 60) return 3;
+            if (pct >= 40) return 2;
+            return 1;
+        }
+
+
+        /* =========================================================
+           INITIALIZE CO INPUTS
+        ========================================================= */
+
+        function initInputs() {
+
+            const tbody =
+                document.getElementById("coInputBody");
+
+            tbody.innerHTML = "";
+
+            /*
+               Sample values only.
+               User can replace them.
+            */
+
+            const defaultCIE = [
+                76.8,
+                14.3,
+                50.0,
+                51.8,
+                0.0
+            ];
 
+            const defaultSEE = [
+                85.7,
+                71.4,
+                30.4,
+                14.3,
+                0.0
+            ];
 
-    document.getElementById(
-        "finalResult"
-    ).innerHTML = html;
+            const defaultIndirect = [
+                2.50,
+                2.60,
+                2.70,
+                2.40,
+                0.00
+            ];
 
-}
 
+            for (let i = 1; i <= NUM_CO; i++) {
 
-/* =========================================================
-   EXPORT EXCEL
-========================================================= */
+                const tr =
+                    document.createElement("tr");
 
-function exportExcel(){
+                tr.innerHTML = `
 
-    calculateCOAttainment();
+                            <td>
+                                <strong>CO${i}</strong>
+                            </td>
 
-    calculateCOPO();
+                            <td>
+                                <input
+                                    type="number"
+                                    id="cie_${i}"
+                                    value="${defaultCIE[i-1]}"
+                                    min="0"
+                                    max="100"
+                                    step="0.1">
+                            </td>
 
+                            <td>
+                                <input
+                                    type="number"
+                                    id="see_${i}"
+                                    value="${defaultSEE[i-1]}"
+                                    min="0"
+                                    max="100"
+                                    step="0.1">
+                            </td>
 
-    const courseCode =
-        document.getElementById(
-            "courseCode"
-        ).value || "Course";
+                            <td id="cieContribution_${i}">
+                                -
+                            </td>
 
+                            <td id="seeContribution_${i}">
+                                -
+                            </td>
 
-    const academicYear =
-        document.getElementById(
-            "academicYear"
-        ).value || "2026-27";
+                            <td
+                                id="finalDisplay_${i}"
+                                style="
+                                    font-weight:700;
+                                    color:#0b5e3a;
+                                ">
+                                -
+                            </td>
 
+                            <td
+                                id="levelDisplay_${i}"
+                                style="font-weight:700;">
+                                -
+                            </td>
 
-    const courseName =
-        document.getElementById(
-            "courseName"
-        ).value || "";
+                            <td>
 
+                                <input
+                                    type="number"
+                                    id="indirect_${i}"
+                                    value="${defaultIndirect[i-1]}"
+                                    min="0"
+                                    max="3"
+                                    step="0.01">
 
-    const semester =
-        document.getElementById(
-            "Semester"
-        ).value || "";
+                                <span class="calc-subtext">
+                                    Optional; does not change direct CO
+                                </span>
 
+                            </td>
 
-    const division =
-        document.getElementById(
-            "Division"
-        ).value || "";
+                            <td id="statusDisplay_${i}">
+                                -
+                            </td>
 
+                        `;
 
-    const staffName =
-        document.getElementById(
-            "NameOfStaff"
-        ).value || "";
+                tbody.appendChild(tr);
 
 
-    const mapping =
-        readMappingFromUI();
+                const cie =
+                    document.getElementById(`cie_${i}`);
 
+                const see =
+                    document.getElementById(`see_${i}`);
 
-    const rows = [];
+                const indirect =
+                    document.getElementById(`indirect_${i}`);
 
 
-    rows.push([
-        "Basaveshwar Engineering College Bagalkote"
-    ]);
+                function liveCalculate() {
 
-    rows.push([
-        "CO-PO / PSO Attainment Report"
-    ]);
+                    const ciePct =
+                        Number(cie.value) || 0;
 
-    rows.push([
-        "Academic Year",
-        academicYear,
-        "Course Code",
-        courseCode
-    ]);
+                    const seePct =
+                        Number(see.value) || 0;
 
-    rows.push([
-        "Course Name",
-        courseName,
-        "Semester",
-        semester,
-        "Division",
-        division
-    ]);
+                    const finalCO =
+                        (0.50 * ciePct) +
+                        (0.50 * seePct);
 
-    rows.push([
-        "Faculty",
-        staffName
-    ]);
+                    const level =
+                        convertToScale(finalCO);
 
-    rows.push([]);
+                    const target =
+                        Number(
+                            document.getElementById(
+                                "targetValue"
+                            ).value
+                        ) || 0;
 
 
-    rows.push([
-        "Assessment Weightage",
-        "CIE = 50%",
-        "SEE = 50%"
-    ]);
+                    document.getElementById(
+                        `cieContribution_${i}`
+                    ).innerHTML = `
+                                <b>${(0.50 * ciePct).toFixed(2)}%</b>
+                                <span class="calc-subtext">
+                                    0.50 × ${ciePct.toFixed(1)}
+                                </span>
+                            `;
 
-    rows.push([]);
 
+                    document.getElementById(
+                        `seeContribution_${i}`
+                    ).innerHTML = `
+                                <b>${(0.50 * seePct).toFixed(2)}%</b>
+                                <span class="calc-subtext">
+                                    0.50 × ${seePct.toFixed(1)}
+                                </span>
+                            `;
 
-    rows.push([
-        "CO",
-        "CIE Avg %",
-        "CIE Contribution 50%",
-        "SEE Avg %",
-        "SEE Contribution 50%",
-        "Final CO %",
-        "Final CO Level",
-        "Indirect Exit",
-        "Status"
-    ]);
 
+                    document.getElementById(
+                        `finalDisplay_${i}`
+                    ).innerHTML = `
+                                ${finalCO.toFixed(2)}%
+                                <span class="calc-subtext">
+                                    0.50(${ciePct.toFixed(1)})
+                                    +
+                                    0.50(${seePct.toFixed(1)})
+                                </span>
+                            `;
 
-    for(let i=0;i<NUM_CO;i++){
 
-        rows.push([
+                    document.getElementById(
+                        `levelDisplay_${i}`
+                    ).innerHTML =
+                        level;
 
-            `CO${i+1}`,
 
-            coAttainmentData
-                .ciePcts[i]
-                .toFixed(2),
+                    const status =
+                        finalCO >= target ?
+                        "ATTAINED" :
+                        "NOT ATTAINED";
 
-            coAttainmentData
-                .cieContributions[i]
-                .toFixed(2),
 
-            coAttainmentData
-                .seePcts[i]
-                .toFixed(2),
+                    document.getElementById(
+                        `statusDisplay_${i}`
+                    ).innerHTML = `
 
-            coAttainmentData
-                .seeContributions[i]
-                .toFixed(2),
+                                <span class="status-badge ${
+                                    finalCO >= target
+                                    ? "status-attained"
+                                    : "status-not-attained"
+                                }">
 
-            coAttainmentData
-                .finalCOPcts[i]
-                .toFixed(2),
+                                    ${status}
 
-            coAttainmentData
-                .finalCOLevels[i]
-                .toFixed(2),
+                                </span>
 
-            coAttainmentData
-                .indirectVals[i]
-                .toFixed(2),
+                            `;
 
-            coAttainmentData
-                .statuses[i]
+                }
 
-        ]);
 
-    }
+                cie.addEventListener(
+                    "input",
+                    liveCalculate
+                );
 
+                see.addEventListener(
+                    "input",
+                    liveCalculate
+                );
 
-    rows.push([]);
+                indirect.addEventListener(
+                    "input",
+                    liveCalculate
+                );
 
-    rows.push([
-        "Average CO Level",
-        coAttainmentData
-            .avgCO
-            .toFixed(2)
-    ]);
+                liveCalculate();
 
-    rows.push([]);
-
-
-    /* Mapping */
-
-    rows.push([
-        "CO-PO / PSO Mapping Matrix"
-    ]);
-
-
-    const mappingHeader = [
-        "CO"
-    ];
-
-
-    for(let p=1;p<=12;p++)
-        mappingHeader.push(`PO${p}`);
-
-
-    mappingHeader.push(
-        "PSO1",
-        "PSO2"
-    );
-
-
-    rows.push(mappingHeader);
-
-
-    for(let c=1;c<=NUM_CO;c++){
-
-        const row = [
-            `CO${c}`
-        ];
-
-
-        for(let p=0;p<12;p++)
-            row.push(
-                mapping[c].po[p]
-            );
-
-
-        for(let p=0;p<2;p++)
-            row.push(
-                mapping[c].pso[p]
-            );
-
-
-        rows.push(row);
-
-    }
-
-
-    rows.push([]);
-
-
-    /* PO */
-
-    rows.push([
-        "PO Attainment"
-    ]);
-
-
-    const poHeader = [
-        "Metric"
-    ];
-
-
-    for(let p=1;p<=12;p++)
-        poHeader.push(`PO${p}`);
-
-
-    rows.push(poHeader);
-
-
-    const poRow = [
-        "Attainment"
-    ];
-
-
-    const poStatus = [
-        "Status"
-    ];
-
-
-    lastCOPOResult
-        .poResults
-        .forEach(r => {
-
-            poRow.push(
-                r.denominator > 0
-                ? r.attainment.toFixed(2)
-                : "-"
-            );
-
-            poStatus.push(
-                r.status
-            );
-
-        });
-
-
-    rows.push(poRow);
-    rows.push(poStatus);
-
-
-    rows.push([]);
-
-
-    /* PSO */
-
-    rows.push([
-        "PSO Attainment"
-    ]);
-
-    rows.push([
-        "Metric",
-        "PSO1",
-        "PSO2"
-    ]);
-
-    rows.push([
-        "Attainment",
-
-        lastCOPOResult
-            .psoResults[0]
-            .attainment
-            .toFixed(2),
-
-        lastCOPOResult
-            .psoResults[1]
-            .attainment
-            .toFixed(2)
-    ]);
-
-    rows.push([
-        "Status",
-
-        lastCOPOResult
-            .psoResults[0]
-            .status,
-
-        lastCOPOResult
-            .psoResults[1]
-            .status
-    ]);
-
-
-    const wb =
-        XLSX.utils.book_new();
-
-
-    const ws =
-        XLSX.utils.aoa_to_sheet(rows);
-
-
-    ws["!cols"] =
-        Array(15)
-        .fill({wch:18});
-
-
-    XLSX.utils.book_append_sheet(
-        wb,
-        ws,
-        "CO_PO_Attainment"
-    );
-
-
-    XLSX.writeFile(
-        wb,
-        `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`
-    );
-
-}
-
-
-/* =========================================================
-   PDF
-========================================================= */
-
-function downloadPDF(){
-
-    calculateCOAttainment();
-
-    calculateCOPO();
-
-
-    const btn =
-        document.getElementById(
-            "pdfBtn"
-        );
-
-
-    const original =
-        btn.innerHTML;
-
-
-    btn.innerHTML =
-        "⏳ Generating PDF...";
-
-
-    btn.disabled = true;
-
-
-    try{
-
-        const {jsPDF} =
-            window.jspdf;
-
-
-        const doc =
-            new jsPDF({
-                orientation:"portrait",
-                unit:"mm",
-                format:"a4"
-            });
-
-
-        const courseCode =
-            document.getElementById(
-                "courseCode"
-            ).value;
-
-
-        const courseName =
-            document.getElementById(
-                "courseName"
-            ).value;
-
-
-        const department =
-            document.getElementById(
-                "department"
-            ).value;
-
-
-        const academicYear =
-            document.getElementById(
-                "academicYear"
-            ).value;
-
-
-        const semester =
-            document.getElementById(
-                "Semester"
-            ).value;
-
-
-        const division =
-            document.getElementById(
-                "Division"
-            ).value;
-
-
-        const staffName =
-            document.getElementById(
-                "NameOfStaff"
-            ).value;
-
-
-        const target =
-            coAttainmentData.target;
-
-
-        /* HEADER */
-
-        doc.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        doc.setFontSize(12);
-
-        doc.text(
-            "BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE",
-            105,
-            12,
-            {align:"center"}
-        );
-
-
-        doc.setFontSize(9);
-
-        doc.text(
-            department,
-            105,
-            17,
-            {align:"center"}
-        );
-
-
-        doc.setFontSize(8);
-
-        doc.text(
-            "CO-PO / PSO ATTAINMENT REPORT",
-            105,
-            23,
-            {align:"center"}
-        );
-
-
-        let y = 29;
-
-
-        const baseStyles = {
-
-            theme:"plain",
-
-            styles:{
-                font:"helvetica",
-                fontSize:6.8,
-                textColor:[0,0,0],
-                lineColor:[0,0,0],
-                lineWidth:0.2,
-                cellPadding:0.9,
-                halign:"center",
-                valign:"middle",
-                overflow:"linebreak"
-            },
-
-            headStyles:{
-                fillColor:[255,255,255],
-                textColor:[0,0,0],
-                fontStyle:"bold",
-                lineColor:[0,0,0],
-                lineWidth:0.2
             }
 
-        };
+        }
 
 
-        /* METADATA */
+        /* =========================================================
+           DEFAULT CO-PO MAPPING
+        ========================================================= */
 
-        doc.setFontSize(7.5);
+        function createMapping() {
 
-        doc.text(
-            "1. COURSE DETAILS",
-            10,
-            y
-        );
+            const defaultMapping = {
 
-        y += 2;
+                1: {
+                    po: [3, 2, 1, 1, 0, 0, 0, 0, 1, 1, 0, 2],
+                    pso: [3, 1]
+                },
+
+                2: {
+                    po: [3, 3, 2, 2, 1, 0, 0, 0, 0, 1, 0, 2],
+                    pso: [3, 2]
+                },
+
+                3: {
+                    po: [2, 3, 3, 2, 2, 1, 1, 0, 0, 0, 1, 2],
+                    pso: [2, 3]
+                },
+
+                4: {
+                    po: [2, 2, 3, 3, 2, 1, 1, 1, 1, 2, 2, 3],
+                    pso: [2, 3]
+                },
+
+                5: {
+                    po: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    pso: [0, 0]
+                }
+
+            };
 
 
-        doc.autoTable({
+            let html = "";
 
-            ...baseStyles,
 
-            startY:y,
+            for (let c = 1; c <= NUM_CO; c++) {
 
-            margin:{
-                left:10,
-                right:10
-            },
+                html += `<tr>
+                                <td>
+                                    <strong>CO${c}</strong>
+                                </td>`;
 
-            head:[[
+
+                const def =
+                    defaultMapping[c];
+
+
+                for (let p = 1; p <= 12; p++) {
+
+                    const value =
+                        def.po[p - 1] || 0;
+
+                    html += `
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="3"
+                                        step="1"
+                                        value="${value}"
+                                        id="co${c}po${p}">
+
+                                </td>
+
+                            `;
+
+                }
+
+
+                for (let p = 1; p <= 2; p++) {
+
+                    const value =
+                        def.pso[p - 1] || 0;
+
+                    html += `
+
+                                <td>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="3"
+                                        step="1"
+                                        value="${value}"
+                                        id="co${c}pso${p}">
+
+                                </td>
+
+                            `;
+
+                }
+
+
+                html += "</tr>";
+
+            }
+
+
+            document.getElementById(
+                "mappingBody"
+            ).innerHTML = html;
+
+        }
+
+
+        /* =========================================================
+           READ MAPPING
+        ========================================================= */
+
+        function readMappingFromUI() {
+
+            mappingData = {};
+
+
+            for (let c = 1; c <= NUM_CO; c++) {
+
+                const po = [];
+
+                const pso = [];
+
+
+                for (let p = 1; p <= 12; p++) {
+
+                    const el =
+                        document.getElementById(
+                            `co${c}po${p}`
+                        );
+
+                    po.push(
+                        el ?
+                        Number(el.value) || 0 :
+                        0
+                    );
+
+                }
+
+
+                for (let p = 1; p <= 2; p++) {
+
+                    const el =
+                        document.getElementById(
+                            `co${c}pso${p}`
+                        );
+
+                    pso.push(
+                        el ?
+                        Number(el.value) || 0 :
+                        0
+                    );
+
+                }
+
+
+                mappingData[c] = {
+                    po,
+                    pso
+                };
+
+            }
+
+
+            return mappingData;
+
+        }
+
+
+        /* =========================================================
+           LOAD DEFAULT
+        ========================================================= */
+
+        function loadDefaultMapping() {
+
+            createMapping();
+
+            readMappingFromUI();
+
+            alert(
+                "Default CO-PO/PSO mapping loaded successfully."
+            );
+
+        }
+
+
+        /* =========================================================
+           CALCULATE FINAL CO ATTAINMENT
+        ========================================================= */
+
+        function calculateCOAttainment() {
+
+            const target =
+                Number(
+                    document.getElementById(
+                        "targetValue"
+                    ).value
+                ) || 2;
+
+
+            const ciePcts = [];
+            const seePcts = [];
+
+            const cieContributions = [];
+            const seeContributions = [];
+
+            const finalCOPcts = [];
+            const finalCOLevels = [];
+
+            const indirectVals = [];
+            const statuses = [];
+
+
+            let activeCount = 0;
+
+            let sumCO = 0;
+
+
+            for (let i = 1; i <= NUM_CO; i++) {
+
+                const ciePct =
+                    Number(
+                        document.getElementById(
+                            `cie_${i}`
+                        ).value
+                    ) || 0;
+
+
+                const seePct =
+                    Number(
+                        document.getElementById(
+                            `see_${i}`
+                        ).value
+                    ) || 0;
+
+
+                const indirect =
+                    Number(
+                        document.getElementById(
+                            `indirect_${i}`
+                        ).value
+                    ) || 0;
+
+
+                /*
+                   CORRECT FORMULA
+
+                   Final CO %
+                   =
+                   50% CIE
+                   +
+                   50% SEE
+                */
+
+                const cieContribution =
+                    0.50 * ciePct;
+
+                const seeContribution =
+                    0.50 * seePct;
+
+                const finalPct =
+                    cieContribution +
+                    seeContribution;
+
+
+                const finalLevel =
+                    convertToScale(finalPct);
+
+
+                const active =
+                    ciePct > 0 ||
+                    seePct > 0;
+
+
+                const status =
+                    active ?
+                    (
+                        finalLevel >= target ?
+                        "ATTAINED" :
+                        "NOT ATTAINED"
+                    ) :
+                    "-";
+
+
+                ciePcts.push(ciePct);
+                seePcts.push(seePct);
+
+                cieContributions.push(
+                    cieContribution
+                );
+
+                seeContributions.push(
+                    seeContribution
+                );
+
+                finalCOPcts.push(finalPct);
+
+                finalCOLevels.push(
+                    finalLevel
+                );
+
+                indirectVals.push(
+                    indirect
+                );
+
+                statuses.push(status);
+
+
+                if (active) {
+
+                    activeCount++;
+
+                    sumCO += finalLevel;
+
+                }
+
+            }
+
+
+            /*
+               Average CO level
+            */
+
+            const avgCO =
+                activeCount > 0 ?
+                sumCO / activeCount :
+                0;
+
+
+            const overallStatus =
+                avgCO >= target ?
+                "ATTAINED" :
+                "NOT ATTAINED";
+
+
+            coAttainmentData = {
+
+                ciePcts,
+                seePcts,
+
+                cieContributions,
+                seeContributions,
+
+                finalCOPcts,
+                finalCOLevels,
+
+                indirectVals,
+                statuses,
+
+                avgCO,
+                target,
+
+                overallStatus,
+                activeCOCount: activeCount
+
+            };
+
+
+            /* -----------------------------------------------------
+               DISPLAY RESULT
+            ----------------------------------------------------- */
+
+            let html = `
+
+                        <div class="result-box">
+
+                            <h3>
+                                📊 Final Course Outcome Attainment
+                            </h3>
+
+                            <div style="overflow-x:auto">
+
+                                <table>
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>CO</th>
+
+                                            <th>CIE (%)</th>
+
+                                            <th>CIE 50%</th>
+
+                                            <th>SEE (%)</th>
+
+                                            <th>SEE 50%</th>
+
+                                            <th>Final CO (%)</th>
+
+                                            <th>CO Level</th>
+
+                                            <th>Target</th>
+
+                                            <th>Status</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+                `;
+
+
+            for (let i = 0; i < NUM_CO; i++) {
+
+                if (
+                    ciePcts[i] > 0 ||
+                    seePcts[i] > 0
+                ) {
+
+                    html += `
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            CO${i+1}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${ciePcts[i].toFixed(2)}%
+                                    </td>
+
+                                    <td>
+                                        ${cieContributions[i].toFixed(2)}%
+                                        <span class="calc-subtext">
+                                            0.50 × ${ciePcts[i].toFixed(2)}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        ${seePcts[i].toFixed(2)}%
+                                    </td>
+
+                                    <td>
+                                        ${seeContributions[i].toFixed(2)}%
+                                        <span class="calc-subtext">
+                                            0.50 × ${seePcts[i].toFixed(2)}
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <strong style="
+                                            color:#0b5e3a;
+                                            font-size:14px;
+                                        ">
+
+                                            ${finalCOPcts[i].toFixed(2)}%
+
+                                        </strong>
+
+                                        <span class="calc-subtext">
+
+                                            0.50(${ciePcts[i].toFixed(2)})
+                                            +
+                                            0.50(${seePcts[i].toFixed(2)})
+
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            ${finalCOLevels[i]}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${target.toFixed(2)}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="status-badge ${
+                                            statuses[i] === "ATTAINED"
+                                            ? "status-attained"
+                                            : "status-not-attained"
+                                        }">
+
+                                            ${statuses[i]}
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                }
+
+            }
+
+
+            html += `
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                            <div class="formula-box">
+
+                                <b>Final CO Calculation:</b><br>
+
+                                Final CO =
+                                0.50 × CIE CO +
+                                0.50 × SEE CO
+
+                            </div>
+
+
+                            <div style="
+                                margin-top:12px;
+                                padding:12px 18px;
+                                background:#dbeafe;
+                                border-radius:6px;
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                                flex-wrap:wrap;
+                                gap:10px;
+                            ">
+
+                                <div>
+
+                                    <span style="
+                                        font-size:14px;
+                                        font-weight:600;
+                                    ">
+                                        Average CO Level:
+                                    </span>
+
+                                    <span style="
+                                        font-size:24px;
+                                        font-weight:700;
+                                        color:#1e3a5f;
+                                        margin-left:8px;
+                                    ">
+
+                                        ${avgCO.toFixed(2)}
+
+                                    </span>
+
+                                    <span>
+                                        / 3.00
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    Target:
+                                    <b>
+                                        ${target.toFixed(2)}
+                                    </b>
+
+                                    <span class="status-badge ${
+                                        overallStatus === "ATTAINED"
+                                        ? "status-attained"
+                                        : "status-not-attained"
+                                    }"
+                                    style="margin-left:8px">
+
+                                        ${overallStatus}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+            document.getElementById(
+                "coAttainmentResult"
+            ).innerHTML = html;
+
+
+            setTimeout(
+                calculateCOPO,
+                100
+            );
+
+        }
+
+
+        /* =========================================================
+           CALCULATE PO / PSO
+        ========================================================= */
+
+        function calculateCOPO() {
+
+            if (!coAttainmentData) {
+
+                calculateCOAttainment();
+
+                return;
+
+            }
+
+
+            const mapping =
+                readMappingFromUI();
+
+
+            /*
+               IMPORTANT:
+
+               PO calculation uses FINAL CO LEVELS,
+               not CIE level + SEE level separately.
+            */
+
+            const coLevels =
+                coAttainmentData.finalCOLevels;
+
+
+            const target =
+                coAttainmentData.target;
+
+
+            const poResults = [];
+
+
+            /* -----------------------------------------------------
+               PO1 - PO12
+            ----------------------------------------------------- */
+
+            for (let p = 1; p <= 12; p++) {
+
+                let numerator = 0;
+                let denominator = 0;
+
+
+                for (let c = 1; c <= NUM_CO; c++) {
+
+                    const mapVal =
+                        mapping[c] ?
+                        .po ? .[p - 1] || 0 :
+                        0;
+
+
+                    if (mapVal > 0) {
+
+                        numerator +=
+                            coLevels[c - 1] *
+                            mapVal;
+
+
+                        denominator +=
+                            mapVal;
+
+                    }
+
+                }
+
+
+                const attainment =
+                    denominator > 0 ?
+                    numerator / denominator :
+                    0;
+
+
+                const status =
+                    attainment >= target ?
+                    "ATTAINED" :
+                    "NOT ATTAINED";
+
+
+                poResults.push({
+
+                    po: p,
+
+                    numerator,
+
+                    denominator,
+
+                    attainment,
+
+                    target,
+
+                    status
+
+                });
+
+            }
+
+
+            /* -----------------------------------------------------
+               PSO1 - PSO2
+            ----------------------------------------------------- */
+
+            const psoResults = [];
+
+
+            for (let p = 1; p <= 2; p++) {
+
+                let numerator = 0;
+                let denominator = 0;
+
+
+                for (let c = 1; c <= NUM_CO; c++) {
+
+                    const mapVal =
+                        mapping[c] ?
+                        .pso ? .[p - 1] || 0 :
+                        0;
+
+
+                    if (mapVal > 0) {
+
+                        numerator +=
+                            coLevels[c - 1] *
+                            mapVal;
+
+
+                        denominator +=
+                            mapVal;
+
+                    }
+
+                }
+
+
+                const attainment =
+                    denominator > 0 ?
+                    numerator / denominator :
+                    0;
+
+
+                const status =
+                    attainment >= target ?
+                    "ATTAINED" :
+                    "NOT ATTAINED";
+
+
+                psoResults.push({
+
+                    pso: p,
+
+                    numerator,
+
+                    denominator,
+
+                    attainment,
+
+                    target,
+
+                    status
+
+                });
+
+            }
+
+
+            lastCOPOResult = {
+
+                poResults,
+
+                psoResults,
+
+                coAttain: coLevels,
+
+                avgCO: coAttainmentData.avgCO,
+
+                target
+
+            };
+
+
+            displayCOPOResults();
+
+        }
+
+
+        /* =========================================================
+           DISPLAY PO / PSO
+        ========================================================= */
+
+        function displayCOPOResults() {
+
+            const results =
+                lastCOPOResult;
+
+
+            const target =
+                results.target;
+
+
+            let html = `
+
+                        <div class="result-box">
+
+                            <h3>
+                                📊 Program Outcome (PO) Attainment
+                            </h3>
+
+                            <div style="overflow-x:auto">
+
+                                <table>
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Metric</th>
+
+                `;
+
+
+            for (let p = 1; p <= 12; p++) {
+
+                html += `<th>PO${p}</th>`;
+
+            }
+
+
+            html += `
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    Attainment (0–3)
+                                                </strong>
+                                            </td>
+
+                `;
+
+
+            results.poResults.forEach(
+                r => {
+
+                    html += `
+
+                                <td style="
+                                    font-weight:700;
+                                    background:${
+                                        r.attainment >= target
+                                        ? "#d1fae5"
+                                        : "#fee2e2"
+                                    };
+                                ">
+
+                                    ${
+                                        r.denominator > 0
+                                        ? r.attainment.toFixed(2)
+                                        : "-"
+                                    }
+
+                                    ${
+                                        r.denominator > 0
+                                        ? `
+                                        <span class="calc-subtext">
+
+                                            ${r.numerator.toFixed(2)}
+                                            /
+                                            ${r.denominator}
+
+                                        </span>
+                                        `
+                                        : ""
+                                    }
+
+                                </td>
+
+                            `;
+
+                }
+            );
+
+
+            html += `
+
+                                        </tr>
+
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    Status
+                                                </strong>
+                                            </td>
+
+                `;
+
+
+            results.poResults.forEach(
+                r => {
+
+                    html += `
+
+                                <td>
+
+                                    ${
+                                        r.denominator > 0
+                                        ? `
+                                        <span class="status-badge ${
+                                            r.status === "ATTAINED"
+                                            ? "status-attained"
+                                            : "status-not-attained"
+                                        }">
+
+                                            ${r.status}
+
+                                        </span>
+                                        `
+                                        : "-"
+                                    }
+
+                                </td>
+
+                            `;
+
+                }
+            );
+
+
+            html += `
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                            <div class="formula-box">
+
+                                PO Attainment =
+                                Σ(Final CO × Mapping) /
+                                Σ(Mapping)
+
+                            </div>
+
+
+                            <h3>
+                                📊 Program Specific Outcome (PSO) Attainment
+                            </h3>
+
+
+                            <div style="overflow-x:auto">
+
+                                <table>
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Metric</th>
+                                            <th>PSO1</th>
+                                            <th>PSO2</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    Attainment (0–3)
+                                                </strong>
+                                            </td>
+
+                `;
+
+
+            results.psoResults.forEach(
+                r => {
+
+                    html += `
+
+                                <td style="
+                                    font-weight:700;
+                                    background:${
+                                        r.attainment >= target
+                                        ? "#d1fae5"
+                                        : "#fee2e2"
+                                    };
+                                ">
+
+                                    ${
+                                        r.denominator > 0
+                                        ? r.attainment.toFixed(2)
+                                        : "-"
+                                    }
+
+                                    ${
+                                        r.denominator > 0
+                                        ? `
+                                        <span class="calc-subtext">
+
+                                            ${r.numerator.toFixed(2)}
+                                            /
+                                            ${r.denominator}
+
+                                        </span>
+                                        `
+                                        : ""
+                                    }
+
+                                </td>
+
+                            `;
+
+                }
+            );
+
+
+            html += `
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    Status
+                                                </strong>
+                                            </td>
+
+                `;
+
+
+            results.psoResults.forEach(
+                r => {
+
+                    html += `
+
+                                <td>
+
+                                    ${
+                                        r.denominator > 0
+                                        ? `
+                                        <span class="status-badge ${
+                                            r.status === "ATTAINED"
+                                            ? "status-attained"
+                                            : "status-not-attained"
+                                        }">
+
+                                            ${r.status}
+
+                                        </span>
+                                        `
+                                        : "-"
+                                    }
+
+                                </td>
+
+                            `;
+
+                }
+            );
+
+
+            html += `
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+            document.getElementById(
+                "finalResult"
+            ).innerHTML = html;
+
+        }
+
+
+        /* =========================================================
+           EXPORT EXCEL
+        ========================================================= */
+
+        function exportExcel() {
+
+            calculateCOAttainment();
+
+            calculateCOPO();
+
+
+            const courseCode =
+                document.getElementById(
+                    "courseCode"
+                ).value || "Course";
+
+
+            const academicYear =
+                document.getElementById(
+                    "academicYear"
+                ).value || "2026-27";
+
+
+            const courseName =
+                document.getElementById(
+                    "courseName"
+                ).value || "";
+
+
+            const semester =
+                document.getElementById(
+                    "Semester"
+                ).value || "";
+
+
+            const division =
+                document.getElementById(
+                    "Division"
+                ).value || "";
+
+
+            const staffName =
+                document.getElementById(
+                    "NameOfStaff"
+                ).value || "";
+
+
+            const mapping =
+                readMappingFromUI();
+
+
+            const rows = [];
+
+
+            rows.push([
+                "Basaveshwar Engineering College Bagalkote"
+            ]);
+
+            rows.push([
+                "CO-PO / PSO Attainment Report"
+            ]);
+
+            rows.push([
                 "Academic Year",
-                "Course Code",
-                "Course Name",
-                "Sem / Div",
-                "Faculty",
-                "Target"
-            ]],
-
-            body:[[
                 academicYear,
-                courseCode,
+                "Course Code",
+                courseCode
+            ]);
+
+            rows.push([
+                "Course Name",
                 courseName,
-                `${semester} / ${division}`,
-                staffName,
-                target.toFixed(2)
-            ]],
+                "Semester",
+                semester,
+                "Division",
+                division
+            ]);
 
-            columnStyles:{
-                0:{cellWidth:25},
-                1:{cellWidth:25},
-                2:{cellWidth:55},
-                3:{cellWidth:22},
-                4:{cellWidth:38},
-                5:{cellWidth:25}
-            }
+            rows.push([
+                "Faculty",
+                staffName
+            ]);
 
-        });
+            rows.push([]);
 
 
-        y =
-            doc.lastAutoTable.finalY + 4;
+            rows.push([
+                "Assessment Weightage",
+                "CIE = 50%",
+                "SEE = 50%"
+            ]);
+
+            rows.push([]);
 
 
-        /* CO TABLE */
+            rows.push([
+                "CO",
+                "CIE Avg %",
+                "CIE Contribution 50%",
+                "SEE Avg %",
+                "SEE Contribution 50%",
+                "Final CO %",
+                "Final CO Level",
+                "Indirect Exit",
+                "Status"
+            ]);
 
-        doc.text(
-            "2. CO ATTAINMENT CALCULATION",
-            10,
-            y
-        );
 
-        y += 2;
+            for (let i = 0; i < NUM_CO; i++) {
 
-
-        const coBody = [];
-
-
-        for(let i=0;i<NUM_CO;i++){
-
-            if(
-                coAttainmentData.ciePcts[i] > 0 ||
-                coAttainmentData.seePcts[i] > 0
-            ){
-
-                coBody.push([
+                rows.push([
 
                     `CO${i+1}`,
 
                     coAttainmentData
-                        .ciePcts[i]
-                        .toFixed(1),
+                    .ciePcts[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .cieContributions[i]
-                        .toFixed(2),
+                    .cieContributions[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .seePcts[i]
-                        .toFixed(1),
+                    .seePcts[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .seeContributions[i]
-                        .toFixed(2),
+                    .seeContributions[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .finalCOPcts[i]
-                        .toFixed(2),
+                    .finalCOPcts[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .finalCOLevels[i]
-                        .toFixed(2),
+                    .finalCOLevels[i]
+                    .toFixed(2),
 
                     coAttainmentData
-                        .statuses[i]
+                    .indirectVals[i]
+                    .toFixed(2),
+
+                    coAttainmentData
+                    .statuses[i]
 
                 ]);
 
             }
 
-        }
+
+            rows.push([]);
+
+            rows.push([
+                "Average CO Level",
+                coAttainmentData
+                .avgCO
+                .toFixed(2)
+            ]);
+
+            rows.push([]);
 
 
-        doc.autoTable({
+            /* Mapping */
 
-            ...baseStyles,
+            rows.push([
+                "CO-PO / PSO Mapping Matrix"
+            ]);
 
-            startY:y,
 
-            margin:{
-                left:10,
-                right:10
-            },
+            const mappingHeader = [
+                "CO"
+            ];
 
-            head:[[
-                "CO",
-                "CIE %",
-                "CIE 50%",
-                "SEE %",
-                "SEE 50%",
-                "Final CO %",
-                "Level",
+
+            for (let p = 1; p <= 12; p++)
+                mappingHeader.push(`PO${p}`);
+
+
+            mappingHeader.push(
+                "PSO1",
+                "PSO2"
+            );
+
+
+            rows.push(mappingHeader);
+
+
+            for (let c = 1; c <= NUM_CO; c++) {
+
+                const row = [
+                    `CO${c}`
+                ];
+
+
+                for (let p = 0; p < 12; p++)
+                    row.push(
+                        mapping[c].po[p]
+                    );
+
+
+                for (let p = 0; p < 2; p++)
+                    row.push(
+                        mapping[c].pso[p]
+                    );
+
+
+                rows.push(row);
+
+            }
+
+
+            rows.push([]);
+
+
+            /* PO */
+
+            rows.push([
+                "PO Attainment"
+            ]);
+
+
+            const poHeader = [
+                "Metric"
+            ];
+
+
+            for (let p = 1; p <= 12; p++)
+                poHeader.push(`PO${p}`);
+
+
+            rows.push(poHeader);
+
+
+            const poRow = [
+                "Attainment"
+            ];
+
+
+            const poStatus = [
                 "Status"
-            ]],
+            ];
 
-            body:coBody,
 
-            columnStyles:{
-                0:{cellWidth:14},
-                1:{cellWidth:19},
-                2:{cellWidth:23},
-                3:{cellWidth:19},
-                4:{cellWidth:23},
-                5:{cellWidth:27},
-                6:{cellWidth:19},
-                7:{cellWidth:30}
-            }
+            lastCOPOResult
+                .poResults
+                .forEach(r => {
 
-        });
+                    poRow.push(
+                        r.denominator > 0 ?
+                        r.attainment.toFixed(2) :
+                        "-"
+                    );
 
+                    poStatus.push(
+                        r.status
+                    );
 
-        y =
-            doc.lastAutoTable.finalY + 4;
+                });
 
 
-        doc.setFontSize(7);
+            rows.push(poRow);
+            rows.push(poStatus);
 
-        doc.text(
-            "Final CO = 0.50 × CIE CO + 0.50 × SEE CO",
-            10,
-            y
-        );
 
+            rows.push([]);
 
-        y += 5;
 
+            /* PSO */
 
-        /* MAPPING */
+            rows.push([
+                "PSO Attainment"
+            ]);
 
-        doc.text(
-            "3. CO-PO / PSO MAPPING",
-            10,
-            y
-        );
-
-        y += 2;
-
-
-        const mappingHead =
-            ["CO"];
-
-
-        for(let p=1;p<=12;p++)
-            mappingHead.push(
-                `PO${p}`
-            );
-
-
-        mappingHead.push(
-            "PSO1",
-            "PSO2"
-        );
-
-
-        const mappingBody = [];
-
-
-        for(let c=1;c<=NUM_CO;c++){
-
-            const row =
-                [`CO${c}`];
-
-
-            for(let p=0;p<12;p++)
-                row.push(
-                    mapping[c].po[p]
-                );
-
-
-            for(let p=0;p<2;p++)
-                row.push(
-                    mapping[c].pso[p]
-                );
-
-
-            mappingBody.push(row);
-
-        }
-
-
-        const mapStyles = {
-            0:{cellWidth:15}
-        };
-
-
-        for(let p=1;p<=12;p++)
-            mapStyles[p]={
-                cellWidth:12
-            };
-
-
-        mapStyles[13]={
-            cellWidth:15
-        };
-
-        mapStyles[14]={
-            cellWidth:15
-        };
-
-
-        doc.autoTable({
-
-            ...baseStyles,
-
-            startY:y,
-
-            margin:{
-                left:10,
-                right:10
-            },
-
-            head:[mappingHead],
-
-            body:mappingBody,
-
-            columnStyles:mapStyles,
-
-            styles:{
-                ...baseStyles.styles,
-                fontSize:6.5
-            }
-
-        });
-
-
-        y =
-            doc.lastAutoTable.finalY + 4;
-
-
-        /* PO */
-
-        doc.text(
-            "4. PO ATTAINMENT",
-            10,
-            y
-        );
-
-        y += 2;
-
-
-        const poHead =
-            ["Metric"];
-
-
-        for(let p=1;p<=12;p++)
-            poHead.push(
-                `PO${p}`
-            );
-
-
-        const poAttainmentRow =
-            ["Attainment"];
-
-
-        const poStatusRow =
-            ["Status"];
-
-
-        lastCOPOResult
-            .poResults
-            .forEach(r => {
-
-                poAttainmentRow.push(
-                    r.denominator > 0
-                    ? r.attainment.toFixed(2)
-                    : "-"
-                );
-
-                poStatusRow.push(
-                    r.denominator > 0
-                    ? (
-                        r.status === "ATTAINED"
-                        ? "ATT"
-                        : "NOT ATT"
-                      )
-                    : "-"
-                );
-
-            });
-
-
-        doc.autoTable({
-
-            ...baseStyles,
-
-            startY:y,
-
-            margin:{
-                left:10,
-                right:10
-            },
-
-            head:[poHead],
-
-            body:[
-                poAttainmentRow,
-                poStatusRow
-            ],
-
-            columnStyles:{
-                0:{cellWidth:27}
-            },
-
-            styles:{
-                ...baseStyles.styles,
-                fontSize:6.1
-            }
-
-        });
-
-
-        y =
-            doc.lastAutoTable.finalY + 3;
-
-
-        /* PSO */
-
-        doc.autoTable({
-
-            ...baseStyles,
-
-            startY:y,
-
-            margin:{
-                left:10,
-                right:10
-            },
-
-            head:[[
+            rows.push([
                 "Metric",
                 "PSO1",
                 "PSO2"
-            ]],
+            ]);
 
-            body:[[
-
+            rows.push([
                 "Attainment",
 
                 lastCOPOResult
-                    .psoResults[0]
-                    .attainment
-                    .toFixed(2),
+                .psoResults[0]
+                .attainment
+                .toFixed(2),
 
                 lastCOPOResult
-                    .psoResults[1]
-                    .attainment
-                    .toFixed(2)
+                .psoResults[1]
+                .attainment
+                .toFixed(2)
+            ]);
 
-            ],[
-
+            rows.push([
                 "Status",
 
                 lastCOPOResult
-                    .psoResults[0]
-                    .status,
+                .psoResults[0]
+                .status,
 
                 lastCOPOResult
-                    .psoResults[1]
-                    .status
+                .psoResults[1]
+                .status
+            ]);
 
-            ]],
 
-            columnStyles:{
-                0:{cellWidth:40},
-                1:{cellWidth:75},
-                2:{cellWidth:75}
+            const wb =
+                XLSX.utils.book_new();
+
+
+            const ws =
+                XLSX.utils.aoa_to_sheet(rows);
+
+
+            ws["!cols"] =
+                Array(15)
+                .fill({ wch: 18 });
+
+
+            XLSX.utils.book_append_sheet(
+                wb,
+                ws,
+                "CO_PO_Attainment"
+            );
+
+
+            XLSX.writeFile(
+                wb,
+                `CO_PO_Attainment_${courseCode}_${academicYear}.xlsx`
+            );
+
+        }
+
+
+        /* =========================================================
+           PDF
+        ========================================================= */
+
+        function downloadPDF() {
+
+            calculateCOAttainment();
+
+            calculateCOPO();
+
+
+            const btn =
+                document.getElementById(
+                    "pdfBtn"
+                );
+
+
+            const original =
+                btn.innerHTML;
+
+
+            btn.innerHTML =
+                "⏳ Generating PDF...";
+
+
+            btn.disabled = true;
+
+
+            try {
+
+                const { jsPDF } =
+                    window.jspdf;
+
+
+                const doc =
+                    new jsPDF({
+                        orientation: "portrait",
+                        unit: "mm",
+                        format: "a4"
+                    });
+
+
+                const courseCode =
+                    document.getElementById(
+                        "courseCode"
+                    ).value;
+
+
+                const courseName =
+                    document.getElementById(
+                        "courseName"
+                    ).value;
+
+
+                const department =
+                    document.getElementById(
+                        "department"
+                    ).value;
+
+
+                const academicYear =
+                    document.getElementById(
+                        "academicYear"
+                    ).value;
+
+
+                const semester =
+                    document.getElementById(
+                        "Semester"
+                    ).value;
+
+
+                const division =
+                    document.getElementById(
+                        "Division"
+                    ).value;
+
+
+                const staffName =
+                    document.getElementById(
+                        "NameOfStaff"
+                    ).value;
+
+
+                const target =
+                    coAttainmentData.target;
+
+
+                /* HEADER */
+
+                doc.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                doc.setFontSize(12);
+
+                doc.text(
+                    "BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE",
+                    105,
+                    12, { align: "center" }
+                );
+
+
+                doc.setFontSize(9);
+
+                doc.text(
+                    department,
+                    105,
+                    17, { align: "center" }
+                );
+
+
+                doc.setFontSize(8);
+
+                doc.text(
+                    "CO-PO / PSO ATTAINMENT REPORT",
+                    105,
+                    23, { align: "center" }
+                );
+
+
+                let y = 29;
+
+
+                const baseStyles = {
+
+                    theme: "plain",
+
+                    styles: {
+                        font: "helvetica",
+                        fontSize: 6.8,
+                        textColor: [0, 0, 0],
+                        lineColor: [0, 0, 0],
+                        lineWidth: 0.2,
+                        cellPadding: 0.9,
+                        halign: "center",
+                        valign: "middle",
+                        overflow: "linebreak"
+                    },
+
+                    headStyles: {
+                        fillColor: [255, 255, 255],
+                        textColor: [0, 0, 0],
+                        fontStyle: "bold",
+                        lineColor: [0, 0, 0],
+                        lineWidth: 0.2
+                    }
+
+                };
+
+
+                /* METADATA */
+
+                doc.setFontSize(7.5);
+
+                doc.text(
+                    "1. COURSE DETAILS",
+                    10,
+                    y
+                );
+
+                y += 2;
+
+
+                doc.autoTable({
+
+                    ...baseStyles,
+
+                    startY: y,
+
+                    margin: {
+                        left: 10,
+                        right: 10
+                    },
+
+                    head: [
+                        [
+                            "Academic Year",
+                            "Course Code",
+                            "Course Name",
+                            "Sem / Div",
+                            "Faculty",
+                            "Target"
+                        ]
+                    ],
+
+                    body: [
+                        [
+                            academicYear,
+                            courseCode,
+                            courseName,
+                            `${semester} / ${division}`,
+                            staffName,
+                            target.toFixed(2)
+                        ]
+                    ],
+
+                    columnStyles: {
+                        0: { cellWidth: 25 },
+                        1: { cellWidth: 25 },
+                        2: { cellWidth: 55 },
+                        3: { cellWidth: 22 },
+                        4: { cellWidth: 38 },
+                        5: { cellWidth: 25 }
+                    }
+
+                });
+
+
+                y =
+                    doc.lastAutoTable.finalY + 4;
+
+
+                /* CO TABLE */
+
+                doc.text(
+                    "2. CO ATTAINMENT CALCULATION",
+                    10,
+                    y
+                );
+
+                y += 2;
+
+
+                const coBody = [];
+
+
+                for (let i = 0; i < NUM_CO; i++) {
+
+                    if (
+                        coAttainmentData.ciePcts[i] > 0 ||
+                        coAttainmentData.seePcts[i] > 0
+                    ) {
+
+                        coBody.push([
+
+                            `CO${i+1}`,
+
+                            coAttainmentData
+                            .ciePcts[i]
+                            .toFixed(1),
+
+                            coAttainmentData
+                            .cieContributions[i]
+                            .toFixed(2),
+
+                            coAttainmentData
+                            .seePcts[i]
+                            .toFixed(1),
+
+                            coAttainmentData
+                            .seeContributions[i]
+                            .toFixed(2),
+
+                            coAttainmentData
+                            .finalCOPcts[i]
+                            .toFixed(2),
+
+                            coAttainmentData
+                            .finalCOLevels[i]
+                            .toFixed(2),
+
+                            coAttainmentData
+                            .statuses[i]
+
+                        ]);
+
+                    }
+
+                }
+
+
+                doc.autoTable({
+
+                    ...baseStyles,
+
+                    startY: y,
+
+                    margin: {
+                        left: 10,
+                        right: 10
+                    },
+
+                    head: [
+                        [
+                            "CO",
+                            "CIE %",
+                            "CIE 50%",
+                            "SEE %",
+                            "SEE 50%",
+                            "Final CO %",
+                            "Level",
+                            "Status"
+                        ]
+                    ],
+
+                    body: coBody,
+
+                    columnStyles: {
+                        0: { cellWidth: 14 },
+                        1: { cellWidth: 19 },
+                        2: { cellWidth: 23 },
+                        3: { cellWidth: 19 },
+                        4: { cellWidth: 23 },
+                        5: { cellWidth: 27 },
+                        6: { cellWidth: 19 },
+                        7: { cellWidth: 30 }
+                    }
+
+                });
+
+
+                y =
+                    doc.lastAutoTable.finalY + 4;
+
+
+                doc.setFontSize(7);
+
+                doc.text(
+                    "Final CO = 0.50 × CIE CO + 0.50 × SEE CO",
+                    10,
+                    y
+                );
+
+
+                y += 5;
+
+
+                /* MAPPING */
+
+                doc.text(
+                    "3. CO-PO / PSO MAPPING",
+                    10,
+                    y
+                );
+
+                y += 2;
+
+
+                const mappingHead =
+                    ["CO"];
+
+
+                for (let p = 1; p <= 12; p++)
+                    mappingHead.push(
+                        `PO${p}`
+                    );
+
+
+                mappingHead.push(
+                    "PSO1",
+                    "PSO2"
+                );
+
+
+                const mappingBody = [];
+
+
+                for (let c = 1; c <= NUM_CO; c++) {
+
+                    const row =
+                        [`CO${c}`];
+
+
+                    for (let p = 0; p < 12; p++)
+                        row.push(
+                            mapping[c].po[p]
+                        );
+
+
+                    for (let p = 0; p < 2; p++)
+                        row.push(
+                            mapping[c].pso[p]
+                        );
+
+
+                    mappingBody.push(row);
+
+                }
+
+
+                const mapStyles = {
+                    0: { cellWidth: 15 }
+                };
+
+
+                for (let p = 1; p <= 12; p++)
+                    mapStyles[p] = {
+                        cellWidth: 12
+                    };
+
+
+                mapStyles[13] = {
+                    cellWidth: 15
+                };
+
+                mapStyles[14] = {
+                    cellWidth: 15
+                };
+
+
+                doc.autoTable({
+
+                    ...baseStyles,
+
+                    startY: y,
+
+                    margin: {
+                        left: 10,
+                        right: 10
+                    },
+
+                    head: [mappingHead],
+
+                    body: mappingBody,
+
+                    columnStyles: mapStyles,
+
+                    styles: {
+                        ...baseStyles.styles,
+                        fontSize: 6.5
+                    }
+
+                });
+
+
+                y =
+                    doc.lastAutoTable.finalY + 4;
+
+
+                /* PO */
+
+                doc.text(
+                    "4. PO ATTAINMENT",
+                    10,
+                    y
+                );
+
+                y += 2;
+
+
+                const poHead =
+                    ["Metric"];
+
+
+                for (let p = 1; p <= 12; p++)
+                    poHead.push(
+                        `PO${p}`
+                    );
+
+
+                const poAttainmentRow =
+                    ["Attainment"];
+
+
+                const poStatusRow =
+                    ["Status"];
+
+
+                lastCOPOResult
+                    .poResults
+                    .forEach(r => {
+
+                        poAttainmentRow.push(
+                            r.denominator > 0 ?
+                            r.attainment.toFixed(2) :
+                            "-"
+                        );
+
+                        poStatusRow.push(
+                            r.denominator > 0 ?
+                            (
+                                r.status === "ATTAINED" ?
+                                "ATT" :
+                                "NOT ATT"
+                            ) :
+                            "-"
+                        );
+
+                    });
+
+
+                doc.autoTable({
+
+                    ...baseStyles,
+
+                    startY: y,
+
+                    margin: {
+                        left: 10,
+                        right: 10
+                    },
+
+                    head: [poHead],
+
+                    body: [
+                        poAttainmentRow,
+                        poStatusRow
+                    ],
+
+                    columnStyles: {
+                        0: { cellWidth: 27 }
+                    },
+
+                    styles: {
+                        ...baseStyles.styles,
+                        fontSize: 6.1
+                    }
+
+                });
+
+
+                y =
+                    doc.lastAutoTable.finalY + 3;
+
+
+                /* PSO */
+
+                doc.autoTable({
+
+                    ...baseStyles,
+
+                    startY: y,
+
+                    margin: {
+                        left: 10,
+                        right: 10
+                    },
+
+                    head: [
+                        [
+                            "Metric",
+                            "PSO1",
+                            "PSO2"
+                        ]
+                    ],
+
+                    body: [
+                        [
+
+                            "Attainment",
+
+                            lastCOPOResult
+                            .psoResults[0]
+                            .attainment
+                            .toFixed(2),
+
+                            lastCOPOResult
+                            .psoResults[1]
+                            .attainment
+                            .toFixed(2)
+
+                        ], [
+
+                            "Status",
+
+                            lastCOPOResult
+                            .psoResults[0]
+                            .status,
+
+                            lastCOPOResult
+                            .psoResults[1]
+                            .status
+
+                        ]
+                    ],
+
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 75 },
+                        2: { cellWidth: 75 }
+                    }
+
+                });
+
+
+                y =
+                    doc.lastAutoTable.finalY + 5;
+
+
+                /* FORMULA */
+
+                doc.setFontSize(6.5);
+
+                doc.setFont(
+                    "helvetica",
+                    "italic"
+                );
+
+
+                doc.text(
+                    "Formula: Final CO = 50% CIE + 50% SEE",
+                    10,
+                    y
+                );
+
+
+                doc.text(
+                    "PO/PSO = Σ(Final CO × Mapping) / Σ(Mapping)",
+                    10,
+                    y + 3
+                );
+
+
+                doc.text(
+                    "Mapping Scale: 3 = High, 2 = Medium, 1 = Low, 0 = No Mapping",
+                    10,
+                    y + 6
+                );
+
+
+                /* SIGNATURE */
+
+                y = 258;
+
+
+                doc.setLineDashPattern(
+                    [1.5, 1.5],
+                    0
+                );
+
+
+                doc.line(
+                    20,
+                    y,
+                    70,
+                    y
+                );
+
+
+                doc.line(
+                    140,
+                    y,
+                    190,
+                    y
+                );
+
+
+                doc.setLineDashPattern(
+                    [],
+                    0
+                );
+
+
+                doc.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                doc.setFontSize(7.5);
+
+
+                doc.text(
+                    staffName,
+                    45,
+                    y + 4, { align: "center" }
+                );
+
+
+                doc.text(
+                    "Head of Department",
+                    165,
+                    y + 4, { align: "center" }
+                );
+
+
+                doc.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                doc.setFontSize(6.5);
+
+
+                doc.text(
+                    "Course Coordinator / Faculty",
+                    45,
+                    y + 8, { align: "center" }
+                );
+
+
+                doc.text(
+                    department,
+                    165,
+                    y + 8, { align: "center" }
+                );
+
+
+                /* FOOTER */
+
+                doc.line(
+                    10,
+                    287,
+                    200,
+                    287
+                );
+
+
+                const now =
+                    new Date();
+
+
+                const dateStr =
+                    now.toLocaleDateString(
+                        "en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    );
+
+
+                const timeStr =
+                    now.toLocaleTimeString(
+                        "en-IN", {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
+
+                doc.text(
+                    `OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`,
+                    105,
+                    291, { align: "center" }
+                );
+
+
+                doc.save(
+                    `CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`
+                );
+
+
+                btn.innerHTML =
+                    original;
+
+                btn.disabled =
+                    false;
+
+            } catch (error) {
+
+                console.error(
+                    "PDF Error:",
+                    error
+                );
+
+                alert(
+                    "PDF generation failed. Please check the browser console."
+                );
+
+
+                btn.innerHTML =
+                    original;
+
+                btn.disabled =
+                    false;
+
             }
 
-        });
+        }
 
 
-        y =
-            doc.lastAutoTable.finalY + 5;
+        /* =========================================================
+           START
+        ========================================================= */
+
+        initInputs();
+
+        createMapping();
+
+        readMappingFromUI();
 
 
-        /* FORMULA */
+        window.addEventListener(
+            "load",
+            function() {
 
-        doc.setFontSize(6.5);
+                setTimeout(
+                    calculateCOAttainment,
+                    300
+                );
 
-        doc.setFont(
-            "helvetica",
-            "italic"
+            }
         );
-
-
-        doc.text(
-            "Formula: Final CO = 50% CIE + 50% SEE",
-            10,
-            y
-        );
-
-
-        doc.text(
-            "PO/PSO = Σ(Final CO × Mapping) / Σ(Mapping)",
-            10,
-            y + 3
-        );
-
-
-        doc.text(
-            "Mapping Scale: 3 = High, 2 = Medium, 1 = Low, 0 = No Mapping",
-            10,
-            y + 6
-        );
-
-
-        /* SIGNATURE */
-
-        y = 258;
-
-
-        doc.setLineDashPattern(
-            [1.5,1.5],
-            0
-        );
-
-
-        doc.line(
-            20,
-            y,
-            70,
-            y
-        );
-
-
-        doc.line(
-            140,
-            y,
-            190,
-            y
-        );
-
-
-        doc.setLineDashPattern(
-            [],
-            0
-        );
-
-
-        doc.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        doc.setFontSize(7.5);
-
-
-        doc.text(
-            staffName,
-            45,
-            y + 4,
-            {align:"center"}
-        );
-
-
-        doc.text(
-            "Head of Department",
-            165,
-            y + 4,
-            {align:"center"}
-        );
-
-
-        doc.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        doc.setFontSize(6.5);
-
-
-        doc.text(
-            "Course Coordinator / Faculty",
-            45,
-            y + 8,
-            {align:"center"}
-        );
-
-
-        doc.text(
-            department,
-            165,
-            y + 8,
-            {align:"center"}
-        );
-
-
-        /* FOOTER */
-
-        doc.line(
-            10,
-            287,
-            200,
-            287
-        );
-
-
-        const now =
-            new Date();
-
-
-        const dateStr =
-            now.toLocaleDateString(
-                "en-IN",
-                {
-                    day:"2-digit",
-                    month:"short",
-                    year:"numeric"
-                }
-            );
-
-
-        const timeStr =
-            now.toLocaleTimeString(
-                "en-IN",
-                {
-                    hour:"2-digit",
-                    minute:"2-digit"
-                }
-            );
-
-
-        doc.text(
-            `OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`,
-            105,
-            291,
-            {align:"center"}
-        );
-
-
-        doc.save(
-            `CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`
-        );
-
-
-        btn.innerHTML =
-            original;
-
-        btn.disabled =
-            false;
-
-    }
-    catch(error){
-
-        console.error(
-            "PDF Error:",
-            error
-        );
-
-        alert(
-            "PDF generation failed. Please check the browser console."
-        );
-
-
-        btn.innerHTML =
-            original;
-
-        btn.disabled =
-            false;
-
-    }
-
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-initInputs();
-
-createMapping();
-
-readMappingFromUI();
-
-
-window.addEventListener(
-    "load",
-    function(){
-
-        setTimeout(
-            calculateCOAttainment,
-            300
-        );
-
-    }
-);
-
-</script>
+    </script>
 
 </body>
+
 </html>
