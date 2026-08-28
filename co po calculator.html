@@ -478,10 +478,12 @@ function downloadPDF() {
     if (!coAttainmentData) calculateCOAttainment();
     if (!lastCOPOResult) calculateCOPO();
 
-    // Wait a moment for calculations
     setTimeout(() => {
         try {
-            if (typeof window.jspdf === 'undefined') throw new Error('jsPDF library not loaded.');
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF library not loaded. Please check internet connection.');
+            }
+
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
@@ -515,24 +517,28 @@ function downloadPDF() {
             // ---- Header ----
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12.5);
-            doc.setTextColor(0,0,0);
+            doc.setTextColor(0, 0, 0);
             doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 105, 12.5, { align: "center" });
+
             doc.setFontSize(9.5);
             doc.text(department, 105, 17, { align: "center" });
+
             doc.setFontSize(8.5);
-            doc.setDrawColor(0,0,0);
+            doc.setDrawColor(0, 0, 0);
             doc.setLineWidth(0.3);
             doc.rect(55, 19.5, 100, 5);
             doc.text("CO-PO / PSO ATTAINMENT REPORT", 105, 23.2, { align: "center" });
+
             doc.setLineWidth(0.35);
             doc.line(10, 26.5, 200, 26.5);
 
+            // ---- Base styles (black text & borders) ----
             const baseStyles = {
                 theme: 'plain',
                 styles: {
-                    textColor: [0,0,0],
-                    fontSize: 7.2,
-                    lineColor: [0,0,0],
+                    textColor: [0, 0, 0],
+                    fontSize: 7.0,
+                    lineColor: [0, 0, 0],
                     lineWidth: 0.2,
                     halign: 'center',
                     valign: 'middle',
@@ -541,51 +547,73 @@ function downloadPDF() {
                     overflow: 'linebreak'
                 },
                 headStyles: {
-                    fillColor: [255,255,255],
-                    textColor: [0,0,0],
+                    fillColor: [255, 255, 255],
+                    textColor: [0, 0, 0],
                     fontStyle: 'bold',
-                    lineColor: [0,0,0],
+                    lineColor: [0, 0, 0],
                     lineWidth: 0.2
                 }
             };
 
             let currentY = 29.5;
 
-            // 1. Course Metadata
+            // ============================================================
+            // 1. COURSE METADATA
+            // ============================================================
             doc.setFontSize(7.8);
             doc.setFont("helvetica", "bold");
             doc.text("1. COURSE METADATA & TARGET SETTINGS", 10, currentY);
             currentY += 1.5;
+
             doc.autoTable({
                 ...baseStyles,
                 startY: currentY,
                 margin: { left: 10, right: 10 },
                 head: [["Academic Year", "Course Code", "Course Title", "Sem / Div", "Faculty Name", "Target Level"]],
-                body: [[academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staffName, target.toFixed(2)]],
-                columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 25 }, 2: { cellWidth: 55 }, 3: { cellWidth: 25 }, 4: { cellWidth: 35 }, 5: { cellWidth: 25 } }
+                body: [
+                    [academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staffName, target.toFixed(2)]
+                ],
+                columnStyles: {
+                    0: { cellWidth: 22 },
+                    1: { cellWidth: 25 },
+                    2: { cellWidth: 50 },
+                    3: { cellWidth: 22 },
+                    4: { cellWidth: 35 },
+                    5: { cellWidth: 22 }
+                }
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 2. CO Attainment (with Assignment)
+            // ============================================================
+            // 2. CO ATTAINMENT (FIXED: separate columns, no concatenation)
+            // ============================================================
             doc.text("2. COURSE OUTCOME (CO) ATTAINMENT & CALCULATION BREAKDOWN", 10, currentY);
             currentY += 1.5;
+
             const coBody = [];
-            for (let i=0; i<NUM_CO; i++) {
+            for (let i = 0; i < NUM_CO; i++) {
                 if (coAttain[i] > 0 || i < 4) {
-                    const directDetail = `${directVals[i].toFixed(2)}\n(0.4×${cieScales[i].toFixed(0)}+0.1×${asgScales[i].toFixed(0)}+0.5×${seeScales[i].toFixed(0)})`;
-                    const finalDetail = `${coAttain[i].toFixed(2)}\n(0.8×${directVals[i].toFixed(2)}+0.2×${indirect[i].toFixed(1)})`;
+                    // Each column gets its own properly formatted string
+                    const cieDisplay = `${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}%) → ${cieScales[i].toFixed(0)}`;
+                    const asgDisplay = `${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}%) → ${asgScales[i].toFixed(0)}`;
+                    const seeDisplay = `${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}%) → ${seeScales[i].toFixed(0)}`;
+                    const directDisplay = `${directVals[i].toFixed(2)}\n(0.4×${cieScales[i].toFixed(0)} + 0.1×${asgScales[i].toFixed(0)} + 0.5×${seeScales[i].toFixed(0)})`;
+                    const finalDisplay = `${coAttain[i].toFixed(2)}\n(0.8×${directVals[i].toFixed(2)} + 0.2×${indirect[i].toFixed(1)})`;
+
                     coBody.push([
                         `CO${i+1}`,
-                        `${cieMarks[i].toFixed(1)} (${ciePcts[i].toFixed(0)}%) → ${cieScales[i].toFixed(0)}`,
-                        `${asgMarks[i].toFixed(1)} (${asgPcts[i].toFixed(0)}%) → ${asgScales[i].toFixed(0)}`,
-                        `${seeMarks[i].toFixed(1)} (${seePcts[i].toFixed(0)}%) → ${seeScales[i].toFixed(0)}`,
-                        directDetail,
+                        cieDisplay,
+                        asgDisplay,
+                        seeDisplay,
+                        directDisplay,
                         indirect[i].toFixed(2),
-                        finalDetail,
+                        finalDisplay,
                         statuses[i]
                     ]);
                 }
             }
+
+            // Add overall average row
             coBody.push([
                 { content: `Overall Average CO Attainment (Target: ${target.toFixed(2)}):`, colSpan: 6, styles: { halign: 'right', fontStyle: 'bold' } },
                 { content: avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
@@ -596,40 +624,52 @@ function downloadPDF() {
                 ...baseStyles,
                 startY: currentY,
                 margin: { left: 10, right: 10 },
-                head: [["CO", "CIE (40)", "Asg (10)", "SEE (50)", "Direct (40%+10%+50%)", "Indirect", "Final (80%+20%)", "Status"]],
+                head: [
+                    ["CO", "CIE (40)", "Asg (10)", "SEE (50)", "Direct (40%+10%+50%)", "Indirect", "Final (80%+20%)", "Status"]
+                ],
                 body: coBody,
                 columnStyles: {
                     0: { cellWidth: 10 },
-                    1: { cellWidth: 22 },
-                    2: { cellWidth: 22 },
-                    3: { cellWidth: 22 },
-                    4: { cellWidth: 36 },
+                    1: { cellWidth: 24 },
+                    2: { cellWidth: 24 },
+                    3: { cellWidth: 24 },
+                    4: { cellWidth: 34 },
                     5: { cellWidth: 14 },
-                    6: { cellWidth: 36 },
-                    7: { cellWidth: 22 }
+                    6: { cellWidth: 34 },
+                    7: { cellWidth: 20 }
                 },
-                styles: { ...baseStyles.styles, fontSize: 6.5, cellPadding: 0.8 }
+                styles: {
+                    ...baseStyles.styles,
+                    fontSize: 6.5,
+                    cellPadding: 0.7
+                }
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 3. Mapping Matrix
+            // ============================================================
+            // 3. CO-PO / PSO MAPPING MATRIX
+            // ============================================================
             doc.text("3. CO-PO & PSO ARTICULATION CORRELATION MATRIX", 10, currentY);
             currentY += 1.5;
+
             const mappingHead = ["CO"];
-            for (let p=1; p<=12; p++) mappingHead.push(`PO${p}`);
+            for (let p = 1; p <= 12; p++) mappingHead.push(`PO${p}`);
             mappingHead.push("PSO1", "PSO2");
+
             const mappingBody = [];
-            for (let c=1; c<=NUM_CO; c++) {
+            for (let c = 1; c <= NUM_CO; c++) {
                 const row = [`CO${c}`];
-                const m = mapping[c] || { po: Array(12).fill(0), pso: [0,0] };
-                for (let p=0; p<12; p++) row.push(m.po[p] || 0);
-                for (let p=0; p<2; p++) row.push(m.pso[p] || 0);
+                const m = mapping[c] || { po: Array(12).fill(0), pso: [0, 0] };
+                for (let p = 0; p < 12; p++) row.push(m.po[p] || 0);
+                for (let p = 0; p < 2; p++) row.push(m.pso[p] || 0);
                 mappingBody.push(row);
             }
-            const matrixColStyles = { 0: { cellWidth: 13 } };
-            for (let p=1; p<=12; p++) matrixColStyles[p] = { cellWidth: 11.5 };
-            matrixColStyles[13] = { cellWidth: 14 };
-            matrixColStyles[14] = { cellWidth: 14 };
+
+            const matrixColStyles = { 0: { cellWidth: 12 } };
+            for (let p = 1; p <= 12; p++) matrixColStyles[p] = { cellWidth: 11 };
+            matrixColStyles[13] = { cellWidth: 13 };
+            matrixColStyles[14] = { cellWidth: 13 };
+
             doc.autoTable({
                 ...baseStyles,
                 startY: currentY,
@@ -637,19 +677,28 @@ function downloadPDF() {
                 head: [mappingHead],
                 body: mappingBody,
                 columnStyles: matrixColStyles,
-                styles: { ...baseStyles.styles, fontSize: 6.8, cellPadding: 0.7 }
+                styles: {
+                    ...baseStyles.styles,
+                    fontSize: 6.8,
+                    cellPadding: 0.6
+                }
             });
             currentY = doc.lastAutoTable.finalY + 3.5;
 
-            // 4. PO & PSO Attainment
+            // ============================================================
+            // 4. PO & PSO ATTAINMENT
+            // ============================================================
             doc.text("4. PROGRAM OUTCOME (PO & PSO) ATTAINMENT & STEP-BY-STEP CALCULATION", 10, currentY);
             currentY += 1.5;
+
+            // PO table
             const poHead = ["Metric"];
-            for (let p=1; p<=12; p++) poHead.push(`PO${p}`);
+            for (let p = 1; p <= 12; p++) poHead.push(`PO${p}`);
+
             const poRow1 = ["Attainment (0-3)"];
             const poRow2 = ["Step: Σ(CO×W)/ΣW"];
             const poRow3 = ["Status"];
-            for (let p=0; p<12; p++) {
+            for (let p = 0; p < 12; p++) {
                 const val = lastCOPOResult.poResults[p].attainment;
                 const num = lastCOPOResult.poResults[p].numerator;
                 const den = lastCOPOResult.poResults[p].denominator;
@@ -657,8 +706,10 @@ function downloadPDF() {
                 poRow2.push(val > 0 ? `${num.toFixed(1)}/${den}` : "-");
                 poRow3.push(val > 0 ? (lastCOPOResult.poResults[p].status === "ATTAINED" ? "ATT" : "NOT ATT") : "-");
             }
+
             const poColStyles = { 0: { cellWidth: 24 } };
-            for (let p=1; p<=12; p++) poColStyles[p] = { cellWidth: 14 };
+            for (let p = 1; p <= 12; p++) poColStyles[p] = { cellWidth: 13.5 };
+
             doc.autoTable({
                 ...baseStyles,
                 startY: currentY,
@@ -666,58 +717,98 @@ function downloadPDF() {
                 head: [poHead],
                 body: [poRow1, poRow2, poRow3],
                 columnStyles: poColStyles,
-                styles: { ...baseStyles.styles, fontSize: 6.0, cellPadding: 0.7 }
+                styles: {
+                    ...baseStyles.styles,
+                    fontSize: 6.0,
+                    cellPadding: 0.6
+                }
             });
             currentY = doc.lastAutoTable.finalY + 2.5;
+
             // PSO table
             doc.autoTable({
                 ...baseStyles,
                 startY: currentY,
                 margin: { left: 10, right: 10 },
-                head: [["Metric", "PSO1 Attainment & Calculation", "PSO2 Attainment & Calculation"]],
-                body: [
-                    ["Attainment (0-3)", `${lastCOPOResult.psoResults[0].attainment.toFixed(2)}  [Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[0].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[0].denominator}]`, `${lastCOPOResult.psoResults[1].attainment.toFixed(2)}  [Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[1].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[1].denominator}]`],
-                    [`Status (Target: ${target.toFixed(2)})`, lastCOPOResult.psoResults[0].status, lastCOPOResult.psoResults[1].status]
+                head: [
+                    ["Metric", "PSO1 Attainment & Calculation", "PSO2 Attainment & Calculation"]
                 ],
-                columnStyles: { 0: { cellWidth: 40 }, 1: { cellWidth: 75 }, 2: { cellWidth: 75 } },
-                styles: { ...baseStyles.styles, fontSize: 6.5, cellPadding: 0.8 }
+                body: [
+                    [
+                        "Attainment (0-3)",
+                        `${lastCOPOResult.psoResults[0].attainment.toFixed(2)}\n[Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[0].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[0].denominator}]`,
+                        `${lastCOPOResult.psoResults[1].attainment.toFixed(2)}\n[Σ(CO×W)/ΣW = ${lastCOPOResult.psoResults[1].numerator.toFixed(2)} / ${lastCOPOResult.psoResults[1].denominator}]`
+                    ],
+                    [
+                        `Status (Target: ${target.toFixed(2)})`,
+                        lastCOPOResult.psoResults[0].status,
+                        lastCOPOResult.psoResults[1].status
+                    ]
+                ],
+                columnStyles: {
+                    0: { cellWidth: 38 },
+                    1: { cellWidth: 76 },
+                    2: { cellWidth: 76 }
+                },
+                styles: {
+                    ...baseStyles.styles,
+                    fontSize: 6.5,
+                    cellPadding: 0.8
+                }
             });
             currentY = doc.lastAutoTable.finalY + 3;
 
-            // Formula Legend
+            // ============================================================
+            // FORMULA LEGEND
+            // ============================================================
             doc.setFontSize(6.4);
             doc.setFont("helvetica", "italic");
-            doc.text("Formula Legend: (1) Direct CO = 0.40×CIE_Level + 0.10×Asg_Level + 0.50×SEE_Level; (2) Final CO = 0.80×Direct_CO + 0.20×Indirect_Exit;", 10, currentY);
-            doc.text("(3) PO/PSO Attainment = Σ(Final CO_i × Mapping_Weight_ij) / Σ(Mapping_Weight_ij); (4) Attainment Status = ATTAINED if Score >= Target.", 10, currentY + 3.0);
+            doc.text(
+                "Formula Legend: (1) Direct CO = 0.40×CIE_Level + 0.10×Asg_Level + 0.50×SEE_Level; (2) Final CO = 0.80×Direct_CO + 0.20×Indirect_Exit;",
+                10, currentY);
+            doc.text(
+                "(3) PO/PSO Attainment = Σ(Final CO_i × Mapping_Weight_ij) / Σ(Mapping_Weight_ij); (4) Attainment Status = ATTAINED if Score >= Target.",
+                10, currentY + 3.0);
 
-            // Signature
+            // ============================================================
+            // SIGNATURE
+            // ============================================================
             currentY = Math.max(currentY + 11, 252);
-            doc.setDrawColor(0,0,0);
-            doc.setLineDashPattern([1.5,1.5], 0);
+            doc.setDrawColor(0, 0, 0);
+            doc.setLineDashPattern([1.5, 1.5], 0);
             doc.line(20, currentY, 70, currentY);
             doc.line(140, currentY, 190, currentY);
             doc.setLineDashPattern([], 0);
+
             doc.setFontSize(7.8);
             doc.setFont("helvetica", "bold");
             doc.text(staffName, 45, currentY + 3.5, { align: "center" });
             doc.text("Head of Department", 165, currentY + 3.5, { align: "center" });
+
             doc.setFontSize(6.8);
             doc.setFont("helvetica", "normal");
             doc.text("Course Coordinator / Faculty", 45, currentY + 7, { align: "center" });
             doc.text(department, 165, currentY + 7, { align: "center" });
 
-            // Footer
+            // ============================================================
+            // FOOTER
+            // ============================================================
             const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-            const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+            const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
             doc.setLineWidth(0.3);
             doc.line(10, 287, 200, 287);
             doc.setFontSize(6.5);
-            doc.text(`OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`, 105, 290.5, { align: "center" });
+            doc.text(
+                `OBE Assessment Document | Generated on ${dateStr} at ${timeStr} | Basaveshwar Engineering College Bagalkote`,
+                105, 290.5, { align: "center" });
 
+            // ---- Save ----
             doc.save(`CO-PO_Attainment_Report_${courseCode}_${academicYear}.pdf`);
+
             btn.innerHTML = originalText;
             btn.disabled = false;
+
         } catch (err) {
             console.error("PDF Export Error:", err);
             alert("PDF export error: " + err.message + "\nCheck console for details.");
@@ -726,7 +817,6 @@ function downloadPDF() {
         }
     }, 400);
 }
-
 // ----- Initialisation -----
 initInputs();
 createMapping();
