@@ -350,7 +350,7 @@
                 <div><label>Faculty Name</label><input id="NameOfStaff" value="Dr M M Biradar" oninput="calculateAll()"></div>
                 <div>
                     <label>Indirect Assessment</label>
-                    <!-- ✅ FIXED: Default is now "NO" -->
+                    <!-- ✅ Default is now "NO" -->
                     <select id="useIndirect" onchange="toggleIndirect(); calculateAll();">
                         <option value="NO" selected>NO</option>
                         <option value="YES">YES</option>
@@ -388,7 +388,8 @@
                             <th>SEE % Students &gt; Target</th>
                             <th>SEE Level</th>
                             <th>Direct CO</th>
-                            <th>Indirect (0–3)</th>
+                            <!-- ✅ Added class="indirect-col" to hide/show this column -->
+                            <th class="indirect-col">Indirect (0–3)</th>
                             <th>Final CO (0–3)</th>
                         </tr>
                     </thead>
@@ -495,7 +496,8 @@
                     <td><input type="number" id="see_${i}" value="${defaultSEE[i-1]}" min="0" max="100" step="0.1"></td>
                     <td id="seeLevel_${i}" style="font-weight:700;">0</td>
                     <td id="directDisplay_${i}">0.00</td>
-                    <td><input type="number" id="indirect_${i}" value="0.00" min="0" max="3" step="0.01"></td>
+                    <!-- ✅ Added class="indirect-col" to the indirect cell -->
+                    <td class="indirect-col"><input type="number" id="indirect_${i}" value="0.00" min="0" max="3" step="0.01"></td>
                     <td id="finalDisplay_${i}" style="font-weight:700;">0.00</td>
                 `;
                 tbody.appendChild(tr);
@@ -557,8 +559,13 @@
 
         function toggleIndirect() {
             const enabled = document.getElementById('useIndirect').value === 'YES';
+            // Toggle weight input boxes
             document.getElementById('directWeightBox').style.display = enabled ? 'block' : 'none';
             document.getElementById('indirectWeightBox').style.display = enabled ? 'block' : 'none';
+            // Toggle the Indirect column in the CO table
+            document.querySelectorAll('.indirect-col').forEach(el => {
+                el.style.display = enabled ? '' : 'none';
+            });
         }
 
         function calculateAll() {
@@ -1006,13 +1013,13 @@
                     btn.innerHTML = origText;
                     btn.disabled = false;
                 }
-            }, 500); // increased timeout for safety
+            }, 500);
         }
 
         window.onload = function() {
             initInputs();
             initMapping();
-            toggleIndirect(); // This will now hide the Direct/Indirect weight boxes because default is NO
+            toggleIndirect(); // hides the column and weight boxes because default is NO
             calculateAll();
         };
     </script>
