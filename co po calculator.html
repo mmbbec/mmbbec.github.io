@@ -350,9 +350,10 @@
                 <div><label>Faculty Name</label><input id="NameOfStaff" value="Dr M M Biradar" oninput="calculateAll()"></div>
                 <div>
                     <label>Indirect Assessment</label>
+                    <!-- ✅ FIXED: Default is now "NO" -->
                     <select id="useIndirect" onchange="toggleIndirect(); calculateAll();">
-                        <option value="NO">NO</option>
-                        <option value="YES" selected>YES</option>
+                        <option value="NO" selected>NO</option>
+                        <option value="YES">YES</option>
                     </select>
                 </div>
                 <div>
@@ -482,8 +483,8 @@
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
-            const defaultCIE = [82, 94, 85, 74, 0];
-            const defaultSEE = [92, 90, 88, 70, 0];
+            const defaultCIE = [82, 94, 85, 74, 88];
+            const defaultSEE = [92, 90, 88, 70, 86];
 
             for (let i = 1; i <= CO_COUNT; i++) {
                 const tr = document.createElement('tr');
@@ -1011,7 +1012,7 @@
         window.onload = function() {
             initInputs();
             initMapping();
-            toggleIndirect();
+            toggleIndirect(); // This will now hide the Direct/Indirect weight boxes because default is NO
             calculateAll();
         };
     </script>
