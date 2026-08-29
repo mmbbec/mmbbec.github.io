@@ -350,7 +350,7 @@
                 <div><label>Faculty Name</label><input id="NameOfStaff" value="Dr M M Biradar" oninput="calculateAll()"></div>
                 <div>
                     <label>Indirect Assessment</label>
-                    <!-- ✅ Default is now "NO" -->
+                    <!-- Default is NO -->
                     <select id="useIndirect" onchange="toggleIndirect(); calculateAll();">
                         <option value="NO" selected>NO</option>
                         <option value="YES">YES</option>
@@ -388,7 +388,7 @@
                             <th>SEE % Students &gt; Target</th>
                             <th>SEE Level</th>
                             <th>Direct CO</th>
-                            <!-- ✅ Added class="indirect-col" to hide/show this column -->
+                            <!-- This column is hidden when Indirect = NO -->
                             <th class="indirect-col">Indirect (0–3)</th>
                             <th>Final CO (0–3)</th>
                         </tr>
@@ -458,7 +458,10 @@
     </div>
 
     <script>
-        const CO_COUNT = 5;
+        // ===== SET THIS TO THE NUMBER OF COs FOR YOUR COURSE =====
+        const CO_COUNT = 4;   // ← Change this to 3, 4, 5, or 6 as needed
+        // ==========================================================
+
         const PO_COUNT = 12;
         const PSO_COUNT = 3;
         const TARGET = 2.00;
@@ -484,19 +487,19 @@
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
-            const defaultCIE = [82, 94, 85, 74, 0];
-            const defaultSEE = [92, 90, 88, 70, 0];
+            // Default values – set realistic numbers for your course
+            const defaultCIE = [82, 94, 85, 74];
+            const defaultSEE = [92, 90, 88, 70];
 
             for (let i = 1; i <= CO_COUNT; i++) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-weight:700;">CO${i}</td>
-                    <td><input type="number" id="cie_${i}" value="${defaultCIE[i-1]}" min="0" max="100" step="0.1"></td>
+                    <td><input type="number" id="cie_${i}" value="${defaultCIE[i-1] || 0}" min="0" max="100" step="0.1"></td>
                     <td id="cieLevel_${i}" style="font-weight:700;">0</td>
-                    <td><input type="number" id="see_${i}" value="${defaultSEE[i-1]}" min="0" max="100" step="0.1"></td>
+                    <td><input type="number" id="see_${i}" value="${defaultSEE[i-1] || 0}" min="0" max="100" step="0.1"></td>
                     <td id="seeLevel_${i}" style="font-weight:700;">0</td>
                     <td id="directDisplay_${i}">0.00</td>
-                    <!-- ✅ Added class="indirect-col" to the indirect cell -->
                     <td class="indirect-col"><input type="number" id="indirect_${i}" value="0.00" min="0" max="3" step="0.01"></td>
                     <td id="finalDisplay_${i}" style="font-weight:700;">0.00</td>
                 `;
@@ -559,17 +562,16 @@
 
         function toggleIndirect() {
             const enabled = document.getElementById('useIndirect').value === 'YES';
-            // Toggle weight input boxes
             document.getElementById('directWeightBox').style.display = enabled ? 'block' : 'none';
             document.getElementById('indirectWeightBox').style.display = enabled ? 'block' : 'none';
-            // Toggle the Indirect column in the CO table
+            // Hide/show the Indirect column in the CO table
             document.querySelectorAll('.indirect-col').forEach(el => {
                 el.style.display = enabled ? '' : 'none';
             });
         }
 
         function calculateAll() {
-            // 1. Read and NORMALIZE CIE/SEE weights so they always sum to 1.0
+            // Normalize CIE/SEE weights to sum to 1.0
             let cieW = parseNum(document.getElementById('cieWeight').value) / 100;
             let seeW = parseNum(document.getElementById('seeWeight').value) / 100;
             const totalW = cieW + seeW;
@@ -618,7 +620,6 @@
             let avgCO = finalVals.reduce((a, b) => a + b, 0) / CO_COUNT;
             let overallStatus = getStatus(avgCO, TARGET);
 
-            // Store normalized weights for export labels
             const usedWeights = {
                 cieW: cieW * 100, seeW: seeW * 100,
                 directW: directW * 100, indirectW: indirectW * 100,
@@ -711,7 +712,7 @@
             html += `<div class="result-box" style="margin-top:14px;">
                 <h3>📐 PO / PSO Calculation Formula</h3>
                 <p><b>Attainment = Σ(CO Attained × CO-Matrix) ÷ (Average CO-Matrix × Number of COs)</b></p>
-                <p style="margin-bottom:0;">All 5 COs are included in the denominator, including zero correlation entries.</p>
+                <p style="margin-bottom:0;">All ${CO_COUNT} COs are included in the denominator, including zero correlation entries.</p>
             </div>`;
             document.getElementById('summaryDashboard').innerHTML = html;
         }
@@ -764,8 +765,7 @@
         }
 
         /* =============================================================
-           IMPROVED 1-PAGE LANDSCAPE PDF EXPORT (297 x 210 mm)
-           Now uses dynamic weights from UI
+           PDF EXPORT – Filters out zero‑attainment CO rows
         ============================================================= */
         function downloadPDF() {
             const btn = document.getElementById('pdfBtn');
@@ -791,9 +791,8 @@
                     const weightLabel = w.useIndirect ? 
                         `Final CO = (${w.directW.toFixed(0)}% Direct) + (${w.indirectW.toFixed(0)}% Indirect)` : 
                         `Final CO = Direct (100%)`;
-                    const cieSeeLabel = `CIE/SEE = ${w.cieW.toFixed(0)}% / ${w.seeW.toFixed(0)}%`;
 
-                    // 1. HEADER
+                    // HEADER
                     doc.setFont("helvetica", "bold");
                     doc.setFontSize(13);
                     doc.text("BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE", 148.5, 11, { align: "center" });
@@ -828,7 +827,7 @@
 
                     let yPos = 26;
 
-                    // 2. METADATA
+                    // METADATA
                     doc.autoTable({
                         ...baseAutoTable,
                         startY: yPos,
@@ -839,23 +838,33 @@
                     });
                     yPos = doc.lastAutoTable.finalY + 3;
 
-                    // 3. CO TABLE
+                    // CO TABLE – FILTERED (hides rows where CIE, SEE, and Final are all zero)
                     const coBody = [];
                     for (let i = 0; i < CO_COUNT; i++) {
-                        coBody.push([
-                            `CO${i+1}`,
-                            coAttainmentData.ciePcts[i].toFixed(1) + "%",
-                            coAttainmentData.cieLevels[i],
-                            coAttainmentData.seePcts[i].toFixed(1) + "%",
-                            coAttainmentData.seeLevels[i],
-                            coAttainmentData.directVals[i].toFixed(2),
-                            coAttainmentData.indirectVals[i].toFixed(2),
-                            coAttainmentData.finalVals[i].toFixed(2),
-                            coAttainmentData.statuses[i]
-                        ]);
+                        const hasData = coAttainmentData.ciePcts[i] > 0 || 
+                                        coAttainmentData.seePcts[i] > 0 || 
+                                        coAttainmentData.finalVals[i] > 0;
+                        if (hasData) {
+                            coBody.push([
+                                `CO${i+1}`,
+                                coAttainmentData.ciePcts[i].toFixed(1) + "%",
+                                coAttainmentData.cieLevels[i],
+                                coAttainmentData.seePcts[i].toFixed(1) + "%",
+                                coAttainmentData.seeLevels[i],
+                                coAttainmentData.directVals[i].toFixed(2),
+                                coAttainmentData.indirectVals[i].toFixed(2),
+                                coAttainmentData.finalVals[i].toFixed(2),
+                                coAttainmentData.statuses[i]
+                            ]);
+                        }
                     }
+                    // If all rows are zero, show at least CO1
+                    if (coBody.length === 0) {
+                        coBody.push([`CO1`, "0%", 0, "0%", 0, "0.00", "0.00", "0.00", "-"]);
+                    }
+                    // Add average row
                     coBody.push([
-                        { content: `Direct Average Target: ${TARGET.toFixed(2)}`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
+                        { content: `Average (Target: ${TARGET.toFixed(2)})`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
                         { content: coAttainmentData.avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
                         { content: coAttainmentData.overallStatus, styles: { fontStyle: 'bold' } }
                     ]);
@@ -874,19 +883,19 @@
                     });
                     yPos = doc.lastAutoTable.finalY + 3.5;
 
-                    // 4. MATRICES (SIDE-BY-SIDE)
+                    // MATRICES (side‑by‑side)
                     doc.setFontSize(8);
                     doc.setFont("helvetica", "bold");
                     doc.text("2. CO-PO & CO-PSO ARTICULATION MATRICES", 12, yPos);
                     yPos += 1.5;
 
                     const poHead = ["CO"];
-                    for (let p = 1; p <= 12; p++) poHead.push(`PO${p}`);
+                    for (let p = 1; p <= PO_COUNT; p++) poHead.push(`PO${p}`);
                     const poMatrixBody = [];
                     for (let c = 1; c <= CO_COUNT; c++) {
                         const row = [`CO${c}`];
-                        const m = mappingData[c]?.po || Array(12).fill(0);
-                        for (let p = 0; p < 12; p++) row.push(m[p] || 0);
+                        const m = mappingData[c]?.po || Array(PO_COUNT).fill(0);
+                        for (let p = 0; p < PO_COUNT; p++) row.push(m[p] || 0);
                         poMatrixBody.push(row);
                     }
 
@@ -903,7 +912,7 @@
                     for (let c = 1; c <= CO_COUNT; c++) {
                         const row = [`CO${c}`];
                         const m = mappingData[c]?.pso || [0, 0, 0];
-                        for (let p = 0; p < 3; p++) row.push(m[p] || 0);
+                        for (let p = 0; p < PSO_COUNT; p++) row.push(m[p] || 0);
                         psoMatrixBody.push(row);
                     }
 
@@ -917,15 +926,15 @@
                     });
                     yPos = doc.lastAutoTable.finalY + 3.5;
 
-                    // 5. PO & PSO UNIFIED TABLE
+                    // PO & PSO ATTAINMENT (unified table)
                     doc.setFontSize(8);
                     doc.setFont("helvetica", "bold");
                     doc.text("3. PROGRAM OUTCOME (PO) & PROGRAM SPECIFIC OUTCOME (PSO) ATTAINMENT", 12, yPos);
                     yPos += 1.5;
 
                     const unifiedHead = ["Metric"];
-                    for (let p = 1; p <= 12; p++) unifiedHead.push(`PO${p}`);
-                    for (let p = 1; p <= 3; p++) unifiedHead.push(`PSO${p}`);
+                    for (let p = 1; p <= PO_COUNT; p++) unifiedHead.push(`PO${p}`);
+                    for (let p = 1; p <= PSO_COUNT; p++) unifiedHead.push(`PSO${p}`);
 
                     const attRow = ["Attainment"];
                     const statusRow = ["Status"];
@@ -949,7 +958,7 @@
                     });
                     yPos = doc.lastAutoTable.finalY + 3;
 
-                    // 6. AUDIT TABLE
+                    // AUDIT TABLE (shows the denominator = CO_COUNT)
                     doc.setFontSize(7.5);
                     doc.setFont("helvetica", "bold");
                     doc.text("4. PO / PSO CALCULATION AUDIT", 12, yPos);
@@ -974,14 +983,14 @@
                     });
                     yPos = doc.lastAutoTable.finalY + 2.5;
 
-                    // 7. FORMULA & NOTES (DYNAMIC WEIGHTS)
+                    // FORMULA NOTE (dynamic)
                     doc.setFontSize(6.5);
                     doc.setFont("helvetica", "italic");
                     const formulaNote = `Scale: >=70%=3, 60-69%=2, 50-59%=1, <50%=0 | Direct=(CIE*${(w.cieW).toFixed(0)}%)+(SEE*${(w.seeW).toFixed(0)}%) | ${weightLabel} | PO/PSO=Σ(CO×Matrix)/(Avg Matrix×No. of COs) | Target≥2.00`;
                     doc.text(formulaNote, 12, yPos);
                     yPos += 14;
 
-                    // 8. SIGNATURES
+                    // SIGNATURES
                     const sigY = Math.max(yPos, 186);
                     doc.setDrawColor(0);
                     doc.setLineWidth(0.3);
@@ -998,7 +1007,7 @@
                     doc.text("Course Instructor / Faculty", 62.5, sigY + 7.5, { align: "center" });
                     doc.text(department, 234.5, sigY + 7.5, { align: "center" });
 
-                    // 9. FOOTER
+                    // FOOTER
                     const now = new Date();
                     doc.setFontSize(6);
                     doc.text(`Generated on: ${now.toLocaleDateString()} ${now.toLocaleTimeString()} | Basaveshwar Engineering College Bagalkote | Autonomous Institution`, 148.5, 204, { align: "center" });
@@ -1019,7 +1028,7 @@
         window.onload = function() {
             initInputs();
             initMapping();
-            toggleIndirect(); // hides the column and weight boxes because default is NO
+            toggleIndirect(); // hides Indirect column (default = NO)
             calculateAll();
         };
     </script>
