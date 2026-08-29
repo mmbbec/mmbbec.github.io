@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Dr. Mahadev Biradar | Document & Resource Dashboard</title>
     <style>
+        /* ─── Reset & Base ─── */
         * {
             margin: 0;
             padding: 0;
@@ -19,7 +20,7 @@
             padding-bottom: 60px;
         }
 
-        /* Top Header */
+        /* ─── Header ─── */
         header {
             background: #163b65;
             color: white;
@@ -86,14 +87,26 @@
             border-color: #b53d28;
         }
 
-        /* Main Container */
+        /* ─── Profile Button (new) ─── */
+        .btn-nav-profile {
+            background: #ffffff;
+            color: #163b65;
+            border: 1px solid #ffffff;
+        }
+
+        .btn-nav-profile:hover {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: #ffffff;
+        }
+
+        /* ─── Dashboard Container ─── */
         .dashboard-container {
             max-width: 1150px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        /* Section Titles */
+        /* ─── Section Headings ─── */
         .section-heading {
             font-size: 19px;
             font-weight: 700;
@@ -108,7 +121,68 @@
             margin-top: 0;
         }
 
-        /* Sub Folders Grid */
+        /* ─── Profile Buttons Row (new) ─── */
+        .profile-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 30px;
+            padding: 18px 22px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            align-items: center;
+        }
+
+        .profile-buttons-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+
+        .profile-btn {
+            padding: 9px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s ease;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            border-color: #163b65;
+            background: #ffffff;
+        }
+
+        .profile-btn-highlight {
+            background: #163b65;
+            color: white;
+            border-color: #163b65;
+        }
+
+        .profile-btn-highlight:hover {
+            background: #0f2a4a;
+            border-color: #0f2a4a;
+            color: white;
+        }
+
+        .profile-btn-icon {
+            font-size: 18px;
+        }
+
+        /* ─── Folders Grid ─── */
         .folders-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -181,7 +255,7 @@
             border-color: #163b65;
         }
 
-        /* Controls Panel */
+        /* ─── Controls ─── */
         .controls-card {
             background: white;
             padding: 20px 22px;
@@ -243,7 +317,6 @@
             border-color: #163b65;
         }
 
-        /* Category Filter Chips */
         .category-chips {
             display: flex;
             flex-wrap: wrap;
@@ -262,6 +335,7 @@
             border: 1px solid transparent;
             cursor: pointer;
             transition: 0.2s;
+            font-family: inherit;
         }
 
         .chip:hover {
@@ -273,7 +347,7 @@
             color: white;
         }
 
-        /* File List Table */
+        /* ─── Files Table ─── */
         .files-table-wrapper {
             background: white;
             border-radius: 10px;
@@ -350,9 +424,15 @@
             text-transform: uppercase;
         }
 
-        .badge-pdf { background: #e53e3e; }
-        .badge-excel { background: #2f855a; }
-        .badge-doc { background: #2b6cb0; }
+        .badge-pdf {
+            background: #e53e3e;
+        }
+        .badge-excel {
+            background: #2f855a;
+        }
+        .badge-doc {
+            background: #2b6cb0;
+        }
 
         .file-title {
             font-weight: 600;
@@ -414,6 +494,7 @@
             display: none;
         }
 
+        /* ─── Responsive ─── */
         @media (max-width: 900px) {
             .folders-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -421,9 +502,18 @@
         }
 
         @media (max-width: 768px) {
-            th:nth-child(2), td:nth-child(2),
-            th:nth-child(3), td:nth-child(3) {
+            th:nth-child(2),
+            td:nth-child(2),
+            th:nth-child(3),
+            td:nth-child(3) {
                 display: none;
+            }
+            .profile-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .profile-buttons-label {
+                margin-bottom: 4px;
             }
         }
 
@@ -440,7 +530,7 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- ═══ HEADER ═══ -->
     <header>
         <div class="header-container">
             <div class="header-title">
@@ -448,202 +538,203 @@
                 <p>Google Drive Directories & Important Academic Documents</p>
             </div>
             <div class="header-actions">
-                <a href="index.html" class="btn-nav btn-nav-light">← Back to Profile</a>
-                <!-- Link to your main MMB_Academic_Resources Drive Folder -->
-                <a href="PASTE_MAIN_MMB_DRIVE_FOLDER_LINK_HERE" target="_blank" rel="noopener noreferrer" class="btn-nav btn-nav-primary">
-                    📁 Open MMB_Academic_Resources
+                <!-- Profile button (new) -->
+                <a href="index.html" class="btn-nav btn-nav-profile">
+                    👤 Profile
                 </a>
-            </div>
+                <a href="index.html" class="btn-nav btn-nav-light">
+                    ← Back to Profile
+                </a>
+                <a href="PASTE_MAIN_MMB_DRIVE_FOLDER_LINK_HERE"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-nav btn-nav-primary">
+                📁 Open MMB_Academic_Resources
+            </a>
         </div>
-    </header>
+    </div>
+</header>
 
-    <div class="dashboard-container">
+<!-- ═══ DASHBOARD ═══ -->
+<div class="dashboard-container">
 
-        <div class="profile-buttons">
-   <a href="free-tools.html" class="profile-btn profile-btn-highlight">🛠️ Free Tools</a>
-    <a href="Rashmi Web Studio.html" class="profile-btn">📚 Rashmi Biradar Web Studio </a>
-   <a href="Mathematics Resources.html" class="profile-btn">📚 Mathematics Resources</a>
-                  
-   
-
-        <!-- Section 1: Sub Folders in Drive -->
-        <h2 class="section-heading">📁 Google Drive Directories (MMB_Academic_Resources)</h2>
-        
-        <div class="folders-grid" id="foldersContainer">
-            <!-- Dynamically populated from subFolders array -->
-        </div>
-
-        <!-- Section 2: Important Direct Files -->
-        <h2 class="section-heading">📄 Important Files & Quick Access</h2>
-
-        <!-- Search & Filter Controls -->
-        <div class="controls-card">
-            <div class="search-row">
-                <div class="search-input-wrapper">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" placeholder="Search files by title, subject, or keyword..." onkeyup="filterFiles()">
-                </div>
-                <select id="typeFilter" class="filter-select" onchange="filterFiles()">
-                    <option value="ALL">All File Types</option>
-                    <option value="PDF">PDF Files (.pdf)</option>
-                    <option value="EXCEL">Excel Spreadsheets (.xlsx)</option>
-                    <option value="DOC">Word Documents (.docx)</option>
-                </select>
-            </div>
-
-            <div class="category-chips">
-                <button class="chip active" onclick="setCategory('ALL', this)">All Categories</button>
-                <button class="chip" onclick="setCategory('Syllabus', this)">Syllabus & Notes</button>
-                <button class="chip" onclick="setCategory('Calculators', this)">Calculators & Templates</button>
-                <button class="chip" onclick="setCategory('Research', this)">Research & Books</button>
-                <button class="chip" onclick="setCategory('YRC', this)">YRC & Admin</button>
-            </div>
-        </div>
-
-        <!-- Files Table -->
-        <div class="files-table-wrapper">
-            <div class="table-header">
-                <h2>Highlighted Files</h2>
-                <span class="result-count" id="resultCount">Loading files...</span>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Document Title</th>
-                        <th>Category</th>
-                        <th>File Size</th>
-                        <th style="text-align: right;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="filesTableBody">
-                    <!-- Dynamically populated from filesData array -->
-                </tbody>
-            </table>
-
-            <div id="emptyState" class="empty-state">
-                <p>📂 No files found matching your search.</p>
-            </div>
-        </div>
-
+    <!-- ─── PROFILE BUTTONS ROW ─── -->
+    <div class="profile-buttons">
+        <span class="profile-buttons-label">🔗 Quick Links</span>
+        <a href="free-tools.html" class="profile-btn profile-btn-highlight">
+            <span class="profile-btn-icon">🛠️</span> Free Tools
+        </a>
+        <a href="Rashmi Web Studio.html" class="profile-btn">
+            <span class="profile-btn-icon">📚</span> Rashmi Biradar Web Studio
+        </a>
+        <a href="Mathematics Resources.html" class="profile-btn">
+            <span class="profile-btn-icon">📐</span> Mathematics Resources
+        </a>
+        <a href="index.html" class="profile-btn">
+            <span class="profile-btn-icon">👤</span> Dr. Biradar Profile
+        </a>
     </div>
 
-    <script>
-        // =========================================================================
-        // 1. GOOGLE DRIVE SUB-FOLDERS (Paste your share links here)
-        // =========================================================================
-        const subFolders = [
-            {
-                name: "01. Research published papers",
-                icon: "📚",
-                desc: "Research published papers",
-                driveLink: "https://drive.google.com/drive/folders/1GwgeaFl8BgDCekEbzaxIFzB2m4yFjKd8?usp=drive_link"
-            },
-            {
-                name: "02. Lecture Notes & PPTs",
-                icon: "📝",
-                desc: "Engineering Maths I–IV module notes, tutorial sheets, and question banks.",
-                driveLink: "PASTE_SUBFOLDER_2_LINK_HERE"
-            },
-            {
-                name: "03. Calculators & Templates",
-                icon: "📊",
-                desc: "CO–PO attainment spreadsheets, AutoCrat sheets, and grading templates.",
-                driveLink: "PASTE_SUBFOLDER_3_LINK_HERE"
-            },
-            {
-                name: "04. Research & Preprints",
-                icon: "🔬",
-                desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book chapters.",
-                driveLink: "PASTE_SUBFOLDER_4_LINK_HERE"
-            },
-            {
-                name: "05. YRC & Social Reports",
-                icon: "🩸",
-                desc: "Youth Red Cross camp rosters, blood donation files, and event photographs.",
-                driveLink: "PASTE_SUBFOLDER_5_LINK_HERE"
-            },
-            {
-                name: "06. Certificates & Admin Docs",
-                icon: "📋",
-                desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee files.",
-                driveLink: "PASTE_SUBFOLDER_6_LINK_HERE"
-            }
-        ];
+    <!-- ─── SECTION 1: SUB FOLDERS ─── -->
+    <h2 class="section-heading">📁 Google Drive Directories (MMB_Academic_Resources)</h2>
 
-        // =========================================================================
-        // 2. IMPORTANT FILES LIST (Direct links for View & Download)
-        // =========================================================================
-        const filesData = [
-            {
-                name: "Differential Equations: Methods & Applications (Textbook Preview)",
-                type: "PDF",
-                category: "Research",
-                size: "4.8 MB",
-                viewUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing",
-                downloadUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing"
-            },
-            {
-                name: "CO-PO Attainment Calculation Template",
-                type: "EXCEL",
-                category: "Calculators",
-                size: "245 KB",
-                viewUrl: "PASTE_GOOGLE_SHEET_OR_DRIVE_LINK_HERE",
-                downloadUrl: "PASTE_DIRECT_DOWNLOAD_OR_DRIVE_LINK_HERE"
-            },
-            {
-                name: "Engineering Mathematics-I Complete Syllabus & Notes",
-                type: "PDF",
-                category: "Syllabus",
-                size: "1.2 MB",
-                viewUrl: "PASTE_DRIVE_LINK_HERE",
-                downloadUrl: "PASTE_DRIVE_LINK_HERE"
-            },
-            {
-                name: "Perturbation Analysis of MHD Prandtl Fluid Flow - Preprint",
-                type: "PDF",
-                category: "Research",
-                size: "890 KB",
-                viewUrl: "https://doi.org/10.1080/02286203.2026.2708091",
-                downloadUrl: "https://doi.org/10.1080/02286203.2026.2708091"
-            },
-            {
-                name: "Dr. Mahadev Biradar Detailed Curriculum Vitae",
-                type: "PDF",
-                category: "Research",
-                size: "350 KB",
-                viewUrl: "CV.pdf",
-                downloadUrl: "CV.pdf"
-            },
-            {
-                name: "Youth Red Cross Blood Donation Donor Roster Sheet",
-                type: "EXCEL",
-                category: "YRC",
-                size: "180 KB",
-                viewUrl: "PASTE_DRIVE_LINK_HERE",
-                downloadUrl: "PASTE_DRIVE_LINK_HERE"
-            },
-            {
-                name: "Question Paper Scrutiny Checklist Format",
-                type: "DOC",
-                category: "Syllabus",
-                size: "115 KB",
-                viewUrl: "PASTE_DRIVE_LINK_HERE",
-                downloadUrl: "PASTE_DRIVE_LINK_HERE"
-            }
-        ];
+    <div class="folders-grid" id="foldersContainer">
+        <!-- populated from subFolders -->
+    </div>
 
-        let selectedCategory = "ALL";
+    <!-- ─── SECTION 2: IMPORTANT FILES ─── -->
+    <h2 class="section-heading">📄 Important Files & Quick Access</h2>
 
-        // Render Sub-Folders
-        function renderFolders() {
-            const container = document.getElementById("foldersContainer");
-            container.innerHTML = "";
+    <!-- Search & Filter -->
+    <div class="controls-card">
+        <div class="search-row">
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search files by title, subject, or keyword..." onkeyup="filterFiles()">
+            </div>
+            <select id="typeFilter" class="filter-select" onchange="filterFiles()">
+                <option value="ALL">All File Types</option>
+                <option value="PDF">PDF Files (.pdf)</option>
+                <option value="EXCEL">Excel Spreadsheets (.xlsx)</option>
+                <option value="DOC">Word Documents (.docx)</option>
+            </select>
+        </div>
 
-            subFolders.forEach(folder => {
-                const card = document.createElement("div");
-                card.className = "folder-card";
-                card.innerHTML = `
+        <div class="category-chips">
+            <button class="chip active" onclick="setCategory('ALL', this)">All Categories</button>
+            <button class="chip" onclick="setCategory('Syllabus', this)">Syllabus & Notes</button>
+            <button class="chip" onclick="setCategory('Calculators', this)">Calculators & Templates</button>
+            <button class="chip" onclick="setCategory('Research', this)">Research & Books</button>
+            <button class="chip" onclick="setCategory('YRC', this)">YRC & Admin</button>
+        </div>
+    </div>
+
+    <!-- Files Table -->
+    <div class="files-table-wrapper">
+        <div class="table-header">
+            <h2>Highlighted Files</h2>
+            <span class="result-count" id="resultCount">Loading files...</span>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Document Title</th>
+                    <th>Category</th>
+                    <th>File Size</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="filesTableBody">
+                <!-- populated from filesData -->
+            </tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state">
+            <p>📂 No files found matching your search.</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══ SCRIPT ═══ -->
+<script>
+    // ─── 1. GOOGLE DRIVE SUB-FOLDERS ───
+    const subFolders = [{
+        name: "01. Research published papers",
+        icon: "📚",
+        desc: "Research published papers",
+        driveLink: "https://drive.google.com/drive/folders/1GwgeaFl8BgDCekEbzaxIFzB2m4yFjKd8?usp=drive_link"
+    }, {
+        name: "02. Lecture Notes & PPTs",
+        icon: "📝",
+        desc: "Engineering Maths I–IV module notes, tutorial sheets, and question banks.",
+        driveLink: "PASTE_SUBFOLDER_2_LINK_HERE"
+    }, {
+        name: "03. Calculators & Templates",
+        icon: "📊",
+        desc: "CO–PO attainment spreadsheets, AutoCrat sheets, and grading templates.",
+        driveLink: "PASTE_SUBFOLDER_3_LINK_HERE"
+    }, {
+        name: "04. Research & Preprints",
+        icon: "🔬",
+        desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book chapters.",
+        driveLink: "PASTE_SUBFOLDER_4_LINK_HERE"
+    }, {
+        name: "05. YRC & Social Reports",
+        icon: "🩸",
+        desc: "Youth Red Cross camp rosters, blood donation files, and event photographs.",
+        driveLink: "PASTE_SUBFOLDER_5_LINK_HERE"
+    }, {
+        name: "06. Certificates & Admin Docs",
+        icon: "📋",
+        desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee files.",
+        driveLink: "PASTE_SUBFOLDER_6_LINK_HERE"
+    }];
+
+    // ─── 2. IMPORTANT FILES ───
+    const filesData = [{
+        name: "Differential Equations: Methods & Applications (Textbook Preview)",
+        type: "PDF",
+        category: "Research",
+        size: "4.8 MB",
+        viewUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing",
+        downloadUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing"
+    }, {
+        name: "CO-PO Attainment Calculation Template",
+        type: "EXCEL",
+        category: "Calculators",
+        size: "245 KB",
+        viewUrl: "PASTE_GOOGLE_SHEET_OR_DRIVE_LINK_HERE",
+        downloadUrl: "PASTE_DIRECT_DOWNLOAD_OR_DRIVE_LINK_HERE"
+    }, {
+        name: "Engineering Mathematics-I Complete Syllabus & Notes",
+        type: "PDF",
+        category: "Syllabus",
+        size: "1.2 MB",
+        viewUrl: "PASTE_DRIVE_LINK_HERE",
+        downloadUrl: "PASTE_DRIVE_LINK_HERE"
+    }, {
+        name: "Perturbation Analysis of MHD Prandtl Fluid Flow - Preprint",
+        type: "PDF",
+        category: "Research",
+        size: "890 KB",
+        viewUrl: "https://doi.org/10.1080/02286203.2026.2708091",
+        downloadUrl: "https://doi.org/10.1080/02286203.2026.2708091"
+    }, {
+        name: "Dr. Mahadev Biradar Detailed Curriculum Vitae",
+        type: "PDF",
+        category: "Research",
+        size: "350 KB",
+        viewUrl: "CV.pdf",
+        downloadUrl: "CV.pdf"
+    }, {
+        name: "Youth Red Cross Blood Donation Donor Roster Sheet",
+        type: "EXCEL",
+        category: "YRC",
+        size: "180 KB",
+        viewUrl: "PASTE_DRIVE_LINK_HERE",
+        downloadUrl: "PASTE_DRIVE_LINK_HERE"
+    }, {
+        name: "Question Paper Scrutiny Checklist Format",
+        type: "DOC",
+        category: "Syllabus",
+        size: "115 KB",
+        viewUrl: "PASTE_DRIVE_LINK_HERE",
+        downloadUrl: "PASTE_DRIVE_LINK_HERE"
+    }];
+
+    let selectedCategory = "ALL";
+
+    // ─── RENDER FOLDERS ───
+    function renderFolders() {
+        const container = document.getElementById("foldersContainer");
+        container.innerHTML = "";
+
+        subFolders.forEach(folder => {
+            const card = document.createElement("div");
+            card.className = "folder-card";
+            card.innerHTML = `
                     <div>
                         <div class="folder-header">
                             <span class="folder-icon">${folder.icon}</span>
@@ -655,34 +746,34 @@
                         Open Folder in Drive ↗
                     </a>
                 `;
-                container.appendChild(card);
-            });
+            container.appendChild(card);
+        });
+    }
+
+    // ─── RENDER TABLE ───
+    function renderTable(data) {
+        const tableBody = document.getElementById("filesTableBody");
+        const emptyState = document.getElementById("emptyState");
+        const resultCount = document.getElementById("resultCount");
+
+        tableBody.innerHTML = "";
+
+        if (data.length === 0) {
+            emptyState.style.display = "block";
+            resultCount.textContent = "0 files found";
+            return;
         }
 
-        // Render Files Table
-        function renderTable(data) {
-            const tableBody = document.getElementById("filesTableBody");
-            const emptyState = document.getElementById("emptyState");
-            const resultCount = document.getElementById("resultCount");
+        emptyState.style.display = "none";
+        resultCount.textContent = `Showing ${data.length} file${data.length > 1 ? 's' : ''}`;
 
-            tableBody.innerHTML = "";
+        data.forEach(file => {
+            let badgeClass = "badge-pdf";
+            if (file.type === "EXCEL") badgeClass = "badge-excel";
+            if (file.type === "DOC") badgeClass = "badge-doc";
 
-            if (data.length === 0) {
-                emptyState.style.display = "block";
-                resultCount.textContent = "0 files found";
-                return;
-            }
-
-            emptyState.style.display = "none";
-            resultCount.textContent = `Showing ${data.length} file${data.length > 1 ? 's' : ''}`;
-
-            data.forEach(file => {
-                let badgeClass = "badge-pdf";
-                if (file.type === "EXCEL") badgeClass = "badge-excel";
-                if (file.type === "DOC") badgeClass = "badge-doc";
-
-                const row = document.createElement("tr");
-                row.innerHTML = `
+            const row = document.createElement("tr");
+            row.innerHTML = `
                     <td>
                         <div class="file-info">
                             <div class="format-badge ${badgeClass}">${file.type}</div>
@@ -701,39 +792,39 @@
                         </div>
                     </td>
                 `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Search and Filter Function
-        function filterFiles() {
-            const searchVal = document.getElementById("searchInput").value.toLowerCase();
-            const typeVal = document.getElementById("typeFilter").value;
-
-            const filtered = filesData.filter(file => {
-                const matchesSearch = file.name.toLowerCase().includes(searchVal) || 
-                                      file.category.toLowerCase().includes(searchVal);
-                const matchesType = (typeVal === "ALL") || (file.type === typeVal);
-                const matchesCategory = (selectedCategory === "ALL") || (file.category === selectedCategory);
-
-                return matchesSearch && matchesType && matchesCategory;
-            });
-
-            renderTable(filtered);
-        }
-
-        function setCategory(category, buttonElement) {
-            selectedCategory = category;
-            document.querySelectorAll(".chip").forEach(el => el.classList.remove("active"));
-            buttonElement.classList.add("active");
-            filterFiles();
-        }
-
-        // Initial Load
-        document.addEventListener("DOMContentLoaded", () => {
-            renderFolders();
-            renderTable(filesData);
+            tableBody.appendChild(row);
         });
-    </script>
+    }
+
+    // ─── SEARCH / FILTER ───
+    function filterFiles() {
+        const searchVal = document.getElementById("searchInput").value.toLowerCase();
+        const typeVal = document.getElementById("typeFilter").value;
+
+        const filtered = filesData.filter(file => {
+            const matchesSearch = file.name.toLowerCase().includes(searchVal) ||
+                file.category.toLowerCase().includes(searchVal);
+            const matchesType = (typeVal === "ALL") || (file.type === typeVal);
+            const matchesCategory = (selectedCategory === "ALL") || (file.category === selectedCategory);
+            return matchesSearch && matchesType && matchesCategory;
+        });
+
+        renderTable(filtered);
+    }
+
+    function setCategory(category, buttonElement) {
+        selectedCategory = category;
+        document.querySelectorAll(".chip").forEach(el => el.classList.remove("active"));
+        buttonElement.classList.add("active");
+        filterFiles();
+    }
+
+    // ─── INIT ───
+    document.addEventListener("DOMContentLoaded", () => {
+        renderFolders();
+        renderTable(filesData);
+    });
+</script>
+
 </body>
 </html>
