@@ -1007,14 +1007,14 @@
             </div>
         </header>
 
-        <!-- ═══ METADATA BAR ═══ -->
+        <!-- ─── METADATA BAR ─── -->
         <div class="metadata-bar" id="metadataBar">
             <div class="m-item">
                 <span class="m-label">🏛 College:</span>
-                <span class="m-value fixed" id="collegeNameDisplay">Basaveshwar Engineering College, Bagalkote</span>
+                <span class="m-value fixed">Basaveshwar Engineering College, Bagalkote</span>
             </div>
             <div class="m-item">
-                <span class="m-label">📅 AY:</span>
+                <span class="m-label">📅 Year:</span>
                 <input type="text" id="metaAcademicYear" value="2026-2027" style="max-width:100px;" />
             </div>
             <div class="m-item">
@@ -1039,227 +1039,270 @@
             </div>
             <div class="m-item">
                 <span class="m-label">👤 Coordinator:</span>
-                <input type="text" id="metaCoordinator" value="Dr. S. R. Biradar" style="max-width:140px;" />
+                <input type="text" id="metaCoordinator" value="Dr. S. R. Biradar" style="max-width:150px;" />
             </div>
-            <div class="lock-badge" id="sessionLockBadge" title="Click to toggle session lock">
-                🔓 Session: Unlocked
-            </div>
-            <div class="lock-badge locked-global" id="collegeGlobalLockBadge" title="Click to toggle college lock">
-                🔒 College: Locked
+            <div class="m-item">
+                <span class="m-label">✏️ Created:</span>
+                <span class="m-value" style="background:#e9d5ff;border-color:#d8b4fe;">Dr Mahadev Biradar</span>
             </div>
         </div>
 
-        <!-- ═══ ROLE PANELS ═══ -->
+        <!-- ─── TABS ─── -->
+        <div class="tabs">
+            <button class="tab-btn" data-tab="tabSettings">⚙️ Settings</button>
+            <button class="tab-btn" data-tab="tabGenerate">🚀 Generate</button>
+            <button class="tab-btn active" data-tab="tabDashboard">📊 Dashboard</button>
+            <button class="tab-btn" data-tab="tabTimetable">📅 Time Table</button>
+            <button class="tab-btn" data-tab="tabDuty">📋 Assign Duties</button>
+        </div>
 
-        <!-- ─── MAIN ADMIN ─── -->
-        <div id="panel-mainadmin" class="role-panel">
-            <div class="panel-title">
-                🏛 Main Admin · College Management
-                <span class="badge badge-purple">Super Admin</span>
-            </div>
+        <!-- ─── TAB 1: SETTINGS ─── -->
+        <div id="tabSettings" class="tab-pane">
             <div class="card">
-                <div class="college-creation">
-                    <div class="big-icon">🏫</div>
-                    <h3>Create New College</h3>
-                    <p>Register a new college and generate a unique College ID and admin access link.</p>
-                    <div class="college-form">
-                        <input type="text" id="collegeNameInput" placeholder="College Name" value="Basaveshwar Engineering College, Bagalkote" />
-                        <button class="btn btn-primary" id="createCollegeBtn">🚀 Create College</button>
+                <div class="card-title">
+                    ⚙️ Settings
+                    <span class="badge">Rooms · Branches · Semesters · Divisions · Staff</span>
+                </div>
+                <div class="settings-grid">
+                    <!-- Rooms with Seats -->
+                    <div class="settings-box">
+                        <div class="box-title">
+                            🏠 Rooms &amp; Seats
+                            <span class="count" id="roomCount">0</span>
+                        </div>
+                        <div class="item-list" id="roomList"></div>
+                        <div class="add-row">
+                            <input type="number" id="roomInput" placeholder="Room" min="1" style="flex:0.6;" />
+                            <input type="number" id="seatInput" placeholder="Seats" value="30" min="1" style="flex:0.4;" />
+                            <button class="btn-sm" id="addRoomBtn">Add</button>
+                            <button class="btn-sm btn-sm-danger" id="resetRoomsBtn">Reset</button>
+                        </div>
+                        <div class="preset-btns">
+                            <span class="preset" data-rooms="101-120:30,201-225:30">Default (101-120, 201-225) 30 seats</span>
+                            <span class="preset" data-rooms="101-110:40,111-120:30,201-215:40,216-225:30">Mixed (40/30 seats)</span>
+                        </div>
+                        <div class="text-sm mt-8" style="color:#718096;">💡 Each room has a seat capacity. Blocks are allocated to rooms based on capacity.</div>
                     </div>
-                    <div id="collegeCreationResult" class="mt-12 hidden">
-                        <div class="college-id-display">
-                            <div class="label">🏷️ College ID</div>
-                            <div class="id" id="collegeIdDisplay">BEC-2026-001</div>
-                            <div class="label mt-8">🔗 College Admin Link</div>
-                            <div class="link" id="collegeLinkDisplay">https://exam.bec.edu/college/BEC-2026-001</div>
-                            <div class="mt-8" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-                                <button class="btn btn-sm btn-success" id="copyLinkBtn">📋 Copy Link</button>
-                                <button class="btn btn-sm btn-warning" id="openLinkBtn">🔗 Open Link</button>
+
+                    <!-- Branches -->
+                    <div class="settings-box">
+                        <div class="box-title">
+                            🏛 Branches
+                            <span class="count" id="branchCount">0</span>
+                        </div>
+                        <div class="item-list" id="branchList"></div>
+                        <div class="add-row">
+                            <input type="text" id="branchInput" placeholder="e.g. CSE" />
+                            <button class="btn-sm" id="addBranchBtn">Add</button>
+                            <button class="btn-sm btn-sm-danger" id="resetBranchesBtn">Reset</button>
+                        </div>
+                        <div class="preset-btns">
+                            <span class="preset" data-branches="CSE,ISE,ECE,EEE,ME,CE,AI&ML,DS,IT,ECM">10 Default</span>
+                        </div>
+                    </div>
+
+                    <!-- Semesters -->
+                    <div class="settings-box">
+                        <div class="box-title">
+                            📚 Semesters
+                            <span class="count" id="semesterCount">0</span>
+                        </div>
+                        <div class="item-list" id="semesterList"></div>
+                        <div class="add-row">
+                            <input type="number" id="semesterInput" placeholder="e.g. 3" min="1" max="8" />
+                            <button class="btn-sm" id="addSemesterBtn">Add</button>
+                            <button class="btn-sm btn-sm-danger" id="resetSemestersBtn">Reset</button>
+                        </div>
+                        <div class="preset-btns">
+                            <span class="preset" data-semesters="1,2,3,4,5,6,7,8">1-8</span>
+                        </div>
+                    </div>
+
+                    <!-- Divisions -->
+                    <div class="settings-box">
+                        <div class="box-title">
+                            📋 Divisions
+                            <span class="count" id="divisionCount">0</span>
+                        </div>
+                        <div class="item-list" id="divisionList"></div>
+                        <div class="add-row">
+                            <input type="text" id="divisionInput" placeholder="e.g. A" maxlength="2" />
+                            <button class="btn-sm" id="addDivisionBtn">Add</button>
+                            <button class="btn-sm btn-sm-danger" id="resetDivisionsBtn">Reset</button>
+                        </div>
+                        <div class="preset-btns">
+                            <span class="preset" data-divisions="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O">A-O</span>
+                        </div>
+                    </div>
+
+                    <!-- Staff Configuration -->
+                    <div class="settings-box" style="grid-column: 1 / -1;">
+                        <div class="box-title">
+                            👨‍🏫 Staff Configuration
+                            <span class="count">For Duty Allocation</span>
+                        </div>
+                        <div class="staff-count-grid">
+                            <div class="field">
+                                <label>👨‍🏫 Professors</label>
+                                <input type="number" id="staffProfessor" value="2" min="0" />
                             </div>
+                            <div class="field">
+                                <label>👨‍🏫 Associate Professors</label>
+                                <input type="number" id="staffAssociate" value="4" min="0" />
+                            </div>
+                            <div class="field">
+                                <label>👨‍🏫 Assistant Professors</label>
+                                <input type="number" id="staffAssistant" value="8" min="0" />
+                            </div>
+                            <div class="field">
+                                <label>🧑‍🏫 Other Staff (CS-Staff)</label>
+                                <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                                    <input type="text" id="staffOtherInput" placeholder="e.g. CS-Staff-1" style="flex:1; min-width:100px;" />
+                                    <button class="btn-sm" id="addStaffOtherBtn">Add</button>
+                                </div>
+                                <div class="item-list" id="staffOtherList" style="margin-top:4px;"></div>
+                                <div style="font-size:11px; color:#718096; margin-top:2px;">Add custom staff names (e.g., CS-Staff-1, Lab-Assistant-1)</div>
+                            </div>
+                        </div>
+                        <div class="mt-8">
+                            <button class="btn btn-sm btn-success" id="saveStaffBtn">💾 Save Staff Configuration</button>
+                            <span class="text-sm text-success" id="staffStatus" style="margin-left:12px;"></span>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-title flex-between">
-                    <span>📊 Registered Colleges</span>
-                    <span style="font-size:12px;font-weight:400;color:#718096;" id="collegeListCount">0 colleges</span>
-                </div>
-                <div class="college-list-scroll" id="collegeListContainer">
-                    <div id="collegeList">
-                        <p class="text-muted" style="padding:12px 0;">No colleges created yet. Create one above.</p>
-                    </div>
-                </div>
+                <div class="mt-12 text-sm text-success" id="settingsStatus"></div>
             </div>
         </div>
 
-        <!-- ─── COLLEGE ADMIN ─── -->
-        <div id="panel-collegeadmin" class="role-panel">
-            <div class="panel-title">
-                🎓 College Admin · Dashboard
-                <span class="badge badge-blue" id="collegeAdminCollegeName">Loading...</span>
-                <span class="badge badge-red" id="collegeAdminLockStatus">🔓 Unlocked</span>
-            </div>
-
-            <div class="college-admin-entry" id="collegeAdminEntry">
-                <div class="flex-between">
-                    <div>
-                        <div class="ca-title" id="caCollegeNameDisplay">🏛 Basaveshwar Engineering College, Bagalkote</div>
-                        <div class="ca-sub" id="caCollegeIdDisplay">ID: BEC-2026-001</div>
-                    </div>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                        <span style="font-size:13px;font-weight:600;">College Lock:</span>
-                        <button class="btn btn-sm btn-warning" id="caToggleCollegeLockBtn">🔓 Unlock</button>
-                        <span style="font-size:13px;font-weight:600;margin-left:8px;">Session Lock:</span>
-                        <button class="btn btn-sm btn-warning" id="caToggleSessionLockBtn">🔓 Unlock</button>
-                    </div>
-                </div>
-                <div class="mt-8" id="caLockStatusDisplay" style="font-size:14px;color:#2d3748;">
-                    College: <span style="font-weight:700;color:#38a169;">Unlocked</span> &nbsp;|&nbsp; Session: <span style="font-weight:700;color:#d69e2e;">Unlocked</span>
-                </div>
-            </div>
-
+        <!-- ─── TAB 2: GENERATE ─── -->
+        <div id="tabGenerate" class="tab-pane">
             <div class="card">
-                <div class="card-title">📋 Academic Session Settings</div>
-                <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+                <div class="card-title">
+                    🚀 Generate Blocks
+                    <span class="badge badge-blue">Select options &amp; generate</span>
+                </div>
+                <div class="form-grid">
                     <div class="field">
-                        <label>Academic Year</label>
-                        <input type="text" id="caAcademicYear" value="2026-2027" />
+                        <label>Branch</label>
+                        <select id="genBranch"></select>
                     </div>
                     <div class="field">
                         <label>Semester</label>
-                        <select id="caSemester">
-                            <option value="ODD">ODD</option>
-                            <option value="EVEN">EVEN</option>
-                            <option value="Summer" selected>Summer</option>
+                        <select id="genSemester"></select>
+                    </div>
+                    <div class="field">
+                        <label>Division</label>
+                        <select id="genDivision"></select>
+                    </div>
+                    <div class="field">
+                        <label>Subject Code</label>
+                        <input type="text" id="genSubjectCode" value="21CS41" />
+                    </div>
+                    <div class="field">
+                        <label>Subject Name</label>
+                        <input type="text" id="genSubjectName" value="Data Structures" />
+                    </div>
+                    <div class="field">
+                        <label>Block Size</label>
+                        <input type="number" id="genBlockSize" value="30" min="1" />
+                    </div>
+                    <div class="field">
+                        <label>Total Strength</label>
+                        <input type="number" id="genStrength" value="90" min="1" />
+                    </div>
+                    <div class="field">
+                        <label>Session</label>
+                        <select id="genSession">
+                            <option value="S1">S1: 8:00 – 9:30 AM</option>
+                            <option value="S2" selected>S2: 10:00 – 11:30 AM</option>
+                            <option value="S3">S3: 12:00 – 1:30 PM</option>
+                            <option value="S4">S4: 2:00 – 3:30 PM</option>
+                            <option value="S5">S5: 4:00 – 5:30 PM</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>CIE</label>
-                        <select id="caCIE">
-                            <option value="CIE-I">CIE-I</option>
-                            <option value="CIE-II" selected>CIE-II</option>
-                            <option value="CIE-III">CIE-III</option>
+                    <!-- Room Selection -->
+                    <div class="field" style="grid-column: span 2;">
+                        <label>🎯 Select Rooms (Manual Assignment)</label>
+                        <select id="genRooms" multiple size="4" style="height:auto; min-height:80px;">
+                            <option value="">-- Available rooms will appear here --</option>
                         </select>
-                    </div>
-                    <div class="field">
-                        <label>Department</label>
-                        <input type="text" id="caDept" value="Department of Electronics and Communication Engineering" />
-                    </div>
-                    <div class="field">
-                        <label>Coordinator</label>
-                        <input type="text" id="caCoordinator" value="Dr. S. R. Biradar" />
+                        <div class="room-hint">
+                            <span id="genRoomsCount">0</span> rooms selected.
+                            <button type="button" class="btn btn-sm btn-primary" id="refreshRoomsBtn" style="padding:2px 10px; font-size:11px;">🔄 Refresh</button>
+                            <span style="margin-left:12px; color:#718096;">Leave empty to auto‑assign randomly.</span>
+                        </div>
                     </div>
                 </div>
                 <div class="btn-group">
-                    <button class="btn btn-success" id="saveSessionBtn">💾 Save Session Settings</button>
+                    <button class="btn btn-primary" id="generateBtn">⚡ Generate Blocks</button>
+                    <button class="btn btn-success" id="addBatchBtn">➕ Add Another Batch</button>
+                    <button class="btn btn-danger" id="resetBtn">🔄 Reset All</button>
                 </div>
-                <div id="sessionStatus" class="mt-8 hidden status-msg"></div>
-            </div>
-            <div class="card">
-                <div class="card-title">📌 Current Session Status</div>
-                <div id="sessionInfoDisplay">
-                    <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:14px;">
-                        <span>📅 AY: <strong>2026-2027</strong></span>
-                        <span>📚 Sem: <strong>Summer</strong></span>
-                        <span>📝 CIE: <strong>CIE-II</strong></span>
-                        <span>🔒 Session: <span style="color:#d69e2e;font-weight:700;">Unlocked</span></span>
-                        <span>🏛 College: <span style="color:#38a169;font-weight:700;">Unlocked</span></span>
-                    </div>
-                </div>
+                <div id="genError" class="text-sm text-danger mt-8 hidden"></div>
+                <div id="genSuccess" class="text-sm text-success mt-8 hidden"></div>
             </div>
         </div>
 
-        <!-- ─── PRINCIPAL ─── -->
-        <div id="panel-principal" class="role-panel">
-            <div class="panel-title">
-                👔 Principal · Master Data Management
-                <span class="badge badge-blue">Principal</span>
-                <span id="principalLockBadge" class="badge badge-red" style="display:none;">🔒 Locked</span>
+        <!-- ─── TAB 3: DASHBOARD ─── -->
+        <div id="tabDashboard" class="tab-pane active">
+            <div class="card" id="outputCard">
+                <div class="card-title">
+                    📊 Dashboard
+                    <span class="badge badge-blue" id="blockCountBadge">0 Blocks</span>
+                    <span class="badge badge-blue" id="studentCountBadge">0 Students</span>
+                    <span class="badge badge-blue" id="roomCountBadge">0 Rooms Used</span>
+                    <span class="badge badge-green" id="batchCountBadge">Batch 1</span>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-item"><div class="num" id="statRooms">0</div><div class="label">Rooms Allocated</div></div>
+                    <div class="stat-item"><div class="num" id="statBlocks">0</div><div class="label">Total Blocks</div></div>
+                    <div class="stat-item"><div class="num" id="statStudents">0</div><div class="label">Total Students</div></div>
+                    <div class="stat-item"><div class="num" id="statPerRoom">0</div><div class="label">Students / Room</div></div>
+                    <div class="stat-item"><div class="num" id="statBatches">1</div><div class="label">Batches Added</div></div>
+                    <div class="stat-item"><div class="num" id="statTT">0</div><div class="label">Time Tables</div></div>
+                </div>
+
+                <!-- Block List -->
+                <div id="blockOutput" class="mt-8"></div>
+
+                <!-- Time Tables List -->
+                <div id="ttOutputList" class="mt-16 border-top">
+                    <div class="card-title" style="margin-bottom:8px;">
+                        📅 Generated Time Tables
+                        <span class="badge badge-blue" id="ttListCount">0</span>
+                    </div>
+                    <div id="ttListContainer"></div>
+                </div>
+
+                <div class="mt-12">
+                    <button class="btn btn-warning" id="downloadPdfBtn" disabled>📄 Download Blocks PDF</button>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-title">👥 Faculty &amp; Quota Rules</div>
-                <div class="faculty-quota-bar">
-                    <span class="quota-pill quota-prof">Professor: 1–2</span>
-                    <span class="quota-pill quota-assoc">Associate: 2–4</span>
-                    <span class="quota-pill quota-asst">Assistant: 4–6</span>
-                    <span class="quota-pill quota-head">Head: 0</span>
-                    <span class="quota-pill quota-dean">Dean: 0</span>
-                    <span style="color:#718096;margin-left:auto;font-size:11px;">⚡ No same-faculty per session</span>
-                </div>
-                <div class="settings-box">
-                    <div class="box-title">
-                        👨‍🏫 Faculty Repository <span class="count" id="facultyCountP">0 Registered</span>
-                    </div>
-                    <div class="item-list" id="facultyListP" style="max-height:180px;"></div>
-                    <div class="add-row">
-                        <input type="text" id="facultyNameInputP" placeholder="Faculty Name" style="flex:2;" />
-                        <select id="facultyDesigInputP" style="flex:1;">
-                            <option value="Assistant Professor">Assistant Professor (4-6)</option>
-                            <option value="Associate Professor">Associate Professor (2-4)</option>
-                            <option value="Professor">Professor (1-2)</option>
-                            <option value="Associate Professor & Head">Associate Professor &amp; Head (0)</option>
-                            <option value="Professor & Head">Professor &amp; Head (0)</option>
-                            <option value="Dean">Dean (0)</option>
-                        </select>
-                        <button class="btn btn-primary btn-sm" id="addFacultyBtnP">Add</button>
-                        <button class="btn btn-danger btn-sm" id="resetFacultyBtnP">Reset Default</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">🏗️ Infrastructure &amp; Academic Setup</div>
-                <div class="settings-grid">
-                    <div class="settings-box">
-                        <div class="box-title">🏠 Rooms &amp; Capacity <span class="count" id="roomCountP">0</span></div>
-                        <div class="item-list" id="roomListP"></div>
-                        <div class="add-row">
-                            <input type="number" id="roomInputP" placeholder="Room" min="1" style="flex:0.6;" />
-                            <input type="number" id="seatInputP" placeholder="Seats" value="30" min="1" style="flex:0.4;" />
-                            <button class="btn-sm btn-primary" id="addRoomBtnP">Add</button>
-                            <button class="btn-sm btn-danger" id="resetRoomsBtnP">Reset</button>
-                        </div>
-                    </div>
-                    <div class="settings-box">
-                        <div class="box-title">🏛 Branches <span class="count" id="branchCountP">0</span></div>
-                        <div class="item-list" id="branchListP"></div>
-                        <div class="add-row">
-                            <input type="text" id="branchInputP" placeholder="e.g. CSE" />
-                            <button class="btn-sm btn-primary" id="addBranchBtnP">Add</button>
-                            <button class="btn-sm btn-danger" id="resetBranchesBtnP">Reset</button>
-                        </div>
-                    </div>
-                    <div class="settings-box">
-                        <div class="box-title">📚 Semesters <span class="count" id="semesterCountP">0</span></div>
-                        <div class="item-list" id="semesterListP"></div>
-                        <div class="add-row">
-                            <input type="number" id="semesterInputP" placeholder="e.g. 3" min="1" max="8" />
-                            <button class="btn-sm btn-primary" id="addSemesterBtnP">Add</button>
-                            <button class="btn-sm btn-danger" id="resetSemestersBtnP">Reset</button>
-                        </div>
-                    </div>
-                    <div class="settings-box">
-                        <div class="box-title">📋 Divisions <span class="count" id="divisionCountP">0</span></div>
-                        <div class="item-list" id="divisionListP"></div>
-                        <div class="add-row">
-                            <input type="text" id="divisionInputP" placeholder="e.g. A" maxlength="2" />
-                            <button class="btn-sm btn-primary" id="addDivisionBtnP">Add</button>
-                            <button class="btn-sm btn-danger" id="resetDivisionsBtnP">Reset</button>
-                        </div>
-                    </div>
-                </div>
+            <div id="noBlocksMsg" class="text-center text-muted" style="padding:30px 0;">
+                <p style="font-size:17px;">No blocks generated yet.</p>
+                <p style="font-size:13px;">Go to the <strong>Generate</strong> tab to create your first block list.</p>
             </div>
         </div>
 
-        <!-- ─── HOD / COORDINATOR ─── -->
-        <div id="panel-hod" class="role-panel">
-            <div class="panel-title">
-                📚 HOD / Coordinator · Timetable Management
-                <span class="badge badge-green">Coordinator</span>
-                <span id="hodLockBadge" class="badge badge-red" style="display:none;">🔒 Locked</span>
-            </div>
+        <!-- ─── TAB 4: TIME TABLE ─── -->
+        <div id="tabTimetable" class="tab-pane">
             <div class="card">
-                <div class="card-title">📅 Semester-wise Timetable Configuration</div>
+                <div class="card-title">
+                    📅 Time Table Generator
+                    <span class="badge badge-blue">Two templates: Standard · Block Arrangement</span>
+                </div>
+
+                <div class="template-toggle">
+                    <label class="active" id="ttStandardLabel">
+                        <input type="radio" name="ttTemplate" value="standard" checked /> Standard (Sessions × Days)
+                    </label>
+                    <label id="ttBlockLabel">
+                        <input type="radio" name="ttTemplate" value="block" /> Block Arrangement (Left/Right)
+                    </label>
+                </div>
+
                 <div class="form-grid">
                     <div class="field">
                         <label>Branch</label>
@@ -1270,251 +1313,121 @@
                         <select id="ttSemester"></select>
                     </div>
                     <div class="field">
-                        <label>Division</label>
-                        <select id="ttDivision"></select>
+                        <label>Date</label>
+                        <input type="date" id="ttDate" />
                     </div>
-                    <div class="field">
-                        <label>Subject Code</label>
-                        <input type="text" id="ttSubjectCode" value="21CS41" />
+                    <div class="field" id="ttTimeField">
+                        <label>Time</label>
+                        <input type="text" id="ttTime" value="10:00am - 11:30am" />
                     </div>
-                    <div class="field">
-                        <label>Subject Name</label>
-                        <input type="text" id="ttSubjectName" value="Data Structures" />
-                    </div>
-                    <div class="field">
-                        <label>Day</label>
-                        <select id="ttDay">
-                            <option value="Monday">Monday</option>
-                            <option value="Tuesday">Tuesday</option>
-                            <option value="Wednesday">Wednesday</option>
-                            <option value="Thursday">Thursday</option>
-                            <option value="Friday">Friday</option>
-                            <option value="Saturday">Saturday</option>
+                    <div class="field" id="ttDaysField">
+                        <label>Days</label>
+                        <select id="ttDays">
+                            <option value="1">1 Day</option>
+                            <option value="2" selected>2 Days</option>
+                            <option value="3">3 Days</option>
+                            <option value="4">4 Days</option>
+                            <option value="5">5 Days</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>Session</label>
-                        <select id="ttSession">
-                            <option value="S1">S1: 8:00 – 9:30 AM</option>
-                            <option value="S2" selected>S2: 10:00 – 11:30 AM</option>
-                            <option value="S3">S3: 12:00 – 1:30 PM</option>
-                            <option value="S4">S4: 2:00 – 3:30 PM</option>
-                            <option value="S5">S5: 4:00 – 5:30 PM</option>
+                    <div class="field" id="ttSessionsField">
+                        <label>Sessions</label>
+                        <select id="ttSessions">
+                            <option value="2">2 Sessions</option>
+                            <option value="3" selected>3 Sessions</option>
+                            <option value="4">4 Sessions</option>
+                            <option value="5">5 Sessions</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>Total Strength</label>
-                        <input type="number" id="ttStrength" value="90" min="1" />
-                    </div>
-                    <div class="field">
-                        <label>Block Size</label>
-                        <input type="number" id="ttBlockSize" value="30" min="1" />
+                    <div class="field" id="ttRowsField" style="display:none;">
+                        <label>Rows (Blocks)</label>
+                        <input type="number" id="ttRows" value="4" min="1" max="20" />
                     </div>
                 </div>
+
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="addTimetableBtn">➕ Add Timetable Entry</button>
-                    <button class="btn btn-success" id="generateFromTimetableBtn">⚡ Generate Blocks from Timetable</button>
-                    <button class="btn btn-warning" id="resetTimetableBtn">🔄 Clear Timetable</button>
+                    <button class="btn btn-primary" id="ttGenerateBtn">📋 Generate Time Table</button>
+                    <button class="btn btn-warning" id="ttDownloadPdfBtn" disabled>📄 Download PDF</button>
+                    <button class="btn btn-danger" id="ttClearBtn">🗑️ Clear All</button>
+                    <button class="btn btn-success" id="ttAddRowBtn" style="display:none;">➕ Add Row</button>
+                    <button class="btn btn-success" id="ttSaveBtn">💾 Save to Dashboard</button>
                 </div>
-                <div id="timetableStatus" class="mt-8 hidden status-msg"></div>
+                <div id="ttStatus" class="text-sm text-success mt-8 hidden"></div>
             </div>
+
+            <div class="card" id="ttOutputCard">
+                <div class="card-title">
+                    📅 Time Table
+                    <span class="badge badge-green" id="ttHeading">Branch: -- · Sem: -- · Date: --</span>
+                </div>
+                <div id="ttStandardContainer">
+                    <div class="tt-wrapper" id="ttGridWrapper">
+                        <table class="tt-table" id="ttTable">
+                            <thead id="ttHead"></thead>
+                            <tbody id="ttBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="ttEmptyMsg" class="text-center text-muted" style="padding:25px 0;">
+                        <p>Click "Generate Time Table" to create the grid.</p>
+                    </div>
+                </div>
+                <div id="ttBlockContainer" style="display:none;">
+                    <div class="tt-wrapper" id="ttBlockWrapper">
+                        <table class="ba-table" id="baTable">
+                            <thead id="baHead"></thead>
+                            <tbody id="baBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="baEmptyMsg" class="text-center text-muted" style="padding:25px 0;">
+                        <p>Click "Generate Time Table" to create the Block Arrangement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── TAB 5: ASSIGN DUTIES ─── -->
+        <div id="tabDuty" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    📋 Timetable Entries
-                    <span class="badge badge-blue" id="ttEntryCount">0 entries</span>
-                </div>
-                <div class="tt-wrapper">
-                    <table class="tt-table" id="timetableTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Branch</th>
-                                <th>Sem</th>
-                                <th>Div</th>
-                                <th>Subject</th>
-                                <th>Day</th>
-                                <th>Session</th>
-                                <th>Strength</th>
-                                <th>Block Size</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ttTableBody">
-                            <tr><td colspan="10" class="text-muted">No timetable entries yet. Add one above.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ─── EXAM SECTION ─── -->
-        <div id="panel-examsection" class="role-panel active">
-            <div class="panel-title">
-                📋 Exam Section · Block &amp; Duty Management
-                <span class="badge badge-blue">Exam Section</span>
-                <span id="examLockBadge" class="badge badge-red" style="display:none;">🔒 Locked</span>
-            </div>
-
-            <!-- Block Generation -->
-            <div class="card">
-                <div class="card-title flex-between">
-                    <span>🚀 Generate Examination Blocks</span>
-                    <span style="font-size:12px;font-weight:400;color:#718096;">Blocks use available rooms automatically</span>
-                </div>
-                <div class="form-grid">
-                    <div class="field">
-                        <label>Branch</label>
-                        <select id="exBranch"></select>
-                    </div>
-                    <div class="field">
-                        <label>Semester</label>
-                        <select id="exSemester"></select>
-                    </div>
-                    <div class="field">
-                        <label>Division</label>
-                        <select id="exDivision"></select>
-                    </div>
-                    <div class="field">
-                        <label>Subject Code</label>
-                        <input type="text" id="exSubjectCode" value="21CS41" />
-                    </div>
-                    <div class="field">
-                        <label>Subject Name</label>
-                        <input type="text" id="exSubjectName" value="Data Structures" />
-                    </div>
-                    <div class="field">
-                        <label>Block Size</label>
-                        <input type="number" id="exBlockSize" value="30" min="1" />
-                    </div>
-                    <div class="field">
-                        <label>Total Strength</label>
-                        <input type="number" id="exStrength" value="90" min="1" />
-                    </div>
-                    <div class="field">
-                        <label>Session</label>
-                        <select id="exSession">
-                            <option value="S1">S1: 8:00 – 9:30 AM</option>
-                            <option value="S2" selected>S2: 10:00 – 11:30 AM</option>
-                            <option value="S3">S3: 12:00 – 1:30 PM</option>
-                            <option value="S4">S4: 2:00 – 3:30 PM</option>
-                            <option value="S5">S5: 4:00 – 5:30 PM</option>
-                        </select>
-                    </div>
+                    📋 Assign Duties (Invigilators)
+                    <span class="badge badge-blue" id="dutyBlockCount">0 Blocks</span>
+                    <span class="badge badge-green" id="dutyStaffSummary">Staff: 0</span>
                 </div>
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="exGenerateBtn">⚡ Generate Blocks</button>
-                    <button class="btn btn-success" id="exAddBatchBtn">➕ Add Another Batch</button>
-                    <button class="btn btn-danger" id="exResetBtn">🔄 Reset All Blocks</button>
+                    <button class="btn btn-success" id="autoAllotBtn">🤖 Auto Allot (Assistant → Associate → Professor → Other)</button>
+                    <button class="btn btn-primary" id="saveDutyBtn">💾 Save Duties</button>
+                    <button class="btn btn-warning" id="downloadDutyPdfBtn" disabled>📄 Download Duty Roster PDF</button>
+                    <button class="btn btn-danger" id="clearDutyBtn">🗑️ Clear All Duties</button>
                 </div>
-                <div id="exGenError" class="hidden text-danger mt-8" style="font-size:13px;"></div>
-                <div id="exGenSuccess" class="hidden text-success mt-8" style="font-size:13px;"></div>
-            </div>
-
-            <!-- Blocks Display -->
-            <div class="card" id="exBlocksCard">
-                <div class="card-title flex-between">
-                    <span>📊 Block Allocations</span>
-                    <span style="font-size:13px;font-weight:400;color:#718096;">
-                        <span id="exBlockCount">0</span> blocks · <span id="exStudentCount">0</span> students
-                    </span>
-                </div>
-                <div id="exBlockOutput"></div>
-                <div class="mt-12">
-                    <button class="btn btn-warning" id="exDownloadPdfBtn" disabled>📄 Download Block PDF</button>
-                </div>
-            </div>
-
-            <!-- Duty Allocation -->
-            <div class="card" id="exDutyCard">
-                <div class="card-title flex-between">
-                    <span>📋 Invigilation Duty Allocation</span>
-                    <span class="badge badge-blue" id="exDutyBlockCount">0 Blocks</span>
-                </div>
-                <div class="faculty-quota-bar">
-                    <span class="quota-pill quota-prof">Professor: 1–2</span>
-                    <span class="quota-pill quota-assoc">Associate: 2–4</span>
-                    <span class="quota-pill quota-asst">Assistant: 4–6</span>
-                    <span class="quota-pill quota-head">Head: 0</span>
-                    <span class="quota-pill quota-dean">Dean: 0</span>
-                    <span style="color:#718096;margin-left:auto;font-size:11px;">⚡ No same-faculty per session</span>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-purple" id="exAutoDutyBtn">🎲 Auto-Generate Duties</button>
-                    <button class="btn btn-success" id="exSaveDutyBtn">💾 Save Duties</button>
-                    <button class="btn btn-warning" id="exDownloadDutyPdfBtn" disabled>📄 Download Duty PDF</button>
-                    <button class="btn btn-danger" id="exClearDutyBtn">🗑️ Clear Duties</button>
-                </div>
-                <div id="exDutyStatus" class="mt-8 hidden status-msg"></div>
-                <div class="duty-table-wrap mt-8">
-                    <div id="exDutyTableContainer">
-                        <p class="text-muted">Generate blocks first, then assign duties.</p>
-                    </div>
-                </div>
-
-                <!-- Live Duty Summary -->
-                <div class="border-top mt-12">
-                    <div class="card-title" style="font-size:14px;">📊 Faculty Duty Distribution</div>
-                    <div class="faculty-duty-grid" id="exFacultyDutySummary"></div>
-                </div>
-
-                <!-- Publish -->
-                <div class="mt-12 border-top">
-                    <div class="flex-between">
-                        <div>
-                            <span style="font-weight:600;font-size:15px;">📢 Publish Roster</span>
-                            <span style="font-size:12px;color:#718096;margin-left:10px;">Make duty roster visible to all faculty</span>
-                        </div>
-                        <button class="btn btn-success" id="exPublishBtn">📢 Publish</button>
-                    </div>
-                    <div id="exPublishStatus" class="mt-8 hidden status-msg"></div>
-                    <div id="exPublishBanner" class="hidden publish-banner">
-                        <span class="publish-label">✅ Published!</span>
-                        <span class="publish-date" id="exPublishDate">Published on: --</span>
-                        <span style="font-size:13px;color:#065f46;">Faculty can now view duties in read-only mode.</span>
+                <div id="dutyStatus" class="text-sm text-success mt-8 hidden"></div>
+                <div class="duty-table-wrap">
+                    <div id="dutyTableContainer">
+                        <p class="text-muted">No blocks available. Generate blocks first.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ─── FACULTY (View Only) ─── -->
-        <div id="panel-faculty" class="role-panel">
-            <div class="panel-title">
-                👨‍🏫 Faculty · View Duty Roster
-                <span class="badge badge-green">Read Only</span>
-            </div>
-            <div class="card">
-                <div class="card-title">📋 My Invigilation Duties</div>
-                <div id="facultyDutyView">
-                    <div id="facultyDutyFilter" style="margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                        <label style="font-size:13px;font-weight:600;">👤 Filter by Faculty:</label>
-                        <select id="facultyFilterSelect" style="padding:5px 14px;border-radius:30px;border:1.5px solid #d0d7e2;font-size:13px;">
-                            <option value="">-- All Faculty --</option>
-                        </select>
-                        <button class="btn btn-sm btn-primary" id="facultyFilterBtn">🔍 Filter</button>
-                        <button class="btn btn-sm btn-warning" id="facultyClearFilterBtn">Clear</button>
-                    </div>
-                    <div class="duty-table-wrap">
-                        <div id="facultyDutyTableContainer">
-                            <p class="text-muted">No duties published yet. Please check back later.</p>
-                        </div>
-                    </div>
-                    <div class="mt-12">
-                        <button class="btn btn-warning" id="facultyDownloadPdfBtn" disabled>📄 Download Duty Roster PDF</button>
-                    </div>
+        <!-- ─── EDIT MODAL ─── -->
+        <div class="modal-overlay hidden" id="editModal">
+            <div class="modal-box">
+                <div class="modal-title" id="editModalTitle">Edit Block</div>
+                <div id="editModalBody"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-sm" id="editModalCancel">Cancel</button>
+                    <button class="btn btn-primary btn-sm" id="editModalSave">Save Changes</button>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-title">📊 Summary</div>
-                <div id="facultyDutySummaryView" class="faculty-duty-grid"></div>
             </div>
         </div>
 
-        <!-- ═══ PDF EXPORT TARGETS ═══ -->
+        <!-- ─── PDF HIDDEN ─── -->
         <div id="pdfContent"></div>
-        <div id="dutyPdfContent"></div>
+        <div id="ttPdfContent" style="display:none;"></div>
+        <div id="dutyPdfContent" style="display:none;"></div>
 
-        <div style="text-align:center;margin-top:20px;font-size:12px;color:#a0aec0;border-top:1px solid #eef2f7;padding-top:16px;">
-            Basaveshwar Engineering College, Bagalkote · Autonomous Examination Suite
+        <!-- ─── FOOTER ─── -->
+        <div style="text-align:center; margin-top:14px; font-size:11px; color:#a0aec0; border-top:1px solid #edf2f7; padding-top:12px;">
+            All processing is local · No data uploaded · Data stays in your browser
         </div>
     </div>
 
@@ -1522,10 +1435,175 @@
         (function() {
             'use strict';
 
-            // ════════════════════════════════════════════════════════════
-            //  GLOBALS
-            // ════════════════════════════════════════════════════════════
+            // ─── DOM refs ───
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = {
+                settings: document.getElementById('tabSettings'),
+                generate: document.getElementById('tabGenerate'),
+                dashboard: document.getElementById('tabDashboard'),
+                timetable: document.getElementById('tabTimetable'),
+                duty: document.getElementById('tabDuty')
+            };
 
+            // Metadata
+            const metaAcademicYear = document.getElementById('metaAcademicYear');
+            const metaSemester = document.getElementById('metaSemester');
+            const metaCIE = document.getElementById('metaCIE');
+            const metaDept = document.getElementById('metaDept');
+            const metaCoordinator = document.getElementById('metaCoordinator');
+
+            // Settings
+            const roomList = document.getElementById('roomList');
+            const roomInput = document.getElementById('roomInput');
+            const seatInput = document.getElementById('seatInput');
+            const addRoomBtn = document.getElementById('addRoomBtn');
+            const resetRoomsBtn = document.getElementById('resetRoomsBtn');
+            const roomCount = document.getElementById('roomCount');
+
+            const branchList = document.getElementById('branchList');
+            const branchInput = document.getElementById('branchInput');
+            const addBranchBtn = document.getElementById('addBranchBtn');
+            const resetBranchesBtn = document.getElementById('resetBranchesBtn');
+            const branchCount = document.getElementById('branchCount');
+
+            const semesterList = document.getElementById('semesterList');
+            const semesterInput = document.getElementById('semesterInput');
+            const addSemesterBtn = document.getElementById('addSemesterBtn');
+            const resetSemestersBtn = document.getElementById('resetSemestersBtn');
+            const semesterCount = document.getElementById('semesterCount');
+
+            const divisionList = document.getElementById('divisionList');
+            const divisionInput = document.getElementById('divisionInput');
+            const addDivisionBtn = document.getElementById('addDivisionBtn');
+            const resetDivisionsBtn = document.getElementById('resetDivisionsBtn');
+            const divisionCount = document.getElementById('divisionCount');
+
+            const settingsStatus = document.getElementById('settingsStatus');
+
+            // Staff Settings
+            const staffProfessor = document.getElementById('staffProfessor');
+            const staffAssociate = document.getElementById('staffAssociate');
+            const staffAssistant = document.getElementById('staffAssistant');
+            const staffOtherInput = document.getElementById('staffOtherInput');
+            const addStaffOtherBtn = document.getElementById('addStaffOtherBtn');
+            const staffOtherList = document.getElementById('staffOtherList');
+            const saveStaffBtn = document.getElementById('saveStaffBtn');
+            const staffStatus = document.getElementById('staffStatus');
+
+            // Generate
+            const genBranch = document.getElementById('genBranch');
+            const genSemester = document.getElementById('genSemester');
+            const genDivision = document.getElementById('genDivision');
+            const genSubjectCode = document.getElementById('genSubjectCode');
+            const genSubjectName = document.getElementById('genSubjectName');
+            const genBlockSize = document.getElementById('genBlockSize');
+            const genStrength = document.getElementById('genStrength');
+            const genSession = document.getElementById('genSession');
+            const genRooms = document.getElementById('genRooms');
+            const genRoomsCount = document.getElementById('genRoomsCount');
+            const refreshRoomsBtn = document.getElementById('refreshRoomsBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            const addBatchBtn = document.getElementById('addBatchBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const genError = document.getElementById('genError');
+            const genSuccess = document.getElementById('genSuccess');
+
+            // Dashboard
+            const outputCard = document.getElementById('outputCard');
+            const noBlocksMsg = document.getElementById('noBlocksMsg');
+            const blockOutput = document.getElementById('blockOutput');
+            const blockCountBadge = document.getElementById('blockCountBadge');
+            const studentCountBadge = document.getElementById('studentCountBadge');
+            const roomCountBadge = document.getElementById('roomCountBadge');
+            const batchCountBadge = document.getElementById('batchCountBadge');
+            const statRooms = document.getElementById('statRooms');
+            const statBlocks = document.getElementById('statBlocks');
+            const statStudents = document.getElementById('statStudents');
+            const statPerRoom = document.getElementById('statPerRoom');
+            const statBatches = document.getElementById('statBatches');
+            const statTT = document.getElementById('statTT');
+            const ttListContainer = document.getElementById('ttListContainer');
+            const ttListCount = document.getElementById('ttListCount');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            const pdfContent = document.getElementById('pdfContent');
+
+            // Time Table
+            const ttBranch = document.getElementById('ttBranch');
+            const ttSemester = document.getElementById('ttSemester');
+            const ttDate = document.getElementById('ttDate');
+            const ttTime = document.getElementById('ttTime');
+            const ttDays = document.getElementById('ttDays');
+            const ttSessions = document.getElementById('ttSessions');
+            const ttRows = document.getElementById('ttRows');
+            const ttGenerateBtn = document.getElementById('ttGenerateBtn');
+            const ttDownloadPdfBtn = document.getElementById('ttDownloadPdfBtn');
+            const ttClearBtn = document.getElementById('ttClearBtn');
+            const ttAddRowBtn = document.getElementById('ttAddRowBtn');
+            const ttSaveBtn = document.getElementById('ttSaveBtn');
+            const ttStatus = document.getElementById('ttStatus');
+            const ttHeading = document.getElementById('ttHeading');
+            const ttHead = document.getElementById('ttHead');
+            const ttBody = document.getElementById('ttBody');
+            const ttEmptyMsg = document.getElementById('ttEmptyMsg');
+            const ttPdfContent = document.getElementById('ttPdfContent');
+            const ttStandardContainer = document.getElementById('ttStandardContainer');
+            const ttBlockContainer = document.getElementById('ttBlockContainer');
+            const baHead = document.getElementById('baHead');
+            const baBody = document.getElementById('baBody');
+            const baEmptyMsg = document.getElementById('baEmptyMsg');
+            const ttStandardLabel = document.getElementById('ttStandardLabel');
+            const ttBlockLabel = document.getElementById('ttBlockLabel');
+            const ttDaysField = document.getElementById('ttDaysField');
+            const ttSessionsField = document.getElementById('ttSessionsField');
+            const ttRowsField = document.getElementById('ttRowsField');
+            const ttTimeField = document.getElementById('ttTimeField');
+
+            // Duty
+            const dutyTableContainer = document.getElementById('dutyTableContainer');
+            const dutyBlockCount = document.getElementById('dutyBlockCount');
+            const dutyStaffSummary = document.getElementById('dutyStaffSummary');
+            const autoAllotBtn = document.getElementById('autoAllotBtn');
+            const saveDutyBtn = document.getElementById('saveDutyBtn');
+            const downloadDutyPdfBtn = document.getElementById('downloadDutyPdfBtn');
+            const clearDutyBtn = document.getElementById('clearDutyBtn');
+            const dutyStatus = document.getElementById('dutyStatus');
+            const dutyPdfContent = document.getElementById('dutyPdfContent');
+
+            // Modal
+            const editModal = document.getElementById('editModal');
+            const editModalTitle = document.getElementById('editModalTitle');
+            const editModalBody = document.getElementById('editModalBody');
+            const editModalCancel = document.getElementById('editModalCancel');
+            const editModalSave = document.getElementById('editModalSave');
+
+            // ─── State ───
+            let rooms = [];
+            let branches = [];
+            let semesters = [];
+            let divisions = [];
+
+            let allBlocks = [];
+            let usedRooms = new Set();
+            let batchCounter = 1;
+            let blockIdCounter = 0;
+            let currentRollStart = 1;
+
+            let savedTimeTables = [];
+            let ttIdCounter = 0;
+
+            let dutyAssignments = {}; // key: blockId, value: { name, category }
+
+            // Staff data
+            let staffConfig = {
+                professor: 2,
+                associate: 4,
+                assistant: 8,
+                other: ['CS-Staff-1', 'CS-Staff-2', 'CS-Staff-3']
+            };
+
+            let editTarget = null;
+
+            // Session mapping
             const sessionTimes = {
                 'S1': '8:00 – 9:30 AM',
                 'S2': '10:00 – 11:30 AM',
@@ -1540,12 +1618,8 @@
                 'S4': '#fadbd8',
                 'S5': '#ebdef0'
             };
-
             // ─── Faculty list (as provided) ───
             const DEFAULT_FACULTY = [
-                { name: 'Dr. S. R. Biradar', desig: 'Professor' },
-                { name: 'Dr. J. D. Kulkarni', desig: 'Professor' },
-                { name: 'Dr. V. B. Pagi', desig: 'Professor' },
                 { name: 'Dr. S. V. Gurushantanavar', desig: 'Associate Professor' },
                 { name: 'Dr Mahadev Biradar', desig: 'Associate Professor' },
                 { name: 'Dr Vidya M Shettar', desig: 'Associate Professor' },
@@ -1568,8 +1642,6 @@
                 { name: 'Dr. Basavarajeshwari G. Hokarani', desig: 'Assistant Professor' },
                 { name: 'Smt. Shanta Byadagi', desig: 'Assistant Professor' },
                 { name: 'Miss. Nidhi P. Koranmath', desig: 'Assistant Professor' },
-                { name: 'Dr. R. N. Herkal', desig: 'Dean' },
-                { name: 'Dr. B. R. Hiremath', desig: 'Professor' },
                 { name: 'Dr. Shankar H. Sanni', desig: 'Associate Professor' },
                 { name: 'Dr. Santhosh M. Malkapur', desig: 'Professor' },
                 { name: 'Dr. Adarsh S. Chatra', desig: 'Professor' },
@@ -1577,7 +1649,6 @@
                 { name: 'Dr.Basappa. Meti', desig: 'Associate Professor' },
                 { name: 'Dr.Gangadhar.B.Megeri', desig: 'Associate Professor' },
                 { name: 'Dr. Mahantesh M. Hanamasagar', desig: 'Associate Professor' },
-                { name: 'Mr. B. S. Haravi', desig: 'Associate Professor' },
                 { name: 'Mr. Sunilkumar.M. Kalagudi', desig: 'Associate Professor' },
                 { name: 'Mr. Basavanagouda A Patil', desig: 'Assistant Professor' },
                 { name: 'Dr. Jayalatha N A', desig: 'Assistant Professor' },
@@ -1700,7 +1771,6 @@
                 { name: 'Prof. P. B. Bhajantri', desig: 'Assistant Professor' },
                 { name: 'Rajath M. Handi', desig: 'Assistant Professor' },
                 { name: 'Dr. Suryakanth', desig: 'Assistant Professor' },
-                { name: 'Dr. M. S. Hebbal', desig: 'Professor' },
                 { name: 'Dr. Bharati S. Meti', desig: 'Professor' },
                 { name: 'Dr. Sharada S. B.', desig: 'Associate Professor' },
                 { name: 'Dr. Madhumala Y.', desig: 'Assistant Professor' },
@@ -1735,9 +1805,10 @@
                 { room: 201, seats: 30 }, { room: 202, seats: 30 }, { room: 203, seats: 30 },
                 { room: 204, seats: 30 }, { room: 205, seats: 30 }, { room: 206, seats: 30 }
             ];
-            const DEFAULT_BRANCHES = ['CSE', 'ISE', 'ECE', 'EEE', 'ME', 'CE', 'AI&ML', 'DS'];
+            const DEFAULT_BRANCHES = ['MATHS','PHY','CHE','HSS','ME', 'CE','CSE', 'ISE', 'ECE', 'EEE',  'AI&ML', 'ECS','BT','IP','AU','MBA','MCA'];
             const DEFAULT_SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
-            const DEFAULT_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const DEFAULT_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O']
+            ];
 
             // ─── State ───
             let faculty = [];
@@ -1851,9 +1922,9 @@
                         if (data.meta) {
                             metaAcademicYear.value = data.meta.academicYear || '2026-2027';
                             metaSemester.value = data.meta.semester || 'Summer';
-                            metaCIE.value = data.meta.cie || 'CIE-II';
-                            metaDept.value = data.meta.dept || 'Department of Electronics and Communication Engineering';
-                            metaCoordinator.value = data.meta.coordinator || 'Dr. S. R. Biradar';
+                            metaCIE.value = data.meta.cie || 'CIE-I';
+                            metaDept.value = data.meta.dept || 'Department of Mathematics';
+                            metaCoordinator.value = data.meta.coordinator || 'Dr. Ishwar Policepatil';
                         }
                         return true;
                     }
