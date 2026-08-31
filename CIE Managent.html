@@ -1921,7 +1921,7 @@
                 { room: 222, seats: 30 }, { room: 223, seats: 30 }, { room: 224, seats: 30 },
                 { room: 225, seats: 30 }
             ];
-            const DEFAULT_BRANCHES = ['MATHS', 'PHY','CHE,'HSS','CSE', 'ISE', 'ECE', 'EEE', 'ME', 'CE', 'AI&ML', 'ECS', 'IP', 'AU','BT','MBA','MCA'];
+            const DEFAULT_BRANCHES = ['CSE', 'ISE', 'ECE', 'EEE', 'ME', 'CE', 'AI&ML', 'DS', 'IT', 'ECM'];
             const DEFAULT_SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
             const DEFAULT_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 
@@ -1951,7 +1951,7 @@
                     semester: metaSemester.value,
                     cie: metaCIE.value,
                     dept: metaDept.value.trim() || 'Department of Electronics and Communication Engineering',
-                    coordinator: metaCoordinator.value.trim() || 'Dr. Ishwar Policepatil',
+                    coordinator: metaCoordinator.value.trim() || 'Dr. S. R. Biradar',
                     createdBy: 'Dr Mahadev Biradar'
                 };
             }
@@ -3269,3 +3269,449 @@
 
                 ttStatus.className = 'text-sm text-success mt-8';
                 ttStatus.textContent = `✅ Block Arrangement generated for ${branch} - Sem ${semester}`;
+                ttStatus.classList.remove('hidden');
+                ttHeading.textContent = `Branch: ${branch} · Sem: ${semester} · Date: ${formatDate(date)} · ${time}`;
+
+                let theadHtml = `
+                    <tr>
+                        <th>Sl. No</th>
+                        <th>Subject Title (Left)</th>
+                        <th>Sub Code (Left)</th>
+                        <th>Div / Roll No. (Left)</th>
+                        <th>Subject Title (Right)</th>
+                        <th>Sub Code (Right)</th>
+                        <th>Div / Roll No. (Right)</th>
+                        <th>Strength</th>
+                        <th>Block</th>
+                    </tr>
+                `;
+                baHead.innerHTML = theadHtml;
+
+                let tbodyHtml = '';
+                for (let i = 0; i < numRows; i++) {
+                    const rowId = `ba_${i}`;
+                    tbodyHtml += `
+                        <tr>
+                            <td><input type="text" class="ba-cell" id="${rowId}_slno" value="${i+1}" style="width:50px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_left_title" placeholder="Physics" style="min-width:90px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_left_code" placeholder="21UPH102C" style="min-width:70px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_left_div" placeholder="02" style="width:55px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_right_title" placeholder="Structural analysis-1" style="min-width:90px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_right_code" placeholder="UCV452C" style="min-width:70px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_right_div" placeholder="01" style="width:55px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_strength" placeholder="32" style="width:55px;" /></td>
+                            <td><input type="text" class="ba-cell" id="${rowId}_block" placeholder="101" style="width:60px;" /></td>
+                        </tr>
+                    `;
+                }
+                baBody.innerHTML = tbodyHtml;
+
+                baEmptyMsg.style.display = 'none';
+                ttDownloadPdfBtn.disabled = false;
+                ttStandardContainer.style.display = 'none';
+                ttBlockContainer.style.display = 'block';
+                ttSaveBtn.style.display = 'inline-flex';
+            }
+
+            // ─── Add Row ───
+            function addBlockRow() {
+                const numRows = parseInt(ttRows.value) || 4;
+                ttRows.value = numRows + 1;
+                generateBlockArrangement();
+            }
+
+            // ─── Save Time Table ───
+            function saveTimeTable() {
+                const isBlock = document.querySelector('input[name="ttTemplate"]:checked').value === 'block';
+                const branch = ttBranch.value;
+                const semester = ttSemester.value;
+                const date = ttDate.value;
+                const time = ttTime.value || '10:00am - 11:30am';
+                const heading = ttHeading.textContent;
+
+                if (!branch || !semester || !date) {
+                    ttStatus.textContent = '⚠️ Generate the time table first.';
+                    ttStatus.className = 'text-sm text-danger mt-8';
+                    ttStatus.classList.remove('hidden');
+                    return;
+                }
+
+                let tableData = [];
+                let hasData = false;
+
+                if (isBlock) {
+                    const numRows = parseInt(ttRows.value) || 4;
+                    for (let i = 0; i < numRows; i++) {
+                        const rowId = `ba_${i}`;
+                        const slno = document.getElementById(`${rowId}_slno`)?.value || i + 1;
+                        const lt = document.getElementById(`${rowId}_left_title`)?.value || '';
+                        const lc = document.getElementById(`${rowId}_left_code`)?.value || '';
+                        const ld = document.getElementById(`${rowId}_left_div`)?.value || '';
+                        const rt = document.getElementById(`${rowId}_right_title`)?.value || '';
+                        const rc = document.getElementById(`${rowId}_right_code`)?.value || '';
+                        const rd = document.getElementById(`${rowId}_right_div`)?.value || '';
+                        const st = document.getElementById(`${rowId}_strength`)?.value || '';
+                        const bl = document.getElementById(`${rowId}_block`)?.value || '';
+                        if (lt || lc || rt || rc) hasData = true;
+                        tableData.push({ slno, left_title: lt, left_code: lc, left_div: ld, right_title: rt, right_code: rc,
+                            right_div: rd, strength: st, block: bl });
+                    }
+                } else {
+                    const numDays = parseInt(ttDays.value) || 2;
+                    const numSessions = parseInt(ttSessions.value) || 3;
+                    for (let d = 0; d < numDays; d++) {
+                        const row = { day: d + 1, sessions: [] };
+                        for (let s = 0; s < numSessions; s++) {
+                            const cellId = `tt_${d}_${s}`;
+                            const codeEl = document.getElementById(`${cellId}_code`);
+                            const nameEl = document.getElementById(`${cellId}_name`);
+                            const code = codeEl ? codeEl.value.trim() : '';
+                            const name = nameEl ? nameEl.value.trim() : '';
+                            if (code || name) hasData = true;
+                            row.sessions.push({ code, name });
+                        }
+                        tableData.push(row);
+                    }
+                }
+
+                if (!hasData) {
+                    ttStatus.textContent = '⚠️ No data entered. Fill at least one cell.';
+                    ttStatus.className = 'text-sm text-danger mt-8';
+                    ttStatus.classList.remove('hidden');
+                    return;
+                }
+
+                const ttEntry = {
+                    id: ++ttIdCounter,
+                    type: isBlock ? 'block' : 'standard',
+                    branch: branch,
+                    semester: semester,
+                    date: date,
+                    time: time,
+                    heading: heading,
+                    days: isBlock ? null : parseInt(ttDays.value) || 2,
+                    sessions: isBlock ? null : parseInt(ttSessions.value) || 3,
+                    rows: isBlock ? parseInt(ttRows.value) || 4 : null,
+                    data: tableData,
+                    savedAt: new Date().toLocaleString()
+                };
+
+                savedTimeTables.push(ttEntry);
+                ttStatus.textContent = `✅ Time table saved to dashboard! (ID: ${ttEntry.id})`;
+                ttStatus.className = 'text-sm text-success mt-8';
+                ttStatus.classList.remove('hidden');
+                renderDashboard();
+                renderHodDashboard();
+                statTT.textContent = savedTimeTables.length;
+            }
+
+            // ─── Time Table PDF ───
+            function generateTTPDF() {
+                const isBlock = document.querySelector('input[name="ttTemplate"]:checked').value === 'block';
+                if (isBlock) generateBlockPDF();
+                else generateStandardPDF();
+            }
+
+            function generateStandardPDF() {
+                const branch = ttBranch.value;
+                const semester = ttSemester.value;
+                const startDate = ttDate.value;
+                const numDays = parseInt(ttDays.value) || 2;
+                const numSessions = parseInt(ttSessions.value) || 3;
+                const creds = getMetadata();
+
+                if (!branch || !semester || !startDate) { alert('Generate the time table first.'); return; }
+
+                const sessionLabels_tt = [];
+                for (let i = 1; i <= numSessions; i++) sessionLabels_tt.push(`S${i}`);
+
+                let tableData = [];
+                let hasData = false;
+                for (let d = 0; d < numDays; d++) {
+                    const row = { day: d + 1, sessions: [] };
+                    for (let s = 0; s < sessionLabels_tt.length; s++) {
+                        const cellId = `tt_${d}_${s}`;
+                        const codeEl = document.getElementById(`${cellId}_code`);
+                        const nameEl = document.getElementById(`${cellId}_name`);
+                        const code = codeEl ? codeEl.value.trim() : '';
+                        const name = nameEl ? nameEl.value.trim() : '';
+                        if (code || name) hasData = true;
+                        row.sessions.push({ code, name });
+                    }
+                    tableData.push(row);
+                }
+
+                if (!hasData) { alert('No data entered. Fill at least one cell.'); return; }
+
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                let pdfHtml = `
+                    <div style="font-family:'Segoe UI',Arial,sans-serif;padding:28px 30px;background:#fff;max-width:1100px;margin:0 auto;">
+                        <div style="text-align:center;border-bottom:3px solid #1a365d;padding-bottom:14px;margin-bottom:20px;">
+                            <h1 style="font-size:24px;font-weight:700;color:#1a365d;">${creds.college}</h1>
+                            <p style="font-size:15px;color:#2d3748;margin:2px 0 0;font-weight:500;">${creds.dept}</p>
+                            <p style="font-size:15px;color:#2d3748;margin:2px 0 0;font-weight:500;">${creds.semester} Semester · ${creds.cie} · Time Table</p>
+                            <p style="font-size:13px;color:#718096;margin:4px 0 0;">
+                                Academic Year: ${creds.academicYear} · Branch: ${branch} · Semester: ${semester} · Start Date: ${formatDate(startDate)} · Generated: ${dateStr}
+                            </p>
+                            <p style="font-size:13px;color:#718096;margin:2px 0 0;">CIE Coordinator: ${creds.coordinator}</p>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:14px;">
+                            <thead><tr style="background:#f7fafc;">
+                                <th style="border:1.5px solid #cbd5e0;padding:10px 12px;text-align:center;font-weight:700;">Day / Session</th>
+                `;
+
+                for (let s = 0; s < sessionLabels_tt.length; s++) {
+                    const session = sessionLabels_tt[s];
+                    const sessionTime = getSessionTime(session);
+                    pdfHtml +=
+                        `<th style="border:1.5px solid #cbd5e0;padding:10px 12px;text-align:center;font-weight:700;">${session}<br><span style="font-weight:400;font-size:11px;">${sessionTime}</span></th>`;
+                }
+
+                pdfHtml += `</tr></thead><tbody>`;
+
+                for (let d = 0; d < tableData.length; d++) {
+                    const row = tableData[d];
+                    const dateStr2 = addDays(startDate, d);
+                    const displayDate = formatDate(dateStr2);
+                    pdfHtml += `
+                        <tr>
+                            <td style="border:1.5px solid #cbd5e0;padding:8px 12px;text-align:center;font-weight:600;background:#ebf8ff;">
+                                Day ${row.day}<br><span style="font-weight:400;font-size:10px;color:#718096;">${displayDate}</span>
+                            </td>
+                    `;
+                    for (let s = 0; s < row.sessions.length; s++) {
+                        const cell = row.sessions[s];
+                        const display = cell.code && cell.name ? `${cell.code} - ${cell.name}` :
+                            (cell.code || cell.name || '—');
+                        pdfHtml +=
+                            `<td style="border:1.5px solid #cbd5e0;padding:8px 12px;text-align:center;vertical-align:middle;">${display}</td>`;
+                    }
+                    pdfHtml += `</tr>`;
+                }
+
+                pdfHtml += `
+                            </tbody>
+                        </table>
+                        <div style="margin-top:22px;border-top:2px solid #e2e8f0;padding-top:12px;display:flex;justify-content:space-between;font-size:13px;color:#718096;">
+                            <span>HOD</span><span>CIE-COORDINATOR</span><span>Page 1 of 1</span>
+                        </div>
+                    </div>
+                `;
+
+                ttPdfContent.innerHTML = pdfHtml;
+                ttPdfContent.style.display = 'block';
+
+                html2pdf().set({
+                    margin: [8, 8, 8, 8],
+                    filename: `CIE_TimeTable_${branch}_Sem${semester}_${formatDate(startDate).replace(/\//g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                }).from(ttPdfContent).save().then(() => { ttPdfContent.style.display = 'none'; })
+                    .catch(err => { alert('PDF error: ' + err.message);
+                        ttPdfContent.style.display = 'none'; });
+            }
+
+            function generateBlockPDF() {
+                const branch = ttBranch.value;
+                const semester = ttSemester.value;
+                const date = ttDate.value;
+                const time = ttTime.value || '10:00am - 11:30am';
+                const numRows = parseInt(ttRows.value) || 4;
+                const creds = getMetadata();
+
+                if (!branch || !semester || !date) { alert('Generate the block arrangement first.'); return; }
+
+                let tableData = [];
+                let hasData = false;
+                for (let i = 0; i < numRows; i++) {
+                    const rowId = `ba_${i}`;
+                    const slno = document.getElementById(`${rowId}_slno`)?.value || i + 1;
+                    const lt = document.getElementById(`${rowId}_left_title`)?.value || '';
+                    const lc = document.getElementById(`${rowId}_left_code`)?.value || '';
+                    const ld = document.getElementById(`${rowId}_left_div`)?.value || '';
+                    const rt = document.getElementById(`${rowId}_right_title`)?.value || '';
+                    const rc = document.getElementById(`${rowId}_right_code`)?.value || '';
+                    const rd = document.getElementById(`${rowId}_right_div`)?.value || '';
+                    const st = document.getElementById(`${rowId}_strength`)?.value || '';
+                    const bl = document.getElementById(`${rowId}_block`)?.value || '';
+                    if (lt || lc || rt || rc) hasData = true;
+                    tableData.push({ slno, left_title: lt, left_code: lc, left_div: ld, right_title: rt, right_code: rc,
+                        right_div: rd, strength: st, block: bl });
+                }
+
+                if (!hasData) { alert('No data entered. Fill at least one row.'); return; }
+
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                const displayDate = formatDate(date);
+
+                let pdfHtml = `
+                    <div style="font-family:'Segoe UI',Arial,sans-serif;padding:20px 24px;background:#fff;max-width:1200px;margin:0 auto;">
+                        <div style="text-align:center;border-bottom:2px solid #1a365d;padding-bottom:12px;margin-bottom:16px;">
+                            <h2 style="font-size:22px;font-weight:700;color:#1a365d;">${creds.college}</h2>
+                            <h3 style="font-size:18px;color:#2d3748;">${creds.dept}</h3>
+                            <p style="font-size:16px;color:#2d3748;font-weight:500;">${creds.semester} Semester · ${creds.cie} · Block Arrangement</p>
+                            <p style="font-size:14px;color:#718096;">Day 1 &nbsp;|&nbsp; ${time} &nbsp;|&nbsp; ${displayDate}</p>
+                            <p style="font-size:13px;color:#718096;">Branch: ${branch} · Semester: ${semester} · Academic Year: ${creds.academicYear}</p>
+                            <p style="font-size:13px;color:#718096;">CIE Coordinator: ${creds.coordinator}</p>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;">
+                            <thead><tr style="background:#f7fafc;">
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Sl. No</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Subject Title (Left)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Sub Code (Left)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Div / Roll No. (Left)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Subject Title (Right)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Sub Code (Right)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Div / Roll No. (Right)</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Strength</th>
+                                <th style="border:1px solid #cbd5e0;padding:8px 6px;text-align:center;font-weight:700;">Block</th>
+                            </tr></thead><tbody>
+                `;
+
+                tableData.forEach(row => {
+                    pdfHtml += `
+                        <tr>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.slno}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;">${row.left_title}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.left_code}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.left_div}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;">${row.right_title}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.right_code}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.right_div}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.strength}</td>
+                            <td style="border:1px solid #cbd5e0;padding:6px 8px;text-align:center;">${row.block}</td>
+                        </tr>
+                    `;
+                });
+
+                pdfHtml += `
+                            </tbody>
+                        </table>
+                        <div style="margin-top:20px;border-top:2px solid #e2e8f0;padding-top:10px;display:flex;justify-content:space-between;font-size:13px;color:#718096;">
+                            <span>HOD</span><span>CIE-COORDINATOR</span><span>Page 1 of 1</span>
+                        </div>
+                    </div>
+                `;
+
+                ttPdfContent.innerHTML = pdfHtml;
+                ttPdfContent.style.display = 'block';
+
+                html2pdf().set({
+                    margin: [6, 6, 6, 6],
+                    filename: `CIE_BlockArrangement_${branch}_Sem${semester}_${displayDate.replace(/\//g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                }).from(ttPdfContent).save().then(() => { ttPdfContent.style.display = 'none'; })
+                    .catch(err => { alert('PDF error: ' + err.message);
+                        ttPdfContent.style.display = 'none'; });
+            }
+
+            // ─── Clear Time Table ───
+            function clearTimeTable() {
+                ttHead.innerHTML = '';
+                ttBody.innerHTML = '';
+                baHead.innerHTML = '';
+                baBody.innerHTML = '';
+                ttEmptyMsg.style.display = 'block';
+                baEmptyMsg.style.display = 'block';
+                ttDownloadPdfBtn.disabled = true;
+                ttStatus.className = 'text-sm text-success mt-8 hidden';
+                ttHeading.textContent = 'Branch: -- · Sem: -- · Date: --';
+                ttStandardContainer.style.display = 'block';
+                ttBlockContainer.style.display = 'none';
+                ttSaveBtn.style.display = 'none';
+            }
+
+            // ─── Event listeners ───
+            generateBtn.addEventListener('click', function() {
+                usedRooms = new Set();
+                currentRollStart = 1;
+                batchCounter = 1;
+                allBlocks = [];
+                blockIdCounter = 0;
+                generateBlocks(false);
+            });
+
+            addBatchBtn.addEventListener('click', function() { generateBlocks(true); });
+            resetBtn.addEventListener('click', resetAll);
+            downloadPdfBtn.addEventListener('click', generatePDF);
+
+            ttGenerateBtn.addEventListener('click', function() {
+                const isBlock = document.querySelector('input[name="ttTemplate"]:checked').value === 'block';
+                if (isBlock) generateBlockArrangement();
+                else generateStandardTimeTable();
+            });
+
+            ttDownloadPdfBtn.addEventListener('click', generateTTPDF);
+            ttClearBtn.addEventListener('click', clearTimeTable);
+            ttAddRowBtn.addEventListener('click', addBlockRow);
+            ttSaveBtn.addEventListener('click', saveTimeTable);
+
+            autoAllotBtn.addEventListener('click', autoAllotDuties);
+            saveDutyBtn.addEventListener('click', saveDuties);
+            downloadDutyPdfBtn.addEventListener('click', generateDutyPDF);
+            clearDutyBtn.addEventListener('click', clearDuties);
+
+            genStrength.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateBtn.click(); });
+            genBlockSize.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateBtn.click(); });
+
+            // Set default date
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            ttDate.value = `${yyyy}-${mm}-${dd}`;
+
+            // ─── Init ───
+            function init() {
+                rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
+                branches = [...DEFAULT_BRANCHES];
+                semesters = [...DEFAULT_SEMESTERS];
+                divisions = [...DEFAULT_DIVISIONS];
+
+                staffConfig.professor = 2;
+                staffConfig.associate = 4;
+                staffConfig.assistant = 8;
+                staffConfig.other = ['CS-Staff-1', 'CS-Staff-2', 'CS-Staff-3'];
+                staffProfessor.value = staffConfig.professor;
+                staffAssociate.value = staffConfig.associate;
+                staffAssistant.value = staffConfig.assistant;
+                renderStaffOther();
+
+                renderRooms();
+                renderBranches();
+                renderSemesters();
+                renderDivisions();
+                updateGenDropdowns();
+                refreshRoomList();
+
+                genBranch.value = 'CSE';
+                genSemester.value = '3';
+                genDivision.value = 'A';
+
+                noBlocksMsg.style.display = 'block';
+                outputCard.style.display = 'none';
+
+                ttBranch.value = 'CSE';
+                ttSemester.value = '3';
+
+                settingsStatus.textContent = '✅ Settings loaded. Ready to generate!';
+
+                setTimeout(() => {
+                    generateStandardTimeTable();
+                    renderHodDashboard();
+                }, 300);
+            }
+
+            init();
+            console.log('CIE Block Generator with HOD Dashboard ready.');
+        })();
+    </script>
+
+</body>
+</html>
