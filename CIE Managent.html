@@ -27,11 +27,152 @@
             width: 100%;
         }
 
+        /* ── Login Overlay ── */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 42, 74, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+        .login-overlay.hidden {
+            display: none;
+        }
+        .login-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px 44px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            animation: fadeSlide 0.4s ease;
+        }
+        .login-box .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .login-box .logo h2 {
+            font-size: 24px;
+            color: #1a365d;
+            font-weight: 700;
+        }
+        .login-box .logo p {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .login-box .form-group {
+            margin-bottom: 16px;
+        }
+        .login-box .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+        .login-box .form-group input,
+        .login-box .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f7fafc;
+        }
+        .login-box .form-group input:focus,
+        .login-box .form-group select:focus {
+            border-color: #2b6cb0;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.12);
+        }
+        .login-box .form-group input:disabled {
+            background: #edf2f7;
+            cursor: not-allowed;
+        }
+        .login-box .btn-login {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            background: #2b6cb0;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .login-box .btn-login:hover {
+            background: #1a4f7a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(43, 108, 176, 0.3);
+        }
+        .login-box .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .login-box .login-error {
+            color: #e53e3e;
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .login-box .register-link {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #718096;
+        }
+        .login-box .register-link a {
+            color: #2b6cb0;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-box .register-link a:hover {
+            text-decoration: underline;
+        }
+        .login-box .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .login-box .status-badge.pending {
+            background: #fefcbf;
+            color: #975a16;
+        }
+        .login-box .status-badge.approved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .login-box .status-badge.rejected {
+            background: #fed7d7;
+            color: #9b2c2c;
+        }
+        .login-box .status-badge.admin {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+
         /* ── Header ── */
         .header {
             background: linear-gradient(135deg, #1a365d, #2b6cb0);
             color: #fff;
-            padding: 18px 24px;
+            padding: 14px 24px;
             border-radius: 16px;
             box-shadow: 0 6px 24px rgba(26, 54, 93, 0.25);
             display: flex;
@@ -42,22 +183,46 @@
             margin-bottom: 18px;
         }
         .header h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.3px;
         }
         .header h1 small {
             font-weight: 400;
-            font-size: 13px;
-            opacity: 0.8;
+            font-size: 12px;
+            opacity: 0.85;
             display: block;
             margin-top: 2px;
         }
-        .header .sub {
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.12);
-            padding: 5px 14px;
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 16px 4px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+        }
+        .header .user-info .role-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 14px;
             border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .header .user-info .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .header .user-info .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         /* ── Metadata Bar ── */
@@ -65,12 +230,12 @@
             background: #f7fafc;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 12px 18px;
+            padding: 10px 16px;
             margin-bottom: 18px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 12px 24px;
+            gap: 10px 20px;
         }
         .metadata-bar .m-item {
             display: flex;
@@ -186,6 +351,18 @@
             background: #e9d5ff;
             color: #6b21a8;
         }
+        .card-title .badge-red {
+            background: #fed7d7;
+            color: #9b2c2c;
+        }
+        .card-title .section-num {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2b6cb0;
+            background: #ebf8ff;
+            padding: 2px 14px;
+            border-radius: 30px;
+        }
 
         /* ── HOD Dashboard Specific ── */
         .hod-stats {
@@ -218,11 +395,6 @@
             margin-top: 2px;
             font-weight: 500;
         }
-        .hod-stat-card .sub {
-            font-size: 11px;
-            color: #a0aec0;
-            margin-top: 2px;
-        }
         .hod-stat-card .icon {
             font-size: 22px;
             display: block;
@@ -234,12 +406,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 18px;
         }
-        .hod-grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 14px;
-        }
-
         .hod-duty-list {
             max-height: 300px;
             overflow-y: auto;
@@ -608,6 +774,13 @@
         .btn-danger:hover {
             background: #c53030;
         }
+        .btn-purple {
+            background: #805ad5;
+            color: #fff;
+        }
+        .btn-purple:hover {
+            background: #6b46c1;
+        }
         .btn-sm {
             padding: 4px 14px;
             font-size: 12px;
@@ -792,11 +965,6 @@
             border-radius: 12px;
             font-size: 11px;
             color: #2b6cb0;
-        }
-        .duty-table .duty-staff-category {
-            font-size: 11px;
-            color: #718096;
-            margin-left: 4px;
         }
 
         /* ── Time Table Grid ── */
@@ -984,24 +1152,13 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .gap-8 {
-            gap: 8px;
-        }
         .border-top {
             border-top: 1px solid #edf2f7;
             padding-top: 12px;
             margin-top: 12px;
         }
-        .empty-state {
-            padding: 25px 10px;
-            text-align: center;
-            color: #a0aec0;
-        }
         .text-center {
             text-align: center;
-        }
-        .fw-700 {
-            font-weight: 700;
         }
 
         /* ── Edit modal ── */
@@ -1069,14 +1226,83 @@
             justify-content: flex-end;
         }
 
+        /* ── Approval Cards ── */
+        .approval-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .approval-card .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .approval-card .info .name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .approval-card .info .email {
+            font-size: 13px;
+            color: #718096;
+        }
+        .approval-card .info .role {
+            font-size: 12px;
+            font-weight: 500;
+            color: #2b6cb0;
+            background: #ebf8ff;
+            padding: 1px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            width: fit-content;
+        }
+        .approval-card .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .approval-card .actions .btn-sm {
+            padding: 4px 16px;
+            font-size: 12px;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0 12px;
+        }
+        .section-divider .line {
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        .section-divider .label {
+            font-weight: 700;
+            font-size: 15px;
+            color: #2d3748;
+            background: #fff;
+            padding: 0 12px;
+            white-space: nowrap;
+        }
+
         @media (max-width: 700px) {
             .header {
                 flex-direction: column;
-                align-items: flex-start;
-                padding: 16px 18px;
+                align-items: stretch;
+                padding: 14px 16px;
             }
             .header h1 {
-                font-size: 20px;
+                font-size: 18px;
+            }
+            .header .user-info {
+                justify-content: center;
+                padding: 4px 12px;
             }
             .card {
                 padding: 14px 16px;
@@ -1139,12 +1365,36 @@
             .staff-count-grid {
                 grid-template-columns: 1fr;
             }
-            .hod-grid-2,
-            .hod-grid-3 {
+            .hod-grid-2 {
                 grid-template-columns: 1fr;
             }
             .hod-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .hod-status-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .login-box {
+                padding: 28px 20px;
+            }
+            .approval-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .approval-card .actions {
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .hod-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .hod-status-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 16px;
             }
         }
     </style>
@@ -1153,7 +1403,70 @@
 
     <div class="app">
 
-        <!-- ─── HEADER ─── -->
+        <!-- ═══ LOGIN OVERLAY ═══ -->
+        <div class="login-overlay" id="loginOverlay">
+            <div class="login-box">
+                <div class="logo">
+                    <h2>📋 CIE Block Generator</h2>
+                    <p>Autonomous Examination Suite</p>
+                </div>
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>Email / Username</label>
+                        <input type="text" id="loginEmail" placeholder="Enter your email" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" />
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="loginRole">
+                            <option value="mainadmin">Main Admin</option>
+                            <option value="collegeadmin">College Admin</option>
+                            <option value="principal">Principal</option>
+                            <option value="hod">HOD / Coordinator</option>
+                            <option value="faculty">Faculty (View Only)</option>
+                        </select>
+                    </div>
+                    <button class="btn-login" id="loginBtn">🔐 Login</button>
+                    <div id="loginError" class="login-error"></div>
+                    <div class="register-link">
+                        Don't have an account? <a id="registerLink">Register here</a>
+                    </div>
+                </div>
+                <div id="registerForm" style="display:none;">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="regName" placeholder="Your full name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" id="regEmail" placeholder="Your email address" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" placeholder="Create a password" />
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="regRole">
+                            <option value="collegeadmin">College Admin</option>
+                            <option value="principal">Principal</option>
+                            <option value="hod">HOD / Coordinator</option>
+                            <option value="faculty">Faculty (View Only)</option>
+                        </select>
+                    </div>
+                    <button class="btn-login" id="registerBtn">📝 Register</button>
+                    <div id="registerError" class="login-error"></div>
+                    <div class="register-link">
+                        Already have an account? <a id="loginLink">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ HEADER ═══ -->
         <header class="header">
             <div>
                 <h1>
@@ -1161,12 +1474,14 @@
                     <small>Basaveshwar Engineering College, Bagalkote</small>
                 </h1>
             </div>
-            <div class="sub">
-                <span>📅 AY 2026-2027 &nbsp;|&nbsp; Summer &nbsp;|&nbsp; CIE-II</span>
+            <div class="user-info" id="userInfo">
+                <span id="userNameDisplay" style="font-weight:500;">Guest</span>
+                <span class="role-badge" id="userRoleDisplay">Guest</span>
+                <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
             </div>
         </header>
 
-        <!-- ─── METADATA BAR ─── -->
+        <!-- ═══ METADATA BAR ═══ -->
         <div class="metadata-bar" id="metadataBar">
             <div class="m-item">
                 <span class="m-label">🏛 College:</span>
@@ -1206,25 +1521,43 @@
             </div>
         </div>
 
-        <!-- ─── TABS ─── -->
-        <div class="tabs">
+        <!-- ═══ TABS ═══ -->
+        <div class="tabs" id="mainTabs">
             <button class="tab-btn" data-tab="tabSettings">⚙️ Settings</button>
             <button class="tab-btn" data-tab="tabGenerate">🚀 Generate</button>
             <button class="tab-btn active" data-tab="tabDashboard">📊 Dashboard</button>
             <button class="tab-btn" data-tab="tabHodDashboard">👔 HOD Dashboard</button>
             <button class="tab-btn" data-tab="tabTimetable">📅 Time Table</button>
             <button class="tab-btn" data-tab="tabDuty">📋 Assign Duties</button>
+            <button class="tab-btn" data-tab="tabApprovals" id="approvalsTabBtn" style="display:none;">✅ Approvals</button>
         </div>
 
-        <!-- ─── TAB 1: SETTINGS ─── -->
+        <!-- ═══ TAB: APPROVALS ═══ -->
+        <div id="tabApprovals" class="tab-pane">
+            <div class="card">
+                <div class="card-title">
+                    ✅ Pending Approvals
+                    <span class="badge badge-blue" id="pendingCount">0</span>
+                </div>
+                <div id="approvalsList">
+                    <p class="text-muted">No pending approvals.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📋 All Users</div>
+                <div id="allUsersList"></div>
+            </div>
+        </div>
+
+        <!-- ═══ TAB 1: SETTINGS ═══ -->
         <div id="tabSettings" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    ⚙️ Settings
+                    <span>⚙️ Settings</span>
+                    <span class="section-num">Part 1 — Configuration</span>
                     <span class="badge">Rooms · Branches · Semesters · Divisions · Staff</span>
                 </div>
                 <div class="settings-grid">
-                    <!-- Rooms with Seats -->
                     <div class="settings-box">
                         <div class="box-title">
                             🏠 Rooms &amp; Seats
@@ -1241,10 +1574,8 @@
                             <span class="preset" data-rooms="101-120:30,201-225:30">Default (101-120, 201-225) 30 seats</span>
                             <span class="preset" data-rooms="101-110:40,111-120:30,201-215:40,216-225:30">Mixed (40/30 seats)</span>
                         </div>
-                        <div class="text-sm mt-8" style="color:#718096;">💡 Each room has a seat capacity. Blocks are allocated to rooms based on capacity.</div>
                     </div>
 
-                    <!-- Branches -->
                     <div class="settings-box">
                         <div class="box-title">
                             🏛 Branches
@@ -1261,7 +1592,6 @@
                         </div>
                     </div>
 
-                    <!-- Semesters -->
                     <div class="settings-box">
                         <div class="box-title">
                             📚 Semesters
@@ -1278,7 +1608,6 @@
                         </div>
                     </div>
 
-                    <!-- Divisions -->
                     <div class="settings-box">
                         <div class="box-title">
                             📋 Divisions
@@ -1295,7 +1624,6 @@
                         </div>
                     </div>
 
-                    <!-- Staff Configuration -->
                     <div class="settings-box" style="grid-column: 1 / -1;">
                         <div class="box-title">
                             👨‍🏫 Staff Configuration
@@ -1315,17 +1643,16 @@
                                 <input type="number" id="staffAssistant" value="8" min="0" />
                             </div>
                             <div class="field">
-                                <label>🧑‍🏫 Other Staff (CS-Staff)</label>
+                                <label>🧑‍🏫 Other Staff</label>
                                 <div style="display:flex; gap:4px; flex-wrap:wrap;">
                                     <input type="text" id="staffOtherInput" placeholder="e.g. CS-Staff-1" style="flex:1; min-width:100px;" />
                                     <button class="btn-sm" id="addStaffOtherBtn">Add</button>
                                 </div>
                                 <div class="item-list" id="staffOtherList" style="margin-top:4px;"></div>
-                                <div style="font-size:11px; color:#718096; margin-top:2px;">Add custom staff names (e.g., CS-Staff-1, Lab-Assistant-1)</div>
                             </div>
                         </div>
                         <div class="mt-8">
-                            <button class="btn btn-sm btn-success" id="saveStaffBtn">💾 Save Staff Configuration</button>
+                            <button class="btn btn-sm btn-success" id="saveStaffBtn">💾 Save Staff</button>
                             <span class="text-sm text-success" id="staffStatus" style="margin-left:12px;"></span>
                         </div>
                     </div>
@@ -1338,7 +1665,8 @@
         <div id="tabGenerate" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    🚀 Generate Blocks
+                    <span>🚀 Generate Blocks</span>
+                    <span class="section-num">Part 2 — Block Creation</span>
                     <span class="badge badge-blue">Select options &amp; generate</span>
                 </div>
                 <div class="form-grid">
@@ -1380,7 +1708,6 @@
                             <option value="S5">S5: 4:00 – 5:30 PM</option>
                         </select>
                     </div>
-                    <!-- Room Selection -->
                     <div class="field" style="grid-column: span 2;">
                         <label>🎯 Select Rooms (Manual Assignment)</label>
                         <select id="genRooms" multiple size="4" style="height:auto; min-height:80px;">
@@ -1389,7 +1716,7 @@
                         <div class="room-hint">
                             <span id="genRoomsCount">0</span> rooms selected.
                             <button type="button" class="btn btn-sm btn-primary" id="refreshRoomsBtn" style="padding:2px 10px; font-size:11px;">🔄 Refresh</button>
-                            <span style="margin-left:12px; color:#718096;">Leave empty to auto‑assign randomly.</span>
+                            <span style="margin-left:12px; color:#718096;">Leave empty to auto‑assign.</span>
                         </div>
                     </div>
                 </div>
@@ -1407,14 +1734,13 @@
         <div id="tabDashboard" class="tab-pane active">
             <div class="card" id="outputCard">
                 <div class="card-title">
-                    📊 Dashboard
+                    <span>📊 Dashboard</span>
+                    <span class="section-num">Part 3 — Overview</span>
                     <span class="badge badge-blue" id="blockCountBadge">0 Blocks</span>
                     <span class="badge badge-blue" id="studentCountBadge">0 Students</span>
                     <span class="badge badge-blue" id="roomCountBadge">0 Rooms Used</span>
                     <span class="badge badge-green" id="batchCountBadge">Batch 1</span>
                 </div>
-
-                <!-- Stats -->
                 <div class="stats-grid" id="statsGrid">
                     <div class="stat-item"><div class="num" id="statRooms">0</div><div class="label">Rooms Allocated</div></div>
                     <div class="stat-item"><div class="num" id="statBlocks">0</div><div class="label">Total Blocks</div></div>
@@ -1423,11 +1749,7 @@
                     <div class="stat-item"><div class="num" id="statBatches">1</div><div class="label">Batches Added</div></div>
                     <div class="stat-item"><div class="num" id="statTT">0</div><div class="label">Time Tables</div></div>
                 </div>
-
-                <!-- Block List -->
                 <div id="blockOutput" class="mt-8"></div>
-
-                <!-- Time Tables List -->
                 <div id="ttOutputList" class="mt-16 border-top">
                     <div class="card-title" style="margin-bottom:8px;">
                         📅 Generated Time Tables
@@ -1435,7 +1757,6 @@
                     </div>
                     <div id="ttListContainer"></div>
                 </div>
-
                 <div class="mt-12">
                     <button class="btn btn-warning" id="downloadPdfBtn" disabled>📄 Download Blocks PDF</button>
                 </div>
@@ -1450,102 +1771,46 @@
         <div id="tabHodDashboard" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    👔 HOD Dashboard · Examination Overview
+                    <span>👔 HOD Dashboard</span>
+                    <span class="section-num">Part 4 — Examination Overview</span>
                     <span class="badge badge-purple">Head of Department</span>
                 </div>
-
-                <!-- Quick Stats -->
                 <div class="hod-stats" id="hodStats">
-                    <div class="hod-stat-card">
-                        <span class="icon">📋</span>
-                        <div class="num" id="hodTotalBlocks">0</div>
-                        <div class="label">Total Blocks</div>
-                    </div>
-                    <div class="hod-stat-card">
-                        <span class="icon">🧑‍🎓</span>
-                        <div class="num" id="hodTotalStudents">0</div>
-                        <div class="label">Total Students</div>
-                    </div>
-                    <div class="hod-stat-card">
-                        <span class="icon">🏠</span>
-                        <div class="num" id="hodRoomsUsed">0</div>
-                        <div class="label">Rooms Used</div>
-                    </div>
-                    <div class="hod-stat-card">
-                        <span class="icon">📚</span>
-                        <div class="num" id="hodBatches">0</div>
-                        <div class="label">Batches</div>
-                    </div>
-                    <div class="hod-stat-card">
-                        <span class="icon">👨‍🏫</span>
-                        <div class="num" id="hodTotalStaff">0</div>
-                        <div class="label">Total Staff</div>
-                    </div>
-                    <div class="hod-stat-card">
-                        <span class="icon">📅</span>
-                        <div class="num" id="hodTTCount">0</div>
-                        <div class="label">Time Tables</div>
-                    </div>
+                    <div class="hod-stat-card"><span class="icon">📋</span><div class="num" id="hodTotalBlocks">0</div><div class="label">Total Blocks</div></div>
+                    <div class="hod-stat-card"><span class="icon">🧑‍🎓</span><div class="num" id="hodTotalStudents">0</div><div class="label">Total Students</div></div>
+                    <div class="hod-stat-card"><span class="icon">🏠</span><div class="num" id="hodRoomsUsed">0</div><div class="label">Rooms Used</div></div>
+                    <div class="hod-stat-card"><span class="icon">📚</span><div class="num" id="hodBatches">0</div><div class="label">Batches</div></div>
+                    <div class="hod-stat-card"><span class="icon">👨‍🏫</span><div class="num" id="hodTotalStaff">0</div><div class="label">Total Staff</div></div>
+                    <div class="hod-stat-card"><span class="icon">📅</span><div class="num" id="hodTTCount">0</div><div class="label">Time Tables</div></div>
                 </div>
-
-                <!-- Status Grid -->
                 <div class="hod-status-grid" id="hodStatusGrid">
-                    <div class="hod-status-item">
-                        <span class="dot green"></span>
-                        <span class="s-label">Blocks Generated</span>
-                        <span class="s-value" id="hodStatusBlocks">No</span>
-                    </div>
-                    <div class="hod-status-item">
-                        <span class="dot blue"></span>
-                        <span class="s-label">Duties Assigned</span>
-                        <span class="s-value" id="hodStatusDuties">0 / 0</span>
-                    </div>
-                    <div class="hod-status-item">
-                        <span class="dot yellow"></span>
-                        <span class="s-label">Time Tables</span>
-                        <span class="s-value" id="hodStatusTT">0</span>
-                    </div>
-                    <div class="hod-status-item">
-                        <span class="dot green"></span>
-                        <span class="s-label">Staff Configured</span>
-                        <span class="s-value" id="hodStatusStaff">0</span>
-                    </div>
+                    <div class="hod-status-item"><span class="dot green"></span><span class="s-label">Blocks Generated</span><span class="s-value" id="hodStatusBlocks">No</span></div>
+                    <div class="hod-status-item"><span class="dot blue"></span><span class="s-label">Duties Assigned</span><span class="s-value" id="hodStatusDuties">0 / 0</span></div>
+                    <div class="hod-status-item"><span class="dot yellow"></span><span class="s-label">Time Tables</span><span class="s-value" id="hodStatusTT">0</span></div>
+                    <div class="hod-status-item"><span class="dot green"></span><span class="s-label">Staff Configured</span><span class="s-value" id="hodStatusStaff">0</span></div>
                 </div>
-
-                <!-- Two Column Layout -->
                 <div class="hod-grid-2">
-                    <!-- Faculty Duty Distribution -->
                     <div>
                         <div class="card-title" style="font-size:15px; margin-bottom:8px;">
                             👨‍🏫 Faculty Duty Distribution
                             <span class="badge badge-blue" id="hodDutyCount">0 assigned</span>
                         </div>
-                        <div class="hod-duty-list" id="hodDutyList">
-                            <p class="text-muted">No duties assigned yet.</p>
-                        </div>
+                        <div class="hod-duty-list" id="hodDutyList"><p class="text-muted">No duties assigned yet.</p></div>
                     </div>
-
-                    <!-- Recent Blocks -->
                     <div>
                         <div class="card-title" style="font-size:15px; margin-bottom:8px;">
                             🏠 Recent Block Allocations
                             <span class="badge badge-blue" id="hodRecentCount">0</span>
                         </div>
-                        <div class="hod-block-preview" id="hodBlockPreview">
-                            <p class="text-muted">No blocks generated yet.</p>
-                        </div>
+                        <div class="hod-block-preview" id="hodBlockPreview"><p class="text-muted">No blocks generated yet.</p></div>
                     </div>
                 </div>
-
-                <!-- Time Tables Summary -->
                 <div class="mt-16 border-top">
                     <div class="card-title" style="font-size:15px; margin-bottom:8px;">
                         📅 Saved Time Tables
                         <span class="badge badge-green" id="hodTTListCount">0</span>
                     </div>
-                    <div class="hod-tt-list" id="hodTTList">
-                        <p class="text-muted">No time tables saved.</p>
-                    </div>
+                    <div class="hod-tt-list" id="hodTTList"><p class="text-muted">No time tables saved.</p></div>
                 </div>
             </div>
         </div>
@@ -1554,10 +1819,10 @@
         <div id="tabTimetable" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    📅 Time Table Generator
-                    <span class="badge badge-blue">Two templates: Standard · Block Arrangement</span>
+                    <span>📅 Time Table Generator</span>
+                    <span class="section-num">Part 3 — Scheduling</span>
+                    <span class="badge badge-blue">Two templates</span>
                 </div>
-
                 <div class="template-toggle">
                     <label class="active" id="ttStandardLabel">
                         <input type="radio" name="ttTemplate" value="standard" checked /> Standard (Sessions × Days)
@@ -1566,49 +1831,15 @@
                         <input type="radio" name="ttTemplate" value="block" /> Block Arrangement (Left/Right)
                     </label>
                 </div>
-
                 <div class="form-grid">
-                    <div class="field">
-                        <label>Branch</label>
-                        <select id="ttBranch"></select>
-                    </div>
-                    <div class="field">
-                        <label>Semester</label>
-                        <select id="ttSemester"></select>
-                    </div>
-                    <div class="field">
-                        <label>Date</label>
-                        <input type="date" id="ttDate" />
-                    </div>
-                    <div class="field" id="ttTimeField">
-                        <label>Time</label>
-                        <input type="text" id="ttTime" value="10:00am - 11:30am" />
-                    </div>
-                    <div class="field" id="ttDaysField">
-                        <label>Days</label>
-                        <select id="ttDays">
-                            <option value="1">1 Day</option>
-                            <option value="2" selected>2 Days</option>
-                            <option value="3">3 Days</option>
-                            <option value="4">4 Days</option>
-                            <option value="5">5 Days</option>
-                        </select>
-                    </div>
-                    <div class="field" id="ttSessionsField">
-                        <label>Sessions</label>
-                        <select id="ttSessions">
-                            <option value="2">2 Sessions</option>
-                            <option value="3" selected>3 Sessions</option>
-                            <option value="4">4 Sessions</option>
-                            <option value="5">5 Sessions</option>
-                        </select>
-                    </div>
-                    <div class="field" id="ttRowsField" style="display:none;">
-                        <label>Rows (Blocks)</label>
-                        <input type="number" id="ttRows" value="4" min="1" max="20" />
-                    </div>
+                    <div class="field"><label>Branch</label><select id="ttBranch"></select></div>
+                    <div class="field"><label>Semester</label><select id="ttSemester"></select></div>
+                    <div class="field"><label>Date</label><input type="date" id="ttDate" /></div>
+                    <div class="field" id="ttTimeField"><label>Time</label><input type="text" id="ttTime" value="10:00am - 11:30am" /></div>
+                    <div class="field" id="ttDaysField"><label>Days</label><select id="ttDays"><option value="1">1 Day</option><option value="2" selected>2 Days</option><option value="3">3 Days</option><option value="4">4 Days</option><option value="5">5 Days</option></select></div>
+                    <div class="field" id="ttSessionsField"><label>Sessions</label><select id="ttSessions"><option value="2">2 Sessions</option><option value="3" selected>3 Sessions</option><option value="4">4 Sessions</option><option value="5">5 Sessions</option></select></div>
+                    <div class="field" id="ttRowsField" style="display:none;"><label>Rows (Blocks)</label><input type="number" id="ttRows" value="4" min="1" max="20" /></div>
                 </div>
-
                 <div class="btn-group">
                     <button class="btn btn-primary" id="ttGenerateBtn">📋 Generate Time Table</button>
                     <button class="btn btn-warning" id="ttDownloadPdfBtn" disabled>📄 Download PDF</button>
@@ -1618,33 +1849,18 @@
                 </div>
                 <div id="ttStatus" class="text-sm text-success mt-8 hidden"></div>
             </div>
-
             <div class="card" id="ttOutputCard">
                 <div class="card-title">
                     📅 Time Table
                     <span class="badge badge-green" id="ttHeading">Branch: -- · Sem: -- · Date: --</span>
                 </div>
                 <div id="ttStandardContainer">
-                    <div class="tt-wrapper" id="ttGridWrapper">
-                        <table class="tt-table" id="ttTable">
-                            <thead id="ttHead"></thead>
-                            <tbody id="ttBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="ttEmptyMsg" class="text-center text-muted" style="padding:25px 0;">
-                        <p>Click "Generate Time Table" to create the grid.</p>
-                    </div>
+                    <div class="tt-wrapper" id="ttGridWrapper"><table class="tt-table" id="ttTable"><thead id="ttHead"></thead><tbody id="ttBody"></tbody></table></div>
+                    <div id="ttEmptyMsg" class="text-center text-muted" style="padding:25px 0;"><p>Click "Generate Time Table" to create the grid.</p></div>
                 </div>
                 <div id="ttBlockContainer" style="display:none;">
-                    <div class="tt-wrapper" id="ttBlockWrapper">
-                        <table class="ba-table" id="baTable">
-                            <thead id="baHead"></thead>
-                            <tbody id="baBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="baEmptyMsg" class="text-center text-muted" style="padding:25px 0;">
-                        <p>Click "Generate Time Table" to create the Block Arrangement.</p>
-                    </div>
+                    <div class="tt-wrapper" id="ttBlockWrapper"><table class="ba-table" id="baTable"><thead id="baHead"></thead><tbody id="baBody"></tbody></table></div>
+                    <div id="baEmptyMsg" class="text-center text-muted" style="padding:25px 0;"><p>Click "Generate Time Table" to create the Block Arrangement.</p></div>
                 </div>
             </div>
         </div>
@@ -1653,21 +1869,20 @@
         <div id="tabDuty" class="tab-pane">
             <div class="card">
                 <div class="card-title">
-                    📋 Assign Duties (Invigilators)
+                    <span>📋 Assign Duties (Invigilators)</span>
+                    <span class="section-num">Part 4 — Allocation</span>
                     <span class="badge badge-blue" id="dutyBlockCount">0 Blocks</span>
                     <span class="badge badge-green" id="dutyStaffSummary">Staff: 0</span>
                 </div>
                 <div class="btn-group">
-                    <button class="btn btn-success" id="autoAllotBtn">🤖 Auto Allot (Assistant → Associate → Professor → Other)</button>
+                    <button class="btn btn-success" id="autoAllotBtn">🤖 Auto Allot</button>
                     <button class="btn btn-primary" id="saveDutyBtn">💾 Save Duties</button>
                     <button class="btn btn-warning" id="downloadDutyPdfBtn" disabled>📄 Download Duty Roster PDF</button>
                     <button class="btn btn-danger" id="clearDutyBtn">🗑️ Clear All Duties</button>
                 </div>
                 <div id="dutyStatus" class="text-sm text-success mt-8 hidden"></div>
                 <div class="duty-table-wrap">
-                    <div id="dutyTableContainer">
-                        <p class="text-muted">No blocks available. Generate blocks first.</p>
-                    </div>
+                    <div id="dutyTableContainer"><p class="text-muted">No blocks available. Generate blocks first.</p></div>
                 </div>
             </div>
         </div>
@@ -1675,7 +1890,7 @@
         <!-- ─── EDIT MODAL ─── -->
         <div class="modal-overlay hidden" id="editModal">
             <div class="modal-box">
-                <div class="modal-title" id="editModalTitle">Edit Block</div>
+                <div class="modal-title" id="editModalTitle">Edit Item</div>
                 <div id="editModalBody"></div>
                 <div class="modal-actions">
                     <button class="btn btn-sm" id="editModalCancel">Cancel</button>
@@ -1689,15 +1904,407 @@
         <div id="ttPdfContent" style="display:none;"></div>
         <div id="dutyPdfContent" style="display:none;"></div>
 
-        <!-- ─── FOOTER ─── -->
         <div style="text-align:center; margin-top:14px; font-size:11px; color:#a0aec0; border-top:1px solid #edf2f7; padding-top:12px;">
-            All processing is local · No data uploaded · Data stays in your browser
+            All processing is local · Data stored in your browser (localStorage)
         </div>
     </div>
 
     <script>
         (function() {
             'use strict';
+
+            // ═══════════════════════════════════════════════════════════════════
+            //  AUTH SYSTEM
+            // ═══════════════════════════════════════════════════════════════════
+
+            const FIXED_ADMIN = {
+                email: 'mmbbec@gmail.com',
+                password: 'mahadevmb',
+                name: 'Main Admin',
+                role: 'mainadmin',
+                status: 'approved'
+            };
+
+            let currentUser = null;
+            let users = [];
+            let pendingUsers = [];
+
+            function loadUsers() {
+                try {
+                    const data = localStorage.getItem('cie_users');
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        users = parsed.users || [];
+                        pendingUsers = parsed.pending || [];
+                        return;
+                    }
+                } catch (e) {}
+                // Default: only main admin exists
+                users = [FIXED_ADMIN];
+                pendingUsers = [];
+                saveUsers();
+            }
+
+            function saveUsers() {
+                try {
+                    localStorage.setItem('cie_users', JSON.stringify({ users, pending: pendingUsers }));
+                } catch (e) {}
+            }
+
+            function findUser(email, role) {
+                return users.find(u => u.email === email && u.role === role);
+            }
+
+            function findPending(email, role) {
+                return pendingUsers.find(u => u.email === email && u.role === role);
+            }
+
+            function loginUser(email, password, role) {
+                // Check fixed admin
+                if (email === FIXED_ADMIN.email && password === FIXED_ADMIN.password && role === 'mainadmin') {
+                    return { success: true, user: FIXED_ADMIN };
+                }
+                // Check registered users
+                const user = findUser(email, role);
+                if (user && user.password === password && user.status === 'approved') {
+                    return { success: true, user: user };
+                }
+                // Check pending
+                const pending = findPending(email, role);
+                if (pending) {
+                    return { success: false, message: '⏳ Your account is pending approval.' };
+                }
+                return { success: false, message: '❌ Invalid credentials or role.' };
+            }
+
+            function registerUser(name, email, password, role) {
+                if (!name || !email || !password) {
+                    return { success: false, message: '⚠️ Please fill all fields.' };
+                }
+                if (role === 'mainadmin') {
+                    return { success: false, message: '⚠️ Cannot register as Main Admin.' };
+                }
+                if (findUser(email, role)) {
+                    return { success: false, message: '⚠️ User with this email and role already exists.' };
+                }
+                if (findPending(email, role)) {
+                    return { success: false, message: '⚠️ You already have a pending request for this role.' };
+                }
+                const newUser = {
+                    name: name.trim(),
+                    email: email.trim(),
+                    password: password.trim(),
+                    role: role,
+                    status: 'pending',
+                    registeredAt: new Date().toISOString()
+                };
+                pendingUsers.push(newUser);
+                saveUsers();
+                return { success: true, message: '✅ Registration successful! Waiting for approval.' };
+            }
+
+            function getApprovalRequests(role) {
+                // Returns pending requests for a specific approver role
+                const approverMap = {
+                    mainadmin: [], // main admin approves college admin
+                    collegeadmin: ['collegeadmin'], // college admin approves principal
+                    principal: ['principal'], // principal approves hod
+                    hod: [], // HOD doesn't approve anyone in this flow
+                    faculty: []
+                };
+                const targetRoles = [];
+                if (role === 'mainadmin') targetRoles.push('collegeadmin');
+                else if (role === 'collegeadmin') targetRoles.push('principal');
+                else if (role === 'principal') targetRoles.push('hod');
+                return pendingUsers.filter(u => targetRoles.includes(u.role));
+            }
+
+            function approveUser(email, role) {
+                const idx = pendingUsers.findIndex(u => u.email === email && u.role === role);
+                if (idx === -1) return false;
+                const user = pendingUsers[idx];
+                user.status = 'approved';
+                users.push(user);
+                pendingUsers.splice(idx, 1);
+                saveUsers();
+                return true;
+            }
+
+            function rejectUser(email, role) {
+                const idx = pendingUsers.findIndex(u => u.email === email && u.role === role);
+                if (idx === -1) return false;
+                pendingUsers.splice(idx, 1);
+                saveUsers();
+                return true;
+            }
+
+            function getRoleDisplay(role) {
+                const map = {
+                    mainadmin: 'Main Admin',
+                    collegeadmin: 'College Admin',
+                    principal: 'Principal',
+                    hod: 'HOD / Coordinator',
+                    faculty: 'Faculty'
+                };
+                return map[role] || role;
+            }
+
+            function getUserApprovalStatus(email, role) {
+                const user = findUser(email, role);
+                if (user) return user.status;
+                const pending = findPending(email, role);
+                if (pending) return 'pending';
+                return null;
+            }
+
+            // ─── Login UI ───
+            const loginOverlay = document.getElementById('loginOverlay');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPassword = document.getElementById('loginPassword');
+            const loginRole = document.getElementById('loginRole');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginError = document.getElementById('loginError');
+            const registerLink = document.getElementById('registerLink');
+            const loginLink = document.getElementById('loginLink');
+            const regName = document.getElementById('regName');
+            const regEmail = document.getElementById('regEmail');
+            const regPassword = document.getElementById('regPassword');
+            const regRole = document.getElementById('regRole');
+            const registerBtn = document.getElementById('registerBtn');
+            const registerError = document.getElementById('registerError');
+
+            // User display
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userRoleDisplay = document.getElementById('userRoleDisplay');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const approvalsTabBtn = document.getElementById('approvalsTabBtn');
+
+            function showLoginForm() {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginError.textContent = '';
+                registerError.textContent = '';
+            }
+
+            function showRegisterForm() {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginError.textContent = '';
+                registerError.textContent = '';
+            }
+
+            registerLink.addEventListener('click', showRegisterForm);
+            loginLink.addEventListener('click', showLoginForm);
+
+            loginBtn.addEventListener('click', function() {
+                const email = loginEmail.value.trim();
+                const password = loginPassword.value.trim();
+                const role = loginRole.value;
+                if (!email || !password) {
+                    loginError.textContent = '⚠️ Please enter email and password.';
+                    return;
+                }
+                const result = loginUser(email, password, role);
+                if (result.success) {
+                    currentUser = result.user;
+                    loginOverlay.classList.add('hidden');
+                    updateUIForUser();
+                } else {
+                    loginError.textContent = result.message;
+                }
+            });
+
+            loginEmail.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
+            loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginBtn.click(); });
+
+            registerBtn.addEventListener('click', function() {
+                const name = regName.value.trim();
+                const email = regEmail.value.trim();
+                const password = regPassword.value.trim();
+                const role = regRole.value;
+                const result = registerUser(name, email, password, role);
+                if (result.success) {
+                    registerError.textContent = result.message;
+                    registerError.style.color = '#38a169';
+                    setTimeout(() => {
+                        showLoginForm();
+                        loginEmail.value = email;
+                        loginRole.value = role;
+                        registerError.textContent = '';
+                    }, 2000);
+                } else {
+                    registerError.textContent = result.message;
+                    registerError.style.color = '#e53e3e';
+                }
+            });
+
+            regName.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerBtn.click(); });
+            regEmail.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerBtn.click(); });
+            regPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerBtn.click(); });
+
+            logoutBtn.addEventListener('click', function() {
+                currentUser = null;
+                loginOverlay.classList.remove('hidden');
+                showLoginForm();
+                loginEmail.value = '';
+                loginPassword.value = '';
+                loginError.textContent = '';
+                // Reset UI
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-tab="tabDashboard"]').classList.add('active');
+                document.getElementById('tabDashboard').classList.add('active');
+                updateUIForUser();
+            });
+
+            function updateUIForUser() {
+                if (!currentUser) {
+                    userNameDisplay.textContent = 'Guest';
+                    userRoleDisplay.textContent = 'Guest';
+                    return;
+                }
+                userNameDisplay.textContent = currentUser.name || currentUser.email;
+                userRoleDisplay.textContent = getRoleDisplay(currentUser.role);
+
+                // Show approvals tab for main admin, college admin, principal
+                const showApprovals = ['mainadmin', 'collegeadmin', 'principal'].includes(currentUser.role);
+                approvalsTabBtn.style.display = showApprovals ? 'inline-block' : 'none';
+
+                // Hide/show tabs based on role
+                const allTabs = document.querySelectorAll('.tab-btn');
+                allTabs.forEach(tab => {
+                    const tabId = tab.dataset.tab;
+                    if (tabId === 'tabApprovals') {
+                        tab.style.display = showApprovals ? 'inline-block' : 'none';
+                        return;
+                    }
+                    // All other tabs visible to logged-in users
+                });
+
+                // Load approvals if on approvals tab
+                if (showApprovals && document.getElementById('tabApprovals').classList.contains('active')) {
+                    renderApprovals();
+                }
+
+                // Re-render all data
+                renderDashboard();
+                renderHodDashboard();
+                renderDutyTable();
+                refreshRoomList();
+                renderTTList();
+            }
+
+            function renderApprovals() {
+                if (!currentUser) return;
+                const requests = getApprovalRequests(currentUser.role);
+                const container = document.getElementById('approvalsList');
+                const pendingCount = document.getElementById('pendingCount');
+
+                if (requests.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No pending approvals.</p>';
+                    pendingCount.textContent = '0';
+                } else {
+                    let html = '';
+                    requests.forEach((u, idx) => {
+                        const roleLabel = getRoleDisplay(u.role);
+                        html += `
+                            <div class="approval-card">
+                                <div class="info">
+                                    <div class="name">${u.name}</div>
+                                    <div class="email">${u.email}</div>
+                                    <div class="role">${roleLabel}</div>
+                                </div>
+                                <div class="actions">
+                                    <button class="btn btn-success btn-sm approve-btn" data-email="${u.email}" data-role="${u.role}">✅ Approve</button>
+                                    <button class="btn btn-danger btn-sm reject-btn" data-email="${u.email}" data-role="${u.role}">❌ Reject</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                    pendingCount.textContent = requests.length;
+
+                    container.querySelectorAll('.approve-btn').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const email = this.dataset.email;
+                            const role = this.dataset.role;
+                            if (approveUser(email, role)) {
+                                renderApprovals();
+                                // If the approved user is the current user's role, update
+                                if (currentUser.role === role && currentUser.email === email) {
+                                    // They would need to re-login, but we just refresh
+                                }
+                                // Refresh user list
+                                renderAllUsers();
+                            }
+                        });
+                    });
+                    container.querySelectorAll('.reject-btn').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const email = this.dataset.email;
+                            const role = this.dataset.role;
+                            if (rejectUser(email, role)) {
+                                renderApprovals();
+                                renderAllUsers();
+                            }
+                        });
+                    });
+                }
+                renderAllUsers();
+            }
+
+            function renderAllUsers() {
+                const container = document.getElementById('allUsersList');
+                if (!container) return;
+                const all = [...users, ...pendingUsers];
+                if (all.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No users registered.</p>';
+                    return;
+                }
+                let html = '';
+                all.forEach(u => {
+                    const status = u.status || 'approved';
+                    const statusLabel = status === 'approved' ? '✅ Approved' : (status === 'pending' ? '⏳ Pending' :
+                        '❌ Rejected');
+                    const roleLabel = getRoleDisplay(u.role);
+                    html += `
+                        <div class="approval-card" style="background:#fff;">
+                            <div class="info">
+                                <div class="name">${u.name || u.email}</div>
+                                <div class="email">${u.email}</div>
+                                <div class="role">${roleLabel} · ${statusLabel}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            // ─── Check if user has permission for a role-based action ───
+            function hasPermission(requiredRole) {
+                if (!currentUser) return false;
+                const roleHierarchy = {
+                    mainadmin: 5,
+                    collegeadmin: 4,
+                    principal: 3,
+                    hod: 2,
+                    faculty: 1
+                };
+                return (roleHierarchy[currentUser.role] || 0) >= (roleHierarchy[requiredRole] || 0);
+            }
+
+            function isAtLeast(requiredRole) {
+                return hasPermission(requiredRole);
+            }
+
+            // ─── Load users on init ───
+            loadUsers();
+
+            // ═══════════════════════════════════════════════════════════════════
+            //  CORE APPLICATION LOGIC
+            // ═══════════════════════════════════════════════════════════════════
 
             // ─── DOM refs ───
             const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1707,7 +2314,8 @@
                 dashboard: document.getElementById('tabDashboard'),
                 hoddashboard: document.getElementById('tabHodDashboard'),
                 timetable: document.getElementById('tabTimetable'),
-                duty: document.getElementById('tabDuty')
+                duty: document.getElementById('tabDuty'),
+                approvals: document.getElementById('tabApprovals')
             };
 
             // Metadata
@@ -1745,7 +2353,7 @@
 
             const settingsStatus = document.getElementById('settingsStatus');
 
-            // Staff Settings
+            // Staff
             const staffProfessor = document.getElementById('staffProfessor');
             const staffAssociate = document.getElementById('staffAssociate');
             const staffAssistant = document.getElementById('staffAssistant');
@@ -1874,9 +2482,8 @@
             let savedTimeTables = [];
             let ttIdCounter = 0;
 
-            let dutyAssignments = {}; // key: blockId, value: { name, category }
+            let dutyAssignments = {};
 
-            // Staff data
             let staffConfig = {
                 professor: 2,
                 associate: 4,
@@ -1902,7 +2509,192 @@
                 'S5': '#ebdef0'
             };
 
-            // ─── Defaults ───
+            // ─── Faculty list (as provided by user) ───
+            const DEFAULT_FACULTY = [
+                { name: 'Dr. S. R. Biradar', desig: 'Professor' },
+                { name: 'Dr. J. D. Kulkarni', desig: 'Professor' },
+                { name: 'Dr. V. B. Pagi', desig: 'Professor' },
+                { name: 'Dr. S. V. Gurushantanavar', desig: 'Associate Professor' },
+                { name: 'Dr Mahadev Biradar', desig: 'Associate Professor' },
+                { name: 'Dr Vidya M Shettar', desig: 'Associate Professor' },
+                { name: 'Dr. K. Rama Prasad', desig: 'Associate Professor' },
+                { name: 'Dr. Anand H Agadi', desig: 'Assistant Professor' },
+                { name: 'Prof. Ishwar Maharudrappa', desig: 'Assistant Professor' },
+                { name: 'Prof. V M Pudakalkatti', desig: 'Assistant Professor' },
+                { name: 'Dr. Pradeep N Hiremath', desig: 'Assistant Professor' },
+                { name: 'Dr. Abhilash L. Nandeppanavar', desig: 'Assistant Professor' },
+                { name: 'Prof. Ratnaprabha. P. Araganji', desig: 'Associate Professor' },
+                { name: 'Dr. K. Chandrasekhar', desig: 'Professor' },
+                { name: 'Dr. Jayashri G. Ghantimath', desig: 'Professor' },
+                { name: 'Shriram S. Bopardekar', desig: 'Associate Professor' },
+                { name: 'Dr. Vibha', desig: 'Assistant Professor' },
+                { name: 'Dr. Aishwarya Nadgir', desig: 'Assistant Professor' },
+                { name: 'Dr. S. K. Patil', desig: 'Associate Professor' },
+                { name: 'Dr. P. L. Timmanagoudar', desig: 'Professor' },
+                { name: 'Dr. V. R. Kattimani', desig: 'Professor' },
+                { name: 'Smt. K. M. Shettar', desig: 'Assistant Professor' },
+                { name: 'Dr. Basavarajeshwari G. Hokarani', desig: 'Assistant Professor' },
+                { name: 'Smt. Shanta Byadagi', desig: 'Assistant Professor' },
+                { name: 'Miss. Nidhi P. Koranmath', desig: 'Assistant Professor' },
+                { name: 'Dr. R. N. Herkal', desig: 'Dean' },
+                { name: 'Dr. B. R. Hiremath', desig: 'Professor' },
+                { name: 'Dr. Shankar H. Sanni', desig: 'Associate Professor' },
+                { name: 'Dr. Santhosh M. Malkapur', desig: 'Professor' },
+                { name: 'Dr. Adarsh S. Chatra', desig: 'Professor' },
+                { name: 'Dr. Shreeshail Heggond', desig: 'Associate Professor' },
+                { name: 'Dr.Basappa. Meti', desig: 'Associate Professor' },
+                { name: 'Dr.Gangadhar.B.Megeri', desig: 'Associate Professor' },
+                { name: 'Dr. Mahantesh M. Hanamasagar', desig: 'Associate Professor' },
+                { name: 'Mr. B. S. Haravi', desig: 'Associate Professor' },
+                { name: 'Mr. Sunilkumar.M. Kalagudi', desig: 'Associate Professor' },
+                { name: 'Mr. Basavanagouda A Patil', desig: 'Assistant Professor' },
+                { name: 'Dr. Jayalatha N A', desig: 'Assistant Professor' },
+                { name: 'Dr. Srinivas F. Chitragar', desig: 'Assistant Professor' },
+                { name: 'Ms. Geetanjali Patil', desig: 'Assistant Professor' },
+                { name: 'Mr. Gururaj Bandihal', desig: 'Assistant Professor' },
+                { name: 'Mr. Manjunath Munenakoppa', desig: 'Assistant Professor' },
+                { name: 'Mr. D. B. Sajjanar', desig: 'Assistant Professor' },
+                { name: 'Mr. Kiran Koraddi', desig: 'Assistant Professor' },
+                { name: 'Mr. Kushnappa B Kenchakanavar', desig: 'Assistant Professor' },
+                { name: 'Mr. Shashikant A Kambali', desig: 'Assistant Professor' },
+                { name: 'Mr. Prakash S Bangarashetti', desig: 'Assistant Professor' },
+                { name: 'Mr. Ramesh Baragani', desig: 'Assistant Professor' },
+                { name: 'Ms. Seema Shringeri', desig: 'Assistant Professor' },
+                { name: 'Mr. Shrishail B Chiniwalar', desig: 'Assistant Professor' },
+                { name: 'Mr. Gurubasav Hiremath', desig: 'Assistant Professor' },
+                { name: 'Dr. Raghuram L. Naik', desig: 'Professor' },
+                { name: 'Prof. Rajshekhar S. Allurkar', desig: 'Associate Professor' },
+                { name: 'Dr. Basanagouda Ronad', desig: 'Associate Professor' },
+                { name: 'Prof. Sunita S. Tambakad', desig: 'Assistant Professor' },
+                { name: 'Dr. Sangamesh Y. Goudappanavar', desig: 'Assistant Professor' },
+                { name: 'Prof. Shivakumar G. Nayak', desig: 'Assistant Professor' },
+                { name: 'Prof. Santhoshkumar S. Kandagal', desig: 'Assistant Professor' },
+                { name: 'Prof. Basavaraju S. Hadapad', desig: 'Assistant Professor' },
+                { name: 'Prof. Mahantesh L. Chikkadesai', desig: 'Assistant Professor' },
+                { name: 'Prof. Apoorva Kulkarni', desig: 'Assistant Professor' },
+                { name: 'Dr. Mahabaleshwar S. K.', desig: 'Professor' },
+                { name: 'Dr. Jayashree D. Mallapur', desig: 'Professor' },
+                { name: 'Dr. P. N. Kulkarni', desig: 'Professor' },
+                { name: 'Dr. S. G. Kambalimath', desig: 'Dean' },
+                { name: 'Sri. B. Veeresh', desig: 'Associate Professor' },
+                { name: 'Dr. Ashok V. Sutagundar', desig: 'Associate Professor' },
+                { name: 'Dr. K. Nagarathna Rajur', desig: 'Associate Professor' },
+                { name: 'Dr. V. S. Jigajinni', desig: 'Assistant Professor' },
+                { name: 'Dr. Mamata J. Sataraddi', desig: 'Assistant Professor' },
+                { name: 'Dr. S. R. Bharamagoudar', desig: 'Assistant Professor' },
+                { name: 'Dr. Rajani S. Pujar', desig: 'Assistant Professor' },
+                { name: 'Sri. S. V. Hanji', desig: 'Assistant Professor' },
+                { name: 'Sri. Mallikarjun Aralimarad', desig: 'Assistant Professor' },
+                { name: 'Dr. Somu P. Parande', desig: 'Assistant Professor' },
+                { name: 'Dr. Anand H. Unnibhavi', desig: 'Assistant Professor' },
+                { name: 'Dr. Santosh B. Kumbalavati', desig: 'Assistant Professor' },
+                { name: 'Dr. Kirankumar B. Balavalad', desig: 'Assistant Professor' },
+                { name: 'Dr. Sharanappa P. H.', desig: 'Assistant Professor' },
+                { name: 'Dr. Basavaraj M. Angadi', desig: 'Assistant Professor' },
+                { name: 'Smt. Supriya B Harlapur', desig: 'Assistant Professor' },
+                { name: 'Dr. Ajayakumar C. Katageri', desig: 'Assistant Professor' },
+                { name: 'Dr. K. Y. Bendigeri', desig: 'Assistant Professor' },
+                { name: 'Dr. Veerappa B. Pagi', desig: 'Professor' },
+                { name: 'Dr. S. V. Saboji', desig: 'Professor' },
+                { name: 'Smt. V. B. Hunagund', desig: 'Associate Professor' },
+                { name: 'Smt. Kamala S. Patil', desig: 'Associate Professor' },
+                { name: 'Dr. Vilas Naik', desig: 'Associate Professor' },
+                { name: 'Prof. J. M. Hurakadli', desig: 'Associate Professor' },
+                { name: 'Dr. Vasudha Bonal', desig: 'Associate Professor' },
+                { name: 'Dr. Praveenkumar S. Challagidad', desig: 'Associate Professor' },
+                { name: 'Dr. M. G. Kambalimath', desig: 'Assistant Professor' },
+                { name: 'Dr. G. B. Chittapur', desig: 'Assistant Professor' },
+                { name: 'Smt. S. N. Benkikeri', desig: 'Assistant Professor' },
+                { name: 'Dr. Smita Gour', desig: 'Assistant Professor' },
+                { name: 'Smt. S. P. Madhavanavar', desig: 'Assistant Professor' },
+                { name: 'Smt. Smita K.', desig: 'Assistant Professor' },
+                { name: 'Ms. J. S. Mulimani', desig: 'Assistant Professor' },
+                { name: 'Shri. P. B. Madhavanavar', desig: 'Assistant Professor' },
+                { name: 'Shri. B. S. Malapur', desig: 'Assistant Professor' },
+                { name: 'Smt. S. R. Karjol', desig: 'Assistant Professor' },
+                { name: 'Dr. Shama P. S.', desig: 'Assistant Professor' },
+                { name: 'Smt. Pradnya Rama', desig: 'Assistant Professor' },
+                { name: 'Smt. Netra Yaradoni', desig: 'Assistant Professor' },
+                { name: 'Prof. Manjunath Sholapur', desig: 'Assistant Professor' },
+                { name: 'Dr. Lokesh B. Bhajantri', desig: 'Associate Professor' },
+                { name: 'Dr. Shobha R. Patil', desig: 'Professor' },
+                { name: 'Dr. Sadhana P. Bangarashetti', desig: 'Professor' },
+                { name: 'Prof. P. V. Kulkarni', desig: 'Associate Professor' },
+                { name: 'Prof. Preeti S. Puranik', desig: 'Associate Professor' },
+                { name: 'Dr. Shivanand Pujar', desig: 'Associate Professor' },
+                { name: 'Prof. Roopa B. Math', desig: 'Assistant Professor' },
+                { name: 'Prof. Vijayalaxmi S. Patil', desig: 'Assistant Professor' },
+                { name: 'Prof. Sandeep N. Kugali', desig: 'Assistant Professor' },
+                { name: 'Prof. G. M. Patil', desig: 'Assistant Professor' },
+                { name: 'Prof. Parashuram K. Deshpande', desig: 'Assistant Professor' },
+                { name: 'Prof. Girish B. Shettar', desig: 'Assistant Professor' },
+                { name: 'Prof. Deepa I. Kalappanavar', desig: 'Assistant Professor' },
+                { name: 'Prof. Chetana R. Shivanagi', desig: 'Assistant Professor' },
+                { name: 'Prof. Mallikarjungouda R. Patil', desig: 'Assistant Professor' },
+                { name: 'Prof. Shiddalingesh S. Hiremath', desig: 'Assistant Professor' },
+                { name: 'Prof. Sheetal Pattanshetti', desig: 'Assistant Professor' },
+                { name: 'Prof. Parimala R. Muttannavar', desig: 'Assistant Professor' },
+                { name: 'Prof. S. S. Guttannavar', desig: 'Assistant Professor' },
+                { name: 'Prof. Netravati Pattar', desig: 'Assistant Professor' },
+                { name: 'Dr. Bharati M. Reshmi', desig: 'Associate Professor' },
+                { name: 'Dr. Vishwanath C. Kagawade', desig: 'Associate Professor' },
+                { name: 'Jayasheela D. Kallaganiger', desig: 'Assistant Professor' },
+                { name: 'Lakshmi P. Kolur', desig: 'Assistant Professor' },
+                { name: 'Anita G. Kori', desig: 'Assistant Professor' },
+                { name: 'Laxmi M. Muttappanavar', desig: 'Assistant Professor' },
+                { name: 'Ashok S. Patil', desig: 'Assistant Professor' },
+                { name: 'Brahmanand Reddy', desig: 'Assistant Professor' },
+                { name: 'Dr. V. V. Kuppast', desig: 'Professor' },
+                { name: 'Prof. S. B. Wadawadagi', desig: 'Associate Professor' },
+                { name: 'Dr. H. M. Kadlimatti', desig: 'Associate Professor' },
+                { name: 'Prof. V. P. Girisagar', desig: 'Associate Professor' },
+                { name: 'Dr. S. G. Sarganachari', desig: 'Professor' },
+                { name: 'Dr. R. V. Kurahatti', desig: 'Professor' },
+                { name: 'Prof. S. C. Yali', desig: 'Associate Professor' },
+                { name: 'Prof. B. R. Endigeri', desig: 'Assistant Professor' },
+                { name: 'Prof. G. H. Rathod', desig: 'Assistant Professor' },
+                { name: 'Dr. S. M. Jigajinni', desig: 'Assistant Professor' },
+                { name: 'Prof. M. C. Goudar', desig: 'Assistant Professor' },
+                { name: 'Prof. M. M. G. Math', desig: 'Associate Professor' },
+                { name: 'Prof. H. R. Patil', desig: 'Associate Professor' },
+                { name: 'Prof. Vivekanand B. S.', desig: 'Assistant Professor' },
+                { name: 'Prof. R. S. Matti', desig: 'Assistant Professor' },
+                { name: 'Prof. K. D. Aswale', desig: 'Assistant Professor' },
+                { name: 'Prof. S. J. Sanjay', desig: 'Assistant Professor' },
+                { name: 'Dr. R. S. Naik', desig: 'Assistant Professor' },
+                { name: 'Dr. A. N. Sonnad', desig: 'Assistant Professor' },
+                { name: 'Prof. P. C. Kolur', desig: 'Assistant Professor' },
+                { name: 'Prof. S. S. Davanageri', desig: 'Assistant Professor' },
+                { name: 'Prof. P. B. Bhajantri', desig: 'Assistant Professor' },
+                { name: 'Rajath M. Handi', desig: 'Assistant Professor' },
+                { name: 'Dr. Suryakanth', desig: 'Assistant Professor' },
+                { name: 'Dr. M. S. Hebbal', desig: 'Professor' },
+                { name: 'Dr. Bharati S. Meti', desig: 'Professor' },
+                { name: 'Dr. Sharada S. B.', desig: 'Associate Professor' },
+                { name: 'Dr. Madhumala Y.', desig: 'Assistant Professor' },
+                { name: 'Dr. Preeti S. Kumarmath', desig: 'Assistant Professor' },
+                { name: 'Dr. Shilpa K. Jigajinni', desig: 'Assistant Professor' },
+                { name: 'Dr. Jayachandra S. Yaradoddi', desig: 'Assistant Professor' },
+                { name: 'Dr. Basavaraj S. Nainegali', desig: 'Assistant Professor' },
+                { name: 'Dr. C. M. Javalagi', desig: 'Associate Professor' },
+                { name: 'Dr. S. M. Pharsiyawar', desig: 'Assistant Professor' },
+                { name: 'Dr Devanand D Chillal', desig: 'Associate Professor & Head' },
+                { name: 'Dr C M Veerendrakumar', desig: 'Associate Professor' },
+                { name: 'Dr. Chayalakshmi C. L.', desig: 'Associate Professor & Head' },
+                { name: 'Dr. Manjula A. Sutagundar', desig: 'Associate Professor' },
+                { name: 'Dr. Krishnamurthy Bhat', desig: 'Associate Professor' },
+                { name: 'Mrs. Laxmi Ugar', desig: 'Assistant Professor' }
+            ];
+
+            const DUTY_QUOTAS = {
+                'Professor': { min: 1, max: 2, class: 'quota-prof' },
+                'Associate Professor': { min: 2, max: 4, class: 'quota-assoc' },
+                'Assistant Professor': { min: 4, max: 6, class: 'quota-asst' },
+                'Associate Professor & Head': { min: 0, max: 0, class: 'quota-head' },
+                'Professor & Head': { min: 0, max: 0, class: 'quota-head' },
+                'Dean': { min: 0, max: 0, class: 'quota-dean' }
+            };
+
             const DEFAULT_ROOMS = [
                 { room: 101, seats: 30 }, { room: 102, seats: 30 }, { room: 103, seats: 30 },
                 { room: 104, seats: 30 }, { room: 105, seats: 30 }, { room: 106, seats: 30 },
@@ -1960,6 +2752,68 @@
                 return rooms.filter(r => !usedRooms.has(r.room));
             }
 
+            // ─── Load / Save State ───
+            function loadAppState() {
+                try {
+                    const saved = localStorage.getItem('cie_app_state');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        rooms = data.rooms || DEFAULT_ROOMS.map(r => ({ ...r }));
+                        branches = data.branches || [...DEFAULT_BRANCHES];
+                        semesters = data.semesters || [...DEFAULT_SEMESTERS];
+                        divisions = data.divisions || [...DEFAULT_DIVISIONS];
+                        allBlocks = data.allBlocks || [];
+                        usedRooms = new Set(data.usedRooms || []);
+                        batchCounter = data.batchCounter || 1;
+                        blockIdCounter = data.blockIdCounter || 0;
+                        currentRollStart = data.currentRollStart || 1;
+                        dutyAssignments = data.dutyAssignments || {};
+                        savedTimeTables = data.savedTimeTables || [];
+                        ttIdCounter = data.ttIdCounter || 0;
+                        staffConfig = data.staffConfig || { professor: 2, associate: 4, assistant: 8, other: [
+                                'CS-Staff-1', 'CS-Staff-2', 'CS-Staff-3'
+                            ] };
+                        if (data.meta) {
+                            metaAcademicYear.value = data.meta.academicYear || '2026-2027';
+                            metaSemester.value = data.meta.semester || 'Summer';
+                            metaCIE.value = data.meta.cie || 'CIE-II';
+                            metaDept.value = data.meta.dept || 'Department of Electronics and Communication Engineering';
+                            metaCoordinator.value = data.meta.coordinator || 'Dr. S. R. Biradar';
+                        }
+                        return true;
+                    }
+                } catch (e) { console.warn('Load app state error:', e); }
+                return false;
+            }
+
+            function saveAppState() {
+                try {
+                    const data = {
+                        rooms: rooms,
+                        branches: branches,
+                        semesters: semesters,
+                        divisions: divisions,
+                        allBlocks: allBlocks,
+                        usedRooms: Array.from(usedRooms),
+                        batchCounter: batchCounter,
+                        blockIdCounter: blockIdCounter,
+                        currentRollStart: currentRollStart,
+                        dutyAssignments: dutyAssignments,
+                        savedTimeTables: savedTimeTables,
+                        ttIdCounter: ttIdCounter,
+                        staffConfig: staffConfig,
+                        meta: {
+                            academicYear: metaAcademicYear.value,
+                            semester: metaSemester.value,
+                            cie: metaCIE.value,
+                            dept: metaDept.value,
+                            coordinator: metaCoordinator.value
+                        }
+                    };
+                    localStorage.setItem('cie_app_state', JSON.stringify(data));
+                } catch (e) { console.warn('Save app state error:', e); }
+            }
+
             // ─── Staff Settings ───
             function renderStaffOther() {
                 staffOtherList.innerHTML = staffConfig.other.map((name, idx) =>
@@ -1972,6 +2826,7 @@
                         renderStaffOther();
                         staffStatus.textContent = 'Other staff removed.';
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
             }
@@ -1984,6 +2839,7 @@
                 renderStaffOther();
                 staffStatus.textContent = `✅ ${name} added.`;
                 renderHodDashboard();
+                saveAppState();
             }
 
             function saveStaffConfig() {
@@ -1999,10 +2855,9 @@
                 staffConfig.assistant = asst;
                 staffStatus.textContent = '✅ Staff configuration saved!';
                 updateDutyStaffSummary();
-                if (allBlocks.length > 0) {
-                    autoAllotDuties();
-                }
+                if (allBlocks.length > 0) autoAllotDuties();
                 renderHodDashboard();
+                saveAppState();
             }
 
             function updateDutyStaffSummary() {
@@ -2010,7 +2865,7 @@
                 dutyStaffSummary.textContent = `Staff: ${total} (P:${staffConfig.professor}, AP:${staffConfig.associate}, Asst:${staffConfig.assistant}, Other:${staffConfig.other.length})`;
             }
 
-            // ─── Duty Allocation Logic ───
+            // ─── Duty Allocation ───
             function autoAllotDuties() {
                 if (!allBlocks || allBlocks.length === 0) {
                     dutyStatus.textContent = '⚠️ No blocks to assign duties.';
@@ -2062,6 +2917,7 @@
                 updateDutyStaffSummary();
                 downloadDutyPdfBtn.disabled = false;
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Refresh Room List ───
@@ -2107,6 +2963,7 @@
                         refreshRoomList();
                         settingsStatus.textContent = 'Room removed.';
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
             }
@@ -2124,6 +2981,7 @@
                 refreshRoomList();
                 settingsStatus.textContent = `✅ Room ${roomNum} (${seats} seats) added.`;
                 renderHodDashboard();
+                saveAppState();
             }
 
             function resetRooms() {
@@ -2133,6 +2991,7 @@
                 refreshRoomList();
                 settingsStatus.textContent = '✅ Rooms reset to default.';
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Settings: Branches ───
@@ -2149,6 +3008,7 @@
                         updateGenDropdowns();
                         settingsStatus.textContent = 'Branch removed.';
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
             }
@@ -2163,6 +3023,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = `✅ Branch ${val} added.`;
                 renderHodDashboard();
+                saveAppState();
             }
 
             function resetBranches() {
@@ -2171,6 +3032,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = '✅ Branches reset.';
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Settings: Semesters ───
@@ -2187,6 +3049,7 @@
                         updateGenDropdowns();
                         settingsStatus.textContent = 'Semester removed.';
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
             }
@@ -2201,6 +3064,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = `✅ Semester ${val} added.`;
                 renderHodDashboard();
+                saveAppState();
             }
 
             function resetSemesters() {
@@ -2209,6 +3073,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = '✅ Semesters reset.';
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Settings: Divisions ───
@@ -2225,6 +3090,7 @@
                         updateGenDropdowns();
                         settingsStatus.textContent = 'Division removed.';
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
             }
@@ -2239,6 +3105,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = `✅ Division ${val} added.`;
                 renderHodDashboard();
+                saveAppState();
             }
 
             function resetDivisions() {
@@ -2247,6 +3114,7 @@
                 updateGenDropdowns();
                 settingsStatus.textContent = '✅ Divisions reset.';
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Update Dropdowns ───
@@ -2304,6 +3172,7 @@
                     refreshRoomList();
                     settingsStatus.textContent = '✅ Rooms updated from preset.';
                     renderHodDashboard();
+                    saveAppState();
                 });
             });
 
@@ -2314,6 +3183,7 @@
                     updateGenDropdowns();
                     settingsStatus.textContent = '✅ Branches updated.';
                     renderHodDashboard();
+                    saveAppState();
                 });
             });
 
@@ -2325,6 +3195,7 @@
                     updateGenDropdowns();
                     settingsStatus.textContent = '✅ Semesters updated.';
                     renderHodDashboard();
+                    saveAppState();
                 });
             });
 
@@ -2335,6 +3206,7 @@
                     updateGenDropdowns();
                     settingsStatus.textContent = '✅ Divisions updated.';
                     renderHodDashboard();
+                    saveAppState();
                 });
             });
 
@@ -2396,6 +3268,9 @@
                     if (tab === 'tabDuty') {
                         renderDutyTable();
                         updateDutyStaffSummary();
+                    }
+                    if (tab === 'tabApprovals' && currentUser) {
+                        renderApprovals();
                     }
                 });
             });
@@ -2539,6 +3414,7 @@
                 }
                 renderDutyTable();
                 renderHodDashboard();
+                saveAppState();
                 document.querySelector('[data-tab="tabDashboard"]').click();
             }
 
@@ -2622,6 +3498,7 @@
                                 renderDutyTable();
                                 renderHodDashboard();
                                 downloadPdfBtn.disabled = allBlocks.length === 0;
+                                saveAppState();
                             }
                         }
                     });
@@ -2635,7 +3512,7 @@
             function renderTTList() {
                 ttListCount.textContent = savedTimeTables.length;
                 if (savedTimeTables.length === 0) {
-                    ttListContainer.innerHTML = '<div class="text-muted" style="padding:12px 0;">No time tables saved yet. Generate and save from the Time Table tab.</div>';
+                    ttListContainer.innerHTML = '<div class="text-muted" style="padding:12px 0;">No time tables saved yet.</div>';
                     return;
                 }
                 let html = `<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px;">`;
@@ -2670,6 +3547,7 @@
                             renderDashboard();
                             renderHodDashboard();
                             statTT.textContent = savedTimeTables.length;
+                            saveAppState();
                         }
                     });
                 });
@@ -2738,6 +3616,7 @@
                             category: catSelect ? catSelect.value : 'Other Staff'
                         };
                         renderHodDashboard();
+                        saveAppState();
                     });
                     el.addEventListener('input', function() {
                         const id = parseInt(this.dataset.id);
@@ -2757,6 +3636,7 @@
                             category: this.value
                         };
                         renderHodDashboard();
+                        saveAppState();
                     });
                 });
 
@@ -2766,7 +3646,6 @@
 
             // ─── HOD Dashboard ───
             function renderHodDashboard() {
-                // Stats
                 const totalBlocks = allBlocks.length;
                 const totalStudents = allBlocks.reduce((s, b) => s + b.students, 0);
                 const roomsUsed = new Set(allBlocks.map(b => b.room)).size;
@@ -2782,14 +3661,12 @@
                 hodTotalStaff.textContent = totalStaff;
                 hodTTCount.textContent = ttCount;
 
-                // Status
                 hodStatusBlocks.textContent = totalBlocks > 0 ? `✅ Yes (${totalBlocks})` : '❌ No';
                 const dutyCount = Object.keys(dutyAssignments).filter(k => dutyAssignments[k] && dutyAssignments[k].name).length;
                 hodStatusDuties.textContent = `${dutyCount} / ${totalBlocks}`;
                 hodStatusTT.textContent = ttCount;
                 hodStatusStaff.textContent = totalStaff;
 
-                // Duty Distribution
                 const dutyMap = {};
                 Object.values(dutyAssignments).forEach(d => {
                     if (d && d.name) {
@@ -2816,7 +3693,6 @@
                     hodDutyList.innerHTML = dutyHtml;
                 }
 
-                // Recent Blocks
                 const recentBlocks = [...allBlocks].sort((a, b) => b.id - a.id).slice(0, 8);
                 hodRecentCount.textContent = `${allBlocks.length} total`;
                 if (allBlocks.length === 0) {
@@ -2837,7 +3713,6 @@
                     hodBlockPreview.innerHTML = blockHtml;
                 }
 
-                // Time Tables List
                 hodTTListCount.textContent = `${savedTimeTables.length} saved`;
                 if (savedTimeTables.length === 0) {
                     hodTTList.innerHTML = '<p class="text-muted">No time tables saved.</p>';
@@ -2971,6 +3846,7 @@
                     refreshRoomList();
                     renderDutyTable();
                     renderHodDashboard();
+                    saveAppState();
                 } else if (editTarget.type === 'tt') {
                     const tt = savedTimeTables.find(t => t.id === editTarget.id);
                     if (!tt) { editModal.classList.add('hidden'); return; }
@@ -2981,6 +3857,7 @@
                     tt.heading = document.getElementById('editTTHeading').value.trim() || tt.heading;
                     renderDashboard();
                     renderHodDashboard();
+                    saveAppState();
                 }
                 editModal.classList.add('hidden');
                 editTarget = null;
@@ -2998,6 +3875,7 @@
                 dutyStatus.classList.remove('hidden');
                 setTimeout(() => { dutyStatus.classList.add('hidden'); }, 3000);
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── Clear Duties ───
@@ -3010,10 +3888,11 @@
                     dutyStatus.className = 'text-sm text-success mt-8';
                     dutyStatus.classList.remove('hidden');
                     setTimeout(() => { dutyStatus.classList.add('hidden'); }, 3000);
+                    saveAppState();
                 }
             }
 
-            // ─── PDF Generation for Blocks ───
+            // ─── PDF Generation ───
             function generatePDF() {
                 if (!allBlocks || allBlocks.length === 0) {
                     alert('No blocks to export.');
@@ -3089,7 +3968,6 @@
                         pdfContent.style.display = 'none'; });
             }
 
-            // ─── Duty Roster PDF ───
             function generateDutyPDF() {
                 if (!allBlocks || allBlocks.length === 0) {
                     alert('No blocks to assign duties.');
@@ -3189,6 +4067,7 @@
                 refreshRoomList();
                 renderDutyTable();
                 renderHodDashboard();
+                saveAppState();
             }
 
             // ─── STANDARD TIME TABLE ───
@@ -3313,7 +4192,6 @@
                 ttSaveBtn.style.display = 'inline-flex';
             }
 
-            // ─── Add Row ───
             function addBlockRow() {
                 const numRows = parseInt(ttRows.value) || 4;
                 ttRows.value = numRows + 1;
@@ -3403,6 +4281,7 @@
                 renderDashboard();
                 renderHodDashboard();
                 statTT.textContent = savedTimeTables.length;
+                saveAppState();
             }
 
             // ─── Time Table PDF ───
@@ -3660,7 +4539,7 @@
             genStrength.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateBtn.click(); });
             genBlockSize.addEventListener('keydown', (e) => { if (e.key === 'Enter') generateBtn.click(); });
 
-            // Set default date
+            // ─── Set default date ───
             const today = new Date();
             const yyyy = today.getFullYear();
             const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -3669,15 +4548,16 @@
 
             // ─── Init ───
             function init() {
-                rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
-                branches = [...DEFAULT_BRANCHES];
-                semesters = [...DEFAULT_SEMESTERS];
-                divisions = [...DEFAULT_DIVISIONS];
+                // Load app state
+                const loaded = loadAppState();
+                if (!loaded) {
+                    rooms = DEFAULT_ROOMS.map(r => ({ ...r }));
+                    branches = [...DEFAULT_BRANCHES];
+                    semesters = [...DEFAULT_SEMESTERS];
+                    divisions = [...DEFAULT_DIVISIONS];
+                }
 
-                staffConfig.professor = 2;
-                staffConfig.associate = 4;
-                staffConfig.assistant = 8;
-                staffConfig.other = ['CS-Staff-1', 'CS-Staff-2', 'CS-Staff-3'];
+                // Staff config
                 staffProfessor.value = staffConfig.professor;
                 staffAssociate.value = staffConfig.associate;
                 staffAssistant.value = staffConfig.assistant;
@@ -3690,17 +4570,27 @@
                 updateGenDropdowns();
                 refreshRoomList();
 
-                genBranch.value = 'CSE';
-                genSemester.value = '3';
-                genDivision.value = 'A';
+                genBranch.value = branches.length > 0 ? branches[0] : 'CSE';
+                genSemester.value = semesters.length > 0 ? semesters[0] : '3';
+                genDivision.value = divisions.length > 0 ? divisions[0] : 'A';
 
                 noBlocksMsg.style.display = 'block';
                 outputCard.style.display = 'none';
 
-                ttBranch.value = 'CSE';
-                ttSemester.value = '3';
+                ttBranch.value = branches.length > 0 ? branches[0] : 'CSE';
+                ttSemester.value = semesters.length > 0 ? semesters[0] : '3';
 
                 settingsStatus.textContent = '✅ Settings loaded. Ready to generate!';
+
+                // If user is logged in, update UI
+                if (currentUser) {
+                    updateUIForUser();
+                }
+
+                // Show login if no user
+                if (!currentUser) {
+                    loginOverlay.classList.remove('hidden');
+                }
 
                 setTimeout(() => {
                     generateStandardTimeTable();
@@ -3708,8 +4598,39 @@
                 }, 300);
             }
 
+            // ─── Check if user is logged in and render ───
+            // If user is already logged in from previous session, we can auto-login
+            // But since we use localStorage for users, we'll check if we have a currentUser in session
+            // For simplicity, we'll just show login
+
+            // Override login success to render
+            const originalLogin = loginBtn.click;
+            // We'll just let the login flow work as is
+
+            // ─── Initialize ───
             init();
-            console.log('CIE Block Generator with HOD Dashboard ready.');
+
+            // ─── Expose for debugging ───
+            window.__state = {
+                rooms,
+                branches,
+                semesters,
+                divisions,
+                allBlocks,
+                dutyAssignments,
+                savedTimeTables,
+                staffConfig,
+                currentUser,
+                users,
+                pendingUsers
+            };
+
+            console.log('CIE Block Generator with Auth and HOD Dashboard ready.');
+            console.log('Data saved in localStorage under keys:');
+            console.log('  - cie_users (users & pending approvals)');
+            console.log('  - cie_app_state (rooms, blocks, duties, timetables, etc.)');
+            console.log('Main Admin: mmbbec@gmail.com / mahadevmb');
+
         })();
     </script>
 
