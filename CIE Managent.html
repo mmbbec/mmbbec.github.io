@@ -322,6 +322,45 @@
             border-color: #1a4972;
             box-shadow: 0 0 0 3px rgba(26, 73, 114, 0.1);
         }
+        .settings-box .add-row .btn-sm {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            background: #1a4972;
+            color: #fff;
+            transition: 0.2s;
+        }
+        .settings-box .add-row .btn-sm:hover {
+            background: #0f3a5c;
+        }
+        .settings-box .add-row .btn-sm-danger {
+            background: #c53030;
+        }
+        .settings-box .add-row .btn-sm-danger:hover {
+            background: #9b2c2c;
+        }
+        .settings-box .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .settings-box .preset-btns .preset {
+            padding: 2px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 11px;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .settings-box .preset-btns .preset:hover {
+            border-color: #1a4972;
+            background: #e7f0fe;
+        }
 
         /* ── Buttons ── */
         .btn {
@@ -1502,7 +1541,7 @@
                 'S5': '#ebdef0'
             };
 
-            // ─── Faculty list (as provided by user) ───
+            // ─── Faculty list (as provided) ───
             const DEFAULT_FACULTY = [
                 { name: 'Dr. S. R. Biradar', desig: 'Professor' },
                 { name: 'Dr. J. D. Kulkarni', desig: 'Professor' },
@@ -1867,7 +1906,7 @@
                 if (role === 'faculty') renderFacultyView();
                 if (role === 'collegeadmin') renderCollegeAdmin();
                 if (role === 'mainadmin') renderCollegeList();
-                if (role === 'hod' || role === 'examsection') updateExDropdowns();
+                if (role === 'hod' || role === 'examsection') updateAllDropdowns();
                 updateLockBadges();
             }
 
@@ -2607,7 +2646,7 @@
             const exPublishBanner = document.getElementById('exPublishBanner');
             const exPublishDate = document.getElementById('exPublishDate');
 
-            function updateExDropdowns() {
+            function updateAllDropdowns() {
                 const fill = (sel, list) => {
                     const cur = sel.value;
                     sel.innerHTML = list.map(item => `<option value="${item}">${item}</option>`).join('');
@@ -2616,11 +2655,9 @@
                 fill(exBranch, branches);
                 fill(exSemester, semesters);
                 fill(exDivision, divisions);
-            }
-
-            function updateAllDropdowns() {
-                updateExDropdowns();
-                updateTtDropdowns();
+                fill(ttBranch, branches);
+                fill(ttSemester, semesters);
+                fill(ttDivision, divisions);
                 const ffs = document.getElementById('facultyFilterSelect');
                 if (ffs) {
                     const cur = ffs.value;
