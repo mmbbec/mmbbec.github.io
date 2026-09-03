@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BEC Bagalkote · Subject Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A",
+                        secondary: "#1E40AF",
+                        accent: "#D97706",
+                        success: "#059669",
+                        canvas: "#F8FAFC",
+                        surface: "#FFFFFF",
+                        muted: "#F1F5F9",
+                        hairl: "#E2E8F0",
+                        subtext: "#64748B",
+                        body: "#334155",
+                        display: "#0F172A",
+                    },
+                    fontFamily: {
+                        sans: ["Manrope", "sans-serif"],
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Manrope", sans-serif;
+            background: #F8FAFC;
+            color: #334155;
+        }
+        .font-display {
+            font-family: "Space Grotesk", sans-serif;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .6rem .9rem;
+            border-radius: .375rem;
+            color: #64748B;
+            font-size: .8125rem;
+            font-weight: 600;
+            transition: all .15s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .sidebar-link:hover {
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .sidebar-link.active {
+            background: #E2E8F0;
+            color: #0F172A;
+            border-left: 3px solid #1E40AF;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: .5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+        }
+        .btn-primary {
+            background: #0F172A;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #1E293B;
+        }
+        .btn-secondary {
+            background: #1E40AF;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background: #1D4ED8;
+        }
+        .btn-ghost {
+            background: #F1F5F9;
+            color: #334155;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-ghost:hover {
+            background: #E2E8F0;
+        }
+        .btn-danger {
+            background: #DC2626;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background: #B91C1C;
+        }
+        .btn-success {
+            background: #059669;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+        .table-row {
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        .tab-btn {
+            padding: .5rem .75rem;
+            border-radius: .375rem;
+            font-size: .8125rem;
+            font-weight: 600;
+            color: #64748B;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: .375rem;
+        }
+        .tab-btn.active {
+            background: #0F172A;
+            color: #fff;
+        }
+        .tab-btn:hover {
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .tab-btn.active:hover {
+            background: #0F172A;
+        }
+        .modal-overlay {
+            background: rgba(15, 23, 42, .4);
+            backdrop-filter: blur(4px);
+        }
+        .resource-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: .125rem .5rem;
+            border-radius: .25rem;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .link-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            padding: .125rem .375rem;
+            border-radius: .25rem;
+            background: #F1F5F9;
+            color: #64748B;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all .3s ease;
+            pointer-events: none;
+            max-width: 360px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .toast.success {
+            background: #059669;
+        }
+        .toast.error {
+            background: #DC2626;
+        }
+        .toast.info {
+            background: #1E40AF;
+        }
+        .font-code-num {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+        input,
+        select,
+        textarea {
+            outline: none;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+        }
+
+        /* Login/Signup styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #E2E8F0;
+        }
+        .auth-card .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .auth-card .logo-text {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #0F172A;
+        }
+        .auth-card .logo-sub {
+            font-size: 12px;
+            color: #64748B;
+            text-align: center;
+            margin-top: -6px;
+            margin-bottom: 20px;
+        }
+        .auth-card .admin-hint {
+            background: #F1F5F9;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #64748B;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px dashed #CBD5E1;
+        }
+        .auth-card .admin-hint strong {
+            color: #0F172A;
+            font-weight: 600;
+        }
+        .auth-card .admin-hint .cred {
+            font-family: 'Courier New', monospace;
+            background: #E2E8F0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .auth-toggle {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #64748B;
+        }
+        .auth-toggle a {
+            color: #1E40AF;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+        .auth-card .role-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .auth-card .role-selector button {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #E2E8F0;
+            background: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .15s;
+            color: #64748B;
+        }
+        .auth-card .role-selector button.active {
+            border-color: #1E40AF;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .auth-card .role-selector button:hover {
+            border-color: #1E40AF;
+        }
+        .auth-card .form-group {
+            margin-bottom: 16px;
+        }
+        .auth-card .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .auth-card .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #F8FAFC;
+            transition: border .15s;
+        }
+        .auth-card .form-group input:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+        }
+        .auth-card .btn-login {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .app-wrapper {
+            display: none;
+        }
+        .app-wrapper.show {
+            display: block;
+        }
+
+        /* Admin user table */
+        .user-role-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+        .user-role-badge.admin {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .user-role-badge.teacher {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .user-role-badge.student {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 28px 20px;
+            }
+            .auth-card .role-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- TOAST -->
+    <!-- ============================================================ -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ============================================================ -->
+    <!-- AUTH CONTAINER (Login / Signup) -->
+    <!-- ============================================================ -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-card">
+            <div class="logo">
+                <svg viewBox="0 0 48 48" fill="none" class="h-12 w-12 shrink-0">
+                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
+                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
+                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
+                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
+                </svg>
+                <span class="logo-text">BEC Bagalkote</span>
+            </div>
+            <div class="logo-sub">Department of Mathematics · Subject Management</div>
+
+            <!-- Admin Hint -->
+            <div class="admin-hint">
+                🔐 <strong>Admin:</strong> <span class="cred">mmbbec@gmail.com</span> / <span class="cred">admin123</span>
+                <br /><span style="font-size:11px;">Teachers &amp; students can sign up below.</span>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input id="login-email" type="email" placeholder="you@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="login-password" type="password" placeholder="••••••••" />
+                </div>
+                <button class="btn-secondary btn-login" onclick="handleLogin()">Sign In</button>
+                <div class="auth-toggle">
+                    Don't have an account? <a onclick="showSignup()">Create one</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="hidden">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input id="signup-name" type="text" placeholder="Your full name" />
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input id="signup-email" type="email" placeholder="you@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="signup-password" type="password" placeholder="••••••••" value="1234" />
+                    <span style="font-size:11px;color:#64748B;">Default: 1234</span>
+                </div>
+                <div class="form-group">
+                    <label>I am a...</label>
+                    <div class="role-selector">
+                        <button id="role-teacher" class="active" onclick="selectRole('teacher')">👨‍🏫 Teacher</button>
+                        <button id="role-student" onclick="selectRole('student')">🎓 Student</button>
+                    </div>
+                    <input type="hidden" id="signup-role" value="teacher" />
+                </div>
+                <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
+                <div class="auth-toggle">
+                    Already have an account? <a onclick="showLogin()">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MAIN APP WRAPPER -->
+    <!-- ============================================================ -->
+    <div id="app-wrapper" class="app-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="fixed left-0 top-0 h-screen w-[250px] bg-white border-r border-[#E2E8F0] z-50 flex flex-col">
+            <!-- Brand Header -->
+            <div class="p-4 border-b border-[#F1F5F9] flex items-center gap-2">
+                <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 shrink-0">
+                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
+                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
+                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
+                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
+                </svg>
+                <div>
+                    <div class="font-display font-bold text-[#0F172A] leading-tight text-[13px]">BEC Bagalkote</div>
+                    <div class="text-[11px] text-[#64748B]">Dept. of Mathematics</div>
+                </div>
+            </div>
+            <!-- User Info -->
+            <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#F1F5F9]">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-[13px] uppercase" id="sidebar-avatar">MB</div>
+                        <div>
+                            <div class="text-[13px] font-semibold text-[#0F172A]" id="sidebar-name">Dr. Mahadev Biradar</div>
+                            <div class="text-[11px] text-[#64748B]" id="sidebar-role">Faculty Guide</div>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition" title="Logout">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Nav -->
+            <nav class="flex-1 p-2 space-y-1" id="sidebar-nav">
+                <!-- Dynamic nav links -->
+            </nav>
+            <!-- Footer -->
+            <div class="p-3 border-t border-[#F1F5F9] text-center">
+                <div class="text-[10px] text-[#64748B]">Created by Dr. Mahadev Biradar</div>
+                <div class="text-[10px] text-[#64748B]">© 2026 BEC Bagalkote</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="pl-[250px] min-h-screen">
+            <!-- Header -->
+            <header class="bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-6 sticky top-0 z-40">
+                <div class="flex items-center gap-3">
+                    <span class="text-[14px] font-semibold text-[#0F172A]" id="page-title">Teacher Subject Management</span>
+                    <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">Semester System</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[12px] text-[#64748B]" id="header-user">Dr. Mahadev Biradar</span>
+                    <div class="w-7 h-7 rounded-full bg-[#1E40AF] text-white text-[11px] flex items-center justify-center font-bold uppercase" id="header-avatar">MB</div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <!-- ===== DASHBOARD VIEW ===== -->
+                <div id="view-dashboard" class="view-section">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Dashboard</h1>
+                            <p class="text-[14px] text-[#64748B]">Overview of your academic portfolio</p>
+                        </div>
+                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span>Add Subject</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="card p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">event_available</span>
+                                Today's Classes
+                            </h3>
+                            <div id="dash-today" class="space-y-2"></div>
+                        </div>
+                        <div class="card p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">pending_actions</span>
+                                Recent Activity
+                            </h3>
+                            <div id="dash-activity" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== MY SUBJECTS VIEW ===== -->
+                <div id="view-my-subjects" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">My Subjects</h1>
+                            <p class="text-[14px] text-[#64748B]">Manage all subjects in your department</p>
+                        </div>
+                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span>Add Subject</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
+                </div>
+
+                <!-- ===== SUBJECT DETAIL VIEW ===== -->
+                <div id="view-subject-detail" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <button class="btn-ghost flex items-center gap-2" onclick="goBackToSubjects()">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            <span>Back to Subjects</span>
+                        </button>
+                        <button class="btn-ghost flex items-center gap-2" onclick="openEditSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                            <span>Edit Subject</span>
+                        </button>
+                    </div>
+                    <div id="subject-detail-header"></div>
+                    <div class="card p-3 mb-4 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
+                        <button class="tab-btn active" data-tab="overview" onclick="switchSubjectTab('overview')">
+                            <span class="material-symbols-outlined text-[16px]">info</span>Overview
+                        </button>
+                        <button class="tab-btn" data-tab="timetable" onclick="switchSubjectTab('timetable')">
+                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>Timetable
+                        </button>
+                        <button class="tab-btn" data-tab="notes" onclick="switchSubjectTab('notes')">
+                            <span class="material-symbols-outlined text-[16px]">sticky_note_2</span>Notes
+                        </button>
+                        <button class="tab-btn" data-tab="syllabus" onclick="switchSubjectTab('syllabus')">
+                            <span class="material-symbols-outlined text-[16px]">menu_book</span>Syllabus
+                        </button>
+                        <button class="tab-btn" data-tab="resources" onclick="switchSubjectTab('resources')">
+                            <span class="material-symbols-outlined text-[16px]">folder_shared</span>Resources
+                        </button>
+                    </div>
+                    <div id="subject-tab-content"></div>
+                </div>
+
+                <!-- ===== STUDENT VIEW ===== -->
+                <div id="view-student" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Student View</h1>
+                            <p class="text-[14px] text-[#64748B]">Read-only view for students</p>
+                        </div>
+                        <span class="bg-[#F1F5F9] text-[#64748B] text-[12px] px-3 py-1 rounded-full">Read-Only Mode</span>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="student-subjects"></div>
+                </div>
+
+                <!-- ===== ADMIN: USER MANAGEMENT ===== -->
+                <div id="view-admin-users" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">User Management</h1>
+                            <p class="text-[14px] text-[#64748B]">Manage all registered users</p>
+                        </div>
+                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold">Admin Only</span>
+                    </div>
+                    <div class="card p-4 overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase">
+                                    <th class="p-3">User</th>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Role</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MODALS (same as before) -->
+        <!-- ============================================================ -->
+
+        <!-- Add/Edit Subject Modal -->
+        <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
+                    <h3 id="subject-modal-title" class="font-display font-bold text-[#0F172A]">Add Subject</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="closeSubjectModal()">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <form id="subject-form" class="p-5 space-y-4" onsubmit="handleSubjectSubmit(event)">
+                    <input type="hidden" id="subject-form-id" />
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Name *</label>
+                            <input id="subject-name" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. Engineering Mathematics" />
+                        </div>
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Code *</label>
+                            <input id="subject-code" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. MA-101" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Semester / Year</label>
+                            <select id="subject-semester" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]">
+                                <option>I Semester</option><option>II Semester</option><option>III Semester</option>
+                                <option>IV Semester</option><option>V Semester</option><option>VI Semester</option>
+                                <option>VII Semester</option><option>VIII Semester</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Class / Section</label>
+                            <input id="subject-section" type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. III-A" />
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
+                        <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save Subject</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Timetable Entry Modal -->
+        <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Timetable Slot</h3>
+                <form class="space-y-3" onsubmit="handleTimetableSubmit(event)">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[12px] font-semibold">Day</label>
+                            <select id="tt-day" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                                <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                                <option>Thursday</option><option>Friday</option><option>Saturday</option>
+                            </select>
+                        </div>
+                        <div><label class="text-[12px] font-semibold">Room</label>
+                            <input id="tt-room" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="E-204" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[12px] font-semibold">Start Time</label>
+                            <input id="tt-start" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="09:00 AM" />
+                        </div>
+                        <div><label class="text-[12px] font-semibold">End Time</label>
+                            <input id="tt-end" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="10:00 AM" />
+                        </div>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Topic / Remarks</label>
+                        <input id="tt-topic" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Lecture on ..." />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeTimetableModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Add Slot</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Resource Modal -->
+        <div id="resource-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Resource</h3>
+                <form class="space-y-3" onsubmit="handleResourceSubmit(event)">
+                    <div><label class="text-[12px] font-semibold">Resource Title *</label>
+                        <input id="res-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Calculus Notes" />
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Resource Type</label>
+                        <select id="res-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="notes">Notes</option><option value="assignment">Assignment</option>
+                            <option value="question-paper">Question Paper</option><option value="video">Video</option>
+                            <option value="presentation">Presentation</option><option value="reference">Reference</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Description</label>
+                        <textarea id="res-desc" rows="2" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Brief description..."></textarea>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link Type</label>
+                        <select id="res-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
+                            <option value="web-url">Web URL</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link URL *</label>
+                        <input id="res-link" required type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeResourceModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Note Modal -->
+        <div id="note-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Note</h3>
+                <form class="space-y-3" onsubmit="handleNoteSubmit(event)">
+                    <div><label class="text-[12px] font-semibold">Note Title *</label>
+                        <input id="note-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Lecture 1 Summary" />
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Content</label>
+                        <textarea id="note-content" rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write your note..."></textarea>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link Type</label>
+                        <select id="note-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
+                            <option value="web-url">Web URL</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link URL</label>
+                        <input id="note-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeNoteModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Syllabus Modal -->
+        <div id="syllabus-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Edit Syllabus</h3>
+                <form class="space-y-3" onsubmit="handleSyllabusSubmit(event)">
+                    <div><label class="text-[12px] font-semibold">Syllabus Content</label>
+                        <textarea id="syl-content" rows="4" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Enter syllabus details..."></textarea>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link Type</label>
+                        <select id="syl-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
+                            <option value="web-url">Web URL</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link URL</label>
+                        <input id="syl-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeSyllabusModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div> <!-- end app-wrapper -->
+
+    <!-- ============================================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        //  AUTH SYSTEM
+        // ============================================================
+
+        const USERS_KEY = 'bec_users';
+        const SESSION_KEY = 'bec_session';
+
+        // Default admin
+        const DEFAULT_ADMIN = {
+            email: 'mmbbec@gmail.com',
+            password: 'admin123',
+            name: 'Admin',
+            role: 'admin'
+        };
+
+        function getUsers() {
+            try {
+                const raw = localStorage.getItem(USERS_KEY);
+                const users = raw ? JSON.parse(raw) : [];
+                // Ensure admin exists
+                const adminExists = users.some(u => u.email === DEFAULT_ADMIN.email);
+                if (!adminExists) {
+                    users.push({ ...DEFAULT_ADMIN });
+                    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+                }
+                return users;
+            } catch (e) {
+                return [{ ...DEFAULT_ADMIN }];
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+
+        function getSession() {
+            try {
+                const raw = localStorage.getItem(SESSION_KEY);
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function setSession(user) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify({ email: user.email, role: user.role, name: user.name }));
+        }
+
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
+        }
+
+        function getCurrentUser() {
+            const session = getSession();
+            if (!session) return null;
+            const users = getUsers();
+            return users.find(u => u.email === session.email) || null;
+        }
+
+        // ============================================================
+        //  AUTH UI
+        // ============================================================
+
+        function showLogin() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.remove('hidden');
+        }
+
+        function selectRole(role) {
+            document.getElementById('signup-role').value = role;
+            document.getElementById('role-teacher').classList.toggle('active', role === 'teacher');
+            document.getElementById('role-student').classList.toggle('active', role === 'student');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            if (!email || !password) {
+                showToast('Please enter email and password.', 'error');
+                return;
+            }
+            const users = getUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                showToast('Invalid email or password.', 'error');
+                return;
+            }
+            setSession(user);
+            showToast('Welcome back, ' + user.name + '!', 'success');
+            initApp();
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim() || '1234';
+            const role = document.getElementById('signup-role').value;
+
+            if (!name || !email) {
+                showToast('Please fill in all fields.', 'error');
+                return;
+            }
+            if (password.length < 4) {
+                showToast('Password must be at least 4 characters.', 'error');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.some(u => u.email === email)) {
+                showToast('This email is already registered.', 'error');
+                return;
+            }
+
+            const newUser = { name, email, password, role };
+            users.push(newUser);
+            saveUsers(users);
+            showToast('Account created! Please sign in.', 'success');
+            showLogin();
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = '';
+            document.getElementById('signup-name').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '1234';
+        }
+
+        // Enter key support
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('login-password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('login-email').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('signup-password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleSignup();
+            });
+        });
+
+        function logout() {
+            clearSession();
+            document.getElementById('app-wrapper').classList.remove('show');
+            document.getElementById('auth-container').classList.remove('hidden');
+            showToast('Logged out.', 'info');
+        }
+
+        // ============================================================
+        //  APP INIT
+        // ============================================================
+
+        function initApp() {
+            const user = getCurrentUser();
+            if (!user) {
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('app-wrapper').classList.remove('show');
+                return;
+            }
+
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-wrapper').classList.add('show');
+
+            // Update UI with user info
+            const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            document.getElementById('sidebar-avatar').textContent = initial;
+            document.getElementById('sidebar-name').textContent = user.name;
+            document.getElementById('sidebar-role').textContent = user.role === 'admin' ? 'Administrator' : user.role ===
+                'teacher' ? 'Faculty Guide' : 'Student';
+            document.getElementById('header-user').textContent = user.name;
+            document.getElementById('header-avatar').textContent = initial;
+
+            // Build sidebar
+            const nav = document.getElementById('sidebar-nav');
+            let links = '';
+            if (user.role === 'admin') {
+                links = `
+              <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+              </a>
+              <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+              </a>
+              <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
+                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+              </a>
+              <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
+                <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
+              </a>
+            `;
+            } else if (user.role === 'teacher') {
+                links = `
+              <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+              </a>
+              <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+              </a>
+              <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
+                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+              </a>
+            `;
+            } else { // student
+                links = `
+              <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
+                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+              </a>
+            `;
+            }
+            nav.innerHTML = links;
+
+            // Load data and render
+            loadData();
+            if (user.role === 'student') {
+                switchView('student');
+            } else {
+                switchView('dashboard');
+            }
+        }
+
+        // ============================================================
+        //  SUBJECT DATA (same as before, with minor fixes)
+        // ============================================================
+
+        let subjects = [];
+        let currentView = 'dashboard';
+        let currentSubjectId = null;
+        let currentTab = 'overview';
+        const STORAGE_KEY = 'bec_math_subjects';
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                subjects = raw ? JSON.parse(raw) : [];
+                subjects = subjects.map(s => ({
+                    ...s,
+                    timetable: Array.isArray(s.timetable) ? s.timetable : [],
+                    notes: Array.isArray(s.notes) ? s.notes : [],
+                    resources: Array.isArray(s.resources) ? s.resources : [],
+                    syllabus: s.syllabus || null,
+                }));
+            } catch (e) { subjects = []; }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
+            } catch (e) { showToast('Failed to save data.', 'error'); }
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer = null;
+
+        function showToast(message, type = 'info') {
+            const el = document.getElementById('toast');
+            el.textContent = message;
+            el.className = 'toast ' + type;
+            void el.offsetWidth;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ============================================================
+        //  VIEW ROUTING
+        // ============================================================
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('view-' + view);
+            if (target) target.classList.remove('hidden');
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-link[data-view="${view}"]`);
+            if (link) link.classList.add('active');
+
+            if (view === 'dashboard') renderDashboard();
+            else if (view === 'my-subjects') renderMySubjects();
+            else if (view === 'student') renderStudentView();
+            else if (view === 'admin-users') renderAdminUsers();
+            if (view !== 'my-subjects' && view !== 'subject-detail') {
+                currentSubjectId = null;
+            }
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                'my-subjects': 'My Subjects',
+                student: 'Student View',
+                'admin-users': 'User Management',
+                'subject-detail': 'Subject Details'
+            };
+            document.getElementById('page-title').textContent = titles[view] || 'Dashboard';
+        }
+
+        function goBackToSubjects() {
+            currentSubjectId = null;
+            switchView('my-subjects');
+        }
+
+        // ============================================================
+        //  DASHBOARD
+        // ============================================================
+        function renderDashboard() {
+            const stats = document.getElementById('dash-stats');
+            const totalSubjects = subjects.length;
+            let totalStudents = 0,
+                totalResources = 0,
+                totalSlots = 0;
+            subjects.forEach(s => {
+                totalStudents += 60;
+                totalResources += (s.resources || []).length + (s.notes || []).length;
+                totalSlots += (s.timetable || []).length;
+            });
+            stats.innerHTML = `
+            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Subjects</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSubjects}</div></div>
+            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Students</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalStudents}</div></div>
+            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Resources</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalResources}</div></div>
+            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Timetable Slots</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSlots}</div></div>
+          `;
+            const todayEl = document.getElementById('dash-today');
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const todayName = days[new Date().getDay() - 1] || 'Monday';
+            let todayHtml = '';
+            subjects.forEach(s => {
+                (s.timetable || []).filter(t => t.day === todayName).forEach(t => {
+                    todayHtml += `<div class="flex items-center justify-between bg-[#F8FAFC] p-2 rounded">
+                <div><div class="font-semibold text-[14px]">${s.name}</div><div class="text-[12px] text-[#64748B]">${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div></div>
+                <span class="text-[12px] font-bold text-[#1E40AF]">${t.topic || ''}</span>
+              </div>`;
+                });
+            });
+            todayEl.innerHTML = todayHtml || '<p class="text-[14px] text-[#64748B]">No classes today.</p>';
+            const actEl = document.getElementById('dash-activity');
+            let actHtml = '';
+            subjects.slice(0, 5).forEach(s => {
+                actHtml += `<div class="flex items-center gap-2 p-2 bg-[#F8FAFC] rounded">
+              <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
+              <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) active</span>
+            </div>`;
+            });
+            actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#64748B]">No activity yet.</p>';
+        }
+
+        // ============================================================
+        //  MY SUBJECTS
+        // ============================================================
+        function renderMySubjects() {
+            const grid = document.getElementById('subjects-grid');
+            if (subjects.length === 0) {
+                grid.innerHTML =
+                    `<div class="col-span-3 text-center py-12 text-[#64748B]">No subjects yet. Click "Add Subject" to begin.</div>`;
+                return;
+            }
+            grid.innerHTML = subjects.map(s => `
+            <div class="card p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openSubjectDetail('${s.id}')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-code-num font-bold text-[#1E40AF] text-[14px]">${s.code}</span>
+                <div class="flex gap-1">
+                  <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="event.stopPropagation(); openEditSubjectModal('${s.id}')"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                  <button class="p-1 rounded hover:bg-red-50 text-red-500" onclick="event.stopPropagation(); deleteSubject('${s.id}')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                </div>
+              </div>
+              <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
+              <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.section || '—'}</p>
+              <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B]">
+                <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
+                <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // ============================================================
+        //  SUBJECT DETAIL
+        // ============================================================
+        function openSubjectDetail(id) {
+            const subj = subjects.find(s => s.id === id);
+            if (!subj) { showToast('Subject not found.', 'error'); return; }
+            currentSubjectId = id;
+            currentTab = 'overview';
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-subject-detail').classList.remove('hidden');
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-link[data-view="my-subjects"]`);
+            if (link) link.classList.add('active');
+            document.getElementById('page-title').textContent = subj.name;
+            renderSubjectDetail();
+        }
+
+        function getCurrentSubject() {
+            return subjects.find(s => s.id === currentSubjectId) || null;
+        }
+
+        function renderSubjectDetail() {
+            const s = getCurrentSubject();
+            if (!s) {
+                document.getElementById('subject-detail-header').innerHTML =
+                    '<div class="card p-5 text-center text-[#64748B]">Subject not found.</div>';
+                document.getElementById('subject-tab-content').innerHTML = '';
+                return;
+            }
+            const header = document.getElementById('subject-detail-header');
+            header.innerHTML = `
+            <div class="card p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
+                  <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
+                  <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.section || '—'}</span>
+                </div>
+                <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
+                <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
+              </div>
+            </div>
+          `;
+            document.querySelectorAll('#subject-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === currentTab) btn.classList.add('active');
+            });
+            renderTabContent();
+        }
+
+        function switchSubjectTab(tab) {
+            currentTab = tab;
+            renderSubjectDetail();
+        }
+
+        function renderTabContent() {
+            const s = getCurrentSubject();
+            if (!s) {
+                document.getElementById('subject-tab-content').innerHTML =
+                    '<div class="card p-4 text-center text-[#64748B]">Subject not available.</div>';
+                return;
+            }
+            const el = document.getElementById('subject-tab-content');
+            if (currentTab === 'overview') {
+                el.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="card p-4"><h3 class="font-semibold mb-2">Subject Info</h3>
+                <p class="text-[13px] text-[#64748B]">Name: <b>${s.name}</b></p>
+                <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
+                <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
+                <p class="text-[13px] text-[#64748B]">Section: <b>${s.section || '—'}</b></p>
+              </div>
+              <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
+                <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
+                <p class="text-[13px] text-[#64748B]">Notes: <b>${(s.notes||[]).length}</b></p>
+                <p class="text-[13px] text-[#64748B]">Resources: <b>${(s.resources||[]).length}</b></p>
+                <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? 'Set' : 'Not set'}</b></p>
+              </div>
+            </div>`;
+            } else if (currentTab === 'timetable') {
+                const slots = s.timetable || [];
+                el.innerHTML = `<div class="card p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold">Weekly Timetable</h3>
+                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
+              </div>
+              ${slots.length === 0 ? '<p class="text-[13px] text-[#64748B]">No timetable entries yet.</p>' : ''}
+              <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
+              ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
+              </tbody></table></div>
+            </div>`;
+            } else if (currentTab === 'notes') {
+                const notes = s.notes || [];
+                el.innerHTML = `<div class="card p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold">Notes</h3>
+                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
+              </div>
+              ${notes.length === 0 ? '<p class="text-[13px] text-[#64748B]">No notes yet.</p>' : ''}
+              <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between">
+                <div><div class="font-semibold text-[14px]">${n.title || ''}</div><div class="text-[12px] text-[#64748B]">${n.content || ''}</div>
+                ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open Link</a>` : ''}
+                </div>
+                <button class="p-1 text-red-500" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+              </div>`).join('')}
+              </div>
+            </div>`;
+            } else if (currentTab === 'syllabus') {
+                el.innerHTML = `<div class="card p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold">Syllabus</h3>
+                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
+              </div>
+              ${s.syllabus ? `<p class="text-[13px] text-[#334155]">${s.syllabus.content || 'No content'}</p>
+              ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#1E40AF] text-[13px] underline flex items-center gap-1 mt-2"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}` : '<p class="text-[13px] text-[#64748B]">No syllabus set.</p>'}
+            </div>`;
+            } else if (currentTab === 'resources') {
+                const resources = s.resources || [];
+                el.innerHTML = `<div class="card p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold">Resources</h3>
+                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
+              </div>
+              ${resources.length === 0 ? '<p class="text-[13px] text-[#64748B]">No resources yet.</p>' : ''}
+              <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="resource-type-badge">${r.type || 'notes'}</span>
+                  <div><div class="font-semibold text-[14px]">${r.title || ''}</div><div class="text-[12px] text-[#64748B]">${r.description || ''}</div></div>
+                  <span class="link-type-badge">${r.linkType || 'web-url'}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="p-1 text-[#1E40AF]"><span class="material-symbols-outlined text-[16px]">open_in_new</span></a>` : ''}
+                  <button class="p-1 text-red-500" onclick="deleteResource(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                </div>
+              </div>`).join('')}
+              </div>
+            </div>`;
+            }
+        }
+
+        // ============================================================
+        //  STUDENT VIEW
+        // ============================================================
+        function renderStudentView() {
+            const el = document.getElementById('student-subjects');
+            if (subjects.length === 0) {
+                el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
+                return;
+            }
+            el.innerHTML = subjects.map(s => `
+            <div class="card p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
+                <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
+              </div>
+              <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
+              <p class="text-[12px] text-[#64748B]">${s.section || '—'} · Dr. Mahadev Biradar</p>
+              <div class="mt-3 space-y-1">
+                ${(s.timetable||[]).slice(0, 3).map(t => `<div class="text-[12px] text-[#64748B]"><span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div>`).join('')}
+              </div>
+              ${(s.resources||[]).length > 0 ? `<div class="mt-3"><span class="text-[12px] font-semibold">Resources:</span> ${s.resources.map(r => `<a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline mr-2">${r.title}</a>`).join('')}</div>` : ''}
+            </div>
+          `).join('');
+        }
+
+        // ============================================================
+        //  ADMIN: USER MANAGEMENT
+        // ============================================================
+        function renderAdminUsers() {
+            const users = getUsers();
+            const tbody = document.getElementById('admin-users-table');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-[#64748B]">No users found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map((u, idx) => `
+            <tr class="table-row">
+              <td class="p-3 font-semibold">${u.name}</td>
+              <td class="p-3 text-[#64748B] text-[13px]">${u.email}</td>
+              <td class="p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
+              <td class="p-3 text-right">
+                ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[12px]">Protected</span>'}
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        function deleteUser(email) {
+            if (email === 'mmbbec@gmail.com') {
+                showToast('Cannot delete the admin account.', 'error');
+                return;
+            }
+            if (!confirm('Delete user ' + email + '?')) return;
+            let users = getUsers();
+            users = users.filter(u => u.email !== email);
+            saveUsers(users);
+            renderAdminUsers();
+            showToast('User deleted.', 'info');
+        }
+
+        // ============================================================
+        //  SUBJECT CRUD
+        // ============================================================
+        function openAddSubjectModal() {
+            document.getElementById('subject-modal-title').textContent = 'Add Subject';
+            document.getElementById('subject-form-id').value = '';
+            document.getElementById('subject-name').value = '';
+            document.getElementById('subject-code').value = '';
+            document.getElementById('subject-section').value = '';
+            document.getElementById('subject-semester').value = 'I Semester';
+            document.getElementById('subject-modal').classList.remove('hidden');
+        }
+
+        function openEditSubjectModal(id) {
+            const s = id ? subjects.find(x => x.id === id) : getCurrentSubject();
+            if (!s) { showToast('Subject not found.', 'error'); return; }
+            document.getElementById('subject-modal-title').textContent = 'Edit Subject';
+            document.getElementById('subject-form-id').value = s.id;
+            document.getElementById('subject-name').value = s.name;
+            document.getElementById('subject-code').value = s.code;
+            document.getElementById('subject-section').value = s.section || '';
+            document.getElementById('subject-semester').value = s.semester || 'I Semester';
+            document.getElementById('subject-modal').classList.remove('hidden');
+        }
+
+        function closeSubjectModal() {
+            document.getElementById('subject-modal').classList.add('hidden');
+        }
+
+        function handleSubjectSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('subject-form-id').value;
+            const name = document.getElementById('subject-name').value.trim();
+            const code = document.getElementById('subject-code').value.trim();
+            const semester = document.getElementById('subject-semester').value;
+            const section = document.getElementById('subject-section').value.trim();
+            if (!name || !code) { showToast('Subject name and code are required.', 'error'); return; }
+            if (id) {
+                const s = subjects.find(x => x.id === id);
+                if (s) { s.name = name;
+                    s.code = code;
+                    s.semester = semester;
+                    s.section = section;
+                    showToast('Subject updated!', 'success'); } else { showToast('Subject not found.', 'error'); return; }
+            } else {
+                if (subjects.some(s => s.code.toLowerCase() === code.toLowerCase())) {
+                    showToast('A subject with this code already exists.', 'error');
+                    return;
+                }
+                subjects.push({ id: Date.now().toString(), name, code, semester, section, timetable: [], notes: [],
+                    resources: [], syllabus: null });
+                showToast('Subject added!', 'success');
+            }
+            saveData();
+            closeSubjectModal();
+            if (currentView === 'dashboard') renderDashboard();
+            else if (currentView === 'my-subjects') renderMySubjects();
+            else if (currentView === 'student') renderStudentView();
+            if (currentSubjectId) renderSubjectDetail();
+        }
+
+        function deleteSubject(id) {
+            if (!confirm('Delete this subject and all its data?')) return;
+            const idx = subjects.findIndex(s => s.id === id);
+            if (idx === -1) { showToast('Subject not found.', 'error'); return; }
+            subjects.splice(idx, 1);
+            saveData();
+            if (currentSubjectId === id) { currentSubjectId = null;
+                goBackToSubjects(); return; }
+            renderMySubjects();
+            renderDashboard();
+            showToast('Subject deleted.', 'info');
+        }
+
+        // ============================================================
+        //  TIMETABLE
+        // ============================================================
+        function openTimetableModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('tt-day').value = 'Monday';
+            document.getElementById('tt-room').value = '';
+            document.getElementById('tt-start').value = '';
+            document.getElementById('tt-end').value = '';
+            document.getElementById('tt-topic').value = '';
+            document.getElementById('timetable-modal').classList.remove('hidden');
+        }
+
+        function closeTimetableModal() { document.getElementById('timetable-modal').classList.add('hidden'); }
+
+        function handleTimetableSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const day = document.getElementById('tt-day').value;
+            const start = document.getElementById('tt-start').value.trim();
+            const end = document.getElementById('tt-end').value.trim();
+            const room = document.getElementById('tt-room').value.trim();
+            const topic = document.getElementById('tt-topic').value.trim();
+            if (!start || !end) { showToast('Start and end time are required.', 'error'); return; }
+            s.timetable = s.timetable || [];
+            s.timetable.push({ day, start, end, room, topic });
+            saveData();
+            closeTimetableModal();
+            renderSubjectDetail();
+            showToast('Timetable slot added!', 'success');
+        }
+
+        function deleteTimetableSlot(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.timetable = s.timetable || [];
+            if (index >= 0 && index < s.timetable.length) { s.timetable.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Slot removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  NOTES
+        // ============================================================
+        function openNoteModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').value = '';
+            document.getElementById('note-link-type').value = 'google-drive';
+            document.getElementById('note-link').value = '';
+            document.getElementById('note-modal').classList.remove('hidden');
+        }
+
+        function closeNoteModal() { document.getElementById('note-modal').classList.add('hidden'); }
+
+        function handleNoteSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').value.trim();
+            const linkType = document.getElementById('note-link-type').value;
+            const linkUrl = document.getElementById('note-link').value.trim();
+            if (!title) { showToast('Note title is required.', 'error'); return; }
+            s.notes = s.notes || [];
+            s.notes.push({ title, content, linkType, linkUrl });
+            saveData();
+            closeNoteModal();
+            renderSubjectDetail();
+            showToast('Note added!', 'success');
+        }
+
+        function deleteNote(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.notes = s.notes || [];
+            if (index >= 0 && index < s.notes.length) { s.notes.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Note removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  SYLLABUS
+        // ============================================================
+        function openSyllabusModal() {
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const modal = document.getElementById('syllabus-modal');
+            if (s.syllabus) {
+                document.getElementById('syl-content').value = s.syllabus.content || '';
+                document.getElementById('syl-link-type').value = s.syllabus.linkType || 'google-drive';
+                document.getElementById('syl-link').value = s.syllabus.linkUrl || '';
+            } else {
+                document.getElementById('syl-content').value = '';
+                document.getElementById('syl-link-type').value = 'google-drive';
+                document.getElementById('syl-link').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeSyllabusModal() { document.getElementById('syllabus-modal').classList.add('hidden'); }
+
+        function handleSyllabusSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            s.syllabus = {
+                content: document.getElementById('syl-content').value.trim(),
+                linkType: document.getElementById('syl-link-type').value,
+                linkUrl: document.getElementById('syl-link').value.trim(),
+            };
+            saveData();
+            closeSyllabusModal();
+            renderSubjectDetail();
+            showToast('Syllabus saved!', 'success');
+        }
+
+        // ============================================================
+        //  RESOURCES
+        // ============================================================
+        function openResourceModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('res-title').value = '';
+            document.getElementById('res-type').value = 'notes';
+            document.getElementById('res-desc').value = '';
+            document.getElementById('res-link-type').value = 'google-drive';
+            document.getElementById('res-link').value = '';
+            document.getElementById('resource-modal').classList.remove('hidden');
+        }
+
+        function closeResourceModal() { document.getElementById('resource-modal').classList.add('hidden'); }
+
+        function handleResourceSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const title = document.getElementById('res-title').value.trim();
+            const type = document.getElementById('res-type').value;
+            const description = document.getElementById('res-desc').value.trim();
+            const linkType = document.getElementById('res-link-type').value;
+            const linkUrl = document.getElementById('res-link').value.trim();
+            if (!title || !linkUrl) { showToast('Title and link URL are required.', 'error'); return; }
+            s.resources = s.resources || [];
+            s.resources.push({ title, type, description, linkType, linkUrl });
+            saveData();
+            closeResourceModal();
+            renderSubjectDetail();
+            showToast('Resource added!', 'success');
+        }
+
+        function deleteResource(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.resources = s.resources || [];
+            if (index >= 0 && index < s.resources.length) { s.resources.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Resource removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            const session = getSession();
+            if (session) {
+                const users = getUsers();
+                const user = users.find(u => u.email === session.email);
+                if (user) {
+                    initApp();
+                    return;
+                } else {
+                    clearSession();
+                }
+            }
+            // Show auth
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('app-wrapper').classList.remove('show');
+            showLogin();
+            // Pre-fill admin for demo
+            document.getElementById('login-email').value = 'mmbbec@gmail.com';
+            document.getElementById('login-password').value = 'admin123';
+        });
+
+        // Expose functions globally
+        window.switchView = switchView;
+        window.openAddSubjectModal = openAddSubjectModal;
+        window.openEditSubjectModal = openEditSubjectModal;
+        window.openSubjectDetail = openSubjectDetail;
+        window.switchSubjectTab = switchSubjectTab;
+        window.goBackToSubjects = goBackToSubjects;
+        window.openTimetableModal = openTimetableModal;
+        window.openNoteModal = openNoteModal;
+        window.openSyllabusModal = openSyllabusModal;
+        window.openResourceModal = openResourceModal;
+        window.closeSubjectModal = closeSubjectModal;
+        window.closeTimetableModal = closeTimetableModal;
+        window.closeNoteModal = closeNoteModal;
+        window.closeSyllabusModal = closeSyllabusModal;
+        window.closeResourceModal = closeResourceModal;
+        window.handleSubjectSubmit = handleSubjectSubmit;
+        window.handleTimetableSubmit = handleTimetableSubmit;
+        window.handleNoteSubmit = handleNoteSubmit;
+        window.handleSyllabusSubmit = handleSyllabusSubmit;
+        window.handleResourceSubmit = handleResourceSubmit;
+        window.deleteSubject = deleteSubject;
+        window.deleteTimetableSlot = deleteTimetableSlot;
+        window.deleteNote = deleteNote;
+        window.deleteResource = deleteResource;
+        window.deleteUser = deleteUser;
+        window.logout = logout;
+        window.showLogin = showLogin;
+        window.showSignup = showSignup;
+        window.selectRole = selectRole;
+        window.handleLogin = handleLogin;
+        window.handleSignup = handleSignup;
+        window.renderAdminUsers = renderAdminUsers;
+    </script>
+</body>
+</html>
