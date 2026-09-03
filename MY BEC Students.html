@@ -245,7 +245,7 @@
             box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
 
-        /* Login/Signup styles */
+        /* Auth */
         .auth-container {
             min-height: 100vh;
             display: flex;
@@ -338,7 +338,121 @@
             display: block;
         }
 
-        /* Admin user table */
+        /* Attendance */
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            max-width: 600px;
+            margin: 12px 0;
+        }
+        @media (max-width: 640px) {
+            .attendance-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        .roll-btn {
+            padding: 10px 4px;
+            border: 2px solid #E2E8F0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s;
+            text-align: center;
+            color: #0F172A;
+        }
+        .roll-btn:hover {
+            border-color: #94A3B8;
+            transform: scale(1.03);
+        }
+        .roll-btn.absent {
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+            color: #991B1B;
+        }
+        .roll-btn.absent:hover {
+            background: #FECACA;
+        }
+        .roll-btn.present {
+            background: #D1FAE5;
+            border-color: #6EE7B7;
+            color: #065F46;
+        }
+        .attendance-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 16px 0;
+            padding: 16px;
+            background: #F8FAFC;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+        .selected-info {
+            padding: 8px 14px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+            font-size: 13px;
+            color: #475569;
+            flex: 1;
+            min-width: 180px;
+        }
+        .selected-info strong {
+            color: #0F172A;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #F8FAFC;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border-left: 4px solid #1E40AF;
+        }
+        .history-item .date {
+            font-weight: 600;
+            color: #0F172A;
+        }
+        .history-item .details {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-absent {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        .badge-present {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .date-picker {
+            padding: 6px 10px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #0F172A;
+        }
+        .date-picker:focus {
+            outline: none;
+            border-color: #1E40AF;
+        }
+
+        /* User role badge */
         .user-role-badge {
             font-size: 11px;
             font-weight: 600;
@@ -359,7 +473,6 @@
             color: #059669;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .auth-card {
                 padding: 28px 20px;
@@ -586,66 +699,63 @@
                 </div>
 
                 <!-- ===== STUDENT VIEW ===== -->
-                // ============================================================
-//  STUDENT VIEW - FIXED to show notes and full timetable
-// ============================================================
-function renderStudentView() {
-    const el = document.getElementById('student-subjects');
-    if (subjects.length === 0) {
-        el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
-        return;
-    }
-    el.innerHTML = subjects.map(s => `
-        <div class="card p-5">
-            <div class="flex items-center justify-between mb-2">
-                <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
-                <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
-            </div>
-            <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
-            <p class="text-[12px] text-[#64748B]">${s.section || '—'} · Dr. Mahadev Biradar</p>
-            
-            <!-- Timetable -->
-            ${(s.timetable||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Timetable:</span>
-                    ${s.timetable.map(t => `
-                        <div class="text-[12px] text-[#64748B]">
-                            <span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}
-                            ${t.topic ? ` (${t.topic})` : ''}
+                <div id="view-student" class="view-section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">Student View</h1>
+                        <p class="text-[14px] text-[#64748B]">Browse all subjects with timetable, notes, and resources</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
+                </div>
+
+                <!-- ===== ATTENDANCE VIEW (NEW) ===== -->
+                <div id="view-attendance" class="view-section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📋 Attendance</h1>
+                        <p class="text-[14px] text-[#64748B]">Mark student attendance date‑wise</p>
+                    </div>
+                    <div class="card p-5">
+                        <!-- Subject & Date Selectors -->
+                        <div class="flex flex-wrap items-end gap-4 mb-4">
+                            <div>
+                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Select Subject</label>
+                                <select id="attendance-subject" class="date-picker" style="min-width:200px;"></select>
+                            </div>
+                            <div>
+                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Date</label>
+                                <input type="date" id="attendance-date" class="date-picker">
+                            </div>
+                            <button class="btn-secondary" onclick="loadAttendance()">Load</button>
                         </div>
-                    `).join('')}
-                </div>
-            ` : ''}
-            
-            <!-- Notes -->
-            ${(s.notes||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Notes:</span>
-                    ${s.notes.map(n => `
-                        <div class="text-[12px] text-[#64748B]">
-                            ${n.title || ''}
-                            ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] underline ml-1">📄 Open</a>` : ''}
+
+                        <h3 class="font-semibold mb-2">Click roll numbers of ABSENT students</h3>
+                        <div id="roll-grid" class="attendance-grid"></div>
+
+                        <div class="attendance-controls">
+                            <button class="btn-success flex items-center gap-1" onclick="markAllPresent()">
+                                <span class="material-symbols-outlined text-[18px]">check_circle</span> ALL PRESENT
+                            </button>
+                            <button class="btn-danger flex items-center gap-1" onclick="markAllAbsent()">
+                                <span class="material-symbols-outlined text-[18px]">cancel</span> ALL ABSENT
+                            </button>
+                            <div class="selected-info" id="selected-info">
+                                <strong>Selected Absent:</strong> None / All Present
+                            </div>
+                            <button class="btn-secondary flex items-center gap-1" onclick="submitAttendance()">
+                                <span class="material-symbols-outlined text-[18px]">save</span> SUBMIT ATTENDANCE
+                            </button>
                         </div>
-                    `).join('')}
+
+                        <div class="mt-4">
+                            <button class="btn-ghost flex items-center gap-1" onclick="toggleHistory()">
+                                <span class="material-symbols-outlined text-[18px]">history</span> Show History
+                            </button>
+                            <div id="attendance-history" style="display: none; margin-top: 16px;">
+                                <h4 class="font-semibold mb-2">Attendance History</h4>
+                                <div id="history-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            ` : ''}
-            
-            <!-- Resources -->
-            ${(s.resources||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Resources:</span>
-                    ${s.resources.map(r => `
-                        <a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline mr-2">${r.title}</a>
-                    `).join('')}
-                </div>
-            ` : ''}
-            
-            ${(s.timetable||[]).length === 0 && (s.notes||[]).length === 0 && (s.resources||[]).length === 0 ? `
-                <div class="mt-3 text-[12px] text-[#64748B]">No content available yet.</div>
-            ` : ''}
-        </div>
-    `).join('');
-}
 
                 <!-- ===== ADMIN: USER MANAGEMENT ===== -->
                 <div id="view-admin-users" class="view-section hidden">
@@ -676,7 +786,7 @@ function renderStudentView() {
         </div>
 
         <!-- ============================================================ -->
-        <!-- MODALS -->
+        <!-- MODALS (Subject, Timetable, Note, Syllabus, Resource, Forgot) -->
         <!-- ============================================================ -->
 
         <!-- Add/Edit Subject Modal -->
@@ -875,7 +985,6 @@ function renderStudentView() {
         const USERS_KEY = 'bec_users';
         const SESSION_KEY = 'bec_session';
 
-        // Default admin
         const DEFAULT_ADMIN = {
             email: 'mmbbec@gmail.com',
             password: 'admin123',
@@ -887,7 +996,6 @@ function renderStudentView() {
             try {
                 const raw = localStorage.getItem(USERS_KEY);
                 const users = raw ? JSON.parse(raw) : [];
-                // Ensure admin exists
                 const adminExists = users.some(u => u.email === DEFAULT_ADMIN.email);
                 if (!adminExists) {
                     users.push({ ...DEFAULT_ADMIN });
@@ -1022,8 +1130,6 @@ function renderStudentView() {
                 showToast('No account found with this email address.', 'error');
                 return;
             }
-            // In a real app, you'd send an email with a reset link.
-            // For demo, we'll show the password in the toast.
             showToast('Your password is: ' + user.password + ' (reset link sent to your email)', 'info');
             closeForgotPasswordModal();
         }
@@ -1087,6 +1193,9 @@ function renderStudentView() {
               <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
                 <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
               </a>
+              <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
+              </a>
               <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
                 <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
               </a>
@@ -1101,6 +1210,9 @@ function renderStudentView() {
               </a>
               <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
                 <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+              </a>
+              <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
               </a>
               <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
                 <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
@@ -1183,15 +1295,16 @@ function renderStudentView() {
 
             if (view === 'dashboard') renderDashboard();
             else if (view === 'my-subjects') renderMySubjects();
+            else if (view === 'attendance') renderAttendance();
             else if (view === 'student') renderStudentView();
             else if (view === 'admin-users') renderAdminUsers();
             if (view !== 'my-subjects' && view !== 'subject-detail') {
                 currentSubjectId = null;
             }
-            // Update page title
             const titles = {
                 dashboard: 'Dashboard',
                 'my-subjects': 'My Subjects',
+                attendance: 'Attendance',
                 student: 'Student View',
                 'admin-users': 'User Management',
                 'subject-detail': 'Subject Details'
@@ -1439,6 +1552,217 @@ function renderStudentView() {
               ${(s.resources||[]).length > 0 ? `<div class="mt-3"><span class="text-[12px] font-semibold">Resources:</span> ${s.resources.map(r => `<a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline mr-2">${r.title}</a>`).join('')}</div>` : ''}
             </div>
           `).join('');
+        }
+
+        // ============================================================
+        //  ATTENDANCE (NEW)
+        // ============================================================
+        const ATTENDANCE_KEY = 'bec_attendance';
+        let attendanceData = {};
+        let selectedAbsent = new Set();
+        let currentAttendanceSubjectId = null;
+        const TOTAL_ROLLS = 58;
+
+        function loadAttendanceData() {
+            try {
+                const raw = localStorage.getItem(ATTENDANCE_KEY);
+                attendanceData = raw ? JSON.parse(raw) : {};
+                // Convert stored arrays back to Sets
+                for (const key in attendanceData) {
+                    if (attendanceData[key].absent && Array.isArray(attendanceData[key].absent)) {
+                        attendanceData[key].absent = new Set(attendanceData[key].absent);
+                    }
+                }
+            } catch (e) { attendanceData = {}; }
+        }
+
+        function saveAttendanceData() {
+            try {
+                // Convert Sets to arrays for storage
+                const toStore = {};
+                for (const key in attendanceData) {
+                    toStore[key] = {
+                        subjectId: attendanceData[key].subjectId,
+                        date: attendanceData[key].date,
+                        absent: attendanceData[key].absent ? Array.from(attendanceData[key].absent) : [],
+                    };
+                }
+                localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(toStore));
+            } catch (e) { showToast('Failed to save attendance.', 'error'); }
+        }
+
+        function renderAttendance() {
+            const select = document.getElementById('attendance-subject');
+            select.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
+            if (subjects.length > 0) {
+                select.value = subjects[0].id;
+                currentAttendanceSubjectId = parseInt(select.value);
+            } else {
+                currentAttendanceSubjectId = null;
+            }
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendance-date').value = today;
+            loadAttendance();
+            document.getElementById('attendance-history').style.display = 'none';
+        }
+
+        function loadAttendance() {
+            const subjectId = parseInt(document.getElementById('attendance-subject').value);
+            const date = document.getElementById('attendance-date').value;
+            if (!subjectId || !date) {
+                showToast('Please select a subject and date.', 'error');
+                return;
+            }
+            currentAttendanceSubjectId = subjectId;
+            const key = `${subjectId}_${date}`;
+            if (!attendanceData[key]) {
+                attendanceData[key] = {
+                    subjectId: subjectId,
+                    date: date,
+                    absent: new Set()
+                };
+            }
+            selectedAbsent = attendanceData[key].absent || new Set();
+            renderRollNumbers();
+            updateSelectedInfo();
+        }
+
+        function renderRollNumbers() {
+            const grid = document.getElementById('roll-grid');
+            let html = '';
+            for (let i = 1; i <= TOTAL_ROLLS; i++) {
+                const isAbsent = selectedAbsent.has(i);
+                html += `
+                    <button class="roll-btn ${isAbsent ? 'absent' : ''}" 
+                            onclick="toggleRoll(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        function toggleRoll(roll) {
+            if (selectedAbsent.has(roll)) {
+                selectedAbsent.delete(roll);
+            } else {
+                selectedAbsent.add(roll);
+            }
+            const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
+            if (attendanceData[key]) {
+                attendanceData[key].absent = selectedAbsent;
+            }
+            renderRollNumbers();
+            updateSelectedInfo();
+        }
+
+        function markAllPresent() {
+            selectedAbsent.clear();
+            const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
+            if (attendanceData[key]) {
+                attendanceData[key].absent = selectedAbsent;
+            }
+            renderRollNumbers();
+            updateSelectedInfo();
+        }
+
+        function markAllAbsent() {
+            for (let i = 1; i <= TOTAL_ROLLS; i++) {
+                selectedAbsent.add(i);
+            }
+            const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
+            if (attendanceData[key]) {
+                attendanceData[key].absent = selectedAbsent;
+            }
+            renderRollNumbers();
+            updateSelectedInfo();
+        }
+
+        function updateSelectedInfo() {
+            const info = document.getElementById('selected-info');
+            const count = selectedAbsent.size;
+            if (count === 0) {
+                info.innerHTML = '<strong>Selected Absent:</strong> None / All Present';
+            } else {
+                const rolls = Array.from(selectedAbsent).sort((a, b) => a - b).join(', ');
+                info.innerHTML = `<strong>Selected Absent (${count}):</strong> ${rolls}`;
+            }
+        }
+
+        function submitAttendance() {
+            const date = document.getElementById('attendance-date').value;
+            const subjectId = currentAttendanceSubjectId;
+            if (!subjectId || !date) {
+                showToast('Please select a subject and date.', 'error');
+                return;
+            }
+            const key = `${subjectId}_${date}`;
+            // Ensure we store the current selection
+            attendanceData[key] = {
+                subjectId: subjectId,
+                date: date,
+                absent: selectedAbsent
+            };
+            saveAttendanceData();
+            const subject = subjects.find(s => s.id === subjectId);
+            const presentCount = TOTAL_ROLLS - selectedAbsent.size;
+            showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`, 'success');
+            // Refresh history if visible
+            if (document.getElementById('attendance-history').style.display !== 'none') {
+                renderHistory();
+            }
+        }
+
+        function toggleHistory() {
+            const div = document.getElementById('attendance-history');
+            if (div.style.display === 'none') {
+                div.style.display = 'block';
+                renderHistory();
+            } else {
+                div.style.display = 'none';
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const subjectId = currentAttendanceSubjectId;
+            if (!subjectId) {
+                list.innerHTML = '<div class="text-sm text-muted">No subject selected.</div>';
+                return;
+            }
+            // Collect all records for this subject
+            const records = [];
+            for (const key in attendanceData) {
+                const rec = attendanceData[key];
+                if (rec.subjectId === subjectId && rec.date) {
+                    records.push({
+                        date: rec.date,
+                        absent: rec.absent ? Array.from(rec.absent) : [],
+                        total: TOTAL_ROLLS,
+                        presentCount: TOTAL_ROLLS - (rec.absent ? rec.absent.size : 0)
+                    });
+                }
+            }
+            if (records.length === 0) {
+                list.innerHTML = '<div class="text-sm text-[#64748B]">No attendance records for this subject.</div>';
+                return;
+            }
+            // Sort by date descending
+            records.sort((a, b) => b.date.localeCompare(a.date));
+            list.innerHTML = records.map(r => `
+                <div class="history-item">
+                    <div>
+                        <div class="date">📅 ${r.date}</div>
+                        <div class="text-xs text-[#64748B]">${r.absent.length} absent · ${r.presentCount} present</div>
+                    </div>
+                    <div class="details">
+                        <span class="badge badge-present">${r.presentCount} Present</span>
+                        <span class="badge badge-absent">${r.absent.length} Absent</span>
+                        ${r.absent.length > 0 ? `<span class="text-xs text-[#64748B]">Rolls: ${r.absent.slice(0, 10).join(', ')}${r.absent.length > 10 ? '...' : ''}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
         // ============================================================
@@ -1717,7 +2041,7 @@ function renderStudentView() {
         //  INIT
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if already logged in
+            loadAttendanceData();
             const session = getSession();
             if (session) {
                 const users = getUsers();
@@ -1729,16 +2053,14 @@ function renderStudentView() {
                     clearSession();
                 }
             }
-            // Show auth
             document.getElementById('auth-container').classList.remove('hidden');
             document.getElementById('app-wrapper').classList.remove('show');
             showLogin();
-            // Pre-fill admin for demo
             document.getElementById('login-email').value = 'mmbbec@gmail.com';
             document.getElementById('login-password').value = 'admin123';
         });
 
-        // Expose functions globally
+        // Expose globals
         window.switchView = switchView;
         window.openAddSubjectModal = openAddSubjectModal;
         window.openEditSubjectModal = openEditSubjectModal;
@@ -1774,6 +2096,13 @@ function renderStudentView() {
         window.handleLogin = handleLogin;
         window.handleSignup = handleSignup;
         window.renderAdminUsers = renderAdminUsers;
+        window.renderAttendance = renderAttendance;
+        window.loadAttendance = loadAttendance;
+        window.toggleRoll = toggleRoll;
+        window.markAllPresent = markAllPresent;
+        window.markAllAbsent = markAllAbsent;
+        window.submitAttendance = submitAttendance;
+        window.toggleHistory = toggleHistory;
     </script>
 </body>
 </html>
