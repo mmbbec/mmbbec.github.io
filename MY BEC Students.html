@@ -1,1706 +1,735 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dr. Mahadev Biradar | Resource & Document Dashboard</title>
+    <title>BEC Bagalkote · Subject Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A",
+                        secondary: "#1E40AF",
+                        accent: "#D97706",
+                        success: "#059669",
+                        canvas: "#F8FAFC",
+                        surface: "#FFFFFF",
+                        muted: "#F1F5F9",
+                        hairl: "#E2E8F0",
+                        subtext: "#64748B",
+                        body: "#334155",
+                        display: "#0F172A",
+                    },
+                    fontFamily: {
+                        sans: ["Manrope", "sans-serif"],
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
     <style>
-        /* ─── Reset & Base ─── */
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        body {
+            font-family: "Manrope", sans-serif;
+            background: #F8FAFC;
+            color: #334155;
+        }
+        .font-display {
+            font-family: "Space Grotesk", sans-serif;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .6rem .9rem;
+            border-radius: .375rem;
+            color: #64748B;
+            font-size: .8125rem;
+            font-weight: 600;
+            transition: all .15s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .sidebar-link:hover {
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .sidebar-link.active {
+            background: #E2E8F0;
+            color: #0F172A;
+            border-left: 3px solid #1E40AF;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: .5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+        }
+        .btn-primary {
+            background: #0F172A;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #1E293B;
+        }
+        .btn-secondary {
+            background: #1E40AF;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background: #1D4ED8;
+        }
+        .btn-ghost {
+            background: #F1F5F9;
+            color: #334155;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-ghost:hover {
+            background: #E2E8F0;
+        }
+        .btn-danger {
+            background: #DC2626;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background: #B91C1C;
+        }
+        .btn-success {
+            background: #059669;
+            color: #fff;
+            border-radius: .375rem;
+            padding: .5rem 1rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: background .15s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+        .table-row {
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        .tab-btn {
+            padding: .5rem .75rem;
+            border-radius: .375rem;
+            font-size: .8125rem;
+            font-weight: 600;
+            color: #64748B;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: .375rem;
+        }
+        .tab-btn.active {
+            background: #0F172A;
+            color: #fff;
+        }
+        .tab-btn:hover {
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .tab-btn.active:hover {
+            background: #0F172A;
+        }
+        .modal-overlay {
+            background: rgba(15, 23, 42, .4);
+            backdrop-filter: blur(4px);
+        }
+        .resource-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: .125rem .5rem;
+            border-radius: .25rem;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .link-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            padding: .125rem .375rem;
+            border-radius: .25rem;
+            background: #F1F5F9;
+            color: #64748B;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all .3s ease;
+            pointer-events: none;
+            max-width: 360px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .toast.success {
+            background: #059669;
+        }
+        .toast.error {
+            background: #DC2626;
+        }
+        .toast.info {
+            background: #1E40AF;
+        }
+        .font-code-num {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+        input,
+        select,
+        textarea {
+            outline: none;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
 
-        body {
-            background: #f4f7fb;
-            color: #263238;
-            line-height: 1.6;
-            padding-bottom: 60px;
+        /* Login/Signup styles */
+        .auth-container {
             min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: flex-start;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            padding: 20px;
         }
-
-        /* ─── Main App Wrapper ─── */
-        #app {
-            width: 100%;
-            max-width: 1150px;
-            padding: 0 20px;
-        }
-
-        /* ─── AUTH CONTAINER ─── */
-        .auth-container {
-            max-width: 460px;
-            margin: 60px auto 40px;
-            background: white;
+        .auth-card {
+            background: #fff;
             border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-            padding: 36px 32px 40px;
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #E2E8F0;
         }
-
-        .auth-container h2 {
-            font-size: 22px;
-            color: #163b65;
-            margin-bottom: 6px;
-        }
-
-        .auth-container .subtitle {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 24px;
-        }
-
-        .auth-tabs {
+        .auth-card .logo {
             display: flex;
-            gap: 4px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 24px;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 28px;
         }
-
-        .auth-tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
+        .auth-card .logo-text {
+            font-family: "Space Grotesk", sans-serif;
             font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.25s;
-            color: #64748b;
+            font-size: 20px;
+            color: #0F172A;
         }
-
-        .auth-tab.active {
-            background: white;
-            color: #163b65;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        .auth-card .logo-sub {
+            font-size: 12px;
+            color: #64748B;
+            text-align: center;
+            margin-top: -6px;
+            margin-bottom: 20px;
         }
-
-        .auth-tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.5);
+        .auth-card .form-group {
+            margin-bottom: 16px;
         }
-
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .auth-form .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .auth-form label {
+        .auth-card .form-group label {
+            display: block;
             font-size: 13px;
             font-weight: 600;
-            color: #1e293b;
+            color: #334155;
+            margin-bottom: 4px;
         }
-
-        .auth-form input,
-        .auth-form select {
-            padding: 11px 14px;
-            border: 1.5px solid #d0d7de;
+        .auth-card .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #E2E8F0;
             border-radius: 8px;
             font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-            background: white;
+            background: #F8FAFC;
+            transition: border .15s;
         }
-
-        .auth-form input:focus,
-        .auth-form select:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
+        .auth-card .form-group input:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
-
-        .auth-form .btn-submit {
+        .auth-card .btn-login {
+            width: 100%;
             padding: 12px;
-            background: #163b65;
-            color: white;
-            border: none;
-            border-radius: 8px;
             font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.25s;
+            border-radius: 8px;
             margin-top: 8px;
         }
-
-        .auth-form .btn-submit:hover {
-            background: #0f2a4a;
+        .auth-card .forgot-password {
+            text-align: right;
+            margin-top: 4px;
+            font-size: 12px;
+            color: #64748B;
         }
-
-        .auth-form .btn-submit-secondary {
-            background: #d94a32;
-        }
-
-        .auth-form .btn-submit-secondary:hover {
-            background: #b53d28;
-        }
-
-        .auth-error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .auth-success {
-            background: #dcfce7;
-            color: #166534;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .auth-extra {
-            text-align: center;
-            font-size: 13px;
-            color: #64748b;
-            margin-top: 12px;
-        }
-
-        .auth-extra a {
-            color: #163b65;
-            font-weight: 600;
-            text-decoration: none;
+        .auth-card .forgot-password a {
+            color: #1E40AF;
+            font-weight: 500;
             cursor: pointer;
+            text-decoration: none;
         }
-
-        .auth-extra a:hover {
+        .auth-card .forgot-password a:hover {
             text-decoration: underline;
         }
+        .hidden {
+            display: none !important;
+        }
+        .app-wrapper {
+            display: none;
+        }
+        .app-wrapper.show {
+            display: block;
+        }
 
-        .role-badge {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 12px;
+        /* Admin user table */
+        .user-role-badge {
             font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .role-badge.teacher {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .role-badge.student {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        /* ─── FORGOT PASSWORD ─── */
-        .forgot-section {
-            display: none;
-            margin-top: 8px;
-            padding-top: 16px;
-            border-top: 1px solid #edf2f7;
-        }
-
-        .forgot-section.show {
-            display: block;
-        }
-
-        /* ─── DASHBOARD (hidden until auth) ─── */
-        #dashboard {
-            display: none;
-        }
-
-        /* ─── Header ─── */
-        header {
-            background: #163b65;
-            color: white;
-            padding: 24px 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border-radius: 12px 12px 0 0;
-        }
-
-        .header-container {
-            max-width: 1150px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header-title h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .header-title p {
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-nav {
-            padding: 8px 18px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 13px;
             font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-nav-light {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-nav-light:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-nav-primary {
-            background: #d94a32;
-            color: white;
-            border: 1px solid #d94a32;
-        }
-
-        .btn-nav-primary:hover {
-            background: #b53d28;
-            border-color: #b53d28;
-        }
-
-        .btn-nav-profile {
-            background: #ffffff;
-            color: #163b65;
-            border: 1px solid #ffffff;
-        }
-
-        .btn-nav-profile:hover {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: #ffffff;
-        }
-
-        .btn-nav-logout {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-nav-logout:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* ─── Dashboard Container ─── */
-        .dashboard-container {
-            max-width: 1150px;
-            margin: 0 auto 30px;
-            padding: 0 0 20px;
-            background: white;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            padding: 20px 22px;
-            border: 1px solid #e2e8f0;
-            border-top: none;
-        }
-
-        /* ─── Section Headings ─── */
-        .section-heading {
-            font-size: 19px;
-            font-weight: 700;
-            color: #163b65;
-            margin: 35px 0 16px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-heading:first-of-type {
-            margin-top: 0;
-        }
-
-        /* ─── Profile Buttons Row ─── */
-        .profile-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 30px;
-            padding: 18px 22px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            align-items: center;
-        }
-
-        .profile-buttons-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-right: 6px;
-        }
-
-        .profile-btn {
-            padding: 9px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.25s ease;
-            border: 1.5px solid #e2e8f0;
-            background: #f8fafc;
-            color: #1e293b;
-            cursor: pointer;
-        }
-
-        .profile-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            border-color: #163b65;
-            background: #ffffff;
-        }
-
-        .profile-btn-highlight {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
-        }
-
-        .profile-btn-highlight:hover {
-            background: #0f2a4a;
-            border-color: #0f2a4a;
-            color: white;
-        }
-
-        .profile-btn-icon {
-            font-size: 18px;
-        }
-
-        /* ─── Folders Grid ─── */
-        .folders-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-bottom: 20px;
-        }
-
-        .folder-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            transition: 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .folder-card:hover {
-            transform: translateY(-3px);
-            border-color: #163b65;
-            box-shadow: 0 8px 22px rgba(22, 59, 101, 0.09);
-        }
-
-        .folder-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .folder-icon {
-            font-size: 24px;
-        }
-
-        .folder-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #163b65;
-        }
-
-        .folder-desc {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
-        .btn-folder-open {
-            background: #f1f5f9;
-            color: #163b65;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 700;
-            text-align: center;
-            border: 1px solid #cbd5e1;
-            transition: 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .folder-card:hover .btn-folder-open {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
-        }
-
-        /* ─── Controls ─── */
-        .controls-card {
-            background: white;
-            padding: 20px 22px;
-            border-radius: 10px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 20px;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            min-width: 260px;
-            position: relative;
-        }
-
-        .search-input-wrapper input {
-            width: 100%;
-            padding: 11px 16px 11px 42px;
-            border: 1.5px solid #d0d7de;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .search-input-wrapper input:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            color: #888;
-        }
-
-        .filter-select {
-            padding: 11px 16px;
-            border-radius: 8px;
-            border: 1.5px solid #d0d7de;
-            font-size: 14px;
-            background: white;
-            color: #333;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .filter-select:focus {
-            border-color: #163b65;
-        }
-
-        .category-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            border-top: 1px solid #edf2f7;
-            padding-top: 14px;
-        }
-
-        .chip {
-            padding: 5px 14px;
-            border-radius: 20px;
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-
-        .chip:hover {
-            background: #e2e8f0;
-        }
-
-        .chip.active {
-            background: #163b65;
-            color: white;
-        }
-
-        /* ─── Files Table ─── */
-        .files-table-wrapper {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-        }
-
-        .table-header {
-            padding: 15px 22px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fafbfc;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .table-header h2 {
-            font-size: 15px;
-            color: #163b65;
-            font-weight: 700;
-        }
-
-        .result-count {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background: #fafbfc;
-            padding: 13px 18px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            font-weight: 700;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        td {
-            padding: 14px 18px;
-            font-size: 14px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .format-badge {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: white;
-            flex-shrink: 0;
-            text-transform: uppercase;
-        }
-
-        .badge-pdf {
-            background: #e53e3e;
-        }
-        .badge-excel {
-            background: #2f855a;
-        }
-        .badge-doc {
-            background: #2b6cb0;
-        }
-        .badge-note {
-            background: #7c3aed;
-        }
-
-        .file-title {
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .file-category {
-            font-size: 12px;
-            color: #64748b;
-            display: block;
-        }
-
-        .actions-cell {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            white-space: nowrap;
-        }
-
-        .btn-action {
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-view {
-            background: #edf2f7;
-            color: #163b65;
-            border: 1px solid #cbd5e1;
-        }
-
-        .btn-view:hover {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
-        }
-
-        .btn-download {
-            background: #d94a32;
-            color: white;
-            border: 1px solid #d94a32;
-        }
-
-        .btn-download:hover {
-            background: #b53d28;
-            border-color: #b53d28;
-        }
-
-        .empty-state {
-            padding: 45px 20px;
-            text-align: center;
-            color: #64748b;
-            display: none;
-        }
-
-        /* ─── TEACHER NOTES SECTION ─── */
-        .teacher-notes-section {
-            margin-top: 30px;
-            border-top: 2px solid #e2e8f0;
-            padding-top: 20px;
-        }
-
-        .teacher-notes-section h3 {
-            font-size: 17px;
-            color: #163b65;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .note-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #f8fafc;
-            padding: 18px 20px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 20px;
-        }
-
-        .note-form textarea {
-            padding: 12px 14px;
-            border: 1.5px solid #d0d7de;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-        }
-
-        .note-form textarea:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
-        }
-
-        .note-form .form-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .note-form .form-row input {
-            flex: 1;
-            min-width: 180px;
-            padding: 10px 14px;
-            border: 1.5px solid #d0d7de;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .note-form .form-row input:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
-        }
-
-        .note-form .btn-add-note {
-            padding: 10px 24px;
-            background: #163b65;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.25s;
-            align-self: flex-start;
-        }
-
-        .note-form .btn-add-note:hover {
-            background: #0f2a4a;
-        }
-
-        .notes-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .note-item {
-            background: white;
-            padding: 16px 20px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .note-item .note-content {
-            flex: 1;
-        }
-
-        .note-item .note-content .note-text {
-            font-size: 14px;
-            color: #1e293b;
-        }
-
-        .note-item .note-content .note-meta {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 4px;
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-
-        .note-item .note-content .note-meta span {
-            background: #f1f5f9;
             padding: 2px 10px;
             border-radius: 12px;
+            text-transform: uppercase;
+        }
+        .user-role-badge.admin {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .user-role-badge.teacher {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .user-role-badge.student {
+            background: #D1FAE5;
+            color: #059669;
         }
 
-        .note-item .note-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .note-item .note-actions .btn-del {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .note-item .note-actions .btn-del:hover {
-            background: #fecaca;
-        }
-
-        /* ─── Responsive ─── */
-        @media (max-width: 900px) {
-            .folders-grid {
-                grid-template-columns: repeat(2, 1fr);
+        /* Responsive */
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 28px 20px;
             }
-        }
-
-        @media (max-width: 768px) {
-            th:nth-child(2),
-            td:nth-child(2),
-            th:nth-child(3),
-            td:nth-child(3) {
-                display: none;
-            }
-            .profile-buttons {
+            .auth-card .role-selector {
                 flex-direction: column;
-                align-items: stretch;
-            }
-            .profile-buttons-label {
-                margin-bottom: 4px;
-            }
-            .auth-container {
-                padding: 24px 18px 28px;
-                margin: 30px auto 30px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .folders-grid {
-                grid-template-columns: 1fr;
-            }
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .note-form .form-row {
-                flex-direction: column;
-            }
-            .note-form .btn-add-note {
-                align-self: stretch;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="app">
+    <!-- ============================================================ -->
+    <!-- TOAST -->
+    <!-- ============================================================ -->
+    <div id="toast" class="toast"></div>
 
-        <!-- ═══ AUTH CONTAINER ═══ -->
-        <div id="authContainer" class="auth-container">
-            <h2 id="authTitle">Welcome Back</h2>
-            <p class="subtitle" id="authSubtitle">Sign in to access your dashboard</p>
+    <!-- ============================================================ -->
+    <!-- AUTH CONTAINER (Login / Signup) -->
+    <!-- ============================================================ -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-card">
+            <div class="logo">
+                <svg viewBox="0 0 48 48" fill="none" class="h-12 w-12 shrink-0">
+                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
+                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
+                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
+                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
+                </svg>
+                <span class="logo-text">BEC Bagalkote</span>
+            </div>
+            <div class="logo-sub">Department of Mathematics · Subject Management</div>
 
-            <!-- Tabs -->
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
-                <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Sign Up</button>
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input id="login-email" type="email" placeholder="you@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="login-password" type="password" placeholder="••••••••" />
+                </div>
+                <div class="forgot-password">
+                    <a onclick="handleForgotPassword()">Forgot Password?</a>
+                </div>
+                <button class="btn-secondary btn-login" onclick="handleLogin()">Sign In</button>
+                <div class="auth-toggle">
+                    Don't have an account? <a onclick="showSignup()">Create one</a>
+                </div>
             </div>
 
-            <!-- Error / Success -->
-            <div id="authError" class="auth-error"></div>
-            <div id="authSuccess" class="auth-success"></div>
-
-            <!-- ─── LOGIN FORM ─── -->
-            <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+            <!-- Signup Form -->
+            <div id="signup-form" class="hidden">
                 <div class="form-group">
-                    <label for="loginEmail">Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="you@example.com" required />
+                    <label>Full Name</label>
+                    <input id="signup-name" type="text" placeholder="Your full name" />
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" required />
+                    <label>Email Address</label>
+                    <input id="signup-email" type="email" placeholder="you@example.com" />
                 </div>
-                <div class="form-group" style="flex-direction:row; gap:12px; align-items:center; flex-wrap:wrap;">
-                    <label for="loginRole" style="margin-bottom:0;">I am a</label>
-                    <select id="loginRole" style="flex:1; min-width:120px; padding:9px 12px;">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </select>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="signup-password" type="password" placeholder="••••••••" value="1234" />
+                    <span style="font-size:11px;color:#64748B;">Default: 1234</span>
                 </div>
-                <button type="submit" class="btn-submit">Sign In</button>
-
-                <div class="auth-extra">
-                    <a onclick="toggleForgot()">Forgot password?</a>
-                </div>
-
-                <!-- Forgot Password (student only) -->
-                <div id="forgotSection" class="forgot-section">
-                    <p style="font-size:13px; color:#64748b; margin-bottom:10px;">
-                        Enter your student email to reset your password.
-                    </p>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <input type="email" id="forgotEmail" placeholder="student@example.com" style="flex:1; min-width:160px; padding:10px 14px; border:1.5px solid #d0d7de; border-radius:8px; font-size:14px; outline:none;" />
-                        <button type="button" onclick="handleForgotPassword()" style="padding:10px 20px; background:#163b65; color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Reset</button>
+                <div class="form-group">
+                    <label>I am a...</label>
+                    <div class="role-selector">
+                        <button id="role-teacher" class="active" onclick="selectRole('teacher')">👨‍🏫 Teacher</button>
+                        <button id="role-student" onclick="selectRole('student')">🎓 Student</button>
                     </div>
-                    <div id="forgotMessage" style="margin-top:8px; font-size:13px; color:#64748b;"></div>
+                    <input type="hidden" id="signup-role" value="teacher" />
                 </div>
-            </form>
-
-            <!-- ─── REGISTER FORM ─── -->
-            <form id="registerForm" class="auth-form" style="display:none;" onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label for="regName">Full Name</label>
-                    <input type="text" id="regName" placeholder="Dr. Jane Doe" required />
+                <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
+                <div class="auth-toggle">
+                    Already have an account? <a onclick="showLogin()">Sign In</a>
                 </div>
-                <div class="form-group">
-                    <label for="regEmail">Email Address</label>
-                    <input type="email" id="regEmail" placeholder="you@example.com" required />
-                </div>
-                <div class="form-group">
-                    <label for="regPassword">Password</label>
-                    <input type="password" id="regPassword" placeholder="•••••••• (min 6 chars)" required minlength="6" />
-                </div>
-                <div class="form-group">
-                    <label for="regRole">I am a</label>
-                    <select id="regRole">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn-submit btn-submit-secondary">Create Account</button>
-                <div class="auth-extra">
-                    Already have an account? <a onclick="switchAuthTab('login')">Sign in</a>
-                </div>
-            </form>
+            </div>
         </div>
+    </div>
 
-        <!-- ═══ DASHBOARD ═══ -->
-        <div id="dashboard">
+    <!-- ============================================================ -->
+    <!-- MAIN APP WRAPPER -->
+    <!-- ============================================================ -->
+    <div id="app-wrapper" class="app-wrapper">
 
-            <!-- HEADER -->
-            <header>
-                <div class="header-container">
-                    <div class="header-title">
-                        <h1>Dr. Mahadev Biradar | Resource & Document Hub</h1>
-                        <p>Google Drive Directories & Important Academic Documents</p>
+        <!-- Sidebar -->
+        <aside class="fixed left-0 top-0 h-screen w-[250px] bg-white border-r border-[#E2E8F0] z-50 flex flex-col">
+            <!-- Brand Header -->
+            <div class="p-4 border-b border-[#F1F5F9] flex items-center gap-2">
+                <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 shrink-0">
+                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
+                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
+                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
+                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
+                </svg>
+                <div>
+                    <div class="font-display font-bold text-[#0F172A] leading-tight text-[13px]">BEC Bagalkote</div>
+                    <div class="text-[11px] text-[#64748B]">Dept. of Mathematics</div>
+                </div>
+            </div>
+            <!-- User Info -->
+            <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#F1F5F9]">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-[13px] uppercase" id="sidebar-avatar">MB</div>
+                        <div>
+                            <div class="text-[13px] font-semibold text-[#0F172A]" id="sidebar-name">Dr. Mahadev Biradar</div>
+                            <div class="text-[11px] text-[#64748B]" id="sidebar-role">Faculty Guide</div>
+                        </div>
                     </div>
-                    <div class="header-actions">
-                        <span id="userRoleBadge" style="background:rgba(255,255,255,0.15); padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600;"></span>
-                        <button onclick="handleLogout()" class="btn-nav btn-nav-logout">🚪 Logout</button>
-                        <a href="#" class="btn-nav btn-nav-primary" onclick="event.preventDefault(); document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});">
-                            📁 Open MMB_Academic_Resources
-                        </a>
-                    </div>
+                    <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition" title="Logout">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Nav -->
+            <nav class="flex-1 p-2 space-y-1" id="sidebar-nav">
+                <!-- Dynamic nav links -->
+            </nav>
+            <!-- Footer -->
+            <div class="p-3 border-t border-[#F1F5F9] text-center">
+                <div class="text-[10px] text-[#64748B]">Created by Dr. Mahadev Biradar</div>
+                <div class="text-[10px] text-[#64748B]">© 2026 BEC Bagalkote</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="pl-[250px] min-h-screen">
+            <!-- Header -->
+            <header class="bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-6 sticky top-0 z-40">
+                <div class="flex items-center gap-3">
+                    <span class="text-[14px] font-semibold text-[#0F172A]" id="page-title">Teacher Subject Management</span>
+                    <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">Semester System</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[12px] text-[#64748B]" id="header-user">Dr. Mahadev Biradar</span>
+                    <div class="w-7 h-7 rounded-full bg-[#1E40AF] text-white text-[11px] flex items-center justify-center font-bold uppercase" id="header-avatar">MB</div>
                 </div>
             </header>
 
-            <div class="dashboard-container">
-
-                <!-- ─── PROFILE BUTTONS ROW ─── -->
-                <div class="profile-buttons">
-                    <span class="profile-buttons-label">🔗 Quick Links</span>
-                    <a href="#" class="profile-btn profile-btn-highlight">
-                        <span class="profile-btn-icon">🛠️</span> Free Tools
-                    </a>
-                    <a href="#" class="profile-btn">
-                        <span class="profile-btn-icon">📚</span> Rashmi Biradar Web Studio
-                    </a>
-                    <a href="#" class="profile-btn">
-                        <span class="profile-btn-icon">📐</span> CIE Management
-                    </a>
-                    <a href="#" class="profile-btn">
-                        <span class="profile-btn-icon">👤</span> My BEC Students
-                    </a>
-                </div>
-
-                <!-- ─── SECTION 1: SUB FOLDERS ─── -->
-                <h2 class="section-heading">📁 Google Drive Directories (MMB_Academic_Resources)</h2>
-
-                <div class="folders-grid" id="foldersContainer">
-                    <!-- populated from subFolders -->
-                </div>
-
-                <!-- ─── SECTION 2: IMPORTANT FILES ─── -->
-                <h2 class="section-heading">📄 Important Files & Quick Access</h2>
-
-                <!-- Search & Filter -->
-                <div class="controls-card">
-                    <div class="search-row">
-                        <div class="search-input-wrapper">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="searchInput" placeholder="Search files by title, subject, or keyword..." onkeyup="filterFiles()">
+            <main class="p-6">
+                <!-- ===== DASHBOARD VIEW ===== -->
+                <div id="view-dashboard" class="view-section">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Dashboard</h1>
+                            <p class="text-[14px] text-[#64748B]">Overview of your academic portfolio</p>
                         </div>
-                        <select id="typeFilter" class="filter-select" onchange="filterFiles()">
-                            <option value="ALL">All File Types</option>
-                            <option value="PDF">PDF Files (.pdf)</option>
-                            <option value="EXCEL">Excel Spreadsheets (.xlsx)</option>
-                            <option value="DOC">Word Documents (.docx)</option>
-                            <option value="NOTE">Teacher Notes</option>
-                        </select>
+                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span>Add Subject</span>
+                        </button>
                     </div>
-
-                    <div class="category-chips">
-                        <button class="chip active" onclick="setCategory('ALL', this)">All Categories</button>
-                        <button class="chip" onclick="setCategory('Syllabus', this)">Syllabus & Notes</button>
-                        <button class="chip" onclick="setCategory('Calculators', this)">Calculators & Templates</button>
-                        <button class="chip" onclick="setCategory('Research', this)">Research & Books</button>
-                        <button class="chip" onclick="setCategory('YRC', this)">YRC & Admin</button>
-                        <button class="chip" onclick="setCategory('Teacher Notes', this)">📝 Teacher Notes</button>
-                    </div>
-                </div>
-
-                <!-- Files Table -->
-                <div class="files-table-wrapper">
-                    <div class="table-header">
-                        <h2>Highlighted Files</h2>
-                        <span class="result-count" id="resultCount">Loading files...</span>
-                    </div>
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Document Title</th>
-                                <th>Category</th>
-                                <th>File Size</th>
-                                <th style="text-align: right;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="filesTableBody">
-                            <!-- populated from filesData + teacher notes -->
-                        </tbody>
-                    </table>
-
-                    <div id="emptyState" class="empty-state">
-                        <p>📂 No files found matching your search.</p>
-                    </div>
-                </div>
-
-                <!-- ─── TEACHER NOTES SECTION (only visible to teachers) ─── -->
-                <div id="teacherNotesSection" class="teacher-notes-section" style="display:none;">
-                    <h3>📝 Teacher Notes</h3>
-                    <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
-                        Add notes that will be visible to all students.
-                    </p>
-
-                    <div class="note-form">
-                        <div class="form-row">
-                            <input type="text" id="noteTitle" placeholder="Note title (e.g. 'HW 3 Solutions')" />
-                            <input type="text" id="noteSubject" placeholder="Subject / Topic" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="card p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">event_available</span>
+                                Today's Classes
+                            </h3>
+                            <div id="dash-today" class="space-y-2"></div>
                         </div>
-                        <textarea id="noteContent" placeholder="Write your note here..."></textarea>
-                        <button class="btn-add-note" onclick="addTeacherNote()">➕ Add Note</button>
-                    </div>
-
-                    <div id="teacherNotesList" class="notes-list">
-                        <!-- populated from teacherNotes -->
+                        <div class="card p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">pending_actions</span>
+                                Recent Activity
+                            </h3>
+                            <div id="dash-activity" class="space-y-2"></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- ===== MY SUBJECTS VIEW ===== -->
+                <div id="view-my-subjects" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">My Subjects</h1>
+                            <p class="text-[14px] text-[#64748B]">Manage all subjects in your department</p>
+                        </div>
+                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span>Add Subject</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
+                </div>
+
+                <!-- ===== SUBJECT DETAIL VIEW ===== -->
+                <div id="view-subject-detail" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <button class="btn-ghost flex items-center gap-2" onclick="goBackToSubjects()">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            <span>Back to Subjects</span>
+                        </button>
+                        <button class="btn-ghost flex items-center gap-2" onclick="openEditSubjectModal()">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                            <span>Edit Subject</span>
+                        </button>
+                    </div>
+                    <div id="subject-detail-header"></div>
+                    <div class="card p-3 mb-4 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
+                        <button class="tab-btn active" data-tab="overview" onclick="switchSubjectTab('overview')">
+                            <span class="material-symbols-outlined text-[16px]">info</span>Overview
+                        </button>
+                        <button class="tab-btn" data-tab="timetable" onclick="switchSubjectTab('timetable')">
+                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>Timetable
+                        </button>
+                        <button class="tab-btn" data-tab="notes" onclick="switchSubjectTab('notes')">
+                            <span class="material-symbols-outlined text-[16px]">sticky_note_2</span>Notes
+                        </button>
+                        <button class="tab-btn" data-tab="syllabus" onclick="switchSubjectTab('syllabus')">
+                            <span class="material-symbols-outlined text-[16px]">menu_book</span>Syllabus
+                        </button>
+                        <button class="tab-btn" data-tab="resources" onclick="switchSubjectTab('resources')">
+                            <span class="material-symbols-outlined text-[16px]">folder_shared</span>Resources
+                        </button>
+                    </div>
+                    <div id="subject-tab-content"></div>
+                </div>
+
+                <!-- ===== STUDENT VIEW ===== -->
+                <div id="view-student" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Student View</h1>
+                            <p class="text-[14px] text-[#64748B]">Read-only view for students</p>
+                        </div>
+                        <span class="bg-[#F1F5F9] text-[#64748B] text-[12px] px-3 py-1 rounded-full">Read-Only Mode</span>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="student-subjects"></div>
+                </div>
+
+                <!-- ===== ADMIN: USER MANAGEMENT ===== -->
+                <div id="view-admin-users" class="view-section hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">User Management</h1>
+                            <p class="text-[14px] text-[#64748B]">Manage all registered users</p>
+                        </div>
+                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold">Admin Only</span>
+                    </div>
+                    <div class="card p-4 overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase">
+                                    <th class="p-3">User</th>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Role</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MODALS -->
+        <!-- ============================================================ -->
+
+        <!-- Add/Edit Subject Modal -->
+        <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
+                    <h3 id="subject-modal-title" class="font-display font-bold text-[#0F172A]">Add Subject</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="closeSubjectModal()">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <form id="subject-form" class="p-5 space-y-4" onsubmit="handleSubjectSubmit(event)">
+                    <input type="hidden" id="subject-form-id" />
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Name *</label>
+                            <input id="subject-name" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. Engineering Mathematics" />
+                        </div>
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Code *</label>
+                            <input id="subject-code" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. MA-101" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Semester / Year</label>
+                            <select id="subject-semester" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]">
+                                <option>I Semester</option><option>II Semester</option><option>III Semester</option>
+                                <option>IV Semester</option><option>V Semester</option><option>VI Semester</option>
+                                <option>VII Semester</option><option>VIII Semester</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Class / Section</label>
+                            <input id="subject-section" type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. III-A" />
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
+                        <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save Subject</button>
+                    </div>
+                </form>
             </div>
         </div>
 
-    </div>
-
-    <script>
-        // ═══════════════════════════════════════════════════════════════
-        // 1. DATA
-        // ═══════════════════════════════════════════════════════════════
-
-        // ─── Google Drive Sub-Folders ───
-        const subFolders = [{
-            name: "01. Research published papers",
-            icon: "📚",
-            desc: "Research published papers",
-            driveLink: "https://drive.google.com/drive/folders/1GwgeaFl8BgDCekEbzaxIFzB2m4yFjKd8?usp=drive_link"
-        }, {
-            name: "02. Lecture Notes & PPTs",
-            icon: "📝",
-            desc: "Engineering Maths I–IV module notes, tutorial sheets, and question banks.",
-            driveLink: "#"
-        }, {
-            name: "03. Calculators & Templates",
-            icon: "📊",
-            desc: "CO–PO attainment spreadsheets, AutoCrat sheets, and grading templates.",
-            driveLink: "#"
-        }, {
-            name: "04. Research & Preprints",
-            icon: "🔬",
-            desc: "MHD, Nanofluids preprints, Casson liquid data tables, and book chapters.",
-            driveLink: "#"
-        }, {
-            name: "05. YRC & Social Reports",
-            icon: "🩸",
-            desc: "Youth Red Cross camp rosters, blood donation files, and event photographs.",
-            driveLink: "#"
-        }, {
-            name: "06. Certificates & Admin Docs",
-            icon: "📋",
-            desc: "IDT/Science day certificate templates, BoS/BoE notices, and committee files.",
-            driveLink: "#"
-        }];
-
-        // ─── Base Files ───
-        const baseFiles = [{
-            name: "Differential Equations: Methods & Applications (Textbook Preview)",
-            type: "PDF",
-            category: "Research",
-            size: "4.8 MB",
-            viewUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing",
-            downloadUrl: "https://drive.google.com/file/d/1diVKxjFcbd8oK6F0evnQt4IBYASlhdsJ/view?usp=sharing"
-        }, {
-            name: "CO-PO Attainment Calculation Template",
-            type: "EXCEL",
-            category: "Calculators",
-            size: "245 KB",
-            viewUrl: "#",
-            downloadUrl: "#"
-        }, {
-            name: "Engineering Mathematics-I Complete Syllabus & Notes",
-            type: "PDF",
-            category: "Syllabus",
-            size: "1.2 MB",
-            viewUrl: "#",
-            downloadUrl: "#"
-        }, {
-            name: "Perturbation Analysis of MHD Prandtl Fluid Flow - Preprint",
-            type: "PDF",
-            category: "Research",
-            size: "890 KB",
-            viewUrl: "https://doi.org/10.1080/02286203.2026.2708091",
-            downloadUrl: "https://doi.org/10.1080/02286203.2026.2708091"
-        }, {
-            name: "Dr. Mahadev Biradar Detailed Curriculum Vitae",
-            type: "PDF",
-            category: "Research",
-            size: "350 KB",
-            viewUrl: "CV.pdf",
-            downloadUrl: "CV.pdf"
-        }, {
-            name: "Youth Red Cross Blood Donation Donor Roster Sheet",
-            type: "EXCEL",
-            category: "YRC",
-            size: "180 KB",
-            viewUrl: "#",
-            downloadUrl: "#"
-        }, {
-            name: "Question Paper Scrutiny Checklist Format",
-            type: "DOC",
-            category: "Syllabus",
-            size: "115 KB",
-            viewUrl: "#",
-            downloadUrl: "#"
-        }];
-
-        // ─── State ───
-        let selectedCategory = "ALL";
-        let currentUser = null; // { name, email, role }
-        let teacherNotes = JSON.parse(localStorage.getItem('teacherNotes') || '[]');
-        let users = JSON.parse(localStorage.getItem('appUsers') || '[]');
-
-        // ─── Combined files (base + teacher notes) ───
-        function getAllFiles() {
-            const notesAsFiles = teacherNotes.map((note, idx) => ({
-                id: 'note-' + idx,
-                name: note.title || 'Untitled Note',
-                type: 'NOTE',
-                category: 'Teacher Notes',
-                size: note.content ? (note.content.length / 1024).toFixed(1) + ' KB' : '0 KB',
-                viewUrl: '#',
-                downloadUrl: '#',
-                isNote: true,
-                noteContent: note.content,
-                noteSubject: note.subject || '',
-                noteAuthor: note.author || 'Teacher',
-                noteDate: note.date || new Date().toLocaleDateString()
-            }));
-            return [...baseFiles, ...notesAsFiles];
-        }
-
-        // ─── Save teacher notes ───
-        function saveTeacherNotes() {
-            localStorage.setItem('teacherNotes', JSON.stringify(teacherNotes));
-        }
-
-        // ─── Save users ───
-        function saveUsers() {
-            localStorage.setItem('appUsers', JSON.stringify(users));
-        }
-
-        // ─── Seed default users if empty ───
-        function seedUsers() {
-            if (users.length === 0) {
-                users = [
-                    { name: 'Dr. Mahadev Biradar', email: 'teacher@mmb.com', password: 'teacher123', role: 'teacher' },
-                    { name: 'Student One', email: 'student@mmb.com', password: 'student123', role: 'student' }
-                ];
-                saveUsers();
-            }
-            // Remove any admin hardcoded references
-        }
-        seedUsers();
-
-        // ═══════════════════════════════════════════════════════════════
-        // 2. AUTH UI
-        // ═══════════════════════════════════════════════════════════════
-
-        function switchAuthTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
-
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const title = document.getElementById('authTitle');
-            const subtitle = document.getElementById('authSubtitle');
-
-            if (tab === 'login') {
-                loginForm.style.display = 'flex';
-                registerForm.style.display = 'none';
-                title.textContent = 'Welcome Back';
-                subtitle.textContent = 'Sign in to access your dashboard';
-                document.getElementById('forgotSection').classList.remove('show');
-                clearAuthMessages();
-            } else {
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'flex';
-                title.textContent = 'Create Account';
-                subtitle.textContent = 'Join the academic community';
-                clearAuthMessages();
-            }
-        }
-
-        function clearAuthMessages() {
-            document.getElementById('authError').style.display = 'none';
-            document.getElementById('authError').textContent = '';
-            document.getElementById('authSuccess').style.display = 'none';
-            document.getElementById('authSuccess').textContent = '';
-        }
-
-        function showAuthError(msg) {
-            const el = document.getElementById('authError');
-            el.textContent = msg;
-            el.style.display = 'block';
-            document.getElementById('authSuccess').style.display = 'none';
-        }
-
-        function showAuthSuccess(msg) {
-            const el = document.getElementById('authSuccess');
-            el.textContent = msg;
-            el.style.display = 'block';
-            document.getElementById('authError').style.display = 'none';
-        }
-
-        function toggleForgot() {
-            const section = document.getElementById('forgotSection');
-            section.classList.toggle('show');
-            document.getElementById('forgotMessage').textContent = '';
-        }
-
-        // ─── Handle Login ───
-        function handleLogin(e) {
-            e.preventDefault();
-            clearAuthMessages();
-
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const role = document.getElementById('loginRole').value;
-
-            if (!email || !password) {
-                showAuthError('Please fill in all fields.');
-                return;
-            }
-
-            const user = users.find(u => u.email === email && u.password === password && u.role === role);
-            if (!user) {
-                showAuthError('Invalid email, password, or role. Please try again.');
-                return;
-            }
-
-            currentUser = user;
-            showAuthSuccess('Welcome back, ' + user.name + '!');
-            setTimeout(() => {
-                document.getElementById('authContainer').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                renderDashboard();
-            }, 500);
-        }
-
-        // ─── Handle Register ───
-        function handleRegister(e) {
-            e.preventDefault();
-            clearAuthMessages();
-
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const role = document.getElementById('regRole').value;
-
-            if (!name || !email || !password) {
-                showAuthError('Please fill in all fields.');
-                return;
-            }
-            if (password.length < 6) {
-                showAuthError('Password must be at least 6 characters.');
-                return;
-            }
-            if (users.find(u => u.email === email)) {
-                showAuthError('An account with this email already exists.');
-                return;
-            }
-
-            const newUser = { name, email, password, role };
-            users.push(newUser);
-            saveUsers();
-
-            showAuthSuccess('Account created! You can now sign in.');
-            // Auto-switch to login
-            document.getElementById('regName').value = '';
-            document.getElementById('regEmail').value = '';
-            document.getElementById('regPassword').value = '';
-            switchAuthTab('login');
-            document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = '';
-            // Select the role
-            document.getElementById('loginRole').value = role;
-        }
-
-        // ─── Handle Forgot Password (student only) ───
-        function handleForgotPassword() {
-            const email = document.getElementById('forgotEmail').value.trim();
-            const msgEl = document.getElementById('forgotMessage');
-
-            if (!email) {
-                msgEl.textContent = 'Please enter your email address.';
-                msgEl.style.color = '#991b1b';
-                return;
-            }
-
-            const student = users.find(u => u.email === email && u.role === 'student');
-            if (!student) {
-                msgEl.textContent = 'No student account found with this email.';
-                msgEl.style.color = '#991b1b';
-                return;
-            }
-
-            // Generate a random temporary password
-            const tempPass = Math.random().toString(36).slice(2, 8);
-            student.password = tempPass;
-            saveUsers();
-
-            msgEl.textContent = `✅ Password reset! Your new password is: ${tempPass} (please change it after logging in)`;
-            msgEl.style.color = '#166534';
-            document.getElementById('forgotEmail').value = '';
-        }
-
-        // ─── Logout ───
-        function handleLogout() {
-            currentUser = null;
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('authContainer').style.display = 'block';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginEmail').value = '';
-            clearAuthMessages();
-            // Reset to login tab
-            switchAuthTab('login');
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // 3. DASHBOARD RENDER
-        // ═══════════════════════════════════════════════════════════════
-
-        function renderDashboard() {
-            if (!currentUser) return;
-
-            // Show role badge
-            const badge = document.getElementById('userRoleBadge');
-            badge.textContent = '👤 ' + currentUser.name + ' (' + currentUser.role + ')';
-
-            // Show/hide teacher notes section
-            const notesSection = document.getElementById('teacherNotesSection');
-            if (currentUser.role === 'teacher') {
-                notesSection.style.display = 'block';
-            } else {
-                notesSection.style.display = 'none';
-            }
-
-            renderFolders();
-            renderTeacherNotesList();
-            renderTable(getAllFiles());
-            filterFiles();
-        }
-
-        // ─── Render Folders ───
-        function renderFolders() {
-            const container = document.getElementById('foldersContainer');
-            container.innerHTML = '';
-            subFolders.forEach(folder => {
-                const card = document.createElement('div');
-                card.className = 'folder-card';
-                card.innerHTML = `
-                        <div>
-                            <div class="folder-header">
-                                <span class="folder-icon">${folder.icon}</span>
-                                <div class="folder-title">${folder.name}</div>
-                            </div>
-                            <p class="folder-desc">${folder.desc}</p>
+        <!-- Timetable Entry Modal -->
+        <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Timetable Slot</h3>
+                <form class="space-y-3" onsubmit="handleTimetableSubmit(event)">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[12px] font-semibold">Day</label>
+                            <select id="tt-day" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                                <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                                <option>Thursday</option><option>Friday</option><option>Saturday</option>
+                            </select>
                         </div>
-                        <a href="${folder.driveLink}" target="_blank" rel="noopener noreferrer" class="btn-folder-open">
-                            Open Folder in Drive ↗
-                        </a>
-                    `;
-                container.appendChild(card);
-            });
-        }
-
-        // ─── Render Table ───
-        function renderTable(data) {
-            const tableBody = document.getElementById('filesTableBody');
-            const emptyState = document.getElementById('emptyState');
-            const resultCount = document.getElementById('resultCount');
-
-            tableBody.innerHTML = '';
-
-            // Filter by category and search
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const typeVal = document.getElementById('typeFilter').value;
-
-            const filtered = data.filter(file => {
-                const matchesSearch = file.name.toLowerCase().includes(searchVal) ||
-                    file.category.toLowerCase().includes(searchVal) ||
-                    (file.noteContent && file.noteContent.toLowerCase().includes(searchVal)) ||
-                    (file.noteSubject && file.noteSubject.toLowerCase().includes(searchVal));
-                const matchesType = (typeVal === 'ALL') || (file.type === typeVal);
-                const matchesCategory = (selectedCategory === 'ALL') || (file.category === selectedCategory);
-                return matchesSearch && matchesType && matchesCategory;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.style.display = 'block';
-                resultCount.textContent = '0 files found';
-                return;
-            }
-
-            emptyState.style.display = 'none';
-            resultCount.textContent = `Showing ${filtered.length} file${filtered.length > 1 ? 's' : ''}`;
-
-            filtered.forEach(file => {
-                let badgeClass = 'badge-pdf';
-                if (file.type === 'EXCEL') badgeClass = 'badge-excel';
-                if (file.type === 'DOC') badgeClass = 'badge-doc';
-                if (file.type === 'NOTE') badgeClass = 'badge-note';
-
-                const row = document.createElement('tr');
-
-                let titleHtml = file.name;
-                if (file.isNote) {
-                    titleHtml = `📝 ${file.name}`;
-                    if (file.noteSubject) {
-                        titleHtml += ` <span style="font-size:11px; color:#7c3aed; background:#ede9fe; padding:1px 8px; border-radius:10px;">${file.noteSubject}</span>`;
-                    }
-                }
-
-                let sizeDisplay = file.size;
-                if (file.isNote && file.noteContent) {
-                    sizeDisplay = (file.noteContent.length / 1024).toFixed(1) + ' KB';
-                }
-
-                let viewBtn = '';
-                let downloadBtn = '';
-                if (file.isNote) {
-                    viewBtn =
-                        `<button class="btn-action btn-view" onclick="alert('${file.noteContent ? file.noteContent.replace(/'/g, "\\'") : 'No content'}')">👁️ View</button>`;
-                    downloadBtn =
-                        `<button class="btn-action btn-download" onclick="alert('📋 Copy note content to clipboard?\\n\\n${file.noteContent ? file.noteContent.replace(/'/g, "\\'") : ''}')">📋 Copy</button>`;
-                } else {
-                    viewBtn =
-                        `<a href="${file.viewUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-view">👁️ View</a>`;
-                    downloadBtn =
-                        `<a href="${file.downloadUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-download">⬇ Download</a>`;
-                }
-
-                row.innerHTML = `
-                        <td>
-                            <div class="file-info">
-                                <div class="format-badge ${badgeClass}">${file.type}</div>
-                                <div>
-                                    <div class="file-title">${titleHtml}</div>
-                                    <span class="file-category">${file.category}</span>
-                                    ${file.isNote ? `<span style="font-size:11px; color:#94a3b8;"> · by ${file.noteAuthor || 'Teacher'} on ${file.noteDate || ''}</span>` : ''}
-                                </div>
-                            </div>
-                        </td>
-                        <td>${file.category}</td>
-                        <td>${sizeDisplay}</td>
-                        <td>
-                            <div class="actions-cell">
-                                ${viewBtn}
-                                ${downloadBtn}
-                            </div>
-                        </td>
-                    `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        // ─── Teacher Notes ───
-        function renderTeacherNotesList() {
-            const container = document.getElementById('teacherNotesList');
-            if (!container) return;
-
-            if (teacherNotes.length === 0) {
-                container.innerHTML =
-                    `<p style="color:#94a3b8; font-size:14px; padding:12px 0;">No notes yet. Add one above!</p>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            // Show newest first
-            const sorted = [...teacherNotes].reverse();
-            sorted.forEach((note, idx) => {
-                const div = document.createElement('div');
-                div.className = 'note-item';
-                const realIdx = teacherNotes.length - 1 - idx;
-                div.innerHTML = `
-                        <div class="note-content">
-                            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:4px;">
-                                <strong style="color:#163b65;">${note.title || 'Untitled'}</strong>
-                                ${note.subject ? `<span style="font-size:11px; background:#ede9fe; color:#7c3aed; padding:1px 10px; border-radius:12px;">${note.subject}</span>` : ''}
-                            </div>
-                            <div class="note-text">${note.content || ''}</div>
-                            <div class="note-meta">
-                                <span>👤 ${note.author || 'Teacher'}</span>
-                                <span>📅 ${note.date || new Date().toLocaleDateString()}</span>
-                            </div>
+                        <div><label class="text-[12px] font-semibold">Room</label>
+                            <input id="tt-room" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="E-204" />
                         </div>
-                        ${currentUser && currentUser.role === 'teacher' ? `
-                            <div class="note-actions">
-                                <button class="btn-del" onclick="deleteTeacherNote(${realIdx})">🗑 Delete</button>
-                            </div>
-                        ` : ''}
-                    `;
-                container.appendChild(div);
-            });
-        }
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[12px] font-semibold">Start Time</label>
+                            <input id="tt-start" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="09:00 AM" />
+                        </div>
+                        <div><label class="text-[12px] font-semibold">End Time</label>
+                            <input id="tt-end" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="10:00 AM" />
+                        </div>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Topic / Remarks</label>
+                        <input id="tt-topic" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Lecture on ..." />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeTimetableModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Add Slot</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-        // ─── Add Teacher Note ───
-        function addTeacherNote() {
-            if (!currentUser || currentUser.role !== 'teacher') {
-                alert('Only teachers can add notes.');
-                return;
-            }
-
-            const title = document.getElementById('noteTitle').value.trim() || 'Untitled Note';
-            const subject = document.getElementById('noteSubject').value.trim() || '';
-            const content = document.getElementById('noteContent').value.trim();
-
-            if (!content) {
-                alert('Please write some content for the note.');
-                return;
-            }
-
-            teacherNotes.push({
-                title: title,
-                subject: subject,
-                content: content,
-                author: currentUser.name,
-                date: new Date().toLocaleDateString()
-            });
-
-            saveTeacherNotes();
-
-            document.getElementById('noteTitle').value = '';
-            document.getElementById('noteSubject').value = '';
-            document.getElementById('noteContent').value = '';
-
-            renderTeacherNotesList();
-            // Re-render table to show updated notes
-            renderTable(getAllFiles());
-            filterFiles();
-        }
-
-        // ─── Delete Teacher Note ───
-        function deleteTeacherNote(index) {
-            if (!currentUser || currentUser.role !== 'teacher') {
-                alert('Only teachers can delete notes.');
-                return;
-            }
-            if (!confirm('Delete this note?')) return;
-            teacherNotes.splice(index, 1);
-            saveTeacherNotes();
-            renderTeacherNotesList();
-            renderTable(getAllFiles());
-            filterFiles();
-        }
-
-        // ─── Search / Filter ───
-        function filterFiles() {
-            const data = getAllFiles();
-            renderTable(data);
-        }
-
-        function setCategory(category, buttonElement) {
-            selectedCategory = category;
-            document.querySelectorAll('.chip').forEach(el => el.classList.remove('active'));
-            buttonElement.classList.add('active');
-            filterFiles();
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // 4. INIT
-        // ═══════════════════════════════════════════════════════════════
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is already logged in (session)
-            // For simplicity, we start with auth visible
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('authContainer').style.display = 'block';
-            switchAuthTab('login');
-
-            // Render folders (will be shown after login)
-            renderFolders();
-            // Seed initial teacher notes if none
-            if (teacherNotes.length === 0) {
-                teacherNotes = [{
-                    title: 'Welcome Note',
-                    subject: 'General',
-                    content: 'Welcome to the Dr. Mahadev Biradar academic resource hub! All teacher notes will appear here for students to view.',
-                    author: 'Dr. Mahadev Biradar',
-                    date: new Date().toLocaleDateString()
-                }];
-                saveTeacherNotes();
-            }
-        });
-
-        // Expose functions globally
-        window.switchAuthTab = switchAuthTab;
-        window.handleLogin = handleLogin;
-        window.handleRegister = handleRegister;
-        window.handleLogout = handleLogout;
-        window.handleForgotPassword = handleForgotPassword;
-        window.toggleForgot = toggleForgot;
-        window.filterFiles = filterFiles;
-        window.setCategory = setCategory;
-        window.addTeacherNote = addTeacherNote;
-        window.deleteTeacherNote = deleteTeacherNote;
-        window.renderDashboard = renderDashboard;
-    </script>
-
-</body>
-</html>
+        <!-- Resource Modal -->
+        <div id="resource-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Resource</h3>
+                <form class="space-y-3" onsubmit="handleResourceSubmit(event)">
+                    <div><label class="text-[12px] font-semibold">Resource Title *</label>
+                        <input id="res-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Calculus Notes" />
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Resource Type</label>
+                        <select id="res-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="notes">Notes</option><option value="assignment">Assignment</option>
+                            <option value="question-paper">Question Paper</option><option value="video">Video</option>
+                            <option value="presentation">Presentation</option><option value="reference">Reference</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Description</label>
+                        <textarea id="res-desc" rows="2" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Brief description..."></textarea>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link Type</label>
+                        <select id="res-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
+                            <option value="web-url">Web URL</option>
+                        </select>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Link URL *</label>
+                        <input id="res-link" required type
