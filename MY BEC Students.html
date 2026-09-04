@@ -401,6 +401,14 @@
             font-weight: 700;
         }
 
+        /* ── disabled fields in signup ── */
+        .auth-card .form-group input:disabled,
+        .auth-card .form-group select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #F1F5F9;
+        }
+
         /* ── attendance grid ── */
         .attendance-grid {
             display: grid;
@@ -728,7 +736,6 @@
                    MOBILE RESPONSIVE OVERRIDES
                    ════════════════════════════════════════════════════ */
 
-        /* ── sidebar toggle button (new element) ── */
         .hamburger-btn {
             display: none;
             background: transparent;
@@ -744,8 +751,6 @@
         .hamburger-btn:hover {
             opacity: 0.7;
         }
-
-        /* ── sidebar backdrop ── */
         .sidebar-backdrop {
             display: none;
             position: fixed;
@@ -764,19 +769,14 @@
             display: block;
         }
 
-        /* ── responsive breakpoints ── */
-
-        /* Tablets & small laptops */
         @media (max-width: 1024px) {
             .attendance-grid {
                 grid-template-columns: repeat(8, 1fr);
             }
         }
 
-        /* Mobile (portrait & landscape) */
         @media (max-width: 768px) {
 
-            /* ── sidebar ── */
             aside.sidebar-fixed {
                 position: fixed !important;
                 left: 0 !important;
@@ -800,21 +800,18 @@
                 opacity: 1 !important;
             }
 
-            /* ── main content ── */
             .main-content {
                 padding-left: 0 !important;
                 min-height: 100vh;
                 width: 100%;
             }
 
-            /* ── hamburger button ── */
             .hamburger-btn {
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
             }
 
-            /* ── header adjustments ── */
             header.app-header {
                 padding-left: 12px !important;
                 padding-right: 12px !important;
@@ -835,12 +832,10 @@
                 display: flex !important;
             }
 
-            /* ── main padding ── */
             main.app-main {
                 padding: 12px !important;
             }
 
-            /* ── dashboard stats ── */
             #dash-stats {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 10px !important;
@@ -852,14 +847,12 @@
                 font-size: 1.6rem !important;
             }
 
-            /* ── subject grid ── */
             #subjects-grid,
             #student-subjects {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
 
-            /* ── subject detail tabs ── */
             #subject-tabs {
                 flex-wrap: nowrap !important;
                 overflow-x: auto !important;
@@ -878,7 +871,6 @@
                 font-size: 14px !important;
             }
 
-            /* ── subject detail header ── */
             #subject-detail-header .card {
                 padding: 14px !important;
             }
@@ -890,7 +882,6 @@
                 gap: 4px !important;
             }
 
-            /* ── attendance ── */
             #view-attendance .card {
                 padding: 14px !important;
             }
@@ -911,7 +902,6 @@
                 min-width: unset !important;
             }
 
-            /* ── auth card ── */
             .auth-card {
                 padding: 24px 18px !important;
             }
@@ -919,7 +909,6 @@
                 font-size: 16px !important;
             }
 
-            /* ── modals ── */
             .modal-overlay .bg-white {
                 max-width: 100% !important;
                 margin: 12px !important;
@@ -938,7 +927,6 @@
                 flex: 1 1 100% !important;
             }
 
-            /* ── user management table ── */
             #admin-users-table {
                 font-size: 12px !important;
             }
@@ -952,7 +940,6 @@
                 padding: 1px 6px !important;
             }
 
-            /* ── settings ── */
             #view-admin-settings .grid-cols-3 {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
@@ -961,7 +948,6 @@
                 align-items: stretch !important;
             }
 
-            /* ── student view ── */
             #student-attendance-history {
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch;
@@ -975,7 +961,6 @@
                 padding: 4px 6px !important;
             }
 
-            /* ── announcements ── */
             .announcement-item {
                 padding: 10px 12px !important;
             }
@@ -986,7 +971,6 @@
                 font-size: 12px !important;
             }
 
-            /* ── misc ── */
             .text-2xl {
                 font-size: 1.3rem !important;
             }
@@ -1006,12 +990,10 @@
                 margin-bottom: 14px !important;
             }
 
-            /* ── hide some decorative elements on mobile ── */
             .hide-mobile {
                 display: none !important;
             }
 
-            /* ── subject card adjustments ── */
             #subjects-grid .card,
             #student-subjects .card {
                 padding: 14px !important;
@@ -1021,7 +1003,6 @@
                 font-size: 15px !important;
             }
 
-            /* ── attendance history item ── */
             .history-item {
                 padding: 8px 10px !important;
             }
@@ -1033,7 +1014,6 @@
                 padding: 1px 8px !important;
             }
 
-            /* ── toast on mobile ── */
             .toast {
                 bottom: 12px !important;
                 right: 12px !important;
@@ -1045,7 +1025,6 @@
             }
         }
 
-        /* Extra small phones */
         @media (max-width: 400px) {
             main.app-main {
                 padding: 8px !important;
@@ -1105,7 +1084,6 @@
             }
         }
 
-        /* Fix for iOS Safari */
         @supports (-webkit-touch-callout: none) {
             .sidebar-backdrop {
                 -webkit-backdrop-filter: blur(2px);
@@ -1118,7 +1096,6 @@
             }
         }
 
-        /* ── utility to show/hide on mobile ── */
         .show-mobile {
             display: none !important;
         }
@@ -1577,7 +1554,7 @@
                             <input id="subject-code" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. MA-101" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-3 gap-3">
                         <div>
                             <label class="text-[12px] font-semibold text-[#64748B]">Semester</label>
                             <select id="subject-semester" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
@@ -1585,6 +1562,10 @@
                         <div>
                             <label class="text-[12px] font-semibold text-[#64748B]">Division</label>
                             <select id="subject-division" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
+                        </div>
+                        <div>
+                            <label class="text-[12px] font-semibold text-[#64748B]">Branch</label>
+                            <select id="subject-branch" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
                         </div>
                     </div>
                     <div>
@@ -1984,6 +1965,7 @@
             // Subject form
             populateSelect('subject-semester', semesters, semesters[0]);
             populateSelect('subject-division', divisions, divisions[0]);
+            populateSelect('subject-branch', branches, branches[0]);
         }
 
         function onSemesterChange() {
@@ -2011,12 +1993,40 @@
             selectRole('teacher');
             populateAcademicDropdowns();
             onSemesterChange();
+            // Disable fields for teacher by default
+            toggleSignupFields('teacher');
         }
 
         function selectRole(role) {
             document.getElementById('signup-role').value = role;
             document.getElementById('role-teacher').classList.toggle('active', role === 'teacher');
             document.getElementById('role-student').classList.toggle('active', role === 'student');
+            toggleSignupFields(role);
+        }
+
+        function toggleSignupFields(role) {
+            const semester = document.getElementById('signup-semester');
+            const division = document.getElementById('signup-division');
+            const branch = document.getElementById('signup-branch');
+            const isTeacher = (role === 'teacher');
+            semester.disabled = isTeacher;
+            division.disabled = isTeacher;
+            branch.disabled = isTeacher;
+            // Also style them visually: we'll use CSS for disabled styling
+            // We can also set value to empty or placeholder
+            if (isTeacher) {
+                semester.value = '';
+                division.value = '';
+                branch.value = '';
+            } else {
+                // Restore first options
+                const semesters = getSemesters();
+                const divisions = getDivisions();
+                const branches = getBranches();
+                if (semesters.length) semester.value = semesters[0];
+                if (divisions.length) division.value = divisions[0];
+                if (branches.length) branch.value = branches[0];
+            }
         }
 
         function handleLogin() {
@@ -2042,9 +2052,23 @@
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value.trim() || '1234';
             const role = document.getElementById('signup-role').value;
-            const semester = document.getElementById('signup-semester').value;
-            const division = document.getElementById('signup-division').value;
-            const branch = document.getElementById('signup-branch').value;
+            // For teacher, we ignore semester, division, branch (set to empty string)
+            let semester = document.getElementById('signup-semester').value;
+            let division = document.getElementById('signup-division').value;
+            let branch = document.getElementById('signup-branch').value;
+
+            if (role === 'teacher') {
+                // If fields are disabled, we don't need to validate them
+                semester = '';
+                division = '';
+                branch = '';
+            } else {
+                // For student, require them
+                if (!semester || !division || !branch) {
+                    showToast('Please select Semester, Division, and Branch.', 'error');
+                    return;
+                }
+            }
 
             if (!name || !email) {
                 showToast('Please fill in all fields.', 'error');
@@ -2272,6 +2296,7 @@
                 subjects = subjects.map(s => ({
                     ...s,
                     strength: parseInt(s.strength) || 58,
+                    branch: s.branch || '',
                     timetable: Array.isArray(s.timetable) ? s.timetable : [],
                     notes: Array.isArray(s.notes) ? s.notes : [],
                     resources: Array.isArray(s.resources) ? s.resources : [],
@@ -2530,7 +2555,7 @@
                         </div>
                     </div>
                     <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
-                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.division || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
+                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.division || '—'} · ${s.branch || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
                     <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B] flex-wrap">
                         <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
                         <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
@@ -2581,6 +2606,7 @@
                             <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
                             <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                             <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.division || '—'}</span>
+                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.branch || '—'}</span>
                             <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
                         </div>
                         <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
@@ -2615,6 +2641,7 @@
                         <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
                         <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
                         <p class="text-[13px] text-[#64748B]">Division: <b>${s.division || '—'}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Branch: <b>${s.branch || '—'}</b></p>
                         <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
                     </div>
                     <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
@@ -2744,7 +2771,7 @@
                         <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                     </div>
                     <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
-                    <p class="text-[12px] text-[#64748B]">${s.division || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
+                    <p class="text-[12px] text-[#64748B]">${s.division || '—'} · ${s.branch || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
                     ${(s.timetable||[]).length > 0 ? `
                         <div class="mt-3">
                             <span class="text-[12px] font-semibold">Timetable:</span>
@@ -3202,8 +3229,10 @@
             populateAcademicDropdowns();
             const semSelect = document.getElementById('subject-semester');
             const divSelect = document.getElementById('subject-division');
+            const branchSelect = document.getElementById('subject-branch');
             semSelect.value = s.semester || semSelect.options[0].value;
             divSelect.value = s.division || divSelect.options[0].value;
+            branchSelect.value = s.branch || branchSelect.options[0].value;
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
@@ -3216,6 +3245,7 @@
             const code = document.getElementById('subject-code').value.trim();
             const semester = document.getElementById('subject-semester').value;
             const division = document.getElementById('subject-division').value;
+            const branch = document.getElementById('subject-branch').value;
             const strength = parseInt(document.getElementById('subject-strength').value) || 58;
             if (!name || !code) { showToast('Subject name and code are required.', 'error'); return; }
             if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
@@ -3225,6 +3255,7 @@
                     s.code = code;
                     s.semester = semester;
                     s.division = division;
+                    s.branch = branch;
                     s.strength = strength;
                     showToast('Subject updated!', 'success'); } else { showToast('Subject not found.', 'error'); return; }
             } else {
@@ -3232,8 +3263,8 @@
                     showToast('A subject with this code already exists.', 'error');
                     return;
                 }
-                subjects.push({ id: Date.now().toString(), name, code, semester, division, strength, timetable: [], notes: [],
-                    resources: [], syllabus: null });
+                subjects.push({ id: Date.now().toString(), name, code, semester, division, branch, strength, timetable: [],
+                    notes: [], resources: [], syllabus: null });
                 showToast('Subject added!', 'success');
             }
             saveData();
