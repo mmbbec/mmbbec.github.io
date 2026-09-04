@@ -87,7 +87,6 @@
             border-color: #b53d28;
         }
 
-        /* ─── Profile Button (new) ─── */
         .btn-nav-profile {
             background: #ffffff;
             color: #163b65;
@@ -121,7 +120,7 @@
             margin-top: 0;
         }
 
-        /* ─── Profile Buttons Row (new) ─── */
+        /* ─── Profile Buttons Row ─── */
         .profile-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -538,7 +537,6 @@
                 <p>Google Drive Directories & Important Academic Documents</p>
             </div>
             <div class="header-actions">
-                <!-- Profile button (new) -->
                 <a href="index.html" class="btn-nav btn-nav-profile">
                     👤 Profile
                 </a>
@@ -546,137 +544,47 @@
                     ← Back to Profile
                 </a>
                 <a href="PASTE_MAIN_MMB_DRIVE_FOLDER_LINK_HERE"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-nav btn-nav-primary">
-                📁 Open MMB_Academic_Resources
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn-nav btn-nav-primary">
+                    📁 Open MMB_Academic_Resources
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="dashboard-container">
+
+        <!-- ─── PROFILE BUTTONS ROW ─── -->
+        <div class="profile-buttons">
+            <span class="profile-buttons-label">🔗 Quick Links</span>
+            <a href="free-tools.html" class="profile-btn profile-btn-highlight">
+                <span class="profile-btn-icon">🛠️</span> Free Tools
+            </a>
+            <a href="Rashmi Web Studio.html" class="profile-btn">
+                <span class="profile-btn-icon">📚</span> Rashmi Biradar Web Studio
+            </a>
+            <a href="CIE Managent.html" class="profile-btn">
+                <span class="profile-btn-icon">📐</span> CIE Management
+            </a>
+            <a href="MY BEC Students.html" class="profile-btn">
+                <span class="profile-btn-icon">👤</span> My BEC Students
             </a>
         </div>
-    </div>
-</header>
 
-<!-- ═══ DASHBOARD ═══ -->
-<div class="dashboard-container">
+        </div>
 
-    <!-- ─── PROFILE BUTTONS ROW ─── -->
-    <div class="profile-buttons">
-        <span class="profile-buttons-label">🔗 Quick Links</span>
-        <a href="free-tools.html" class="profile-btn profile-btn-highlight">
-            <span class="profile-btn-icon">🛠️</span> Free Tools
-        </a>
-        <a href="Rashmi Web Studio.html" class="profile-btn">
-            <span class="profile-btn-icon">📚</span> Rashmi Biradar Web Studio
-        </a>
-        <a href="CIE Managent.html" class="CIE Management">
-            <span class="profile-btn-icon">📐</span> CIE Management
-        </a>
-        <a href="MY BEC Students.html" class="profile-btn">
-            <span class="profile-btn-icon">👤</span> My BEC Students
-        </a>
-    </div>
-
-
-    let selectedCategory = "ALL";
-
-    // ─── RENDER FOLDERS ───
-    function renderFolders() {
-        const container = document.getElementById("foldersContainer");
-        container.innerHTML = "";
-
-        subFolders.forEach(folder => {
-            const card = document.createElement("div");
-            card.className = "folder-card";
-            card.innerHTML = `
-                    <div>
-                        <div class="folder-header">
-                            <span class="folder-icon">${folder.icon}</span>
-                            <div class="folder-title">${folder.name}</div>
-                        </div>
-                        <p class="folder-desc">${folder.desc}</p>
-                    </div>
-                    <a href="${folder.driveLink}" target="_blank" rel="noopener noreferrer" class="btn-folder-open">
-                        Open Folder in Drive ↗
-                    </a>
-                `;
-            container.appendChild(card);
+    <script>
+     
+    
+     
+        // ─── INIT ───
+        document.addEventListener("DOMContentLoaded", () => {
+            renderFolders();
+            renderTable(filesData);
         });
-    }
-
-    // ─── RENDER TABLE ───
-    function renderTable(data) {
-        const tableBody = document.getElementById("filesTableBody");
-        const emptyState = document.getElementById("emptyState");
-        const resultCount = document.getElementById("resultCount");
-
-        tableBody.innerHTML = "";
-
-        if (data.length === 0) {
-            emptyState.style.display = "block";
-            resultCount.textContent = "0 files found";
-            return;
-        }
-
-        emptyState.style.display = "none";
-        resultCount.textContent = `Showing ${data.length} file${data.length > 1 ? 's' : ''}`;
-
-        data.forEach(file => {
-            let badgeClass = "badge-pdf";
-            if (file.type === "EXCEL") badgeClass = "badge-excel";
-            if (file.type === "DOC") badgeClass = "badge-doc";
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                    <td>
-                        <div class="file-info">
-                            <div class="format-badge ${badgeClass}">${file.type}</div>
-                            <div>
-                                <div class="file-title">${file.name}</div>
-                                <span class="file-category">${file.category}</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${file.category}</td>
-                    <td>${file.size}</td>
-                    <td>
-                        <div class="actions-cell">
-                            <a href="${file.viewUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-view">👁️ View</a>
-                            <a href="${file.downloadUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-download">⬇ Download</a>
-                        </div>
-                    </td>
-                `;
-            tableBody.appendChild(row);
-        });
-    }
-
-    // ─── SEARCH / FILTER ───
-    function filterFiles() {
-        const searchVal = document.getElementById("searchInput").value.toLowerCase();
-        const typeVal = document.getElementById("typeFilter").value;
-
-        const filtered = filesData.filter(file => {
-            const matchesSearch = file.name.toLowerCase().includes(searchVal) ||
-                file.category.toLowerCase().includes(searchVal);
-            const matchesType = (typeVal === "ALL") || (file.type === typeVal);
-            const matchesCategory = (selectedCategory === "ALL") || (file.category === selectedCategory);
-            return matchesSearch && matchesType && matchesCategory;
-        });
-
-        renderTable(filtered);
-    }
-
-    function setCategory(category, buttonElement) {
-        selectedCategory = category;
-        document.querySelectorAll(".chip").forEach(el => el.classList.remove("active"));
-        buttonElement.classList.add("active");
-        filterFiles();
-    }
-
-    // ─── INIT ───
-    document.addEventListener("DOMContentLoaded", () => {
-        renderFolders();
-        renderTable(filesData);
-    });
-</script>
+    </script>
 
 </body>
 </html>
