@@ -362,6 +362,21 @@
 </head>
 <body>
 
+    <!-- ===== HEADER (with dynamic college name) ===== -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="college-name" id="headerCollegeName">Basaveshwar Engineering College <span>(BEC)</span></div>
+                <div class="calc-title">📊 NBA CO-PO-PSO Attainment Calculator</div>
+            </div>
+            <div class="header-right">
+                <div class="creator-label">Developed by</div>
+                <div class="creator-name">Dr. M M Biradar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== COLLEGE INFO INPUT SECTION ===== -->
     <div class="college-info-section">
         <h3>🏛️ College Information</h3>
         <div class="form-row">
@@ -371,17 +386,10 @@
                     type="text"
                     id="collegeName"
                     placeholder="Enter College / Institution Name"
+                    value="Basaveshwar Engineering College"
                     oninput="updateCollegeHeader()"
                 >
             </div>
-            <div class="form-group">
-                <label for="collegeShortName">College Short Name</label>
-                <input
-                    type="text"
-                    id="collegeShortName"
-                    placeholder="e.g., BEC"
-                    oninput="updateCollegeHeader()"
-                >
             </div>
         </div>
     </div>
@@ -400,7 +408,6 @@
                 <div><label>Faculty Name</label><input id="NameOfStaff" value="Dr M M Biradar" oninput="calculateAll()"></div>
                 <div>
                     <label>Indirect Assessment</label>
-                    <!-- Default is NO -->
                     <select id="useIndirect" onchange="toggleIndirect(); calculateAll();">
                         <option value="NO" selected>NO</option>
                         <option value="YES">YES</option>
@@ -438,7 +445,6 @@
                             <th>SEE % Students &gt; Target</th>
                             <th>SEE Level</th>
                             <th>Direct CO</th>
-                            <!-- This column is hidden when Indirect = NO -->
                             <th class="indirect-col">Indirect (0–3)</th>
                             <th>Final CO (0–3)</th>
                         </tr>
@@ -534,26 +540,22 @@
             return score >= target ? 'ATTAINED' : 'NOT ATTAINED';
         }
 
+        // ===== NEW FUNCTION: Update college name in header =====
         function updateCollegeHeader() {
             const name = document.getElementById('collegeName').value.trim();
             const short = document.getElementById('collegeShortName').value.trim();
-            // Update the header dynamically
-            let headerCollegeName = document.querySelector('.header .college-name');
-            if (!headerCollegeName) {
-                // Create header if it doesn't exist (it will be created on load)
-                return;
-            }
+            const headerElement = document.getElementById('headerCollegeName');
+            
             if (name) {
-                headerCollegeName.innerHTML = name + (short ? ` <span>(${short})</span>` : '');
+                headerElement.innerHTML = name + (short ? ` <span>(${short})</span>` : '');
             } else {
-                headerCollegeName.innerHTML = 'Basaveshwar Engineering College <span>(BEC)</span>';
+                headerElement.innerHTML = 'Basaveshwar Engineering College <span>(BEC)</span>';
             }
         }
 
         function initInputs() {
             const tbody = document.getElementById('coInputBody');
             tbody.innerHTML = '';
-            // Default values – set realistic numbers for your course
             const defaultCIE = [82, 94, 85, 74];
             const defaultSEE = [92, 90, 88, 70];
 
@@ -630,14 +632,13 @@
             const enabled = document.getElementById('useIndirect').value === 'YES';
             document.getElementById('directWeightBox').style.display = enabled ? 'block' : 'none';
             document.getElementById('indirectWeightBox').style.display = enabled ? 'block' : 'none';
-            // Hide/show the Indirect column in the CO table
             document.querySelectorAll('.indirect-col').forEach(el => {
                 el.style.display = enabled ? '' : 'none';
             });
         }
 
+        // ===== MAIN CALCULATION FUNCTION (all calculations intact) =====
         function calculateAll() {
-            // Normalize CIE/SEE weights to sum to 1.0
             let cieW = parseNum(document.getElementById('cieWeight').value) / 100;
             let seeW = parseNum(document.getElementById('seeWeight').value) / 100;
             const totalW = cieW + seeW;
@@ -783,6 +784,7 @@
             document.getElementById('summaryDashboard').innerHTML = html;
         }
 
+        // ===== EXPORT EXCEL (with college name) =====
         function exportExcel() {
             calculateAll();
             const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
@@ -795,4 +797,308 @@
 
             const rows = [
                 [collegeName],
-               
+                ['CO-PO-PSO Attainment Report'],
+                ['Course:', courseCode, 'Year:', academicYear],
+                ['CIE/SEE Weights:', `${w.cieW.toFixed(0)}% / ${w.seeW.toFixed(0)}%`],
+                ['CO Formula:', formulaLabel],
+                ['PO/PSO Formula:', 'Σ(CO Attained × Matrix) / (Avg CO-Matrix × Number of COs)'],
+                [],
+                ['CO', 'CIE %', 'CIE Level', 'SEE %', 'SEE Level', 'Direct', 'Indirect', 'Final', 'Status']
+            ];
+            for (let i = 0; i < CO_COUNT; i++) {
+                rows.push([
+                    `CO${i+1}`, coAttainmentData.ciePcts[i].toFixed(1), coAttainmentData.cieLevels[i],
+                    coAttainmentData.seePcts[i].toFixed(1), coAttainmentData.seeLevels[i],
+                    coAttainmentData.directVals[i].toFixed(2), coAttainmentData.indirectVals[i].toFixed(2),
+                    coAttainmentData.finalVals[i].toFixed(2), coAttainmentData.statuses[i]
+                ]);
+            }
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, 'Attainment');
+
+            const auditRows = [['Metric', 'Σ(CO×Matrix)', 'Average Matrix', 'No. of COs', 'Denominator', 'Attainment', 'Status']];
+            lastCOPOResult.poResults.forEach(r => auditRows.push([`PO${r.po}`, r.numerator, r.avgMatrix, CO_COUNT, r.denominator, r.att, r.status]));
+            lastCOPOResult.psoResults.forEach(r => auditRows.push([`PSO${r.pso}`, r.numerator, r.avgMatrix, CO_COUNT, r.denominator, r.att, r.status]));
+            const auditWs = XLSX.utils.aoa_to_sheet(auditRows);
+            XLSX.utils.book_append_sheet(wb, auditWs, 'PO_PSO_Audit');
+
+            const matrixRows = [['CO', ...Array.from({length: PO_COUNT}, (_, i) => `PO${i+1}`), ...Array.from({length: PSO_COUNT}, (_, i) => `PSO${i+1}`)]];
+            for (let c = 1; c <= CO_COUNT; c++) {
+                matrixRows.push([`CO${c}`, ...mappingData[c].po, ...mappingData[c].pso]);
+            }
+            const matrixWs = XLSX.utils.aoa_to_sheet(matrixRows);
+            XLSX.utils.book_append_sheet(wb, matrixWs, 'CO_PO_PSO_Matrix');
+
+            XLSX.writeFile(wb, `Attainment_${courseCode}_${academicYear}.xlsx`);
+        }
+
+        // ===== EXPORT PDF (with college name) =====
+        function downloadPDF() {
+            const btn = document.getElementById('pdfBtn');
+            const origText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF…';
+            btn.disabled = true;
+
+            calculateAll();
+
+            setTimeout(() => {
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+                    const collegeName = document.getElementById('collegeName').value.trim() || 'Basaveshwar Engineering College';
+                    const courseCode = document.getElementById('courseCode').value || 'BMAS101C';
+                    const courseName = document.getElementById('courseName').value || 'Engineering Mathematics-I';
+                    const academicYear = document.getElementById('academicYear').value || '2026-27';
+                    const department = document.getElementById('department').value || 'Department of Mathematics';
+                    const semester = document.getElementById('Semester').value || 'I';
+                    const division = document.getElementById('Division').value || 'A';
+                    const staff = document.getElementById('NameOfStaff').value || 'Dr M M Biradar';
+                    const w = coAttainmentData.weights;
+                    const weightLabel = w.useIndirect ? 
+                        `Final CO = (${w.directW.toFixed(0)}% Direct) + (${w.indirectW.toFixed(0)}% Indirect)` : 
+                        `Final CO = Direct (100%)`;
+
+                    // HEADER with dynamic college name
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(13);
+                    doc.text(collegeName.toUpperCase(), 148.5, 11, { align: "center" });
+                    doc.setFontSize(10);
+                    doc.text(department.toUpperCase(), 148.5, 16, { align: "center" });
+                    doc.setFontSize(8.5);
+                    doc.setDrawColor(30, 58, 95);
+                    doc.setFillColor(240, 244, 248);
+                    doc.rect(80, 18.5, 137, 5, 'FD');
+                    doc.text("COURSE & PROGRAM OUTCOME (CO-PO-PSO) ATTAINMENT REPORT", 148.5, 22, { align: "center" });
+
+                    const baseAutoTable = {
+                        theme: 'plain',
+                        styles: {
+                            textColor: [0, 0, 0],
+                            fontSize: 7.2,
+                            lineColor: [100, 100, 100],
+                            lineWidth: 0.15,
+                            halign: 'center',
+                            valign: 'middle',
+                            cellPadding: 0.8,
+                            font: 'helvetica'
+                        },
+                        headStyles: {
+                            fillColor: [230, 238, 246],
+                            textColor: [0, 0, 0],
+                            fontStyle: 'bold',
+                            lineColor: [80, 80, 80],
+                            lineWidth: 0.2
+                        }
+                    };
+
+                    let yPos = 26;
+
+                    // METADATA
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 12, right: 12 },
+                        head: [["Academic Year", "Course Code", "Course Title", "Sem / Div", "Faculty Name", "Attainment Target"]],
+                        body: [[academicYear, courseCode, courseName, `Sem ${semester} / Div ${division}`, staff, `${TARGET.toFixed(2)} / 3.00`]],
+                        styles: { fontSize: 7.5, cellPadding: 1 }
+                    });
+                    yPos = doc.lastAutoTable.finalY + 3;
+
+                    // CO TABLE
+                    const coBody = [];
+                    for (let i = 0; i < CO_COUNT; i++) {
+                        const hasData = coAttainmentData.ciePcts[i] > 0 || 
+                                        coAttainmentData.seePcts[i] > 0 || 
+                                        coAttainmentData.finalVals[i] > 0;
+                        if (hasData) {
+                            coBody.push([
+                                `CO${i+1}`,
+                                coAttainmentData.ciePcts[i].toFixed(1) + "%",
+                                coAttainmentData.cieLevels[i],
+                                coAttainmentData.seePcts[i].toFixed(1) + "%",
+                                coAttainmentData.seeLevels[i],
+                                coAttainmentData.directVals[i].toFixed(2),
+                                coAttainmentData.indirectVals[i].toFixed(2),
+                                coAttainmentData.finalVals[i].toFixed(2),
+                                coAttainmentData.statuses[i]
+                            ]);
+                        }
+                    }
+                    if (coBody.length === 0) {
+                        coBody.push([`CO1`, "0%", 0, "0%", 0, "0.00", "0.00", "0.00", "-"]);
+                    }
+                    coBody.push([
+                        { content: `Average (Target: ${TARGET.toFixed(2)})`, colSpan: 7, styles: { halign: 'right', fontStyle: 'bold' } },
+                        { content: coAttainmentData.avgCO.toFixed(2), styles: { fontStyle: 'bold' } },
+                        { content: coAttainmentData.overallStatus, styles: { fontStyle: 'bold' } }
+                    ]);
+
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("1. COURSE OUTCOME (CO) ATTAINMENT COMPUTATION", 12, yPos);
+                    yPos += 1.5;
+
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 12, right: 12 },
+                        head: [["CO", "CIE % > Target", "CIE Level", "SEE % > Target", "SEE Level", "Direct CO", "Indirect", "Final CO", "Attainment Status"]],
+                        body: coBody
+                    });
+                    yPos = doc.lastAutoTable.finalY + 3.5;
+
+                    // MATRICES
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("2. CO-PO & CO-PSO ARTICULATION MATRICES", 12, yPos);
+                    yPos += 1.5;
+
+                    const poHead = ["CO"];
+                    for (let p = 1; p <= PO_COUNT; p++) poHead.push(`PO${p}`);
+                    const poMatrixBody = [];
+                    for (let c = 1; c <= CO_COUNT; c++) {
+                        const row = [`CO${c}`];
+                        const m = mappingData[c]?.po || Array(PO_COUNT).fill(0);
+                        for (let p = 0; p < PO_COUNT; p++) row.push(m[p] || 0);
+                        poMatrixBody.push(row);
+                    }
+
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 12 },
+                        tableWidth: 200,
+                        head: [poHead],
+                        body: poMatrixBody
+                    });
+
+                    const psoMatrixBody = [];
+                    for (let c = 1; c <= CO_COUNT; c++) {
+                        const row = [`CO${c}`];
+                        const m = mappingData[c]?.pso || [0, 0, 0];
+                        for (let p = 0; p < PSO_COUNT; p++) row.push(m[p] || 0);
+                        psoMatrixBody.push(row);
+                    }
+
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 216 },
+                        tableWidth: 69,
+                        head: [["CO", "PSO1", "PSO2", "PSO3"]],
+                        body: psoMatrixBody
+                    });
+                    yPos = doc.lastAutoTable.finalY + 3.5;
+
+                    // PO & PSO ATTAINMENT
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("3. PROGRAM OUTCOME (PO) & PROGRAM SPECIFIC OUTCOME (PSO) ATTAINMENT", 12, yPos);
+                    yPos += 1.5;
+
+                    const unifiedHead = ["Metric"];
+                    for (let p = 1; p <= PO_COUNT; p++) unifiedHead.push(`PO${p}`);
+                    for (let p = 1; p <= PSO_COUNT; p++) unifiedHead.push(`PSO${p}`);
+
+                    const attRow = ["Attainment"];
+                    const statusRow = ["Status"];
+
+                    lastCOPOResult.poResults.forEach(r => {
+                        attRow.push(r.att > 0 ? r.att.toFixed(2) : "-");
+                        statusRow.push(r.status !== '-' ? r.status : "-");
+                    });
+                    lastCOPOResult.psoResults.forEach(r => {
+                        attRow.push(r.att > 0 ? r.att.toFixed(2) : "-");
+                        statusRow.push(r.status !== '-' ? r.status : "-");
+                    });
+
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 12, right: 12 },
+                        head: [unifiedHead],
+                        body: [attRow, statusRow],
+                        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 22 } }
+                    });
+                    yPos = doc.lastAutoTable.finalY + 3;
+
+                    // AUDIT TABLE
+                    doc.setFontSize(7.5);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("4. PO / PSO CALCULATION AUDIT", 12, yPos);
+                    yPos += 1.5;
+
+                    const auditHead = ["Metric", "Σ(CO×Matrix)", "Avg Matrix", "No. of COs", "Denominator", "Attainment"];
+                    const auditBody = [];
+                    lastCOPOResult.poResults.forEach(r => {
+                        auditBody.push([`PO${r.po}`, r.numerator.toFixed(2), r.avgMatrix.toFixed(2), CO_COUNT, r.denominator.toFixed(2), r.att > 0 ? r.att.toFixed(2) : "-"]);
+                    });
+                    lastCOPOResult.psoResults.forEach(r => {
+                        auditBody.push([`PSO${r.pso}`, r.numerator.toFixed(2), r.avgMatrix.toFixed(2), CO_COUNT, r.denominator.toFixed(2), r.att > 0 ? r.att.toFixed(2) : "-"]);
+                    });
+
+                    doc.autoTable({
+                        ...baseAutoTable,
+                        startY: yPos,
+                        margin: { left: 12, right: 12 },
+                        head: [auditHead],
+                        body: auditBody,
+                        styles: { fontSize: 6.2, cellPadding: 0.65 }
+                    });
+                    yPos = doc.lastAutoTable.finalY + 2.5;
+
+                    // FORMULA NOTE
+                    doc.setFontSize(6.5);
+                    doc.setFont("helvetica", "italic");
+                    const formulaNote = `Scale: >=70%=3, 60-69%=2, 50-59%=1, <50%=0 | Direct=(CIE*${(w.cieW).toFixed(0)}%)+(SEE*${(w.seeW).toFixed(0)}%) | ${weightLabel} | PO/PSO=Σ(CO×Matrix)/(Avg Matrix×No. of COs) | Target≥2.00`;
+                    doc.text(formulaNote, 12, yPos);
+                    yPos += 14;
+
+                    // SIGNATURES
+                    const sigY = Math.max(yPos, 186);
+                    doc.setDrawColor(0);
+                    doc.setLineWidth(0.3);
+                    doc.line(25, sigY, 100, sigY);
+                    doc.line(197, sigY, 272, sigY);
+
+                    doc.setFontSize(8);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(staff, 62.5, sigY + 4, { align: "center" });
+                    doc.text("Head of the Department", 234.5, sigY + 4, { align: "center" });
+
+                    doc.setFontSize(7);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Course Instructor / Faculty", 62.5, sigY + 7.5, { align: "center" });
+                    doc.text(department, 234.5, sigY + 7.5, { align: "center" });
+
+                    // FOOTER
+                    const now = new Date();
+                    doc.setFontSize(6);
+                    doc.text(`Generated on: ${now.toLocaleDateString()} ${now.toLocaleTimeString()} | ${collegeName} | Autonomous Institution`, 148.5, 204, { align: "center" });
+
+                    doc.save(`CO_PO_PSO_${courseCode}_${academicYear}.pdf`);
+
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                } catch (e) {
+                    console.error(e);
+                    alert("Error exporting PDF: " + e.message);
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                }
+            }, 500);
+        }
+
+        // ===== WINDOW ONLOAD =====
+        window.onload = function() {
+            initInputs();
+            initMapping();
+            toggleIndirect();
+            updateCollegeHeader(); // Set initial header with default college name
+            calculateAll();
+        };
+    </script>
+</body>
+</html>
