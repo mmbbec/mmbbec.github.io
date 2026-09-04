@@ -245,7 +245,6 @@
             box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
 
-        /* Auth */
         .auth-container {
             min-height: 100vh;
             display: flex;
@@ -260,7 +259,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
             padding: 40px 36px;
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
             border: 1px solid #E2E8F0;
         }
         .auth-card .logo {
@@ -284,7 +283,7 @@
             margin-bottom: 20px;
         }
         .auth-card .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .auth-card .form-group label {
             display: block;
@@ -293,7 +292,8 @@
             color: #334155;
             margin-bottom: 4px;
         }
-        .auth-card .form-group input {
+        .auth-card .form-group input,
+        .auth-card .form-group select {
             width: 100%;
             padding: 10px 14px;
             border: 1px solid #E2E8F0;
@@ -302,7 +302,8 @@
             background: #F8FAFC;
             transition: border .15s;
         }
-        .auth-card .form-group input:focus {
+        .auth-card .form-group input:focus,
+        .auth-card .form-group select:focus {
             border-color: #1E40AF;
             box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
@@ -338,7 +339,41 @@
             display: block;
         }
 
-        /* Attendance */
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .role-selector button {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .role-selector button:hover {
+            border-color: #94A3B8;
+            background: #F8FAFC;
+        }
+        .role-selector button.active {
+            border-color: #1E40AF;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .role-selector button.active::after {
+            content: " ✓";
+            font-weight: 700;
+        }
+
         .attendance-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -452,7 +487,6 @@
             border-color: #1E40AF;
         }
 
-        /* User role badge */
         .user-role-badge {
             font-size: 11px;
             font-weight: 600;
@@ -473,57 +507,6 @@
             color: #059669;
         }
 
-        @media (max-width: 480px) {
-            .auth-card {
-                padding: 28px 20px;
-            }
-            .role-selector {
-                flex-direction: column;
-            }
-        }
-
-        /* Role Selector - fixed visible buttons */
-        .role-selector {
-            display: flex;
-            gap: 8px;
-            margin-top: 4px;
-        }
-        .role-selector button {
-            flex: 1;
-            padding: 10px 12px;
-            border: 2px solid #E2E8F0;
-            border-radius: 8px;
-            background: white;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.15s;
-            color: #64748B;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .role-selector button:hover {
-            border-color: #94A3B8;
-            background: #F8FAFC;
-        }
-        .role-selector button.active {
-            border-color: #1E40AF;
-            background: #EFF6FF;
-            color: #1E40AF;
-        }
-        .role-selector button.active::after {
-            content: " ✓";
-            font-weight: 700;
-        }
-
-        /* Strength input inline */
-        .strength-input {
-            max-width: 80px;
-        }
-
-        /* Announcement card */
         .announcement-item {
             border-left: 4px solid #D97706;
             padding: 12px 16px;
@@ -537,7 +520,6 @@
             font-weight: 600;
         }
 
-        /* Student attendance history table */
         .attendance-history-table {
             width: 100%;
             border-collapse: collapse;
@@ -565,17 +547,66 @@
             color: #991B1B;
             font-size: 12px;
         }
+
+        .auth-toggle {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748B;
+        }
+        .auth-toggle a {
+            color: #1E40AF;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .conditional-field {
+            transition: all 0.25s ease;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            padding: 0 4px;
+        }
+        .conditional-field.open {
+            max-height: 120px;
+            opacity: 1;
+            padding: 4px 4px 8px 4px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 28px 20px;
+            }
+            .role-selector {
+                flex-direction: column;
+            }
+        }
+
+        .view-section {
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================ -->
-    <!-- TOAST -->
-    <!-- ============================================================ -->
+    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
     <!-- ============================================================ -->
-    <!-- AUTH CONTAINER (Login / Signup) -->
+    <!-- AUTH CONTAINER -->
     <!-- ============================================================ -->
     <div id="auth-container" class="auth-container">
         <div class="auth-card">
@@ -591,7 +622,7 @@
             </div>
             <div class="logo-sub">Department of Mathematics · Subject Management</div>
 
-            <!-- Login Form -->
+            <!-- Login -->
             <div id="login-form">
                 <div class="form-group">
                     <label>Email Address</label>
@@ -605,12 +636,12 @@
                     <a onclick="handleForgotPassword()">Forgot Password?</a>
                 </div>
                 <button class="btn-secondary btn-login" onclick="handleLogin()">Sign In</button>
-                <div class="auth-toggle" style="margin-top:12px;text-align:center;font-size:13px;color:#64748B;">
-                    Don't have an account? <a onclick="showSignup()" style="color:#1E40AF;font-weight:600;cursor:pointer;">Create one</a>
+                <div class="auth-toggle">
+                    Don't have an account? <a onclick="showSignup()">Create one</a>
                 </div>
             </div>
 
-            <!-- Signup Form -->
+            <!-- Signup -->
             <div id="signup-form" class="hidden">
                 <div class="form-group">
                     <label>Full Name</label>
@@ -627,16 +658,54 @@
                 </div>
                 <div class="form-group">
                     <label>I am a...</label>
-                    <!-- Role Selector: fixed visible buttons -->
                     <div class="role-selector">
                         <button id="role-teacher" class="active" type="button" onclick="selectRole('teacher')">👨‍🏫 Teacher</button>
                         <button id="role-student" type="button" onclick="selectRole('student')">🎓 Student</button>
                     </div>
                     <input type="hidden" id="signup-role" value="teacher" />
                 </div>
+
+                <!-- Semester -->
+                <div class="form-group">
+                    <label>Semester / Year <span class="text-[#64748B] text-[11px]">(1–8)</span></label>
+                    <select id="signup-semester" onchange="onSemesterChange()">
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option>
+                        <option value="6">6th Semester</option>
+                        <option value="7">7th Semester</option>
+                        <option value="8">8th Semester</option>
+                    </select>
+                </div>
+
+                <!-- Division (always shown) -->
+                <div class="form-group">
+                    <label>Division <span class="text-[#64748B] text-[11px]">(e.g. A, B, C)</span></label>
+                    <input id="signup-division" type="text" placeholder="A" maxlength="2" style="text-transform:uppercase;" />
+                </div>
+
+                <!-- Branch Name (conditional: shown for semester 3–8) -->
+                <div id="branch-group" class="form-group conditional-field open">
+                    <label>Branch Name <span class="text-[#64748B] text-[11px]">(for 3rd–8th sem)</span></label>
+                    <select id="signup-branch">
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Information Science">Information Science</option>
+                        <option value="Mathematics" selected>Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
                 <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
-                <div class="auth-toggle" style="margin-top:12px;text-align:center;font-size:13px;color:#64748B;">
-                    Already have an account? <a onclick="showLogin()" style="color:#1E40AF;font-weight:600;cursor:pointer;">Sign In</a>
+                <div class="auth-toggle">
+                    Already have an account? <a onclick="showLogin()">Sign In</a>
                 </div>
             </div>
         </div>
@@ -649,7 +718,6 @@
 
         <!-- Sidebar -->
         <aside class="fixed left-0 top-0 h-screen w-[250px] bg-white border-r border-[#E2E8F0] z-50 flex flex-col">
-            <!-- Brand Header -->
             <div class="p-4 border-b border-[#F1F5F9] flex items-center gap-2">
                 <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 shrink-0">
                     <rect width="48" height="48" rx="8" fill="#1E40AF" />
@@ -671,6 +739,7 @@
                         <div>
                             <div class="text-[13px] font-semibold text-[#0F172A]" id="sidebar-name">Dr. Mahadev Biradar</div>
                             <div class="text-[11px] text-[#64748B]" id="sidebar-role">Faculty Guide</div>
+                            <div class="text-[10px] text-[#64748B]" id="sidebar-academic"></div>
                         </div>
                     </div>
                     <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition" title="Logout">
@@ -679,10 +748,7 @@
                 </div>
             </div>
             <!-- Nav -->
-            <nav class="flex-1 p-2 space-y-1 overflow-y-auto" id="sidebar-nav">
-                <!-- Dynamic nav links -->
-            </nav>
-            <!-- Footer -->
+            <nav class="flex-1 p-2 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
             <div class="p-3 border-t border-[#F1F5F9] text-center">
                 <div class="text-[10px] text-[#64748B]">Created by Dr. Mahadev Biradar</div>
                 <div class="text-[10px] text-[#64748B]">© 2026 BEC Bagalkote</div>
@@ -691,10 +757,9 @@
 
         <!-- Main Content -->
         <div class="pl-[250px] min-h-screen">
-            <!-- Header -->
             <header class="bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-6 sticky top-0 z-40">
                 <div class="flex items-center gap-3">
-                    <span class="text-[14px] font-semibold text-[#0F172A]" id="page-title">Teacher Subject Management</span>
+                    <span class="text-[14px] font-semibold text-[#0F172A]" id="page-title">Dashboard</span>
                     <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">Semester System</span>
                 </div>
                 <div class="flex items-center gap-3">
@@ -704,21 +769,20 @@
             </header>
 
             <main class="p-6">
-                <!-- ===== DASHBOARD VIEW ===== -->
+
+                <!-- ===== DASHBOARD (Teacher/Admin) ===== -->
                 <div id="view-dashboard" class="view-section">
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h1 class="text-2xl font-bold text-[#0F172A] font-display">Dashboard</h1>
-                            <p class="text-[14px] text-[#64748B]">Overview of your academic portfolio</p>
+                            <p class="text-[14px] text-[#64748B]" id="dash-subtitle">Overview of your academic portfolio</p>
                         </div>
                         <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">add</span>
                             <span>Add Subject</span>
                         </button>
                     </div>
-                    <!-- Stats -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
-                    <!-- Announcements (visible to all) -->
                     <div class="card p-5 mb-6" id="announcements-section">
                         <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
@@ -749,7 +813,7 @@
                     </div>
                 </div>
 
-                <!-- ===== MY SUBJECTS VIEW ===== -->
+                <!-- ===== MY SUBJECTS ===== -->
                 <div id="view-my-subjects" class="view-section hidden">
                     <div class="flex items-center justify-between mb-6">
                         <div>
@@ -764,7 +828,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
                 </div>
 
-                <!-- ===== SUBJECT DETAIL VIEW ===== -->
+                <!-- ===== SUBJECT DETAIL ===== -->
                 <div id="view-subject-detail" class="view-section hidden">
                     <div class="flex items-center justify-between mb-4">
                         <button class="btn-ghost flex items-center gap-2" onclick="goBackToSubjects()">
@@ -797,43 +861,13 @@
                     <div id="subject-tab-content"></div>
                 </div>
 
-                <!-- ===== STUDENT VIEW (improved) ===== -->
-                <div id="view-student" class="view-section hidden">
-                    <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📘 Student Dashboard</h1>
-                        <p class="text-[14px] text-[#64748B]">Browse subjects, attendance records, and announcements</p>
-                    </div>
-                    <!-- Announcements for students -->
-                    <div class="card p-5 mb-6">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
-                            📢 Announcements
-                        </h3>
-                        <div id="student-announcements" class="space-y-2"></div>
-                    </div>
-                    <!-- Attendance History for Student -->
-                    <div class="card p-5 mb-6">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">fact_check</span>
-                            📋 My Attendance Records
-                        </h3>
-                        <div id="student-attendance-history" class="overflow-x-auto">
-                            <p class="text-[13px] text-[#64748B]">Loading attendance...</p>
-                        </div>
-                    </div>
-                    <!-- Subjects -->
-                    <h3 class="font-display font-semibold text-[#0F172A] mb-3">📚 Subjects</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
-                </div>
-
-                <!-- ===== ATTENDANCE VIEW ===== -->
+                <!-- ===== ATTENDANCE ===== -->
                 <div id="view-attendance" class="view-section hidden">
                     <div class="mb-6">
                         <h1 class="text-2xl font-bold text-[#0F172A] font-display">📋 Attendance</h1>
                         <p class="text-[14px] text-[#64748B]">Mark student attendance date‑wise</p>
                     </div>
                     <div class="card p-5">
-                        <!-- Subject & Date Selectors -->
                         <div class="flex flex-wrap items-end gap-4 mb-4">
                             <div>
                                 <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Select Subject</label>
@@ -845,11 +879,9 @@
                             </div>
                             <button class="btn-secondary" onclick="loadAttendance()">Load</button>
                         </div>
-
                         <h3 class="font-semibold mb-2">Click roll numbers of ABSENT students</h3>
                         <p class="text-[12px] text-[#64748B] mb-2" id="attendance-strength-info">Strength: --</p>
                         <div id="roll-grid" class="attendance-grid"></div>
-
                         <div class="attendance-controls">
                             <button class="btn-success flex items-center gap-1" onclick="markAllPresent()">
                                 <span class="material-symbols-outlined text-[18px]">check_circle</span> ALL PRESENT
@@ -864,7 +896,6 @@
                                 <span class="material-symbols-outlined text-[18px]">save</span> SUBMIT ATTENDANCE
                             </button>
                         </div>
-
                         <div class="mt-4">
                             <button class="btn-ghost flex items-center gap-1" onclick="toggleHistory()">
                                 <span class="material-symbols-outlined text-[18px]">history</span> Show History
@@ -875,6 +906,32 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- ===== STUDENT DASHBOARD ===== -->
+                <div id="view-student" class="view-section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📘 Student Dashboard</h1>
+                        <p class="text-[14px] text-[#64748B]" id="student-subtitle">Browse subjects, attendance, and announcements</p>
+                    </div>
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
+                            📢 Announcements
+                        </h3>
+                        <div id="student-announcements" class="space-y-2"></div>
+                    </div>
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">fact_check</span>
+                            📋 My Attendance Records
+                        </h3>
+                        <div id="student-attendance-history" class="overflow-x-auto">
+                            <p class="text-[13px] text-[#64748B]">Loading attendance...</p>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-semibold text-[#0F172A] mb-3">📚 Subjects</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
                 </div>
 
                 <!-- ===== ADMIN: USER MANAGEMENT ===== -->
@@ -893,11 +950,13 @@
                                     <th class="p-3">User</th>
                                     <th class="p-3">Email</th>
                                     <th class="p-3">Role</th>
+                                    <th class="p-3">Semester</th>
+                                    <th class="p-3">Division</th>
+                                    <th class="p-3">Branch</th>
                                     <th class="p-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="admin-users-table">
-                            </tbody>
+                            <tbody id="admin-users-table"></tbody>
                         </table>
                     </div>
                 </div>
@@ -909,7 +968,7 @@
         <!-- MODALS -->
         <!-- ============================================================ -->
 
-        <!-- Add/Edit Subject Modal (with Strength) -->
+        <!-- Subject Modal -->
         <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
@@ -947,7 +1006,6 @@
                     <div>
                         <label class="text-[12px] font-semibold text-[#64748B]">Student Strength (Roll Numbers)</label>
                         <input id="subject-strength" type="number" min="1" max="200" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. 58" value="58" />
-                        <span class="text-[11px] text-[#64748B]">Number of students in this class. Attendance grid will show 1 to this number.</span>
                     </div>
                     <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
                         <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
@@ -957,7 +1015,7 @@
             </div>
         </div>
 
-        <!-- Timetable Entry Modal -->
+        <!-- Timetable Modal -->
         <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Timetable Slot</h3>
@@ -1123,7 +1181,7 @@
             </div>
         </div>
 
-    </div> <!-- end app-wrapper -->
+    </div>
 
     <!-- ============================================================ -->
     <!-- SCRIPTS -->
@@ -1140,7 +1198,10 @@
             email: 'mmbbec@gmail.com',
             password: 'admin123',
             name: 'Admin',
-            role: 'admin'
+            role: 'admin',
+            semester: '1',
+            division: 'A',
+            branch: 'Mathematics'
         };
 
         function getUsers() {
@@ -1170,7 +1231,14 @@
         }
 
         function setSession(user) {
-            localStorage.setItem(SESSION_KEY, JSON.stringify({ email: user.email, role: user.role, name: user.name }));
+            localStorage.setItem(SESSION_KEY, JSON.stringify({
+                email: user.email,
+                role: user.role,
+                name: user.name,
+                semester: user.semester || '1',
+                division: user.division || '',
+                branch: user.branch || ''
+            }));
         }
 
         function clearSession() {
@@ -1196,16 +1264,24 @@
         function showSignup() {
             document.getElementById('login-form').classList.add('hidden');
             document.getElementById('signup-form').classList.remove('hidden');
-            // Reset role selector
             selectRole('teacher');
+            onSemesterChange();
         }
 
         function selectRole(role) {
             document.getElementById('signup-role').value = role;
-            const tBtn = document.getElementById('role-teacher');
-            const sBtn = document.getElementById('role-student');
-            tBtn.classList.toggle('active', role === 'teacher');
-            sBtn.classList.toggle('active', role === 'student');
+            document.getElementById('role-teacher').classList.toggle('active', role === 'teacher');
+            document.getElementById('role-student').classList.toggle('active', role === 'student');
+        }
+
+        function onSemesterChange() {
+            const sem = parseInt(document.getElementById('signup-semester').value);
+            const branchGroup = document.getElementById('branch-group');
+            if (sem >= 3) {
+                branchGroup.classList.add('open');
+            } else {
+                branchGroup.classList.remove('open');
+            }
         }
 
         function handleLogin() {
@@ -1231,6 +1307,9 @@
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value.trim() || '1234';
             const role = document.getElementById('signup-role').value;
+            const semester = document.getElementById('signup-semester').value;
+            const division = document.getElementById('signup-division').value.trim().toUpperCase() || 'A';
+            const branch = document.getElementById('signup-branch').value;
 
             if (!name || !email) {
                 showToast('Please fill in all fields.', 'error');
@@ -1247,7 +1326,7 @@
                 return;
             }
 
-            const newUser = { name, email, password, role };
+            const newUser = { name, email, password, role, semester, division, branch };
             users.push(newUser);
             saveUsers(users);
             showToast('Account created! Please sign in.', 'success');
@@ -1289,7 +1368,6 @@
             closeForgotPasswordModal();
         }
 
-        // Enter key support
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('login-password').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') handleLogin();
@@ -1304,6 +1382,7 @@
                 if (e.key === 'Enter') document.querySelector('#forgot-password-modal form').dispatchEvent(new Event(
                     'submit'));
             });
+            onSemesterChange();
         });
 
         function logout() {
@@ -1328,61 +1407,60 @@
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-wrapper').classList.add('show');
 
-            // Update UI with user info
             const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
             document.getElementById('sidebar-avatar').textContent = initial;
             document.getElementById('sidebar-name').textContent = user.name;
-            document.getElementById('sidebar-role').textContent = user.role === 'admin' ? 'Administrator' : user.role ===
-                'teacher' ? 'Faculty Guide' : 'Student';
+            const roleLabel = user.role === 'admin' ? 'Administrator' : user.role === 'teacher' ? 'Faculty Guide' : 'Student';
+            document.getElementById('sidebar-role').textContent = roleLabel;
+            const semLabel = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][parseInt(user.semester || '1') - 1] || 'I';
+            const branchDisplay = user.branch && user.branch !== 'Other' ? user.branch : '';
+            document.getElementById('sidebar-academic').textContent =
+                `${semLabel} Semester · Div ${user.division || '—'} ${branchDisplay ? '· ' + branchDisplay : ''}`;
             document.getElementById('header-user').textContent = user.name;
             document.getElementById('header-avatar').textContent = initial;
 
-            // Build sidebar
+            // Build sidebar based on role
             const nav = document.getElementById('sidebar-nav');
             let links = '';
             if (user.role === 'admin') {
                 links = `
-              <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-              </a>
-              <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-              </a>
-              <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-              </a>
-              <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
-                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
-              </a>
-              <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
-                <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
-              </a>
-            `;
+                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+                    </a>
+                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
+                    </a>
+                    <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+                    </a>
+                    <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
+                        <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
+                    </a>
+                `;
             } else if (user.role === 'teacher') {
                 links = `
-              <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-              </a>
-              <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-              </a>
-              <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-              </a>
-              <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
-                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
-              </a>
-            `;
+                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+                    </a>
+                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
+                    </a>
+                `;
             } else { // student
                 links = `
-              <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
-                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student Dashboard</span>
-              </a>
-            `;
+                    <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Student Dashboard</span>
+                    </a>
+                `;
             }
             nav.innerHTML = links;
 
-            // Load data and render
             loadData();
             loadAnnouncements();
             loadAttendanceData();
@@ -1443,18 +1521,15 @@
             } catch (e) { showToast('Failed to save announcement.', 'error'); }
         }
 
-        function renderAnnouncements(target = 'all') {
+        function renderAnnouncements(target) {
             const user = getCurrentUser();
             if (!user) return;
-            // Filter: show all if admin, or target matches user role, or 'all'
             let filtered = announcements;
             if (user.role !== 'admin') {
                 filtered = announcements.filter(a => a.target === 'all' || a.target === user.role);
             }
-            // Sort by date descending
             filtered = filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // For dashboard
             const listEl = document.getElementById('announcements-list');
             if (listEl) {
                 if (filtered.length === 0) {
@@ -1474,11 +1549,9 @@
                 }
             }
 
-            // For student dashboard
             const studentAnnEl = document.getElementById('student-announcements');
             if (studentAnnEl) {
-                const studentFiltered = announcements.filter(a => a.target === 'all' || a.target === 'student' || a.target ===
-                    'all');
+                const studentFiltered = announcements.filter(a => a.target === 'all' || a.target === 'student');
                 if (studentFiltered.length === 0) {
                     studentAnnEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements for students.</p>';
                 } else {
@@ -1496,7 +1569,6 @@
                 }
             }
 
-            // Show/hide admin post button
             const adminActions = document.getElementById('announcement-admin-actions');
             if (adminActions) {
                 adminActions.classList.toggle('hidden', user.role !== 'admin' && user.role !== 'teacher');
@@ -1522,19 +1594,17 @@
             const content = document.getElementById('ann-content').value.trim();
             const target = document.getElementById('ann-target').value;
             if (!title || !content) { showToast('Title and content are required.', 'error'); return; }
-            const ann = {
+            announcements.push({
                 id: Date.now().toString(),
                 title,
                 content,
                 target,
                 date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 author: user.name
-            };
-            announcements.push(ann);
+            });
             saveAnnouncements();
             closeAnnouncementModal();
             renderAnnouncements();
-            // Also refresh student view if visible
             if (currentView === 'student') renderStudentView();
             showToast('Announcement posted!', 'success');
         }
@@ -1566,11 +1636,16 @@
             const link = document.querySelector(`.sidebar-link[data-view="${view}"]`);
             if (link) link.classList.add('active');
 
-            if (view === 'dashboard') renderDashboard();
-            else if (view === 'my-subjects') renderMySubjects();
+            const user = getCurrentUser();
+            if (view === 'dashboard') {
+                document.getElementById('dash-subtitle').textContent =
+                    user && user.role === 'admin' ? 'Admin overview of all subjects' : 'Overview of your academic portfolio';
+                renderDashboard();
+            } else if (view === 'my-subjects') renderMySubjects();
             else if (view === 'attendance') renderAttendance();
             else if (view === 'student') renderStudentView();
             else if (view === 'admin-users') renderAdminUsers();
+
             if (view !== 'my-subjects' && view !== 'subject-detail') {
                 currentSubjectId = null;
             }
@@ -1583,13 +1658,11 @@
                 'subject-detail': 'Subject Details'
             };
             document.getElementById('page-title').textContent = titles[view] || 'Dashboard';
-            // Re-render announcements on dashboard/student
+
             if (view === 'dashboard' || view === 'student') {
                 renderAnnouncements();
             }
-            // Show admin announcement button on dashboard
-            const user = getCurrentUser();
-            if (view === 'dashboard' && (user && (user.role === 'admin' || user.role === 'teacher'))) {
+            if (view === 'dashboard' && user && (user.role === 'admin' || user.role === 'teacher')) {
                 document.getElementById('announcement-admin-actions').classList.remove('hidden');
             } else if (view === 'dashboard') {
                 document.getElementById('announcement-admin-actions').classList.add('hidden');
@@ -1616,11 +1689,11 @@
                 totalSlots += (s.timetable || []).length;
             });
             stats.innerHTML = `
-            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Subjects</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSubjects}</div></div>
-            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Students</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalStudents}</div></div>
-            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Resources</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalResources}</div></div>
-            <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Timetable Slots</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSlots}</div></div>
-          `;
+                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Subjects</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSubjects}</div></div>
+                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Students</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalStudents}</div></div>
+                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Resources</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalResources}</div></div>
+                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Timetable Slots</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSlots}</div></div>
+            `;
             const todayEl = document.getElementById('dash-today');
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const todayName = days[new Date().getDay() - 1] || 'Monday';
@@ -1628,9 +1701,9 @@
             subjects.forEach(s => {
                 (s.timetable || []).filter(t => t.day === todayName).forEach(t => {
                     todayHtml += `<div class="flex items-center justify-between bg-[#F8FAFC] p-2 rounded">
-                <div><div class="font-semibold text-[14px]">${s.name}</div><div class="text-[12px] text-[#64748B]">${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div></div>
-                <span class="text-[12px] font-bold text-[#1E40AF]">${t.topic || ''}</span>
-              </div>`;
+                        <div><div class="font-semibold text-[14px]">${s.name}</div><div class="text-[12px] text-[#64748B]">${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div></div>
+                        <span class="text-[12px] font-bold text-[#1E40AF]">${t.topic || ''}</span>
+                    </div>`;
                 });
             });
             todayEl.innerHTML = todayHtml || '<p class="text-[14px] text-[#64748B]">No classes today.</p>';
@@ -1638,9 +1711,9 @@
             let actHtml = '';
             subjects.slice(0, 5).forEach(s => {
                 actHtml += `<div class="flex items-center gap-2 p-2 bg-[#F8FAFC] rounded">
-              <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
-              <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) · ${s.strength || 58} students</span>
-            </div>`;
+                    <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
+                    <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) · ${s.strength || 58} students</span>
+                </div>`;
             });
             actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#64748B]">No activity yet.</p>';
             renderAnnouncements();
@@ -1657,22 +1730,22 @@
                 return;
             }
             grid.innerHTML = subjects.map(s => `
-            <div class="card p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openSubjectDetail('${s.id}')">
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-code-num font-bold text-[#1E40AF] text-[14px]">${s.code}</span>
-                <div class="flex gap-1">
-                  <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="event.stopPropagation(); openEditSubjectModal('${s.id}')"><span class="material-symbols-outlined text-[16px]">edit</span></button>
-                  <button class="p-1 rounded hover:bg-red-50 text-red-500" onclick="event.stopPropagation(); deleteSubject('${s.id}')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                <div class="card p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openSubjectDetail('${s.id}')">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-code-num font-bold text-[#1E40AF] text-[14px]">${s.code}</span>
+                        <div class="flex gap-1">
+                            <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="event.stopPropagation(); openEditSubjectModal('${s.id}')"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                            <button class="p-1 rounded hover:bg-red-50 text-red-500" onclick="event.stopPropagation(); deleteSubject('${s.id}')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
+                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.section || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
+                    <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B]">
+                        <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
+                        <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
+                    </div>
                 </div>
-              </div>
-              <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
-              <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.section || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
-              <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B]">
-                <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
-                <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
-              </div>
-            </div>
-          `).join('');
+            `).join('');
         }
 
         // ============================================================
@@ -1706,19 +1779,19 @@
             }
             const header = document.getElementById('subject-detail-header');
             header.innerHTML = `
-            <div class="card p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
-                  <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
-                  <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.section || '—'}</span>
-                  <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
+                <div class="card p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
+                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
+                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.section || '—'}</span>
+                            <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
+                        </div>
+                        <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
+                        <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
+                    </div>
                 </div>
-                <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
-                <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
-              </div>
-            </div>
-          `;
+            `;
             document.querySelectorAll('#subject-tabs .tab-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.tab === currentTab) btn.classList.add('active');
@@ -1741,89 +1814,87 @@
             const el = document.getElementById('subject-tab-content');
             if (currentTab === 'overview') {
                 el.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="card p-4"><h3 class="font-semibold mb-2">Subject Info</h3>
-                <p class="text-[13px] text-[#64748B]">Name: <b>${s.name}</b></p>
-                <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
-                <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
-                <p class="text-[13px] text-[#64748B]">Section: <b>${s.section || '—'}</b></p>
-                <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
-              </div>
-              <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
-                <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
-                <p class="text-[13px] text-[#64748B]">Notes: <b>${(s.notes||[]).length}</b></p>
-                <p class="text-[13px] text-[#64748B]">Resources: <b>${(s.resources||[]).length}</b></p>
-                <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? 'Set' : 'Not set'}</b></p>
-              </div>
-            </div>`;
+                    <div class="card p-4"><h3 class="font-semibold mb-2">Subject Info</h3>
+                        <p class="text-[13px] text-[#64748B]">Name: <b>${s.name}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Section: <b>${s.section || '—'}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
+                    </div>
+                    <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
+                        <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Notes: <b>${(s.notes||[]).length}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Resources: <b>${(s.resources||[]).length}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? 'Set' : 'Not set'}</b></p>
+                    </div>
+                </div>`;
             } else if (currentTab === 'timetable') {
                 const slots = s.timetable || [];
                 el.innerHTML = `<div class="card p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold">Weekly Timetable</h3>
-                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
-              </div>
-              ${slots.length === 0 ? '<p class="text-[13px] text-[#64748B]">No timetable entries yet.</p>' : ''}
-              <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
-              ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
-              </tbody></table></div>
-            </div>`;
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold">Weekly Timetable</h3>
+                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
+                    </div>
+                    ${slots.length === 0 ? '<p class="text-[13px] text-[#64748B]">No timetable entries yet.</p>' : ''}
+                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
+                    ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
+                    </tbody></table></div>
+                </div>`;
             } else if (currentTab === 'notes') {
                 const notes = s.notes || [];
                 el.innerHTML = `<div class="card p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold">Notes</h3>
-                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
-              </div>
-              ${notes.length === 0 ? '<p class="text-[13px] text-[#64748B]">No notes yet.</p>' : ''}
-              <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between">
-                <div><div class="font-semibold text-[14px]">${n.title || ''}</div><div class="text-[12px] text-[#64748B]">${n.content || ''}</div>
-                ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open Link</a>` : ''}
-                </div>
-                <button class="p-1 text-red-500" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
-              </div>`).join('')}
-              </div>
-            </div>`;
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold">Notes</h3>
+                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
+                    </div>
+                    ${notes.length === 0 ? '<p class="text-[13px] text-[#64748B]">No notes yet.</p>' : ''}
+                    <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between">
+                        <div><div class="font-semibold text-[14px]">${n.title || ''}</div><div class="text-[12px] text-[#64748B]">${n.content || ''}</div>
+                        ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open Link</a>` : ''}
+                        </div>
+                        <button class="p-1 text-red-500" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    </div>`).join('')}
+                    </div>
+                </div>`;
             } else if (currentTab === 'syllabus') {
                 el.innerHTML = `<div class="card p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold">Syllabus</h3>
-                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
-              </div>
-              ${s.syllabus ? `<p class="text-[13px] text-[#334155]">${s.syllabus.content || 'No content'}</p>
-              ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#1E40AF] text-[13px] underline flex items-center gap-1 mt-2"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}` : '<p class="text-[13px] text-[#64748B]">No syllabus set.</p>'}
-            </div>`;
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold">Syllabus</h3>
+                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
+                    </div>
+                    ${s.syllabus ? `<p class="text-[13px] text-[#334155]">${s.syllabus.content || 'No content'}</p>
+                    ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#1E40AF] text-[13px] underline flex items-center gap-1 mt-2"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}` : '<p class="text-[13px] text-[#64748B]">No syllabus set.</p>'}
+                </div>`;
             } else if (currentTab === 'resources') {
                 const resources = s.resources || [];
                 el.innerHTML = `<div class="card p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold">Resources</h3>
-                <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
-              </div>
-              ${resources.length === 0 ? '<p class="text-[13px] text-[#64748B]">No resources yet.</p>' : ''}
-              <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="resource-type-badge">${r.type || 'notes'}</span>
-                  <div><div class="font-semibold text-[14px]">${r.title || ''}</div><div class="text-[12px] text-[#64748B]">${r.description || ''}</div></div>
-                  <span class="link-type-badge">${r.linkType || 'web-url'}</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="p-1 text-[#1E40AF]"><span class="material-symbols-outlined text-[16px]">open_in_new</span></a>` : ''}
-                  <button class="p-1 text-red-500" onclick="deleteResource(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
-                </div>
-              </div>`).join('')}
-              </div>
-            </div>`;
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold">Resources</h3>
+                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
+                    </div>
+                    ${resources.length === 0 ? '<p class="text-[13px] text-[#64748B]">No resources yet.</p>' : ''}
+                    <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="resource-type-badge">${r.type || 'notes'}</span>
+                            <div><div class="font-semibold text-[14px]">${r.title || ''}</div><div class="text-[12px] text-[#64748B]">${r.description || ''}</div></div>
+                            <span class="link-type-badge">${r.linkType || 'web-url'}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="p-1 text-[#1E40AF]"><span class="material-symbols-outlined text-[16px]">open_in_new</span></a>` : ''}
+                            <button class="p-1 text-red-500" onclick="deleteResource(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </div>
+                    </div>`).join('')}
+                    </div>
+                </div>`;
             }
         }
 
         // ============================================================
-        //  STUDENT VIEW - with attendance history and announcements
+        //  STUDENT VIEW
         // ============================================================
         function renderStudentView() {
-            // Announcements
             renderAnnouncements();
 
-            // Attendance History for this student (show all records with date, subject code, absent rolls)
             const attEl = document.getElementById('student-attendance-history');
             if (attEl) {
                 const allRecords = [];
@@ -1848,12 +1919,7 @@
                     attEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No attendance records available.</p>';
                 } else {
                     let html = `<table class="attendance-history-table">
-                        <thead><tr>
-                            <th>Date</th>
-                            <th>Subject</th>
-                            <th>Absent Roll Numbers</th>
-                            <th>Present</th>
-                        </tr></thead><tbody>`;
+                        <thead><tr><th>Date</th><th>Subject</th><th>Absent Roll Numbers</th><th>Present</th></tr></thead><tbody>`;
                     allRecords.slice(0, 20).forEach(r => {
                         const absentStr = r.absent.length > 0 ? r.absent.sort((a, b) => a - b).join(', ') :
                             'None (All Present)';
@@ -1865,14 +1931,11 @@
                         </tr>`;
                     });
                     html += '</tbody></table>';
-                    if (allRecords.length > 20) {
-                        html += `<p class="text-[11px] text-[#64748B] mt-2">Showing last 20 records.</p>`;
-                    }
+                    if (allRecords.length > 20) html += `<p class="text-[11px] text-[#64748B] mt-2">Showing last 20 records.</p>`;
                     attEl.innerHTML = html;
                 }
             }
 
-            // Subjects
             const el = document.getElementById('student-subjects');
             if (subjects.length === 0) {
                 el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
@@ -1886,7 +1949,6 @@
                     </div>
                     <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
                     <p class="text-[12px] text-[#64748B]">${s.section || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
-
                     ${(s.timetable||[]).length > 0 ? `
                         <div class="mt-3">
                             <span class="text-[12px] font-semibold">Timetable:</span>
@@ -1898,7 +1960,6 @@
                             `).join('')}
                         </div>
                     ` : ''}
-
                     ${(s.notes||[]).length > 0 ? `
                         <div class="mt-3">
                             <span class="text-[12px] font-semibold">Notes:</span>
@@ -1910,7 +1971,6 @@
                             `).join('')}
                         </div>
                     ` : ''}
-
                     ${(s.resources||[]).length > 0 ? `
                         <div class="mt-3">
                             <span class="text-[12px] font-semibold">Resources:</span>
@@ -1919,7 +1979,6 @@
                             `).join('')}
                         </div>
                     ` : ''}
-
                     ${(s.timetable||[]).length === 0 && (s.notes||[]).length === 0 && (s.resources||[]).length === 0 ? `
                         <div class="mt-3 text-[12px] text-[#64748B]">No content available yet.</div>
                     ` : ''}
@@ -1987,14 +2046,9 @@
             currentAttendanceSubjectId = subjectId;
             const key = `${subjectId}_${date}`;
             if (!attendanceData[key]) {
-                attendanceData[key] = {
-                    subjectId: subjectId,
-                    date: date,
-                    absent: new Set()
-                };
+                attendanceData[key] = { subjectId, date, absent: new Set() };
             }
             selectedAbsent = attendanceData[key].absent || new Set();
-            // Show strength info
             const subj = subjects.find(s => s.id === subjectId);
             const strength = subj ? (subj.strength || 58) : 58;
             document.getElementById('attendance-strength-info').textContent = `Strength: ${strength} students (Roll 1 – ${strength})`;
@@ -2009,8 +2063,7 @@
             for (let i = 1; i <= total; i++) {
                 const isAbsent = selectedAbsent.has(i);
                 html += `
-                    <button class="roll-btn ${isAbsent ? 'absent' : ''}" 
-                            onclick="toggleRoll(${i})">
+                    <button class="roll-btn ${isAbsent ? 'absent' : ''}" onclick="toggleRoll(${i})">
                         ${i}
                     </button>
                 `;
@@ -2019,15 +2072,10 @@
         }
 
         function toggleRoll(roll) {
-            if (selectedAbsent.has(roll)) {
-                selectedAbsent.delete(roll);
-            } else {
-                selectedAbsent.add(roll);
-            }
+            if (selectedAbsent.has(roll)) selectedAbsent.delete(roll);
+            else selectedAbsent.add(roll);
             const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
-            if (attendanceData[key]) {
-                attendanceData[key].absent = selectedAbsent;
-            }
+            if (attendanceData[key]) attendanceData[key].absent = selectedAbsent;
             const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
             const strength = subj ? (subj.strength || 58) : 58;
             renderRollNumbers(strength);
@@ -2037,9 +2085,7 @@
         function markAllPresent() {
             selectedAbsent.clear();
             const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
-            if (attendanceData[key]) {
-                attendanceData[key].absent = selectedAbsent;
-            }
+            if (attendanceData[key]) attendanceData[key].absent = selectedAbsent;
             const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
             const strength = subj ? (subj.strength || 58) : 58;
             renderRollNumbers(strength);
@@ -2049,13 +2095,9 @@
         function markAllAbsent() {
             const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
             const strength = subj ? (subj.strength || 58) : 58;
-            for (let i = 1; i <= strength; i++) {
-                selectedAbsent.add(i);
-            }
+            for (let i = 1; i <= strength; i++) selectedAbsent.add(i);
             const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
-            if (attendanceData[key]) {
-                attendanceData[key].absent = selectedAbsent;
-            }
+            if (attendanceData[key]) attendanceData[key].absent = selectedAbsent;
             renderRollNumbers(strength);
             updateSelectedInfo();
         }
@@ -2074,43 +2116,27 @@
         function submitAttendance() {
             const date = document.getElementById('attendance-date').value;
             const subjectId = currentAttendanceSubjectId;
-            if (!subjectId || !date) {
-                showToast('Please select a subject and date.', 'error');
-                return;
-            }
+            if (!subjectId || !date) { showToast('Please select a subject and date.', 'error'); return; }
             const key = `${subjectId}_${date}`;
-            attendanceData[key] = {
-                subjectId: subjectId,
-                date: date,
-                absent: selectedAbsent
-            };
+            attendanceData[key] = { subjectId, date, absent: selectedAbsent };
             saveAttendanceData();
             const subject = subjects.find(s => s.id === subjectId);
             const strength = subject ? (subject.strength || 58) : 58;
             const presentCount = strength - selectedAbsent.size;
             showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`, 'success');
-            if (document.getElementById('attendance-history').style.display !== 'none') {
-                renderHistory();
-            }
+            if (document.getElementById('attendance-history').style.display !== 'none') renderHistory();
         }
 
         function toggleHistory() {
             const div = document.getElementById('attendance-history');
-            if (div.style.display === 'none') {
-                div.style.display = 'block';
-                renderHistory();
-            } else {
-                div.style.display = 'none';
-            }
+            if (div.style.display === 'none') { div.style.display = 'block';
+                renderHistory(); } else { div.style.display = 'none'; }
         }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
             const subjectId = currentAttendanceSubjectId;
-            if (!subjectId) {
-                list.innerHTML = '<div class="text-sm text-muted">No subject selected.</div>';
-                return;
-            }
+            if (!subjectId) { list.innerHTML = '<div class="text-sm text-muted">No subject selected.</div>'; return; }
             const records = [];
             for (const key in attendanceData) {
                 const rec = attendanceData[key];
@@ -2152,26 +2178,26 @@
             const users = getUsers();
             const tbody = document.getElementById('admin-users-table');
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-[#64748B]">No users found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-[#64748B]">No users found.</td></tr>';
                 return;
             }
             tbody.innerHTML = users.map((u, idx) => `
-            <tr class="table-row">
-              <td class="p-3 font-semibold">${u.name}</td>
-              <td class="p-3 text-[#64748B] text-[13px]">${u.email}</td>
-              <td class="p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
-              <td class="p-3 text-right">
-                ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[12px]">Protected</span>'}
-              </td>
-            </tr>
-          `).join('');
+                <tr class="table-row">
+                    <td class="p-3 font-semibold">${u.name}</td>
+                    <td class="p-3 text-[#64748B] text-[13px]">${u.email}</td>
+                    <td class="p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
+                    <td class="p-3 text-[13px]">${u.semester ? ['I','II','III','IV','V','VI','VII','VIII'][parseInt(u.semester)-1] || u.semester : '—'}</td>
+                    <td class="p-3 text-[13px]">${u.division || '—'}</td>
+                    <td class="p-3 text-[13px]">${u.branch || '—'}</td>
+                    <td class="p-3 text-right">
+                        ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[12px]">Protected</span>'}
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function deleteUser(email) {
-            if (email === 'mmbbec@gmail.com') {
-                showToast('Cannot delete the admin account.', 'error');
-                return;
-            }
+            if (email === 'mmbbec@gmail.com') { showToast('Cannot delete the admin account.', 'error'); return; }
             if (!confirm('Delete user ' + email + '?')) return;
             let users = getUsers();
             users = users.filter(u => u.email !== email);
@@ -2207,9 +2233,7 @@
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
-        function closeSubjectModal() {
-            document.getElementById('subject-modal').classList.add('hidden');
-        }
+        function closeSubjectModal() { document.getElementById('subject-modal').classList.add('hidden'); }
 
         function handleSubjectSubmit(e) {
             e.preventDefault();
@@ -2244,7 +2268,6 @@
             else if (currentView === 'my-subjects') renderMySubjects();
             else if (currentView === 'student') renderStudentView();
             if (currentSubjectId) renderSubjectDetail();
-            // Refresh attendance subject list if visible
             if (currentView === 'attendance') renderAttendance();
         }
 
@@ -2434,12 +2457,7 @@
             if (session) {
                 const users = getUsers();
                 const user = users.find(u => u.email === session.email);
-                if (user) {
-                    initApp();
-                    return;
-                } else {
-                    clearSession();
-                }
+                if (user) { initApp(); return; } else { clearSession(); }
             }
             document.getElementById('auth-container').classList.remove('hidden');
             document.getElementById('app-wrapper').classList.remove('show');
@@ -2494,6 +2512,7 @@
         window.markAllAbsent = markAllAbsent;
         window.submitAttendance = submitAttendance;
         window.toggleHistory = toggleHistory;
+        window.onSemesterChange = onSemesterChange;
     </script>
 </body>
 </html>
