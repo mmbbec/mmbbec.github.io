@@ -44,199 +44,32 @@
             font-family: "Manrope", sans-serif;
             background: #F8FAFC;
             color: #334155;
-            margin: 0;
-            padding: 0;
+            overflow-x: hidden;
         }
         .font-display {
             font-family: "Space Grotesk", sans-serif;
         }
 
-        /* ── auth ── */
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
-            padding: 16px;
-        }
-        .auth-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
-            padding: 32px 28px;
-            width: 100%;
-            max-width: 440px;
-            border: 1px solid #E2E8F0;
-        }
-        .auth-card .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .auth-card .logo-text {
-            font-family: "Space Grotesk", sans-serif;
-            font-weight: 700;
-            font-size: 18px;
-            color: #0F172A;
-            text-align: center;
-        }
-        .auth-card .logo-sub {
-            font-size: 12px;
-            color: #64748B;
-            text-align: center;
-            margin-top: -4px;
-            margin-bottom: 16px;
-        }
-        .auth-card .form-group {
-            margin-bottom: 12px;
-        }
-        .auth-card .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 3px;
-        }
-        .auth-card .form-group input,
-        .auth-card .form-group select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #E2E8F0;
-            border-radius: 10px;
-            font-size: 14px;
-            background: #F8FAFC;
-            transition: border .15s;
-        }
-        .auth-card .form-group input:focus,
-        .auth-card .form-group select:focus {
-            border-color: #1E40AF;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
-        }
-        .auth-card .btn-login {
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-            border-radius: 10px;
-            margin-top: 6px;
-        }
-        .auth-card .forgot-password {
-            text-align: right;
-            margin-top: 2px;
-            font-size: 12px;
-            color: #64748B;
-        }
-        .auth-card .forgot-password a {
-            color: #1E40AF;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .auth-card .forgot-password a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .app-wrapper {
-            display: none;
-        }
-        .app-wrapper.show {
-            display: block;
-        }
-        .role-selector {
-            display: flex;
-            gap: 8px;
-            margin-top: 2px;
-        }
-        .role-selector button {
-            flex: 1;
-            padding: 8px 10px;
-            border: 2px solid #E2E8F0;
-            border-radius: 8px;
-            background: white;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.15s;
-            color: #64748B;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-        .role-selector button:hover {
-            border-color: #94A3B8;
-            background: #F8FAFC;
-        }
-        .role-selector button.active {
-            border-color: #1E40AF;
-            background: #EFF6FF;
-            color: #1E40AF;
-        }
-        .role-selector button.active::after {
-            content: " ✓";
-            font-weight: 700;
-        }
-        .auth-toggle {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 13px;
-            color: #64748B;
-        }
-        .auth-toggle a {
-            color: #1E40AF;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .auth-toggle a:hover {
-            text-decoration: underline;
-        }
-        .conditional-field {
-            transition: all 0.25s ease;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            padding: 0 4px;
-        }
-        .conditional-field.open {
-            max-height: 120px;
-            opacity: 1;
-            padding: 4px 4px 8px 4px;
-        }
-
-        /* ── sidebar ── */
+        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            bottom: 0;
-            width: 260px;
-            background: #fff;
+            width: 250px;
+            height: 100vh;
+            background: #FFFFFF;
             border-right: 1px solid #E2E8F0;
-            z-index: 100;
-            transform: translateX(0);
-            transition: transform 0.25s ease;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
         }
         .sidebar.closed {
             transform: translateX(-100%);
         }
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, .35);
-            z-index: 99;
-            display: none;
-        }
-        .sidebar-overlay.open {
-            display: block;
-        }
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -260,56 +93,69 @@
             border-left: 3px solid #1E40AF;
         }
 
-        /* ── mobile bottom nav ── */
-        .bottom-nav {
+        /* ===== OVERLAY ===== */
+        .sidebar-overlay {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #E2E8F0;
-            display: none;
-            z-index: 50;
-            padding: 4px 0 env(safe-area-inset-bottom);
-            justify-content: space-around;
-            align-items: center;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        .bottom-nav .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px 8px;
-            border: none;
-            background: transparent;
-            font-size: 10px;
-            color: #94A3B8;
-            font-weight: 600;
-            cursor: pointer;
-            transition: color .15s;
-            gap: 1px;
-            min-width: 48px;
-        }
-        .bottom-nav .nav-item .material-symbols-outlined {
-            font-size: 22px;
-        }
-        .bottom-nav .nav-item.active {
-            color: #1E40AF;
-        }
-        .bottom-nav .nav-item:hover {
-            color: #0F172A;
+        .sidebar-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        /* ── cards ── */
+        /* ===== HAMBURGER ===== */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .hamburger:hover {
+            background: #F1F5F9;
+        }
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: #0F172A;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .hamburger.open span:nth-child(1) {
+            transform: translateY(6.5px) rotate(45deg);
+        }
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open span:nth-child(3) {
+            transform: translateY(-6.5px) rotate(-45deg);
+        }
+
+        /* ===== CARDS ===== */
         .card {
             background: #FFFFFF;
             border: 1px solid #E2E8F0;
-            border-radius: .75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+            border-radius: .5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
         }
+
+        /* ===== BUTTONS ===== */
         .btn-primary {
             background: #0F172A;
             color: #fff;
-            border-radius: .5rem;
+            border-radius: .375rem;
             padding: .5rem 1rem;
             font-weight: 600;
             font-size: .8125rem;
@@ -323,7 +169,7 @@
         .btn-secondary {
             background: #1E40AF;
             color: #fff;
-            border-radius: .5rem;
+            border-radius: .375rem;
             padding: .5rem 1rem;
             font-weight: 600;
             font-size: .8125rem;
@@ -337,7 +183,7 @@
         .btn-ghost {
             background: #F1F5F9;
             color: #334155;
-            border-radius: .5rem;
+            border-radius: .375rem;
             padding: .5rem 1rem;
             font-weight: 600;
             font-size: .8125rem;
@@ -351,7 +197,7 @@
         .btn-danger {
             background: #DC2626;
             color: #fff;
-            border-radius: .5rem;
+            border-radius: .375rem;
             padding: .5rem 1rem;
             font-weight: 600;
             font-size: .8125rem;
@@ -365,7 +211,7 @@
         .btn-success {
             background: #059669;
             color: #fff;
-            border-radius: .5rem;
+            border-radius: .375rem;
             padding: .5rem 1rem;
             font-weight: 600;
             font-size: .8125rem;
@@ -377,212 +223,80 @@
             background: #047857;
         }
 
-        .roll-btn {
-            padding: 10px 4px;
-            border: 2px solid #E2E8F0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.15s;
-            text-align: center;
-            color: #0F172A;
-            min-width: 36px;
-        }
-        .roll-btn:hover {
-            border-color: #94A3B8;
-            transform: scale(1.04);
-        }
-        .roll-btn.absent {
-            background: #FEE2E2;
-            border-color: #FCA5A5;
-            color: #991B1B;
-        }
-        .roll-btn.absent:hover {
-            background: #FECACA;
-        }
-        .roll-btn.present {
-            background: #D1FAE5;
-            border-color: #6EE7B7;
-            color: #065F46;
-        }
-        .attendance-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
-            max-width: 600px;
-            margin: 8px 0;
-        }
-        @media (max-width: 640px) {
-            .attendance-grid {
-                grid-template-columns: repeat(6, 1fr);
-            }
-        }
-        @media (max-width: 420px) {
-            .attendance-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        .attendance-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin: 12px 0;
-            padding: 14px 16px;
-            background: #F8FAFC;
-            border-radius: 10px;
-            border: 1px solid #E2E8F0;
-        }
-        .selected-info {
-            padding: 6px 12px;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #E2E8F0;
-            font-size: 12px;
-            color: #475569;
-            flex: 1;
-            min-width: 140px;
-        }
-        .selected-info strong {
-            color: #0F172A;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 14px;
-            background: #F8FAFC;
-            border-radius: 8px;
-            margin-bottom: 4px;
-            border-left: 4px solid #1E40AF;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .history-item .date {
-            font-weight: 600;
-            color: #0F172A;
-            font-size: 13px;
-        }
-        .history-item .details {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-absent {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-        .badge-present {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-        .date-picker {
-            padding: 6px 10px;
-            border: 2px solid #E2E8F0;
-            border-radius: 8px;
-            font-size: 13px;
-            background: white;
-            color: #0F172A;
-        }
-        .date-picker:focus {
-            outline: none;
-            border-color: #1E40AF;
-        }
-        .user-role-badge {
-            font-size: 10px;
-            font-weight: 600;
-            padding: 2px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-        }
-        .user-role-badge.admin {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-        .user-role-badge.teacher {
-            background: #DBEAFE;
-            color: #1E40AF;
-        }
-        .user-role-badge.student {
-            background: #D1FAE5;
-            color: #059669;
-        }
-
-        .announcement-item {
-            border-left: 4px solid #D97706;
-            padding: 10px 14px;
-            background: #FFFBEB;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 8px;
-        }
-        .announcement-item .meta {
-            font-size: 11px;
-            color: #92400E;
-            font-weight: 600;
-        }
-
-        .attendance-history-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-        .attendance-history-table th {
-            background: #F8FAFC;
-            color: #64748B;
-            font-weight: 600;
-            padding: 6px 8px;
-            text-align: left;
-            font-size: 10px;
-            text-transform: uppercase;
-        }
-        .attendance-history-table td {
-            padding: 6px 8px;
+        .table-row {
             border-bottom: 1px solid #F1F5F9;
         }
-        .attendance-history-table tr:last-child td {
+        .table-row:last-child {
             border-bottom: none;
         }
-        .absent-rolls {
-            font-family: 'Courier New', monospace;
+        .tab-btn {
+            padding: .5rem .75rem;
+            border-radius: .375rem;
+            font-size: .8125rem;
             font-weight: 600;
-            color: #991B1B;
-            font-size: 11px;
+            color: #64748B;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: .375rem;
+        }
+        .tab-btn.active {
+            background: #0F172A;
+            color: #fff;
+        }
+        .tab-btn:hover {
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .tab-btn.active:hover {
+            background: #0F172A;
+        }
+
+        .modal-overlay {
+            background: rgba(15, 23, 42, .4);
+            backdrop-filter: blur(4px);
+        }
+        .resource-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: .125rem .5rem;
+            border-radius: .25rem;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .link-type-badge {
+            font-size: .6875rem;
+            font-weight: 600;
+            padding: .125rem .375rem;
+            border-radius: .25rem;
+            background: #F1F5F9;
+            color: #64748B;
         }
 
         .toast {
             position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
+            bottom: 24px;
+            right: 24px;
             padding: 12px 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             color: #fff;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             z-index: 9999;
             opacity: 0;
+            transform: translateY(20px);
             transition: all .3s ease;
             pointer-events: none;
             max-width: 360px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
-            text-align: center;
-            width: 90%;
         }
         .toast.show {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
             pointer-events: auto;
         }
         .toast.success {
@@ -611,6 +325,347 @@
             box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
         }
 
+        /* ===== AUTH ===== */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid #E2E8F0;
+        }
+        .auth-card .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .auth-card .logo-text {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #0F172A;
+        }
+        .auth-card .logo-sub {
+            font-size: 12px;
+            color: #64748B;
+            text-align: center;
+            margin-top: -6px;
+            margin-bottom: 20px;
+        }
+        .auth-card .form-group {
+            margin-bottom: 14px;
+        }
+        .auth-card .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .auth-card .form-group input,
+        .auth-card .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #F8FAFC;
+            transition: border .15s;
+        }
+        .auth-card .form-group input:focus,
+        .auth-card .form-group select:focus {
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+        }
+        .auth-card .btn-login {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .auth-card .forgot-password {
+            text-align: right;
+            margin-top: 4px;
+            font-size: 12px;
+            color: #64748B;
+        }
+        .auth-card .forgot-password a {
+            color: #1E40AF;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .auth-card .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .app-wrapper {
+            display: none;
+        }
+        .app-wrapper.show {
+            display: block;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .role-selector button {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .role-selector button:hover {
+            border-color: #94A3B8;
+            background: #F8FAFC;
+        }
+        .role-selector button.active {
+            border-color: #1E40AF;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .role-selector button.active::after {
+            content: " ✓";
+            font-weight: 700;
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            max-width: 600px;
+            margin: 12px 0;
+        }
+        @media (max-width: 640px) {
+            .attendance-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        .roll-btn {
+            padding: 10px 4px;
+            border: 2px solid #E2E8F0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.15s;
+            text-align: center;
+            color: #0F172A;
+        }
+        .roll-btn:hover {
+            border-color: #94A3B8;
+            transform: scale(1.03);
+        }
+        .roll-btn.absent {
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+            color: #991B1B;
+        }
+        .roll-btn.absent:hover {
+            background: #FECACA;
+        }
+        .roll-btn.present {
+            background: #D1FAE5;
+            border-color: #6EE7B7;
+            color: #065F46;
+        }
+        .attendance-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 16px 0;
+            padding: 16px;
+            background: #F8FAFC;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+        .selected-info {
+            padding: 8px 14px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+            font-size: 13px;
+            color: #475569;
+            flex: 1;
+            min-width: 180px;
+        }
+        .selected-info strong {
+            color: #0F172A;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #F8FAFC;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border-left: 4px solid #1E40AF;
+        }
+        .history-item .date {
+            font-weight: 600;
+            color: #0F172A;
+        }
+        .history-item .details {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-absent {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        .badge-present {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .date-picker {
+            padding: 6px 10px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #0F172A;
+        }
+        .date-picker:focus {
+            outline: none;
+            border-color: #1E40AF;
+        }
+
+        .user-role-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+        .user-role-badge.admin {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .user-role-badge.teacher {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .user-role-badge.student {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .announcement-item {
+            border-left: 4px solid #D97706;
+            padding: 12px 16px;
+            background: #FFFBEB;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 10px;
+        }
+        .announcement-item .meta {
+            font-size: 11px;
+            color: #92400E;
+            font-weight: 600;
+        }
+
+        .attendance-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .attendance-history-table th {
+            background: #F8FAFC;
+            color: #64748B;
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .attendance-history-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .attendance-history-table tr:last-child td {
+            border-bottom: none;
+        }
+        .absent-rolls {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #991B1B;
+            font-size: 12px;
+        }
+
+        .auth-toggle {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748B;
+        }
+        .auth-toggle a {
+            color: #1E40AF;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .conditional-field {
+            transition: all 0.25s ease;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            padding: 0 4px;
+        }
+        .conditional-field.open {
+            max-height: 120px;
+            opacity: 1;
+            padding: 4px 4px 8px 4px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 28px 20px;
+            }
+            .role-selector {
+                flex-direction: column;
+            }
+        }
+
         .view-section {
             animation: fadeIn 0.25s ease;
         }
@@ -625,25 +680,33 @@
             }
         }
 
+        .settings-section {
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
         .settings-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 12px;
+            padding: 8px 12px;
             background: #F8FAFC;
             border-radius: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .settings-item .name {
             font-weight: 500;
-            font-size: 13px;
         }
         .settings-item .actions button {
             padding: 2px 8px;
             border-radius: 4px;
             border: none;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
         }
         .settings-item .actions .del {
@@ -654,107 +717,108 @@
             background: #FECACA;
         }
 
-        .date-badge {
-            display: inline-flex;
+        /* ===== DASHBOARD STAT CARDS ===== */
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
+        }
+        .stat-card .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        .stat-card .stat-number {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0F172A;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #64748B;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .stat-card .stat-trend {
+            font-size: 11px;
             font-weight: 600;
-            background: #EFF6FF;
-            color: #1E40AF;
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 6px;
         }
-        .date-badge.important {
-            background: #FEF3C7;
-            color: #D97706;
+        .stat-card .stat-trend.up {
+            background: #D1FAE5;
+            color: #065F46;
         }
-        .date-badge.urgent {
+        .stat-card .stat-trend.down {
             background: #FEE2E2;
             color: #991B1B;
         }
-
-        .tab-btn {
-            padding: .4rem .7rem;
-            border-radius: .5rem;
-            font-size: .75rem;
-            font-weight: 600;
-            color: #64748B;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all .15s;
-            display: flex;
-            align-items: center;
-            gap: .25rem;
-            white-space: nowrap;
-        }
-        .tab-btn.active {
-            background: #0F172A;
-            color: #fff;
-        }
-        .tab-btn:hover {
-            background: #F1F5F9;
-            color: #0F172A;
-        }
-        .tab-btn.active:hover {
-            background: #0F172A;
-        }
-
-        .modal-overlay {
-            background: rgba(15, 23, 42, .4);
-            backdrop-filter: blur(4px);
-        }
-        .resource-type-badge {
-            font-size: .65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            padding: .1rem .5rem;
-            border-radius: .25rem;
-            background: #EFF6FF;
-            color: #1E40AF;
-        }
-        .link-type-badge {
-            font-size: .65rem;
-            font-weight: 600;
-            padding: .1rem .3rem;
-            border-radius: .25rem;
+        .stat-card .stat-trend.neutral {
             background: #F1F5F9;
             color: #64748B;
         }
 
-        /* ── responsive ── */
-        @media (max-width: 768px) {
+        .stat-card .stat-glow {
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 1024px) {
             .sidebar {
-                width: 280px;
-            }
-            .sidebar.closed {
-                transform: translateX(-100%);
-            }
-            .sidebar-overlay.open {
-                display: block;
-            }
-            .bottom-nav {
-                display: flex;
-            }
-            main {
-                padding-bottom: 80px !important;
+                width: 260px;
             }
             .pl-\[250px\] {
                 padding-left: 0 !important;
             }
-            .auth-card {
-                padding: 24px 16px;
-                border-radius: 16px;
+            .hamburger {
+                display: flex !important;
             }
-            .auth-card .logo-text {
-                font-size: 16px;
+            .sidebar.closed {
+                transform: translateX(-100%);
             }
-            .attendance-grid {
-                grid-template-columns: repeat(6, 1fr);
+            .sidebar.open {
+                transform: translateX(0);
             }
         }
-        @media (max-width: 480px) {
+
+        @media (max-width: 768px) {
+            .stat-card .stat-number {
+                font-size: 22px;
+            }
+            .stat-card {
+                padding: 16px 18px;
+            }
+            .stat-card .stat-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
             .attendance-grid {
                 grid-template-columns: repeat(5, 1fr);
             }
@@ -763,69 +827,147 @@
                 align-items: stretch;
             }
             .selected-info {
-                text-align: center;
+                min-width: unset;
+            }
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .auth-card {
+                padding: 24px 16px;
+            }
+            .auth-card .logo-text {
+                font-size: 16px;
+            }
+            #subject-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            #subject-tabs .tab-btn {
+                white-space: nowrap;
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            #subject-tabs .tab-btn .material-symbols-outlined {
+                font-size: 14px;
+            }
+            .grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            .stat-card .stat-number {
+                font-size: 18px;
+            }
+            .stat-card {
+                padding: 12px 14px;
+            }
+            .stat-card .stat-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+                margin-bottom: 6px;
+            }
+            .attendance-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 4px;
+            }
+            .roll-btn {
+                padding: 6px 2px;
+                font-size: 11px;
+            }
+            header {
+                padding: 0 12px !important;
+                height: 52px !important;
+            }
+            main {
+                padding: 12px !important;
             }
             .auth-card {
                 padding: 20px 14px;
             }
-            .role-selector {
-                flex-direction: column;
+            .auth-card .logo-text {
+                font-size: 14px;
             }
-            .bottom-nav .nav-item {
-                font-size: 9px;
-                min-width: 36px;
-                padding: 2px 4px;
+            .auth-card .logo svg {
+                width: 36px;
+                height: 36px;
             }
-            .bottom-nav .nav-item .material-symbols-outlined {
-                font-size: 20px;
+            .card {
+                padding: 12px !important;
+            }
+            .attendance-controls {
+                padding: 12px;
+            }
+            .attendance-controls .btn {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .selected-info {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .tab-btn {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+            .tab-btn .material-symbols-outlined {
+                font-size: 14px;
             }
         }
 
-        /* scrollbar */
-        ::-webkit-scrollbar {
+        /* ===== SCROLLBAR ===== */
+        .sidebar::-webkit-scrollbar {
             width: 4px;
-            height: 4px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #CBD5E1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-track {
+        .sidebar::-webkit-scrollbar-track {
             background: transparent;
         }
-
-        .header-user {
-            font-size: 13px;
-            font-weight: 600;
-            color: #0F172A;
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 4px;
         }
-        @media (max-width: 480px) {
-            .header-user {
-                font-size: 12px;
-            }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #CBD5E1;
         }
 
-        .stat-card {
-            transition: transform 0.15s;
+        /* ===== UTILITY ===== */
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
-        .stat-card:hover {
-            transform: translateY(-2px);
+        .bg-gradient-subtle {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
         }
 
-        .important-date-card {
-            border-left: 4px solid #D97706;
-            padding: 10px 14px;
-            background: #FFFBEB;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 6px;
+        /* ===== SUBJECT CARD HOVER ===== */
+        .subject-card {
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
-        .important-date-card .date-label {
-            font-weight: 700;
-            color: #92400E;
+        .subject-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
         }
-        .important-date-card .date-value {
-            color: #0F172A;
-            font-weight: 600;
+
+        .announcement-item {
+            transition: all 0.2s ease;
+        }
+        .announcement-item:hover {
+            background: #FFFDF5;
         }
     </style>
 </head>
@@ -834,7 +976,9 @@
     <!-- Toast -->
     <div id="toast" class="toast"></div>
 
-    <!-- ─── AUTH ─── -->
+    <!-- ============================================================ -->
+    <!-- AUTH CONTAINER -->
+    <!-- ============================================================ -->
     <div id="auth-container" class="auth-container">
         <div class="auth-card">
             <div class="logo">
@@ -847,7 +991,7 @@
                 </svg>
                 <span class="logo-text">Basaveshwar Engineering College Bagalkote</span>
             </div>
-            <div class="logo-sub">Subject Management System</div>
+            <div class="logo-sub">Subject Management</div>
 
             <!-- Login -->
             <div id="login-form">
@@ -891,18 +1035,25 @@
                     </div>
                     <input type="hidden" id="signup-role" value="teacher" />
                 </div>
+
+                <!-- Semester -->
                 <div class="form-group">
-                    <label>Semester</label>
+                    <label>Semester <span class="text-[#64748B] text-[11px]">(from admin settings)</span></label>
                     <select id="signup-semester"></select>
                 </div>
+
+                <!-- Division -->
                 <div class="form-group">
-                    <label>Division</label>
+                    <label>Division <span class="text-[#64748B] text-[11px]">(from admin settings)</span></label>
                     <select id="signup-division"></select>
                 </div>
+
+                <!-- Branch Name (conditional) -->
                 <div id="branch-group" class="form-group conditional-field open">
-                    <label>Branch Name</label>
+                    <label>Branch Name <span class="text-[#64748B] text-[11px]">(for 3rd–8th sem)</span></label>
                     <select id="signup-branch"></select>
                 </div>
+
                 <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
                 <div class="auth-toggle">
                     Already have an account? <a onclick="showLogin()">Sign In</a>
@@ -911,11 +1062,16 @@
         </div>
     </div>
 
-    <!-- ─── APP ─── -->
+    <!-- ============================================================ -->
+    <!-- MAIN APP WRAPPER -->
+    <!-- ============================================================ -->
     <div id="app-wrapper" class="app-wrapper">
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="main-sidebar">
+        <!-- ===== SIDEBAR OVERLAY (mobile) ===== -->
+        <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside id="sidebar" class="sidebar closed">
             <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 shrink-0">
@@ -930,25 +1086,28 @@
                         <div class="text-[11px] text-[#64748B]">Dept. of Mathematics</div>
                     </div>
                 </div>
-                <button class="p-1 rounded hover:bg-[#F1F5F9] lg:hidden" onclick="toggleSidebar()">
+                <!-- Close button (mobile) -->
+                <button class="md:hidden p-1 rounded hover:bg-[#F1F5F9]" onclick="toggleSidebar()">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
+            <!-- User Info -->
             <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#F1F5F9]">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-[13px] uppercase shrink-0" id="sidebar-avatar">MB</div>
-                        <div class="min-w-0">
-                            <div class="text-[13px] font-semibold text-[#0F172A] truncate" id="sidebar-name">Dr. Mahadev Biradar</div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-[13px] uppercase" id="sidebar-avatar">MB</div>
+                        <div>
+                            <div class="text-[13px] font-semibold text-[#0F172A]" id="sidebar-name">Dr. Mahadev Biradar</div>
                             <div class="text-[11px] text-[#64748B]" id="sidebar-role">Faculty Guide</div>
-                            <div class="text-[10px] text-[#64748B] truncate" id="sidebar-academic"></div>
+                            <div class="text-[10px] text-[#64748B]" id="sidebar-academic"></div>
                         </div>
                     </div>
-                    <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition shrink-0" title="Logout">
+                    <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition" title="Logout">
                         <span class="material-symbols-outlined text-[20px]">logout</span>
                     </button>
                 </div>
             </div>
+            <!-- Nav -->
             <nav class="flex-1 p-2 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
             <div class="p-3 border-t border-[#F1F5F9] text-center">
                 <div class="text-[10px] text-[#64748B]">Created by Dr. Mahadev Biradar</div>
@@ -956,60 +1115,42 @@
             </div>
         </aside>
 
-        <!-- Overlay -->
-        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="pl-[250px] min-h-screen" id="main-content">
 
-        <!-- Main -->
-        <div class="pl-[260px] min-h-screen" style="padding-left:260px;">
-            <header class="bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-4 sticky top-0 z-40">
-                <div class="flex items-center gap-3 min-w-0">
-                    <button class="p-1 rounded hover:bg-[#F1F5F9] lg:hidden" onclick="toggleSidebar()">
-                        <span class="material-symbols-outlined text-[22px]">menu</span>
+            <!-- HEADER -->
+            <header class="bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-6 sticky top-0 z-40">
+                <div class="flex items-center gap-3">
+                    <!-- Hamburger -->
+                    <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
+                        <span></span><span></span><span></span>
                     </button>
-                    <span class="text-[14px] font-semibold text-[#0F172A] truncate" id="page-title">Dashboard</span>
-                    <span class="bg-[#F1F5F9] text-[#64748B] text-[10px] px-2 py-0.5 rounded hidden sm:inline">Semester</span>
+                    <span class="text-[14px] font-semibold text-[#0F172A]" id="page-title">Dashboard</span>
+                    <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded hidden sm:inline-block">Semester System</span>
                 </div>
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3">
                     <span class="text-[12px] text-[#64748B] hidden sm:inline" id="header-user">Dr. Mahadev Biradar</span>
                     <div class="w-7 h-7 rounded-full bg-[#1E40AF] text-white text-[11px] flex items-center justify-center font-bold uppercase" id="header-avatar">MB</div>
                 </div>
             </header>
 
-            <main class="p-4 md:p-6">
+            <main class="p-6">
 
                 <!-- ===== DASHBOARD ===== -->
                 <div id="view-dashboard" class="view-section">
-                    <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">📊 Dashboard</h1>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Dashboard</h1>
                             <p class="text-[14px] text-[#64748B]" id="dash-subtitle">Overview of your academic portfolio</p>
                         </div>
-                        <button class="btn-secondary flex items-center gap-2 text-[13px]" onclick="openAddSubjectModal()">
+                        <button class="btn-secondary flex items-center gap-2 self-start sm:self-auto" onclick="openAddSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">add</span>
                             <span>Add Subject</span>
                         </button>
                     </div>
-
-                    <!-- Important Dates -->
-                    <div class="card p-4 mb-5" id="important-dates-section">
-                        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-                            <h3 class="font-display font-semibold text-[#0F172A] flex items-center gap-2 text-[16px]">
-                                <span class="material-symbols-outlined text-[20px] text-[#D97706]">event_note</span>
-                                📅 Important Dates
-                            </h3>
-                            <button class="btn-ghost text-[12px] flex items-center gap-1" onclick="openDateModal()" id="date-admin-btn">
-                                <span class="material-symbols-outlined text-[16px]">add</span> Add Date
-                            </button>
-                        </div>
-                        <div id="important-dates-list" class="space-y-1"></div>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5" id="dash-stats"></div>
-
-                    <!-- Announcements -->
-                    <div class="card p-4 mb-5" id="announcements-section">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[16px]">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6" id="dash-stats"></div>
+                    <div class="card p-4 md:p-5 mb-6" id="announcements-section">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
                             📢 Announcements
                         </h3>
@@ -1020,18 +1161,16 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Today & Activity -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="card p-4">
-                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[15px]">
+                        <div class="card p-4 md:p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">event_available</span>
                                 Today's Classes
                             </h3>
                             <div id="dash-today" class="space-y-2"></div>
                         </div>
-                        <div class="card p-4">
-                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[15px]">
+                        <div class="card p-4 md:p-5">
+                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">pending_actions</span>
                                 Recent Activity
                             </h3>
@@ -1042,33 +1181,33 @@
 
                 <!-- ===== MY SUBJECTS ===== -->
                 <div id="view-my-subjects" class="view-section hidden">
-                    <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">📚 My Subjects</h1>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">My Subjects</h1>
                             <p class="text-[14px] text-[#64748B]">Manage all subjects in your department</p>
                         </div>
-                        <button class="btn-secondary flex items-center gap-2 text-[13px]" onclick="openAddSubjectModal()">
+                        <button class="btn-secondary flex items-center gap-2 self-start sm:self-auto" onclick="openAddSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">add</span>
                             <span>Add Subject</span>
                         </button>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
                 </div>
 
                 <!-- ===== SUBJECT DETAIL ===== -->
                 <div id="view-subject-detail" class="view-section hidden">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <button class="btn-ghost flex items-center gap-2 text-[13px]" onclick="goBackToSubjects()">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                        <button class="btn-ghost flex items-center gap-2 self-start" onclick="goBackToSubjects()">
                             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                            <span>Back</span>
+                            <span>Back to Subjects</span>
                         </button>
-                        <button class="btn-ghost flex items-center gap-2 text-[13px]" onclick="openEditSubjectModal()">
+                        <button class="btn-ghost flex items-center gap-2 self-start sm:self-auto" onclick="openEditSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">edit</span>
-                            <span>Edit</span>
+                            <span>Edit Subject</span>
                         </button>
                     </div>
                     <div id="subject-detail-header"></div>
-                    <div class="card p-2 mb-3 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
+                    <div class="card p-2 md:p-3 mb-4 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
                         <button class="tab-btn active" data-tab="overview" onclick="switchSubjectTab('overview')">
                             <span class="material-symbols-outlined text-[16px]">info</span>Overview
                         </button>
@@ -1090,45 +1229,45 @@
 
                 <!-- ===== ATTENDANCE ===== -->
                 <div id="view-attendance" class="view-section hidden">
-                    <div class="mb-5">
+                    <div class="mb-6">
                         <h1 class="text-2xl font-bold text-[#0F172A] font-display">📋 Attendance</h1>
                         <p class="text-[14px] text-[#64748B]">Mark student attendance date‑wise</p>
                     </div>
                     <div class="card p-4 md:p-5">
                         <div class="flex flex-wrap items-end gap-3 mb-4">
-                            <div class="flex-1 min-w-[160px]">
-                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Subject</label>
-                                <select id="attendance-subject" class="date-picker w-full"></select>
+                            <div>
+                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Select Subject</label>
+                                <select id="attendance-subject" class="date-picker" style="min-width:180px;"></select>
                             </div>
-                            <div class="flex-1 min-w-[140px]">
+                            <div>
                                 <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Date</label>
-                                <input type="date" id="attendance-date" class="date-picker w-full">
+                                <input type="date" id="attendance-date" class="date-picker">
                             </div>
                             <button class="btn-secondary" onclick="loadAttendance()">Load</button>
                         </div>
-                        <h3 class="font-semibold text-[15px]">Click roll numbers of <span class="text-red-600">ABSENT</span> students</h3>
+                        <h3 class="font-semibold mb-2">Click roll numbers of ABSENT students</h3>
                         <p class="text-[12px] text-[#64748B] mb-2" id="attendance-strength-info">Strength: --</p>
                         <div id="roll-grid" class="attendance-grid"></div>
                         <div class="attendance-controls">
-                            <button class="btn-success flex items-center gap-1 text-[12px]" onclick="markAllPresent()">
-                                <span class="material-symbols-outlined text-[18px]">check_circle</span> All Present
+                            <button class="btn-success flex items-center gap-1" onclick="markAllPresent()">
+                                <span class="material-symbols-outlined text-[18px]">check_circle</span> ALL PRESENT
                             </button>
-                            <button class="btn-danger flex items-center gap-1 text-[12px]" onclick="markAllAbsent()">
-                                <span class="material-symbols-outlined text-[18px]">cancel</span> All Absent
+                            <button class="btn-danger flex items-center gap-1" onclick="markAllAbsent()">
+                                <span class="material-symbols-outlined text-[18px]">cancel</span> ALL ABSENT
                             </button>
                             <div class="selected-info" id="selected-info">
-                                <strong>Absent:</strong> None
+                                <strong>Selected Absent:</strong> None / All Present
                             </div>
-                            <button class="btn-secondary flex items-center gap-1 text-[12px]" onclick="submitAttendance()">
-                                <span class="material-symbols-outlined text-[18px]">save</span> Submit
+                            <button class="btn-secondary flex items-center gap-1" onclick="submitAttendance()">
+                                <span class="material-symbols-outlined text-[18px]">save</span> SUBMIT
                             </button>
                         </div>
-                        <div class="mt-3">
-                            <button class="btn-ghost flex items-center gap-1 text-[12px]" onclick="toggleHistory()">
+                        <div class="mt-4">
+                            <button class="btn-ghost flex items-center gap-1" onclick="toggleHistory()">
                                 <span class="material-symbols-outlined text-[18px]">history</span> Show History
                             </button>
-                            <div id="attendance-history" style="display:none;margin-top:12px;">
-                                <h4 class="font-semibold mb-2 text-[14px]">Attendance History</h4>
+                            <div id="attendance-history" style="display: none; margin-top: 16px;">
+                                <h4 class="font-semibold mb-2">Attendance History</h4>
                                 <div id="history-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
                             </div>
                         </div>
@@ -1137,29 +1276,19 @@
 
                 <!-- ===== STUDENT DASHBOARD ===== -->
                 <div id="view-student" class="view-section hidden">
-                    <div class="mb-5">
-                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">🎓 Student Dashboard</h1>
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📘 Student Dashboard</h1>
                         <p class="text-[14px] text-[#64748B]" id="student-subtitle">Browse subjects, attendance, and announcements</p>
                     </div>
-
-                    <!-- Important Dates for students -->
-                    <div class="card p-4 mb-5">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[15px]">
-                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">event_note</span>
-                            📅 Important Dates
-                        </h3>
-                        <div id="student-important-dates" class="space-y-1"></div>
-                    </div>
-
-                    <div class="card p-4 mb-5">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[15px]">
+                    <div class="card p-4 md:p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
                             📢 Announcements
                         </h3>
                         <div id="student-announcements" class="space-y-2"></div>
                     </div>
-                    <div class="card p-4 mb-5">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2 text-[15px]">
+                    <div class="card p-4 md:p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                             <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">fact_check</span>
                             📋 My Attendance Records
                         </h3>
@@ -1167,29 +1296,29 @@
                             <p class="text-[13px] text-[#64748B]">Loading attendance...</p>
                         </div>
                     </div>
-                    <h3 class="font-display font-semibold text-[#0F172A] mb-3 text-[16px]">📚 Subjects</h3>
+                    <h3 class="font-display font-semibold text-[#0F172A] mb-3">📚 Subjects</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
                 </div>
 
-                <!-- ===== ADMIN: USERS ===== -->
+                <!-- ===== ADMIN: USER MANAGEMENT ===== -->
                 <div id="view-admin-users" class="view-section hidden">
-                    <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">👥 User Management</h1>
+                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">User Management</h1>
                             <p class="text-[14px] text-[#64748B]">Manage all registered users</p>
                         </div>
-                        <span class="bg-[#FEF3C7] text-[#D97706] text-[11px] px-3 py-1 rounded-full font-semibold">Admin</span>
+                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold self-start sm:self-auto">Admin Only</span>
                     </div>
                     <div class="card p-3 md:p-4 overflow-x-auto">
-                        <table class="w-full text-left text-[13px]">
+                        <table class="w-full text-left text-sm md:text-base">
                             <thead>
-                                <tr class="bg-[#F8FAFC] text-[#64748B] text-[10px] uppercase">
+                                <tr class="bg-[#F8FAFC] text-[#64748B] text-[10px] md:text-[11px] uppercase">
                                     <th class="p-2 md:p-3">User</th>
                                     <th class="p-2 md:p-3">Email</th>
                                     <th class="p-2 md:p-3">Role</th>
-                                    <th class="p-2 md:p-3 hidden sm:table-cell">Sem</th>
-                                    <th class="p-2 md:p-3 hidden sm:table-cell">Div</th>
-                                    <th class="p-2 md:p-3 hidden lg:table-cell">Branch</th>
+                                    <th class="p-2 md:p-3">Semester</th>
+                                    <th class="p-2 md:p-3">Division</th>
+                                    <th class="p-2 md:p-3">Branch</th>
                                     <th class="p-2 md:p-3 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -1200,40 +1329,40 @@
 
                 <!-- ===== ADMIN: SETTINGS ===== -->
                 <div id="view-admin-settings" class="view-section hidden">
-                    <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                         <div>
                             <h1 class="text-2xl font-bold text-[#0F172A] font-display">⚙️ Academic Settings</h1>
-                            <p class="text-[14px] text-[#64748B]">Manage academic year, branches, divisions, semesters</p>
+                            <p class="text-[14px] text-[#64748B]">Manage academic year, semester type, branches, divisions, and semesters</p>
                         </div>
-                        <span class="bg-[#FEF3C7] text-[#D97706] text-[11px] px-3 py-1 rounded-full font-semibold">Admin</span>
+                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold self-start sm:self-auto">Admin Only</span>
                     </div>
 
                     <!-- Academic Year & Semester Type -->
-                    <div class="card p-4 mb-5 settings-section">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 text-[15px]">Current Academic Settings</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="card p-4 md:p-5 mb-6 settings-section">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-4">Current Academic Settings</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Academic Year</label>
-                                <input id="academic-year" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. 2025-26" />
+                                <input id="academic-year" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. 2025-26" />
                             </div>
                             <div>
                                 <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Semester Type</label>
-                                <select id="semester-type" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]">
+                                <select id="semester-type" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded">
                                     <option value="ODD">ODD</option>
                                     <option value="EVEN">EVEN</option>
                                     <option value="SUMMER">SUMMER</option>
                                 </select>
                             </div>
                             <div class="flex items-end">
-                                <button class="btn-secondary w-full" onclick="saveAcademicSettings()">Save</button>
+                                <button class="btn-secondary w-full" onclick="saveAcademicSettings()">Save Settings</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Branches -->
-                    <div class="card p-4 mb-5 settings-section">
-                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A] text-[15px]">🏛️ Branches</h3>
+                    <div class="card p-4 md:p-5 mb-6 settings-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-display font-semibold text-[#0F172A]">Branches</h3>
                             <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddBranchModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Branch
                             </button>
@@ -1242,9 +1371,9 @@
                     </div>
 
                     <!-- Divisions -->
-                    <div class="card p-4 mb-5 settings-section">
-                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A] text-[15px]">📂 Divisions</h3>
+                    <div class="card p-4 md:p-5 mb-6 settings-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-display font-semibold text-[#0F172A]">Divisions</h3>
                             <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddDivisionModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Division
                             </button>
@@ -1253,9 +1382,9 @@
                     </div>
 
                     <!-- Semesters -->
-                    <div class="card p-4 settings-section">
-                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A] text-[15px]">📖 Semesters</h3>
+                    <div class="card p-4 md:p-5 settings-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-display font-semibold text-[#0F172A]">Semesters</h3>
                             <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddSemesterModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Semester
                             </button>
@@ -1265,35 +1394,34 @@
                 </div>
 
             </main>
-
-            <!-- Bottom Navigation (mobile) -->
-            <nav class="bottom-nav" id="bottom-nav"></nav>
         </div>
 
-        <!-- ─── MODALS ─── -->
+        <!-- ============================================================ -->
+        <!-- MODALS -->
+        <!-- ============================================================ -->
 
         <!-- Subject Modal -->
-        <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between sticky top-0 bg-white z-10">
+                <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
                     <h3 id="subject-modal-title" class="font-display font-bold text-[#0F172A]">Add Subject</h3>
                     <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="closeSubjectModal()">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <form id="subject-form" class="p-4 space-y-3" onsubmit="handleSubjectSubmit(event)">
+                <form id="subject-form" class="p-4 md:p-5 space-y-4" onsubmit="handleSubjectSubmit(event)">
                     <input type="hidden" id="subject-form-id" />
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="text-[12px] font-semibold text-[#64748B]">Subject Name *</label>
-                            <input id="subject-name" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. Engineering Maths" />
+                            <input id="subject-name" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. Engineering Mathematics" />
                         </div>
                         <div>
                             <label class="text-[12px] font-semibold text-[#64748B]">Subject Code *</label>
                             <input id="subject-code" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. MA-101" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="text-[12px] font-semibold text-[#64748B]">Semester</label>
                             <select id="subject-semester" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
@@ -1307,16 +1435,16 @@
                         <label class="text-[12px] font-semibold text-[#64748B]">Student Strength (Roll Numbers)</label>
                         <input id="subject-strength" type="number" min="1" max="200" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. 58" value="58" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
+                    <div class="flex flex-wrap justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
                         <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
-                        <button type="submit" class="btn-secondary">Save</button>
+                        <button type="submit" class="btn-secondary">Save Subject</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Branch Modal -->
-        <div id="branch-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <!-- Add Branch Modal -->
+        <div id="branch-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Branch</h3>
                 <form onsubmit="handleAddBranch(event)">
@@ -1332,13 +1460,13 @@
             </div>
         </div>
 
-        <!-- Division Modal -->
-        <div id="division-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <!-- Add Division Modal -->
+        <div id="division-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Division</h3>
                 <form onsubmit="handleAddDivision(event)">
                     <div class="form-group">
-                        <label class="text-[12px] font-semibold text-[#64748B]">Division *</label>
+                        <label class="text-[12px] font-semibold text-[#64748B]">Division Name *</label>
                         <input id="new-division" type="text" required class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. E" maxlength="2" style="text-transform:uppercase;" />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
@@ -1349,8 +1477,8 @@
             </div>
         </div>
 
-        <!-- Semester Modal -->
-        <div id="semester-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <!-- Add Semester Modal -->
+        <div id="semester-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Semester</h3>
                 <form onsubmit="handleAddSemester(event)">
@@ -1367,66 +1495,66 @@
         </div>
 
         <!-- Timetable Modal -->
-        <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Timetable Slot</h3>
                 <form class="space-y-3" onsubmit="handleTimetableSubmit(event)">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div><label class="text-[12px] font-semibold">Day</label>
-                            <select id="tt-day" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
+                            <select id="tt-day" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
                                 <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
                                 <option>Thursday</option><option>Friday</option><option>Saturday</option>
                             </select>
                         </div>
                         <div><label class="text-[12px] font-semibold">Room</label>
-                            <input id="tt-room" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="E-204" />
+                            <input id="tt-room" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="E-204" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-[12px] font-semibold">Start</label>
-                            <input id="tt-start" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="09:00 AM" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-[12px] font-semibold">Start Time</label>
+                            <input id="tt-start" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="09:00 AM" />
                         </div>
-                        <div><label class="text-[12px] font-semibold">End</label>
-                            <input id="tt-end" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="10:00 AM" />
+                        <div><label class="text-[12px] font-semibold">End Time</label>
+                            <input id="tt-end" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="10:00 AM" />
                         </div>
                     </div>
                     <div><label class="text-[12px] font-semibold">Topic / Remarks</label>
-                        <input id="tt-topic" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Lecture on ..." />
+                        <input id="tt-topic" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Lecture on ..." />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" class="btn-ghost" onclick="closeTimetableModal()">Cancel</button>
-                        <button type="submit" class="btn-secondary">Add</button>
+                        <button type="submit" class="btn-secondary">Add Slot</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Resource Modal -->
-        <div id="resource-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="resource-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Resource</h3>
                 <form class="space-y-3" onsubmit="handleResourceSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Title *</label>
-                        <input id="res-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="e.g. Calculus Notes" />
+                    <div><label class="text-[12px] font-semibold">Resource Title *</label>
+                        <input id="res-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Calculus Notes" />
                     </div>
-                    <div><label class="text-[12px] font-semibold">Type</label>
-                        <select id="res-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
+                    <div><label class="text-[12px] font-semibold">Resource Type</label>
+                        <select id="res-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
                             <option value="notes">Notes</option><option value="assignment">Assignment</option>
                             <option value="question-paper">Question Paper</option><option value="video">Video</option>
                             <option value="presentation">Presentation</option><option value="reference">Reference</option>
                         </select>
                     </div>
                     <div><label class="text-[12px] font-semibold">Description</label>
-                        <textarea id="res-desc" rows="2" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Brief description..."></textarea>
+                        <textarea id="res-desc" rows="2" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Brief description..."></textarea>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="res-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
+                        <select id="res-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link URL *</label>
-                        <input id="res-link" required type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="https://..." />
+                        <input id="res-link" required type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" class="btn-ghost" onclick="closeResourceModal()">Cancel</button>
@@ -1437,24 +1565,24 @@
         </div>
 
         <!-- Note Modal -->
-        <div id="note-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="note-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Note</h3>
                 <form class="space-y-3" onsubmit="handleNoteSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Title *</label>
-                        <input id="note-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="e.g. Lecture 1 Summary" />
+                    <div><label class="text-[12px] font-semibold">Note Title *</label>
+                        <input id="note-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Lecture 1 Summary" />
                     </div>
                     <div><label class="text-[12px] font-semibold">Content</label>
-                        <textarea id="note-content" rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Write your note..."></textarea>
+                        <textarea id="note-content" rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write your note..."></textarea>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="note-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
+                        <select id="note-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link URL</label>
-                        <input id="note-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="https://..." />
+                        <input id="note-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" class="btn-ghost" onclick="closeNoteModal()">Cancel</button>
@@ -1465,21 +1593,21 @@
         </div>
 
         <!-- Syllabus Modal -->
-        <div id="syllabus-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="syllabus-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Edit Syllabus</h3>
                 <form class="space-y-3" onsubmit="handleSyllabusSubmit(event)">
                     <div><label class="text-[12px] font-semibold">Syllabus Content</label>
-                        <textarea id="syl-content" rows="4" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Enter syllabus details..."></textarea>
+                        <textarea id="syl-content" rows="4" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Enter syllabus details..."></textarea>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="syl-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
+                        <select id="syl-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
                     <div><label class="text-[12px] font-semibold">Link URL</label>
-                        <input id="syl-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="https://..." />
+                        <input id="syl-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" class="btn-ghost" onclick="closeSyllabusModal()">Cancel</button>
@@ -1490,13 +1618,13 @@
         </div>
 
         <!-- Forgot Password Modal -->
-        <div id="forgot-password-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="forgot-password-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">Reset Password</h3>
                 <p class="text-[13px] text-[#64748B] mb-4">Enter your email address and we'll send you a password reset link.</p>
                 <form class="space-y-3" onsubmit="handleForgotPasswordSubmit(event)">
                     <div><label class="text-[12px] font-semibold">Email Address</label>
-                        <input id="forgot-email" type="email" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="you@example.com" required />
+                        <input id="forgot-email" type="email" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="you@example.com" required />
                     </div>
                     <div class="flex justify-end gap-2 pt-2">
                         <button type="button" class="btn-ghost" onclick="closeForgotPasswordModal()">Cancel</button>
@@ -1507,19 +1635,19 @@
         </div>
 
         <!-- Announcement Modal -->
-        <div id="announcement-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
+        <div id="announcement-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
                 <h3 class="font-display font-bold text-[#0F172A] mb-3">📢 Post Announcement</h3>
                 <form class="space-y-3" onsubmit="handleAnnouncementSubmit(event)">
                     <div><label class="text-[12px] font-semibold">Title *</label>
-                        <input id="ann-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="e.g. Exam Schedule Update" />
+                        <input id="ann-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Exam Schedule Update" />
                     </div>
                     <div><label class="text-[12px] font-semibold">Content *</label>
-                        <textarea id="ann-content" required rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Write announcement..."></textarea>
+                        <textarea id="ann-content" required rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write announcement..."></textarea>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Target</label>
-                        <select id="ann-target" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
-                            <option value="all">All</option>
+                    <div><label class="text-[12px] font-semibold">Target Audience</label>
+                        <select id="ann-target" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="all">All (Teachers & Students)</option>
                             <option value="teachers">Teachers Only</option>
                             <option value="students">Students Only</option>
                         </select>
@@ -1532,47 +1660,19 @@
             </div>
         </div>
 
-        <!-- Important Date Modal -->
-        <div id="date-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-3">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">📅 Add Important Date</h3>
-                <form class="space-y-3" onsubmit="handleDateSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Event Title *</label>
-                        <input id="date-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="e.g. CIE-1, SEE, Assignment Submission" />
-                    </div>
-                    <div><label class="text-[12px] font-semibold">Date *</label>
-                        <input id="date-value" required type="date" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" />
-                    </div>
-                    <div><label class="text-[12px] font-semibold">Category</label>
-                        <select id="date-category" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]">
-                            <option value="CIE">CIE</option>
-                            <option value="SEE">SEE</option>
-                            <option value="Assignment">Assignment</option>
-                            <option value="Quiz">Quiz</option>
-                            <option value="Exam">Exam</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div><label class="text-[12px] font-semibold">Description</label>
-                        <input id="date-desc" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded text-[14px]" placeholder="Additional info..." />
-                    </div>
-                    <div class="flex justify-end gap-2 pt-2">
-                        <button type="button" class="btn-ghost" onclick="closeDateModal()">Cancel</button>
-                        <button type="submit" class="btn-secondary">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
 
-    <!-- ─── SCRIPTS ─── -->
+    <!-- ============================================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================================ -->
     <script>
         // ============================================================
-        //  AUTH
+        //  AUTH SYSTEM
         // ============================================================
+
         const USERS_KEY = 'bec_users';
         const SESSION_KEY = 'bec_session';
+
         const DEFAULT_ADMIN = {
             email: 'mmbbec@gmail.com',
             password: 'admin123',
@@ -1588,16 +1688,25 @@
                 const raw = localStorage.getItem(USERS_KEY);
                 const users = raw ? JSON.parse(raw) : [];
                 const adminExists = users.some(u => u.email === DEFAULT_ADMIN.email);
-                if (!adminExists) { users.push({ ...DEFAULT_ADMIN });
-                    localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+                if (!adminExists) {
+                    users.push({ ...DEFAULT_ADMIN });
+                    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+                }
                 return users;
-            } catch (e) { return [{ ...DEFAULT_ADMIN }]; }
+            } catch (e) {
+                return [{ ...DEFAULT_ADMIN }];
+            }
         }
 
-        function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
 
         function getSession() {
-            try { const raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+            try {
+                const raw = localStorage.getItem(SESSION_KEY);
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
         }
 
         function setSession(user) {
@@ -1611,7 +1720,9 @@
             }));
         }
 
-        function clearSession() { localStorage.removeItem(SESSION_KEY); }
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
+        }
 
         function getCurrentUser() {
             const session = getSession();
@@ -1621,50 +1732,56 @@
         }
 
         // ============================================================
-        //  ACADEMIC SETTINGS
+        //  ACADEMIC SETTINGS (Admin controlled)
         // ============================================================
+
         const ACADEMIC_YEAR_KEY = 'bec_academic_year';
         const SEMESTER_TYPE_KEY = 'bec_semester_type';
         const BRANCHES_KEY = 'bec_branches';
         const DIVISIONS_KEY = 'bec_divisions';
         const SEMESTERS_KEY = 'bec_semesters';
-        const IMPORTANT_DATES_KEY = 'bec_important_dates';
 
-        function getAcademicYear() { return localStorage.getItem(ACADEMIC_YEAR_KEY) || '2025-26'; }
+        function getAcademicYear() {
+            return localStorage.getItem(ACADEMIC_YEAR_KEY) || '2025-26';
+        }
 
-        function setAcademicYear(year) { localStorage.setItem(ACADEMIC_YEAR_KEY, year); }
+        function setAcademicYear(year) {
+            localStorage.setItem(ACADEMIC_YEAR_KEY, year);
+        }
 
-        function getSemesterType() { return localStorage.getItem(SEMESTER_TYPE_KEY) || 'ODD'; }
+        function getSemesterType() {
+            return localStorage.getItem(SEMESTER_TYPE_KEY) || 'ODD';
+        }
 
-        function setSemesterType(type) { localStorage.setItem(SEMESTER_TYPE_KEY, type); }
+        function setSemesterType(type) {
+            localStorage.setItem(SEMESTER_TYPE_KEY, type);
+        }
 
         function getBranches() {
             try {
                 const raw = localStorage.getItem(BRANCHES_KEY);
-                return raw ? JSON.parse(raw) : ['Computer Science', 'Artificial Intelligence', 'Data Science',
-                    'Electronics & Communication', 'Mechanical Engineering', 'Civil Engineering',
-                    'Electrical Engineering', 'Information Science', 'Mathematics', 'Physics', 'Chemistry',
-                    'Biotechnology'
+                return raw ? JSON.parse(raw) : ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical',
+                    'Information Science', 'Mathematics', 'Physics', 'Chemistry', 'Other'
                 ];
-            } catch (e) { return ['Computer Science', 'Artificial Intelligence', 'Data Science',
-                    'Electronics & Communication', 'Mechanical Engineering', 'Civil Engineering',
-                    'Electrical Engineering', 'Information Science', 'Mathematics', 'Physics', 'Chemistry',
-                    'Biotechnology'
+            } catch (e) { return ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical',
+                    'Information Science', 'Mathematics', 'Physics', 'Chemistry', 'Other'
                 ]; }
         }
 
-        function setBranches(branches) { localStorage.setItem(BRANCHES_KEY, JSON.stringify(branches)); }
+        function setBranches(branches) {
+            localStorage.setItem(BRANCHES_KEY, JSON.stringify(branches));
+        }
 
         function getDivisions() {
             try {
                 const raw = localStorage.getItem(DIVISIONS_KEY);
-                return raw ? JSON.parse(raw) : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-                    'P'
-                ];
-            } catch (e) { return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']; }
+                return raw ? JSON.parse(raw) : ['A', 'B', 'C', 'D'];
+            } catch (e) { return ['A', 'B', 'C', 'D']; }
         }
 
-        function setDivisions(divisions) { localStorage.setItem(DIVISIONS_KEY, JSON.stringify(divisions)); }
+        function setDivisions(divisions) {
+            localStorage.setItem(DIVISIONS_KEY, JSON.stringify(divisions));
+        }
 
         function getSemesters() {
             try {
@@ -1677,20 +1794,14 @@
                 ]; }
         }
 
-        function setSemesters(semesters) { localStorage.setItem(SEMESTERS_KEY, JSON.stringify(semesters)); }
-
-        function getImportantDates() {
-            try {
-                const raw = localStorage.getItem(IMPORTANT_DATES_KEY);
-                return raw ? JSON.parse(raw) : [];
-            } catch (e) { return []; }
+        function setSemesters(semesters) {
+            localStorage.setItem(SEMESTERS_KEY, JSON.stringify(semesters));
         }
 
-        function setImportantDates(dates) { localStorage.setItem(IMPORTANT_DATES_KEY, JSON.stringify(dates)); }
+        // ============================================================
+        //  AUTH UI
+        // ============================================================
 
-        // ============================================================
-        //  UI HELPERS
-        // ============================================================
         function populateSelect(selectId, options, selectedValue) {
             const select = document.getElementById(selectId);
             if (!select) return;
@@ -1708,9 +1819,11 @@
             const branches = getBranches();
             const divisions = getDivisions();
             const semesters = getSemesters();
+
             populateSelect('signup-semester', semesters, semesters[0]);
             populateSelect('signup-division', divisions, divisions[0]);
             populateSelect('signup-branch', branches, branches[0]);
+
             populateSelect('subject-semester', semesters, semesters[0]);
             populateSelect('subject-division', divisions, divisions[0]);
         }
@@ -1718,13 +1831,17 @@
         function onSemesterChange() {
             const sem = parseInt(document.getElementById('signup-semester').selectedIndex) + 1;
             const branchGroup = document.getElementById('branch-group');
-            if (sem >= 3) branchGroup.classList.add('open');
-            else branchGroup.classList.remove('open');
+            if (sem >= 3) {
+                branchGroup.classList.add('open');
+            } else {
+                branchGroup.classList.remove('open');
+            }
         }
 
         // ============================================================
         //  AUTH ACTIONS
         // ============================================================
+
         function showLogin() {
             document.getElementById('login-form').classList.remove('hidden');
             document.getElementById('signup-form').classList.add('hidden');
@@ -1747,10 +1864,16 @@
         function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value.trim();
-            if (!email || !password) { showToast('Please enter email and password.', 'error'); return; }
+            if (!email || !password) {
+                showToast('Please enter email and password.', 'error');
+                return;
+            }
             const users = getUsers();
             const user = users.find(u => u.email === email && u.password === password);
-            if (!user) { showToast('Invalid email or password.', 'error'); return; }
+            if (!user) {
+                showToast('Invalid email or password.', 'error');
+                return;
+            }
             setSession(user);
             showToast('Welcome back, ' + user.name + '!', 'success');
             initApp();
@@ -1764,11 +1887,24 @@
             const semester = document.getElementById('signup-semester').value;
             const division = document.getElementById('signup-division').value;
             const branch = document.getElementById('signup-branch').value;
-            if (!name || !email) { showToast('Please fill in all fields.', 'error'); return; }
-            if (password.length < 4) { showToast('Password must be at least 4 characters.', 'error'); return; }
+
+            if (!name || !email) {
+                showToast('Please fill in all fields.', 'error');
+                return;
+            }
+            if (password.length < 4) {
+                showToast('Password must be at least 4 characters.', 'error');
+                return;
+            }
+
             const users = getUsers();
-            if (users.some(u => u.email === email)) { showToast('Email already registered.', 'error'); return; }
-            users.push({ name, email, password, role, semester, division, branch });
+            if (users.some(u => u.email === email)) {
+                showToast('This email is already registered.', 'error');
+                return;
+            }
+
+            const newUser = { name, email, password, role, semester, division, branch };
+            users.push(newUser);
             saveUsers(users);
             showToast('Account created! Please sign in.', 'success');
             showLogin();
@@ -1779,66 +1915,197 @@
             document.getElementById('signup-password').value = '1234';
         }
 
+        // ============================================================
+        //  FORGOT PASSWORD
+        // ============================================================
+
         function handleForgotPassword() {
             document.getElementById('forgot-password-modal').classList.remove('hidden');
             document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
         }
 
-        function closeForgotPasswordModal() { document.getElementById('forgot-password-modal').classList.add('hidden'); }
+        function closeForgotPasswordModal() {
+            document.getElementById('forgot-password-modal').classList.add('hidden');
+        }
 
         function handleForgotPasswordSubmit(e) {
             e.preventDefault();
             const email = document.getElementById('forgot-email').value.trim();
-            if (!email) { showToast('Please enter your email address.', 'error'); return; }
+            if (!email) {
+                showToast('Please enter your email address.', 'error');
+                return;
+            }
             const users = getUsers();
             const user = users.find(u => u.email === email);
-            if (!user) { showToast('No account found with this email address.', 'error'); return; }
-            showToast('Your password is: ' + user.password, 'info');
+            if (!user) {
+                showToast('No account found with this email address.', 'error');
+                return;
+            }
+            showToast('Your password is: ' + user.password + ' (reset link sent to your email)', 'info');
             closeForgotPasswordModal();
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('login-password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('login-email').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('signup-password').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleSignup();
+            });
+            document.getElementById('forgot-email').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') document.querySelector('#forgot-password-modal form').dispatchEvent(new Event(
+                    'submit'));
+            });
+            document.getElementById('signup-semester').addEventListener('change', onSemesterChange);
+            populateAcademicDropdowns();
+        });
 
         function logout() {
             clearSession();
             document.getElementById('app-wrapper').classList.remove('show');
             document.getElementById('auth-container').classList.remove('hidden');
+            // close sidebar on logout
+            if (window.innerWidth <= 1024) {
+                document.getElementById('sidebar').classList.add('closed');
+                document.getElementById('hamburger-btn').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('open');
+            }
             showToast('Logged out.', 'info');
         }
 
         // ============================================================
-        //  SIDEBAR / NAV
+        //  SIDEBAR TOGGLE (mobile)
         // ============================================================
+
         function toggleSidebar() {
-            const sidebar = document.getElementById('main-sidebar');
+            const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('closed');
-            overlay.classList.toggle('open');
+            const hamburger = document.getElementById('hamburger-btn');
+
+            if (sidebar.classList.contains('closed')) {
+                sidebar.classList.remove('closed');
+                sidebar.classList.add('open');
+                overlay.classList.add('open');
+                hamburger.classList.add('open');
+            } else {
+                sidebar.classList.add('closed');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+                hamburger.classList.remove('open');
+            }
         }
 
-        function closeSidebar() {
-            const sidebar = document.getElementById('main-sidebar');
+        // Close sidebar on resize to desktop
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.add('closed');
-            overlay.classList.remove('open');
-        }
+            const hamburger = document.getElementById('hamburger-btn');
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('closed', 'open');
+                overlay.classList.remove('open');
+                hamburger.classList.remove('open');
+            }
+        });
 
         // ============================================================
-        //  TOAST
+        //  APP INIT
         // ============================================================
-        let toastTimer = null;
 
-        function showToast(message, type = 'info') {
-            const el = document.getElementById('toast');
-            el.textContent = message;
-            el.className = 'toast ' + type;
-            void el.offsetWidth;
-            el.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        function initApp() {
+            const user = getCurrentUser();
+            if (!user) {
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('app-wrapper').classList.remove('show');
+                return;
+            }
+
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-wrapper').classList.add('show');
+
+            const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            document.getElementById('sidebar-avatar').textContent = initial;
+            document.getElementById('sidebar-name').textContent = user.name;
+            const roleLabel = user.role === 'admin' ? 'Administrator' : user.role === 'teacher' ? 'Faculty Guide' : 'Student';
+            document.getElementById('sidebar-role').textContent = roleLabel;
+            document.getElementById('sidebar-academic').textContent =
+                `${user.semester || '—'} · Div ${user.division || '—'} ${user.branch ? '· ' + user.branch : ''}`;
+            document.getElementById('header-user').textContent = user.name;
+            document.getElementById('header-avatar').textContent = initial;
+
+            const nav = document.getElementById('sidebar-nav');
+            let links = '';
+            if (user.role === 'admin') {
+                links = `
+                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+                    </a>
+                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
+                    </a>
+                    <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+                    </a>
+                    <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
+                        <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
+                    </a>
+                    <a class="sidebar-link" data-view="admin-settings" href="#" onclick="switchView('admin-settings')">
+                        <span class="material-symbols-outlined text-[18px]">settings</span><span>Settings</span>
+                    </a>
+                `;
+            } else if (user.role === 'teacher') {
+                links = `
+                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
+                    </a>
+                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
+                    </a>
+                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
+                    </a>
+                `;
+            } else {
+                links = `
+                    <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Student Dashboard</span>
+                    </a>
+                `;
+            }
+            nav.innerHTML = links;
+
+            loadData();
+            loadAnnouncements();
+            loadAttendanceData();
+            populateAcademicDropdowns();
+            if (user.role === 'student') {
+                switchView('student');
+            } else {
+                switchView('dashboard');
+            }
+
+            // Close sidebar on nav click (mobile)
+            document.querySelectorAll('.sidebar-link').forEach(el => {
+                el.addEventListener('click', function() {
+                    if (window.innerWidth <= 1024) {
+                        document.getElementById('sidebar').classList.add('closed');
+                        document.getElementById('sidebar').classList.remove('open');
+                        document.getElementById('sidebar-overlay').classList.remove('open');
+                        document.getElementById('hamburger-btn').classList.remove('open');
+                    }
+                });
+            });
         }
 
         // ============================================================
         //  SUBJECT DATA
         // ============================================================
+
         let subjects = [];
         let currentView = 'dashboard';
         let currentSubjectId = null;
@@ -1861,8 +2128,9 @@
         }
 
         function saveData() {
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects)); } catch (e) { showToast('Failed to save data.',
-                    'error'); }
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
+            } catch (e) { showToast('Failed to save data.', 'error'); }
         }
 
         // ============================================================
@@ -1872,31 +2140,37 @@
         let announcements = [];
 
         function loadAnnouncements() {
-            try { const raw = localStorage.getItem(ANNOUNCE_KEY);
-                announcements = raw ? JSON.parse(raw) : []; } catch (e) { announcements = []; }
+            try {
+                const raw = localStorage.getItem(ANNOUNCE_KEY);
+                announcements = raw ? JSON.parse(raw) : [];
+            } catch (e) { announcements = []; }
         }
 
         function saveAnnouncements() {
-            try { localStorage.setItem(ANNOUNCE_KEY, JSON.stringify(announcements)); } catch (e) { showToast(
-                    'Failed to save announcement.', 'error'); }
+            try {
+                localStorage.setItem(ANNOUNCE_KEY, JSON.stringify(announcements));
+            } catch (e) { showToast('Failed to save announcement.', 'error'); }
         }
 
         function renderAnnouncements() {
             const user = getCurrentUser();
             if (!user) return;
             let filtered = announcements;
-            if (user.role !== 'admin') filtered = announcements.filter(a => a.target === 'all' || a.target === user.role);
+            if (user.role !== 'admin') {
+                filtered = announcements.filter(a => a.target === 'all' || a.target === user.role);
+            }
             filtered = filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             const listEl = document.getElementById('announcements-list');
             if (listEl) {
-                if (filtered.length === 0) listEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements yet.</p>';
-                else {
+                if (filtered.length === 0) {
+                    listEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements yet.</p>';
+                } else {
                     listEl.innerHTML = filtered.slice(0, 5).map(a => `
                         <div class="announcement-item">
                             <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
                             <div class="text-[13px] text-[#334155]">${a.content}</div>
-                            <div class="meta flex items-center gap-3 mt-1 flex-wrap">
+                            <div class="meta flex items-center gap-3 mt-1">
                                 <span>📅 ${a.date}</span>
                                 <span>👤 ${a.author}</span>
                                 ${a.target !== 'all' ? `<span class="bg-[#F1F5F9] px-2 py-0.5 rounded text-[10px]">${a.target}</span>` : ''}
@@ -1909,15 +2183,15 @@
             const studentAnnEl = document.getElementById('student-announcements');
             if (studentAnnEl) {
                 const studentFiltered = announcements.filter(a => a.target === 'all' || a.target === 'student');
-                if (studentFiltered.length === 0) studentAnnEl.innerHTML =
-                '<p class="text-[13px] text-[#64748B]">No announcements for students.</p>';
-                else {
+                if (studentFiltered.length === 0) {
+                    studentAnnEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements for students.</p>';
+                } else {
                     studentAnnEl.innerHTML = studentFiltered.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
                         .map(a => `
                             <div class="announcement-item">
                                 <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
                                 <div class="text-[13px] text-[#334155]">${a.content}</div>
-                                <div class="meta flex items-center gap-3 mt-1 flex-wrap">
+                                <div class="meta flex items-center gap-3 mt-1">
                                     <span>📅 ${a.date}</span>
                                     <span>👤 ${a.author}</span>
                                 </div>
@@ -1927,7 +2201,9 @@
             }
 
             const adminActions = document.getElementById('announcement-admin-actions');
-            if (adminActions) adminActions.classList.toggle('hidden', user.role !== 'admin' && user.role !== 'teacher');
+            if (adminActions) {
+                adminActions.classList.toggle('hidden', user.role !== 'admin' && user.role !== 'teacher');
+            }
         }
 
         function openAnnouncementModal() {
@@ -1937,7 +2213,9 @@
             document.getElementById('announcement-modal').classList.remove('hidden');
         }
 
-        function closeAnnouncementModal() { document.getElementById('announcement-modal').classList.add('hidden'); }
+        function closeAnnouncementModal() {
+            document.getElementById('announcement-modal').classList.add('hidden');
+        }
 
         function handleAnnouncementSubmit(e) {
             e.preventDefault();
@@ -1963,73 +2241,18 @@
         }
 
         // ============================================================
-        //  IMPORTANT DATES
+        //  TOAST
         // ============================================================
-        function renderImportantDates() {
-            const dates = getImportantDates();
-            const listEl = document.getElementById('important-dates-list');
-            const studentListEl = document.getElementById('student-important-dates');
+        let toastTimer = null;
 
-            const sorted = dates.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            const renderFn = (datesArr) => {
-                if (datesArr.length === 0) return '<p class="text-[13px] text-[#64748B]">No important dates scheduled.</p>';
-                return datesArr.map(d => `
-                    <div class="important-date-card">
-                        <div class="flex items-center justify-between flex-wrap gap-1">
-                            <span class="date-label">${d.title}</span>
-                            <span class="date-value">${d.date}</span>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1 flex-wrap">
-                            <span class="date-badge">${d.category || 'Other'}</span>
-                            ${d.description ? `<span class="text-[12px] text-[#64748B]">${d.description}</span>` : ''}
-                            ${getCurrentUser()?.role === 'admin' ? `<button class="text-red-500 text-[11px] font-semibold ml-auto" onclick="deleteImportantDate('${d.id}')">✕</button>` : ''}
-                        </div>
-                    </div>
-                `).join('');
-            };
-
-            if (listEl) listEl.innerHTML = renderFn(sorted);
-            if (studentListEl) studentListEl.innerHTML = renderFn(sorted);
-
-            // Show/hide admin add button
-            const user = getCurrentUser();
-            const btn = document.getElementById('date-admin-btn');
-            if (btn) btn.style.display = (user && (user.role === 'admin' || user.role === 'teacher')) ? 'flex' : 'none';
-        }
-
-        function openDateModal() {
-            document.getElementById('date-title').value = '';
-            document.getElementById('date-value').value = new Date().toISOString().split('T')[0];
-            document.getElementById('date-category').value = 'CIE';
-            document.getElementById('date-desc').value = '';
-            document.getElementById('date-modal').classList.remove('hidden');
-        }
-
-        function closeDateModal() { document.getElementById('date-modal').classList.add('hidden'); }
-
-        function handleDateSubmit(e) {
-            e.preventDefault();
-            const title = document.getElementById('date-title').value.trim();
-            const date = document.getElementById('date-value').value;
-            const category = document.getElementById('date-category').value;
-            const description = document.getElementById('date-desc').value.trim();
-            if (!title || !date) { showToast('Title and date are required.', 'error'); return; }
-            const dates = getImportantDates();
-            dates.push({ id: Date.now().toString(), title, date, category, description });
-            setImportantDates(dates);
-            closeDateModal();
-            renderImportantDates();
-            showToast('Important date added!', 'success');
-        }
-
-        function deleteImportantDate(id) {
-            if (!confirm('Delete this important date?')) return;
-            let dates = getImportantDates();
-            dates = dates.filter(d => d.id !== id);
-            setImportantDates(dates);
-            renderImportantDates();
-            showToast('Date deleted.', 'info');
+        function showToast(message, type = 'info') {
+            const el = document.getElementById('toast');
+            el.textContent = message;
+            el.className = 'toast ' + type;
+            void el.offsetWidth;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         // ============================================================
@@ -2043,14 +2266,11 @@
             document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
             const link = document.querySelector(`.sidebar-link[data-view="${view}"]`);
             if (link) link.classList.add('active');
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
-            const navLink = document.querySelector(`.bottom-nav .nav-item[data-view="${view}"]`);
-            if (navLink) navLink.classList.add('active');
 
             const user = getCurrentUser();
             if (view === 'dashboard') {
-                document.getElementById('dash-subtitle').textContent = user && user.role === 'admin' ?
-                    'Admin overview of all subjects' : 'Overview of your academic portfolio';
+                document.getElementById('dash-subtitle').textContent =
+                    user && user.role === 'admin' ? 'Admin overview of all subjects' : 'Overview of your academic portfolio';
                 renderDashboard();
             } else if (view === 'my-subjects') renderMySubjects();
             else if (view === 'attendance') renderAttendance();
@@ -2058,7 +2278,9 @@
             else if (view === 'admin-users') renderAdminUsers();
             else if (view === 'admin-settings') renderAdminSettings();
 
-            if (view !== 'my-subjects' && view !== 'subject-detail') currentSubjectId = null;
+            if (view !== 'my-subjects' && view !== 'subject-detail') {
+                currentSubjectId = null;
+            }
             const titles = {
                 dashboard: 'Dashboard',
                 'my-subjects': 'My Subjects',
@@ -2070,21 +2292,23 @@
             };
             document.getElementById('page-title').textContent = titles[view] || 'Dashboard';
 
-            if (view === 'dashboard' || view === 'student') { renderAnnouncements();
-                renderImportantDates(); }
+            if (view === 'dashboard' || view === 'student') {
+                renderAnnouncements();
+            }
             if (view === 'dashboard' && user && (user.role === 'admin' || user.role === 'teacher')) {
                 document.getElementById('announcement-admin-actions').classList.remove('hidden');
             } else if (view === 'dashboard') {
                 document.getElementById('announcement-admin-actions').classList.add('hidden');
             }
-            closeSidebar();
         }
 
-        function goBackToSubjects() { currentSubjectId = null;
-            switchView('my-subjects'); }
+        function goBackToSubjects() {
+            currentSubjectId = null;
+            switchView('my-subjects');
+        }
 
         // ============================================================
-        //  DASHBOARD
+        //  DASHBOARD — ATTRACTIVE STATS
         // ============================================================
         function renderDashboard() {
             const stats = document.getElementById('dash-stats');
@@ -2097,12 +2321,52 @@
                 totalResources += (s.resources || []).length + (s.notes || []).length;
                 totalSlots += (s.timetable || []).length;
             });
-            stats.innerHTML = `
-                <div class="card p-3 md:p-4 stat-card"><div class="text-[11px] text-[#64748B] font-semibold uppercase">Subjects</div><div class="text-2xl md:text-3xl font-bold font-display text-[#0F172A]">${totalSubjects}</div></div>
-                <div class="card p-3 md:p-4 stat-card"><div class="text-[11px] text-[#64748B] font-semibold uppercase">Students</div><div class="text-2xl md:text-3xl font-bold font-display text-[#0F172A]">${totalStudents}</div></div>
-                <div class="card p-3 md:p-4 stat-card"><div class="text-[11px] text-[#64748B] font-semibold uppercase">Resources</div><div class="text-2xl md:text-3xl font-bold font-display text-[#0F172A]">${totalResources}</div></div>
-                <div class="card p-3 md:p-4 stat-card"><div class="text-[11px] text-[#64748B] font-semibold uppercase">Slots</div><div class="text-2xl md:text-3xl font-bold font-display text-[#0F172A]">${totalSlots}</div></div>
-            `;
+
+            const statItems = [{
+                label: 'Total Subjects',
+                value: totalSubjects,
+                icon: '📚',
+                color: 'bg-blue-50 text-blue-600',
+                glow: 'bg-blue-400',
+                trend: totalSubjects > 0 ? 'up' : 'neutral',
+                trendLabel: totalSubjects > 0 ? 'Active' : 'No subjects'
+            }, {
+                label: 'Students',
+                value: totalStudents,
+                icon: '👨‍🎓',
+                color: 'bg-emerald-50 text-emerald-600',
+                glow: 'bg-emerald-400',
+                trend: totalStudents > 0 ? 'up' : 'neutral',
+                trendLabel: totalStudents > 0 ? 'Enrolled' : 'No students'
+            }, {
+                label: 'Resources',
+                value: totalResources,
+                icon: '📄',
+                color: 'bg-amber-50 text-amber-600',
+                glow: 'bg-amber-400',
+                trend: totalResources > 0 ? 'up' : 'neutral',
+                trendLabel: totalResources > 0 ? 'Available' : 'No resources'
+            }, {
+                label: 'Timetable Slots',
+                value: totalSlots,
+                icon: '🕐',
+                color: 'bg-purple-50 text-purple-600',
+                glow: 'bg-purple-400',
+                trend: totalSlots > 0 ? 'up' : 'neutral',
+                trendLabel: totalSlots > 0 ? 'Scheduled' : 'No slots'
+            }];
+
+            stats.innerHTML = statItems.map(item => `
+                <div class="stat-card">
+                    <div class="stat-glow ${item.glow}"></div>
+                    <div class="stat-icon ${item.color}">${item.icon}</div>
+                    <div class="stat-number">${item.value}</div>
+                    <div class="stat-label">${item.label}</div>
+                    <span class="stat-trend ${item.trend}">${item.trendLabel}</span>
+                </div>
+            `).join('');
+
+            // Today's classes
             const todayEl = document.getElementById('dash-today');
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const todayName = days[new Date().getDay() - 1] || 'Monday';
@@ -2116,17 +2380,18 @@
                 });
             });
             todayEl.innerHTML = todayHtml || '<p class="text-[14px] text-[#64748B]">No classes today.</p>';
+
+            // Activity
             const actEl = document.getElementById('dash-activity');
             let actHtml = '';
             subjects.slice(0, 5).forEach(s => {
                 actHtml += `<div class="flex items-center gap-2 p-2 bg-[#F8FAFC] rounded">
-                    <span class="w-2 h-2 rounded-full bg-[#1E40AF] shrink-0"></span>
-                    <span class="text-[13px] text-[#334155] truncate">${s.name} (${s.code}) · ${s.strength || 58} students</span>
+                    <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
+                    <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) · ${s.strength || 58} students</span>
                 </div>`;
             });
             actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#64748B]">No activity yet.</p>';
             renderAnnouncements();
-            renderImportantDates();
         }
 
         // ============================================================
@@ -2136,11 +2401,11 @@
             const grid = document.getElementById('subjects-grid');
             if (subjects.length === 0) {
                 grid.innerHTML =
-                    `<div class="col-span-full text-center py-12 text-[#64748B]">No subjects yet. Click "Add Subject" to begin.</div>`;
+                    `<div class="col-span-3 text-center py-12 text-[#64748B]">No subjects yet. Click "Add Subject" to begin.</div>`;
                 return;
             }
             grid.innerHTML = subjects.map(s => `
-                <div class="card p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openSubjectDetail('${s.id}')">
+                <div class="card p-4 subject-card" onclick="openSubjectDetail('${s.id}')">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-code-num font-bold text-[#1E40AF] text-[14px]">${s.code}</span>
                         <div class="flex gap-1">
@@ -2148,9 +2413,9 @@
                             <button class="p-1 rounded hover:bg-red-50 text-red-500" onclick="event.stopPropagation(); deleteSubject('${s.id}')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
                         </div>
                     </div>
-                    <h3 class="font-display font-semibold text-[#0F172A] text-[15px]">${s.name}</h3>
-                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.division || '—'} · 🧑‍🎓 ${s.strength || 58}</p>
-                    <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B] flex-wrap">
+                    <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
+                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.division || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
+                    <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B]">
                         <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
                         <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
                     </div>
@@ -2173,10 +2438,11 @@
             if (link) link.classList.add('active');
             document.getElementById('page-title').textContent = subj.name;
             renderSubjectDetail();
-            closeSidebar();
         }
 
-        function getCurrentSubject() { return subjects.find(s => s.id === currentSubjectId) || null; }
+        function getCurrentSubject() {
+            return subjects.find(s => s.id === currentSubjectId) || null;
+        }
 
         function renderSubjectDetail() {
             const s = getCurrentSubject();
@@ -2188,15 +2454,15 @@
             }
             const header = document.getElementById('subject-detail-header');
             header.innerHTML = `
-                <div class="card p-4 mb-4 flex flex-col md:flex-row justify-between gap-3">
+                <div class="card p-4 md:p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
                     <div>
-                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
                             <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
                             <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                             <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.division || '—'}</span>
-                            <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58}</span>
+                            <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
                         </div>
-                        <h1 class="text-xl md:text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
+                        <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
                         <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
                     </div>
                 </div>
@@ -2208,8 +2474,10 @@
             renderTabContent();
         }
 
-        function switchSubjectTab(tab) { currentTab = tab;
-            renderSubjectDetail(); }
+        function switchSubjectTab(tab) {
+            currentTab = tab;
+            renderSubjectDetail();
+        }
 
         function renderTabContent() {
             const s = getCurrentSubject();
@@ -2221,43 +2489,43 @@
             const el = document.getElementById('subject-tab-content');
             if (currentTab === 'overview') {
                 el.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="card p-4"><h3 class="font-semibold mb-2 text-[15px]">Subject Info</h3>
+                    <div class="card p-4"><h3 class="font-semibold mb-2">Subject Info</h3>
                         <p class="text-[13px] text-[#64748B]">Name: <b>${s.name}</b></p>
                         <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
                         <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
                         <p class="text-[13px] text-[#64748B]">Division: <b>${s.division || '—'}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Strength: <b>${s.strength || 58}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
                     </div>
-                    <div class="card p-4"><h3 class="font-semibold mb-2 text-[15px]">Quick Stats</h3>
-                        <p class="text-[13px] text-[#64748B]">Timetable: <b>${(s.timetable||[]).length}</b></p>
+                    <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
+                        <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
                         <p class="text-[13px] text-[#64748B]">Notes: <b>${(s.notes||[]).length}</b></p>
                         <p class="text-[13px] text-[#64748B]">Resources: <b>${(s.resources||[]).length}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? '✅ Set' : '❌ Not set'}</b></p>
+                        <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? 'Set' : 'Not set'}</b></p>
                     </div>
                 </div>`;
             } else if (currentTab === 'timetable') {
                 const slots = s.timetable || [];
                 el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold text-[15px]">Weekly Timetable</h3>
+                    <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+                        <h3 class="font-semibold">Weekly Timetable</h3>
                         <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
                     </div>
                     ${slots.length === 0 ? '<p class="text-[13px] text-[#64748B]">No timetable entries yet.</p>' : ''}
-                    <div class="overflow-x-auto"><table class="w-full text-left text-[13px]"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[10px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2 hidden sm:table-cell">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
-                    ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2 hidden sm:table-cell">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
+                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
+                    ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
                     </tbody></table></div>
                 </div>`;
             } else if (currentTab === 'notes') {
                 const notes = s.notes || [];
                 el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold text-[15px]">Notes</h3>
+                    <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+                        <h3 class="font-semibold">Notes</h3>
                         <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
                     </div>
                     ${notes.length === 0 ? '<p class="text-[13px] text-[#64748B]">No notes yet.</p>' : ''}
-                    <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
+                    <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div><div class="font-semibold text-[14px]">${n.title || ''}</div><div class="text-[12px] text-[#64748B]">${n.content || ''}</div>
-                        ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open</a>` : ''}
+                        ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open Link</a>` : ''}
                         </div>
                         <button class="p-1 text-red-500" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
                     </div>`).join('')}
@@ -2265,8 +2533,8 @@
                 </div>`;
             } else if (currentTab === 'syllabus') {
                 el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold text-[15px]">Syllabus</h3>
+                    <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+                        <h3 class="font-semibold">Syllabus</h3>
                         <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
                     </div>
                     ${s.syllabus ? `<p class="text-[13px] text-[#334155]">${s.syllabus.content || 'No content'}</p>
@@ -2275,13 +2543,13 @@
             } else if (currentTab === 'resources') {
                 const resources = s.resources || [];
                 el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold text-[15px]">Resources</h3>
+                    <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+                        <h3 class="font-semibold">Resources</h3>
                         <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
                     </div>
                     ${resources.length === 0 ? '<p class="text-[13px] text-[#64748B]">No resources yet.</p>' : ''}
-                    <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
-                        <div class="flex items-center gap-2 flex-wrap">
+                    <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-2 flex-wrap">
+                        <div class="flex flex-wrap items-center gap-2">
                             <span class="resource-type-badge">${r.type || 'notes'}</span>
                             <div><div class="font-semibold text-[14px]">${r.title || ''}</div><div class="text-[12px] text-[#64748B]">${r.description || ''}</div></div>
                             <span class="link-type-badge">${r.linkType || 'web-url'}</span>
@@ -2301,7 +2569,6 @@
         // ============================================================
         function renderStudentView() {
             renderAnnouncements();
-            renderImportantDates();
 
             const attEl = document.getElementById('student-attendance-history');
             if (attEl) {
@@ -2327,10 +2594,10 @@
                     attEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No attendance records available.</p>';
                 } else {
                     let html = `<div class="overflow-x-auto"><table class="attendance-history-table">
-                        <thead><tr><th>Date</th><th>Subject</th><th>Absent Rolls</th><th>Present</th></tr></thead><tbody>`;
+                        <thead><tr><th>Date</th><th>Subject</th><th>Absent Roll Numbers</th><th>Present</th></tr></thead><tbody>`;
                     allRecords.slice(0, 20).forEach(r => {
                         const absentStr = r.absent.length > 0 ? r.absent.sort((a, b) => a - b).join(', ') :
-                            'None ✅';
+                            'None (All Present)';
                         html += `<tr>
                             <td><strong>${r.date}</strong></td>
                             <td><span class="font-code-num text-[#1E40AF]">${r.subjectCode}</span> ${r.subjectName}</td>
@@ -2346,16 +2613,16 @@
 
             const el = document.getElementById('student-subjects');
             if (subjects.length === 0) {
-                el.innerHTML = '<div class="col-span-full text-center py-12 text-[#64748B]">No subjects available.</div>';
+                el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
                 return;
             }
             el.innerHTML = subjects.map(s => `
-                <div class="card p-4 hover:shadow-md transition-shadow">
+                <div class="card p-4 subject-card">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
                         <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                     </div>
-                    <h3 class="font-display font-bold text-[#0F172A] text-[15px]">${s.name}</h3>
+                    <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
                     <p class="text-[12px] text-[#64748B]">${s.division || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
                     ${(s.timetable||[]).length > 0 ? `
                         <div class="mt-3">
@@ -2430,11 +2697,14 @@
 
         function renderAttendance() {
             const select = document.getElementById('attendance-subject');
-            select.innerHTML = subjects.map(s =>
-                    `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58})</option>`)
+            select.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58} students)</option>`)
                 .join('');
-            if (subjects.length > 0) { select.value = subjects[0].id;
-                currentAttendanceSubjectId = subjects[0].id; } else { currentAttendanceSubjectId = null; }
+            if (subjects.length > 0) {
+                select.value = subjects[0].id;
+                currentAttendanceSubjectId = subjects[0].id;
+            } else {
+                currentAttendanceSubjectId = null;
+            }
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attendance-date').value = today;
             loadAttendance();
@@ -2444,10 +2714,15 @@
         function loadAttendance() {
             const subjectId = document.getElementById('attendance-subject').value;
             const date = document.getElementById('attendance-date').value;
-            if (!subjectId || !date) { showToast('Select subject and date.', 'error'); return; }
+            if (!subjectId || !date) {
+                showToast('Please select a subject and date.', 'error');
+                return;
+            }
             currentAttendanceSubjectId = subjectId;
             const key = `${subjectId}_${date}`;
-            if (!attendanceData[key]) attendanceData[key] = { subjectId, date, absent: new Set() };
+            if (!attendanceData[key]) {
+                attendanceData[key] = { subjectId, date, absent: new Set() };
+            }
             selectedAbsent = attendanceData[key].absent || new Set();
             const subj = subjects.find(s => s.id === subjectId);
             const strength = subj ? (subj.strength || 58) : 58;
@@ -2462,7 +2737,11 @@
             let html = '';
             for (let i = 1; i <= total; i++) {
                 const isAbsent = selectedAbsent.has(i);
-                html += `<button class="roll-btn ${isAbsent ? 'absent' : ''}" onclick="toggleRoll(${i})">${i}</button>`;
+                html += `
+                    <button class="roll-btn ${isAbsent ? 'absent' : ''}" onclick="toggleRoll(${i})">
+                        ${i}
+                    </button>
+                `;
             }
             grid.innerHTML = html;
         }
@@ -2501,26 +2780,25 @@
         function updateSelectedInfo() {
             const info = document.getElementById('selected-info');
             const count = selectedAbsent.size;
-            if (count === 0) info.innerHTML = '<strong>Absent:</strong> None ✅';
-            else {
+            if (count === 0) {
+                info.innerHTML = '<strong>Selected Absent:</strong> None / All Present';
+            } else {
                 const rolls = Array.from(selectedAbsent).sort((a, b) => a - b).join(', ');
-                info.innerHTML = `<strong>Absent (${count}):</strong> ${rolls}`;
+                info.innerHTML = `<strong>Selected Absent (${count}):</strong> ${rolls}`;
             }
         }
 
         function submitAttendance() {
             const date = document.getElementById('attendance-date').value;
             const subjectId = currentAttendanceSubjectId;
-            if (!subjectId || !date) { showToast('Select subject and date.', 'error'); return; }
+            if (!subjectId || !date) { showToast('Please select a subject and date.', 'error'); return; }
             const key = `${subjectId}_${date}`;
             attendanceData[key] = { subjectId, date, absent: selectedAbsent };
             saveAttendanceData();
             const subject = subjects.find(s => s.id === subjectId);
             const strength = subject ? (subject.strength || 58) : 58;
             const presentCount = strength - selectedAbsent.size;
-            showToast(
-                `✅ Attendance saved for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`,
-                'success');
+            showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`, 'success');
             if (document.getElementById('attendance-history').style.display !== 'none') renderHistory();
         }
 
@@ -2569,7 +2847,7 @@
         }
 
         // ============================================================
-        //  ADMIN: USERS
+        //  ADMIN: USER MANAGEMENT
         // ============================================================
         function renderAdminUsers() {
             const users = getUsers();
@@ -2580,21 +2858,21 @@
             }
             tbody.innerHTML = users.map((u, idx) => `
                 <tr class="table-row">
-                    <td class="p-2 md:p-3 font-semibold text-[13px]">${u.name}</td>
-                    <td class="p-2 md:p-3 text-[#64748B] text-[12px] truncate max-w-[120px]">${u.email}</td>
+                    <td class="p-2 md:p-3 font-semibold text-sm md:text-base">${u.name}</td>
+                    <td class="p-2 md:p-3 text-[#64748B] text-[12px] md:text-[13px]">${u.email}</td>
                     <td class="p-2 md:p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
-                    <td class="p-2 md:p-3 text-[12px] hidden sm:table-cell">${u.semester || '—'}</td>
-                    <td class="p-2 md:p-3 text-[12px] hidden sm:table-cell">${u.division || '—'}</td>
-                    <td class="p-2 md:p-3 text-[12px] hidden lg:table-cell">${u.branch || '—'}</td>
+                    <td class="p-2 md:p-3 text-[12px] md:text-[13px]">${u.semester || '—'}</td>
+                    <td class="p-2 md:p-3 text-[12px] md:text-[13px]">${u.division || '—'}</td>
+                    <td class="p-2 md:p-3 text-[12px] md:text-[13px]">${u.branch || '—'}</td>
                     <td class="p-2 md:p-3 text-right">
-                        ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[12px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[11px]">Protected</span>'}
+                        ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[12px] md:text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[11px] md:text-[12px]">Protected</span>'}
                     </td>
                 </tr>
             `).join('');
         }
 
         function deleteUser(email) {
-            if (email === 'mmbbec@gmail.com') { showToast('Cannot delete admin.', 'error'); return; }
+            if (email === 'mmbbec@gmail.com') { showToast('Cannot delete the admin account.', 'error'); return; }
             if (!confirm('Delete user ' + email + '?')) return;
             let users = getUsers();
             users = users.filter(u => u.email !== email);
@@ -2617,12 +2895,16 @@
         function renderBranches() {
             const branches = getBranches();
             const container = document.getElementById('branches-list');
-            if (branches.length === 0) { container.innerHTML =
-                    '<p class="text-[13px] text-[#64748B]">No branches defined.</p>'; return; }
+            if (branches.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No branches defined.</p>';
+                return;
+            }
             container.innerHTML = branches.map((b, idx) => `
                 <div class="settings-item">
                     <span class="name">${b}</span>
-                    <div class="actions"><button class="del" onclick="deleteBranch(${idx})">Delete</button></div>
+                    <div class="actions">
+                        <button class="del" onclick="deleteBranch(${idx})">Delete</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2630,12 +2912,16 @@
         function renderDivisions() {
             const divisions = getDivisions();
             const container = document.getElementById('divisions-list');
-            if (divisions.length === 0) { container.innerHTML =
-                    '<p class="text-[13px] text-[#64748B]">No divisions defined.</p>'; return; }
+            if (divisions.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No divisions defined.</p>';
+                return;
+            }
             container.innerHTML = divisions.map((d, idx) => `
                 <div class="settings-item">
                     <span class="name">${d}</span>
-                    <div class="actions"><button class="del" onclick="deleteDivision(${idx})">Delete</button></div>
+                    <div class="actions">
+                        <button class="del" onclick="deleteDivision(${idx})">Delete</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2643,12 +2929,16 @@
         function renderSemesters() {
             const semesters = getSemesters();
             const container = document.getElementById('semesters-list');
-            if (semesters.length === 0) { container.innerHTML =
-                    '<p class="text-[13px] text-[#64748B]">No semesters defined.</p>'; return; }
+            if (semesters.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No semesters defined.</p>';
+                return;
+            }
             container.innerHTML = semesters.map((s, idx) => `
                 <div class="settings-item">
                     <span class="name">${s}</span>
-                    <div class="actions"><button class="del" onclick="deleteSemester(${idx})">Delete</button></div>
+                    <div class="actions">
+                        <button class="del" onclick="deleteSemester(${idx})">Delete</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2662,10 +2952,14 @@
             showToast('Academic settings saved!', 'success');
         }
 
-        function openAddBranchModal() { document.getElementById('new-branch').value = '';
-            document.getElementById('branch-modal').classList.remove('hidden'); }
+        function openAddBranchModal() {
+            document.getElementById('new-branch').value = '';
+            document.getElementById('branch-modal').classList.remove('hidden');
+        }
 
-        function closeBranchModal() { document.getElementById('branch-modal').classList.add('hidden'); }
+        function closeBranchModal() {
+            document.getElementById('branch-modal').classList.add('hidden');
+        }
 
         function handleAddBranch(e) {
             e.preventDefault();
@@ -2691,15 +2985,19 @@
             showToast('Branch deleted.', 'info');
         }
 
-        function openAddDivisionModal() { document.getElementById('new-division').value = '';
-            document.getElementById('division-modal').classList.remove('hidden'); }
+        function openAddDivisionModal() {
+            document.getElementById('new-division').value = '';
+            document.getElementById('division-modal').classList.remove('hidden');
+        }
 
-        function closeDivisionModal() { document.getElementById('division-modal').classList.add('hidden'); }
+        function closeDivisionModal() {
+            document.getElementById('division-modal').classList.add('hidden');
+        }
 
         function handleAddDivision(e) {
             e.preventDefault();
             const name = document.getElementById('new-division').value.trim().toUpperCase();
-            if (!name) { showToast('Division is required.', 'error'); return; }
+            if (!name) { showToast('Division name is required.', 'error'); return; }
             const divisions = getDivisions();
             if (divisions.includes(name)) { showToast('Division already exists.', 'error'); return; }
             divisions.push(name);
@@ -2720,10 +3018,14 @@
             showToast('Division deleted.', 'info');
         }
 
-        function openAddSemesterModal() { document.getElementById('new-semester').value = '';
-            document.getElementById('semester-modal').classList.remove('hidden'); }
+        function openAddSemesterModal() {
+            document.getElementById('new-semester').value = '';
+            document.getElementById('semester-modal').classList.remove('hidden');
+        }
 
-        function closeSemesterModal() { document.getElementById('semester-modal').classList.add('hidden'); }
+        function closeSemesterModal() {
+            document.getElementById('semester-modal').classList.add('hidden');
+        }
 
         function handleAddSemester(e) {
             e.preventDefault();
@@ -2788,7 +3090,7 @@
             const semester = document.getElementById('subject-semester').value;
             const division = document.getElementById('subject-division').value;
             const strength = parseInt(document.getElementById('subject-strength').value) || 58;
-            if (!name || !code) { showToast('Name and code are required.', 'error'); return; }
+            if (!name || !code) { showToast('Subject name and code are required.', 'error'); return; }
             if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
             if (id) {
                 const s = subjects.find(x => x.id === id);
@@ -2800,7 +3102,7 @@
                     showToast('Subject updated!', 'success'); } else { showToast('Subject not found.', 'error'); return; }
             } else {
                 if (subjects.some(s => s.code.toLowerCase() === code.toLowerCase())) {
-                    showToast('Subject code already exists.', 'error');
+                    showToast('A subject with this code already exists.', 'error');
                     return;
                 }
                 subjects.push({ id: Date.now().toString(), name, code, semester, division, strength, timetable: [], notes: [],
@@ -2830,7 +3132,7 @@
         }
 
         // ============================================================
-        //  TIMETABLE
+        //  TIMETABLE, NOTES, SYLLABUS, RESOURCES
         // ============================================================
         function openTimetableModal() {
             if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
@@ -2872,9 +3174,6 @@
                 showToast('Slot removed.', 'info'); }
         }
 
-        // ============================================================
-        //  NOTES
-        // ============================================================
         function openNoteModal() {
             if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
             document.getElementById('note-title').value = '';
@@ -2913,9 +3212,6 @@
                 showToast('Note removed.', 'info'); }
         }
 
-        // ============================================================
-        //  SYLLABUS
-        // ============================================================
         function openSyllabusModal() {
             const s = getCurrentSubject();
             if (!s) { showToast('No subject selected.', 'error'); return; }
@@ -2949,9 +3245,6 @@
             showToast('Syllabus saved!', 'success');
         }
 
-        // ============================================================
-        //  RESOURCES
-        // ============================================================
         function openResourceModal() {
             if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
             document.getElementById('res-title').value = '';
@@ -3011,110 +3304,6 @@
             document.getElementById('login-password').value = 'admin123';
         });
 
-        function initApp() {
-            const user = getCurrentUser();
-            if (!user) {
-                document.getElementById('auth-container').classList.remove('hidden');
-                document.getElementById('app-wrapper').classList.remove('show');
-                return;
-            }
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-wrapper').classList.add('show');
-
-            const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-            document.getElementById('sidebar-avatar').textContent = initial;
-            document.getElementById('sidebar-name').textContent = user.name;
-            const roleLabel = user.role === 'admin' ? 'Administrator' : user.role === 'teacher' ? 'Faculty Guide' : 'Student';
-            document.getElementById('sidebar-role').textContent = roleLabel;
-            document.getElementById('sidebar-academic').textContent =
-                `${user.semester || '—'} · Div ${user.division || '—'} ${user.branch ? '· ' + user.branch : ''}`;
-            document.getElementById('header-user').textContent = user.name;
-            document.getElementById('header-avatar').textContent = initial;
-
-            const nav = document.getElementById('sidebar-nav');
-            let links = '';
-            if (user.role === 'admin') {
-                links = `
-                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-                    </a>
-                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-                    </a>
-                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-                    </a>
-                    <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
-                        <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
-                    </a>
-                    <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
-                        <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
-                    </a>
-                    <a class="sidebar-link" data-view="admin-settings" href="#" onclick="switchView('admin-settings')">
-                        <span class="material-symbols-outlined text-[18px]">settings</span><span>Settings</span>
-                    </a>
-                `;
-            } else if (user.role === 'teacher') {
-                links = `
-                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-                    </a>
-                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-                    </a>
-                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-                    </a>
-                `;
-            } else {
-                links = `
-                    <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Student Dashboard</span>
-                    </a>
-                `;
-            }
-            nav.innerHTML = links;
-
-            // Bottom nav
-            const bottomNav = document.getElementById('bottom-nav');
-            let bottomLinks = '';
-            if (user.role === 'admin' || user.role === 'teacher') {
-                bottomLinks = `
-                    <button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
-                        <span class="material-symbols-outlined">dashboard</span>Home
-                    </button>
-                    <button class="nav-item" data-view="my-subjects" onclick="switchView('my-subjects')">
-                        <span class="material-symbols-outlined">auto_stories</span>Subjects
-                    </button>
-                    <button class="nav-item" data-view="attendance" onclick="switchView('attendance')">
-                        <span class="material-symbols-outlined">fact_check</span>Attendance
-                    </button>
-                    ${user.role === 'admin' ? `
-                        <button class="nav-item" data-view="admin-users" onclick="switchView('admin-users')">
-                            <span class="material-symbols-outlined">people</span>Users
-                        </button>
-                        <button class="nav-item" data-view="admin-settings" onclick="switchView('admin-settings')">
-                            <span class="material-symbols-outlined">settings</span>Settings
-                        </button>
-                    ` : ''}
-                `;
-            } else {
-                bottomLinks = `
-                    <button class="nav-item active" data-view="student" onclick="switchView('student')">
-                        <span class="material-symbols-outlined">dashboard</span>Home
-                    </button>
-                `;
-            }
-            bottomNav.innerHTML = bottomLinks;
-
-            loadData();
-            loadAnnouncements();
-            loadAttendanceData();
-            populateAcademicDropdowns();
-            if (user.role === 'student') switchView('student');
-            else switchView('dashboard');
-        }
-
         // Expose globals
         window.switchView = switchView;
         window.openAddSubjectModal = openAddSubjectModal;
@@ -3127,14 +3316,12 @@
         window.openSyllabusModal = openSyllabusModal;
         window.openResourceModal = openResourceModal;
         window.openAnnouncementModal = openAnnouncementModal;
-        window.openDateModal = openDateModal;
         window.closeSubjectModal = closeSubjectModal;
         window.closeTimetableModal = closeTimetableModal;
         window.closeNoteModal = closeNoteModal;
         window.closeSyllabusModal = closeSyllabusModal;
         window.closeResourceModal = closeResourceModal;
         window.closeAnnouncementModal = closeAnnouncementModal;
-        window.closeDateModal = closeDateModal;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
         window.handleForgotPassword = handleForgotPassword;
         window.handleForgotPasswordSubmit = handleForgotPasswordSubmit;
@@ -3144,13 +3331,11 @@
         window.handleSyllabusSubmit = handleSyllabusSubmit;
         window.handleResourceSubmit = handleResourceSubmit;
         window.handleAnnouncementSubmit = handleAnnouncementSubmit;
-        window.handleDateSubmit = handleDateSubmit;
         window.deleteSubject = deleteSubject;
         window.deleteTimetableSlot = deleteTimetableSlot;
         window.deleteNote = deleteNote;
         window.deleteResource = deleteResource;
         window.deleteUser = deleteUser;
-        window.deleteImportantDate = deleteImportantDate;
         window.logout = logout;
         window.showLogin = showLogin;
         window.showSignup = showSignup;
@@ -3166,7 +3351,6 @@
         window.submitAttendance = submitAttendance;
         window.toggleHistory = toggleHistory;
         window.onSemesterChange = onSemesterChange;
-        window.toggleSidebar = toggleSidebar;
         window.renderAdminSettings = renderAdminSettings;
         window.saveAcademicSettings = saveAcademicSettings;
         window.openAddBranchModal = openAddBranchModal;
@@ -3182,8 +3366,7 @@
         window.handleAddSemester = handleAddSemester;
         window.deleteSemester = deleteSemester;
         window.populateAcademicDropdowns = populateAcademicDropdowns;
-        window.renderImportantDates = renderImportantDates;
+        window.toggleSidebar = toggleSidebar;
     </script>
-
 </body>
 </html>
