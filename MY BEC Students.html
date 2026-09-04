@@ -2871,4 +2871,85 @@
         // ============================================================
         //  INIT
         // ============================================================
-        document.addEventListener('DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAttendanceData();
+            loadAnnouncements();
+            const session = getSession();
+            if (session) {
+                const users = getUsers();
+                const user = users.find(u => u.email === session.email);
+                if (user) { initApp(); return; } else { clearSession(); }
+            }
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('app-wrapper').classList.remove('show');
+            showLogin();
+            document.getElementById('login-email').value = 'mmbbec@gmail.com';
+            document.getElementById('login-password').value = 'admin123';
+        });
+
+        // Expose globals
+        window.switchView = switchView;
+        window.openAddSubjectModal = openAddSubjectModal;
+        window.openEditSubjectModal = openEditSubjectModal;
+        window.openSubjectDetail = openSubjectDetail;
+        window.switchSubjectTab = switchSubjectTab;
+        window.goBackToSubjects = goBackToSubjects;
+        window.openTimetableModal = openTimetableModal;
+        window.openNoteModal = openNoteModal;
+        window.openSyllabusModal = openSyllabusModal;
+        window.openResourceModal = openResourceModal;
+        window.openAnnouncementModal = openAnnouncementModal;
+        window.closeSubjectModal = closeSubjectModal;
+        window.closeTimetableModal = closeTimetableModal;
+        window.closeNoteModal = closeNoteModal;
+        window.closeSyllabusModal = closeSyllabusModal;
+        window.closeResourceModal = closeResourceModal;
+        window.closeAnnouncementModal = closeAnnouncementModal;
+        window.closeForgotPasswordModal = closeForgotPasswordModal;
+        window.handleForgotPassword = handleForgotPassword;
+        window.handleForgotPasswordSubmit = handleForgotPasswordSubmit;
+        window.handleSubjectSubmit = handleSubjectSubmit;
+        window.handleTimetableSubmit = handleTimetableSubmit;
+        window.handleNoteSubmit = handleNoteSubmit;
+        window.handleSyllabusSubmit = handleSyllabusSubmit;
+        window.handleResourceSubmit = handleResourceSubmit;
+        window.handleAnnouncementSubmit = handleAnnouncementSubmit;
+        window.deleteSubject = deleteSubject;
+        window.deleteTimetableSlot = deleteTimetableSlot;
+        window.deleteNote = deleteNote;
+        window.deleteResource = deleteResource;
+        window.deleteUser = deleteUser;
+        window.logout = logout;
+        window.showLogin = showLogin;
+        window.showSignup = showSignup;
+        window.selectRole = selectRole;
+        window.handleLogin = handleLogin;
+        window.handleSignup = handleSignup;
+        window.renderAdminUsers = renderAdminUsers;
+        window.renderAttendance = renderAttendance;
+        window.loadAttendance = loadAttendance;
+        window.toggleRoll = toggleRoll;
+        window.markAllPresent = markAllPresent;
+        window.markAllAbsent = markAllAbsent;
+        window.submitAttendance = submitAttendance;
+        window.toggleHistory = toggleHistory;
+        window.onSemesterChange = onSemesterChange;
+        // Settings
+        window.renderAdminSettings = renderAdminSettings;
+        window.saveAcademicSettings = saveAcademicSettings;
+        window.openAddBranchModal = openAddBranchModal;
+        window.closeBranchModal = closeBranchModal;
+        window.handleAddBranch = handleAddBranch;
+        window.deleteBranch = deleteBranch;
+        window.openAddDivisionModal = openAddDivisionModal;
+        window.closeDivisionModal = closeDivisionModal;
+        window.handleAddDivision = handleAddDivision;
+        window.deleteDivision = deleteDivision;
+        window.openAddSemesterModal = openAddSemesterModal;
+        window.closeSemesterModal = closeSemesterModal;
+        window.handleAddSemester = handleAddSemester;
+        window.deleteSemester = deleteSemester;
+        window.populateAcademicDropdowns = populateAcademicDropdowns;
+    </script>
+</body>
+</html>
