@@ -2961,4 +2961,548 @@
                     <div class="details">
                         <span class="badge badge-present">${r.presentCount} Present</span>
                         <span class="badge badge-absent">${r.absent.length} Absent</span>
-                        ${r.absent.length > 0 ? `<span class="text-xs text-[#647
+                        ${r.absent.length > 0 ? `<span class="text-xs text-[#64748B]">Rolls: ${r.absent.slice(0, 10).join(', ')}${r.absent.length > 10 ? '...' : ''}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================================
+        //  ADMIN: USER MANAGEMENT
+        // ============================================================
+        function renderAdminUsers() {
+            const users = getUsers();
+            const tbody = document.getElementById('admin-users-table');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-[#64748B]">No users found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map((u, idx) => `
+                <tr class="table-row">
+                    <td class="p-3 font-semibold">${u.name}</td>
+                    <td class="p-3 text-[#64748B] text-[13px]">${u.email}</td>
+                    <td class="p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
+                    <td class="p-3 text-[13px]">${u.semester || '—'}</td>
+                    <td class="p-3 text-[13px]">${u.division || '—'}</td>
+                    <td class="p-3 text-[13px]">${u.branch || '—'}</td>
+                    <td class="p-3 text-right">
+                        ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[12px]">Protected</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteUser(email) {
+            if (email === 'mmbbec@gmail.com') { showToast('Cannot delete the admin account.', 'error'); return; }
+            if (!confirm('Delete user ' + email + '?')) return;
+            let users = getUsers();
+            users = users.filter(u => u.email !== email);
+            saveUsers(users);
+            renderAdminUsers();
+            showToast('User deleted.', 'info');
+        }
+
+        // ============================================================
+        //  ADMIN: SETTINGS
+        // ============================================================
+        function renderAdminSettings() {
+            // Academic year & semester type
+            document.getElementById('academic-year').value = getAcademicYear();
+            document.getElementById('semester-type').value = getSemesterType();
+
+            // Branches
+            renderBranches();
+            renderDivisions();
+            renderSemesters();
+        }
+
+        function renderBranches() {
+            const branches = getBranches();
+            const container = document.getElementById('branches-list');
+            if (branches.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No branches defined.</p>';
+                return;
+            }
+            container.innerHTML = branches.map((b, idx) => `
+                <div class="settings-item">
+                    <span class="name">${b}</span>
+                    <div class="actions">
+                        <button class="del" onclick="deleteBranch(${idx})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDivisions() {
+            const divisions = getDivisions();
+            const container = document.getElementById('divisions-list');
+            if (divisions.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No divisions defined.</p>';
+                return;
+            }
+            container.innerHTML = divisions.map((d, idx) => `
+                <div class="settings-item">
+                    <span class="name">${d}</span>
+                    <div class="actions">
+                        <button class="del" onclick="deleteDivision(${idx})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSemesters() {
+            const semesters = getSemesters();
+            const container = document.getElementById('semesters-list');
+            if (semesters.length === 0) {
+                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No semesters defined.</p>';
+                return;
+            }
+            container.innerHTML = semesters.map((s, idx) => `
+                <div class="settings-item">
+                    <span class="name">${s}</span>
+                    <div class="actions">
+                        <button class="del" onclick="deleteSemester(${idx})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function saveAcademicSettings() {
+            const year = document.getElementById('academic-year').value.trim();
+            const type = document.getElementById('semester-type').value;
+            if (!year) { showToast('Please enter an academic year.', 'error'); return; }
+            setAcademicYear(year);
+            setSemesterType(type);
+            showToast('Academic settings saved!', 'success');
+        }
+
+        // Branch CRUD
+        function openAddBranchModal() {
+            document.getElementById('new-branch').value = '';
+            document.getElementById('branch-modal').classList.remove('hidden');
+        }
+
+        function closeBranchModal() {
+            document.getElementById('branch-modal').classList.add('hidden');
+        }
+
+        function handleAddBranch(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-branch').value.trim();
+            if (!name) { showToast('Branch name is required.', 'error'); return; }
+            const branches = getBranches();
+            if (branches.includes(name)) { showToast('Branch already exists.', 'error'); return; }
+            branches.push(name);
+            setBranches(branches);
+            closeBranchModal();
+            renderBranches();
+            populateAcademicDropdowns();
+            showToast('Branch added!', 'success');
+        }
+
+        function deleteBranch(index) {
+            if (!confirm('Delete this branch?')) return;
+            const branches = getBranches();
+            branches.splice(index, 1);
+            setBranches(branches);
+            renderBranches();
+            populateAcademicDropdowns();
+            showToast('Branch deleted.', 'info');
+        }
+
+        // Division CRUD
+        function openAddDivisionModal() {
+            document.getElementById('new-division').value = '';
+            document.getElementById('division-modal').classList.remove('hidden');
+        }
+
+        function closeDivisionModal() {
+            document.getElementById('division-modal').classList.add('hidden');
+        }
+
+        function handleAddDivision(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-division').value.trim().toUpperCase();
+            if (!name) { showToast('Division name is required.', 'error'); return; }
+            const divisions = getDivisions();
+            if (divisions.includes(name)) { showToast('Division already exists.', 'error'); return; }
+            divisions.push(name);
+            setDivisions(divisions);
+            closeDivisionModal();
+            renderDivisions();
+            populateAcademicDropdowns();
+            showToast('Division added!', 'success');
+        }
+
+        function deleteDivision(index) {
+            if (!confirm('Delete this division?')) return;
+            const divisions = getDivisions();
+            divisions.splice(index, 1);
+            setDivisions(divisions);
+            renderDivisions();
+            populateAcademicDropdowns();
+            showToast('Division deleted.', 'info');
+        }
+
+        // Semester CRUD
+        function openAddSemesterModal() {
+            document.getElementById('new-semester').value = '';
+            document.getElementById('semester-modal').classList.remove('hidden');
+        }
+
+        function closeSemesterModal() {
+            document.getElementById('semester-modal').classList.add('hidden');
+        }
+
+        function handleAddSemester(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-semester').value.trim();
+            if (!name) { showToast('Semester label is required.', 'error'); return; }
+            const semesters = getSemesters();
+            if (semesters.includes(name)) { showToast('Semester already exists.', 'error'); return; }
+            semesters.push(name);
+            setSemesters(semesters);
+            closeSemesterModal();
+            renderSemesters();
+            populateAcademicDropdowns();
+            showToast('Semester added!', 'success');
+        }
+
+        function deleteSemester(index) {
+            if (!confirm('Delete this semester?')) return;
+            const semesters = getSemesters();
+            semesters.splice(index, 1);
+            setSemesters(semesters);
+            renderSemesters();
+            populateAcademicDropdowns();
+            showToast('Semester deleted.', 'info');
+        }
+
+        // ============================================================
+        //  SUBJECT CRUD
+        // ============================================================
+        function openAddSubjectModal() {
+            document.getElementById('subject-modal-title').textContent = 'Add Subject';
+            document.getElementById('subject-form-id').value = '';
+            document.getElementById('subject-name').value = '';
+            document.getElementById('subject-code').value = '';
+            document.getElementById('subject-strength').value = '58';
+            populateAcademicDropdowns();
+            document.getElementById('subject-modal').classList.remove('hidden');
+        }
+
+        function openEditSubjectModal(id) {
+            const s = id ? subjects.find(x => x.id === id) : getCurrentSubject();
+            if (!s) { showToast('Subject not found.', 'error'); return; }
+            document.getElementById('subject-modal-title').textContent = 'Edit Subject';
+            document.getElementById('subject-form-id').value = s.id;
+            document.getElementById('subject-name').value = s.name;
+            document.getElementById('subject-code').value = s.code;
+            document.getElementById('subject-strength').value = s.strength || 58;
+            populateAcademicDropdowns();
+            const semSelect = document.getElementById('subject-semester');
+            const divSelect = document.getElementById('subject-division');
+            semSelect.value = s.semester || semSelect.options[0].value;
+            divSelect.value = s.division || divSelect.options[0].value;
+            document.getElementById('subject-modal').classList.remove('hidden');
+        }
+
+        function closeSubjectModal() { document.getElementById('subject-modal').classList.add('hidden'); }
+
+        function handleSubjectSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('subject-form-id').value;
+            const name = document.getElementById('subject-name').value.trim();
+            const code = document.getElementById('subject-code').value.trim();
+            const semester = document.getElementById('subject-semester').value;
+            const division = document.getElementById('subject-division').value;
+            const strength = parseInt(document.getElementById('subject-strength').value) || 58;
+            if (!name || !code) { showToast('Subject name and code are required.', 'error'); return; }
+            if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
+            if (id) {
+                const s = subjects.find(x => x.id === id);
+                if (s) { s.name = name;
+                    s.code = code;
+                    s.semester = semester;
+                    s.division = division;
+                    s.strength = strength;
+                    showToast('Subject updated!', 'success'); } else { showToast('Subject not found.', 'error'); return; }
+            } else {
+                if (subjects.some(s => s.code.toLowerCase() === code.toLowerCase())) {
+                    showToast('A subject with this code already exists.', 'error');
+                    return;
+                }
+                subjects.push({ id: Date.now().toString(), name, code, semester, division, strength, timetable: [], notes: [],
+                    resources: [], syllabus: null });
+                showToast('Subject added!', 'success');
+            }
+            saveData();
+            closeSubjectModal();
+            if (currentView === 'dashboard') renderDashboard();
+            else if (currentView === 'my-subjects') renderMySubjects();
+            else if (currentView === 'student') renderStudentView();
+            if (currentSubjectId) renderSubjectDetail();
+            if (currentView === 'attendance') renderAttendance();
+        }
+
+        function deleteSubject(id) {
+            if (!confirm('Delete this subject and all its data?')) return;
+            const idx = subjects.findIndex(s => s.id === id);
+            if (idx === -1) { showToast('Subject not found.', 'error'); return; }
+            subjects.splice(idx, 1);
+            saveData();
+            if (currentSubjectId === id) { currentSubjectId = null;
+                goBackToSubjects(); return; }
+            renderMySubjects();
+            renderDashboard();
+            showToast('Subject deleted.', 'info');
+        }
+
+        // ============================================================
+        //  TIMETABLE
+        // ============================================================
+        function openTimetableModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('tt-day').value = 'Monday';
+            document.getElementById('tt-room').value = '';
+            document.getElementById('tt-start').value = '';
+            document.getElementById('tt-end').value = '';
+            document.getElementById('tt-topic').value = '';
+            document.getElementById('timetable-modal').classList.remove('hidden');
+        }
+
+        function closeTimetableModal() { document.getElementById('timetable-modal').classList.add('hidden'); }
+
+        function handleTimetableSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const day = document.getElementById('tt-day').value;
+            const start = document.getElementById('tt-start').value.trim();
+            const end = document.getElementById('tt-end').value.trim();
+            const room = document.getElementById('tt-room').value.trim();
+            const topic = document.getElementById('tt-topic').value.trim();
+            if (!start || !end) { showToast('Start and end time are required.', 'error'); return; }
+            s.timetable = s.timetable || [];
+            s.timetable.push({ day, start, end, room, topic });
+            saveData();
+            closeTimetableModal();
+            renderSubjectDetail();
+            showToast('Timetable slot added!', 'success');
+        }
+
+        function deleteTimetableSlot(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.timetable = s.timetable || [];
+            if (index >= 0 && index < s.timetable.length) { s.timetable.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Slot removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  NOTES
+        // ============================================================
+        function openNoteModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').value = '';
+            document.getElementById('note-link-type').value = 'google-drive';
+            document.getElementById('note-link').value = '';
+            document.getElementById('note-modal').classList.remove('hidden');
+        }
+
+        function closeNoteModal() { document.getElementById('note-modal').classList.add('hidden'); }
+
+        function handleNoteSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').value.trim();
+            const linkType = document.getElementById('note-link-type').value;
+            const linkUrl = document.getElementById('note-link').value.trim();
+            if (!title) { showToast('Note title is required.', 'error'); return; }
+            s.notes = s.notes || [];
+            s.notes.push({ title, content, linkType, linkUrl });
+            saveData();
+            closeNoteModal();
+            renderSubjectDetail();
+            showToast('Note added!', 'success');
+        }
+
+        function deleteNote(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.notes = s.notes || [];
+            if (index >= 0 && index < s.notes.length) { s.notes.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Note removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  SYLLABUS
+        // ============================================================
+        function openSyllabusModal() {
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const modal = document.getElementById('syllabus-modal');
+            if (s.syllabus) {
+                document.getElementById('syl-content').value = s.syllabus.content || '';
+                document.getElementById('syl-link-type').value = s.syllabus.linkType || 'google-drive';
+                document.getElementById('syl-link').value = s.syllabus.linkUrl || '';
+            } else {
+                document.getElementById('syl-content').value = '';
+                document.getElementById('syl-link-type').value = 'google-drive';
+                document.getElementById('syl-link').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeSyllabusModal() { document.getElementById('syllabus-modal').classList.add('hidden'); }
+
+        function handleSyllabusSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            s.syllabus = {
+                content: document.getElementById('syl-content').value.trim(),
+                linkType: document.getElementById('syl-link-type').value,
+                linkUrl: document.getElementById('syl-link').value.trim(),
+            };
+            saveData();
+            closeSyllabusModal();
+            renderSubjectDetail();
+            showToast('Syllabus saved!', 'success');
+        }
+
+        // ============================================================
+        //  RESOURCES
+        // ============================================================
+        function openResourceModal() {
+            if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
+            document.getElementById('res-title').value = '';
+            document.getElementById('res-type').value = 'notes';
+            document.getElementById('res-desc').value = '';
+            document.getElementById('res-link-type').value = 'google-drive';
+            document.getElementById('res-link').value = '';
+            document.getElementById('resource-modal').classList.remove('hidden');
+        }
+
+        function closeResourceModal() { document.getElementById('resource-modal').classList.add('hidden'); }
+
+        function handleResourceSubmit(e) {
+            e.preventDefault();
+            const s = getCurrentSubject();
+            if (!s) { showToast('No subject selected.', 'error'); return; }
+            const title = document.getElementById('res-title').value.trim();
+            const type = document.getElementById('res-type').value;
+            const description = document.getElementById('res-desc').value.trim();
+            const linkType = document.getElementById('res-link-type').value;
+            const linkUrl = document.getElementById('res-link').value.trim();
+            if (!title || !linkUrl) { showToast('Title and link URL are required.', 'error'); return; }
+            s.resources = s.resources || [];
+            s.resources.push({ title, type, description, linkType, linkUrl });
+            saveData();
+            closeResourceModal();
+            renderSubjectDetail();
+            showToast('Resource added!', 'success');
+        }
+
+        function deleteResource(index) {
+            const s = getCurrentSubject();
+            if (!s) return;
+            s.resources = s.resources || [];
+            if (index >= 0 && index < s.resources.length) { s.resources.splice(index, 1);
+                saveData();
+                renderSubjectDetail();
+                showToast('Resource removed.', 'info'); }
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAttendanceData();
+            loadAnnouncements();
+            const session = getSession();
+            if (session) {
+                const users = getUsers();
+                const user = users.find(u => u.email === session.email);
+                if (user) { initApp(); return; } else { clearSession(); }
+            }
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('app-wrapper').classList.remove('show');
+            showLogin();
+            document.getElementById('login-email').value = 'mmbbec@gmail.com';
+            document.getElementById('login-password').value = 'admin123';
+        });
+
+        // Expose globals
+        window.switchView = switchView;
+        window.openAddSubjectModal = openAddSubjectModal;
+        window.openEditSubjectModal = openEditSubjectModal;
+        window.openSubjectDetail = openSubjectDetail;
+        window.switchSubjectTab = switchSubjectTab;
+        window.goBackToSubjects = goBackToSubjects;
+        window.openTimetableModal = openTimetableModal;
+        window.openNoteModal = openNoteModal;
+        window.openSyllabusModal = openSyllabusModal;
+        window.openResourceModal = openResourceModal;
+        window.openAnnouncementModal = openAnnouncementModal;
+        window.closeSubjectModal = closeSubjectModal;
+        window.closeTimetableModal = closeTimetableModal;
+        window.closeNoteModal = closeNoteModal;
+        window.closeSyllabusModal = closeSyllabusModal;
+        window.closeResourceModal = closeResourceModal;
+        window.closeAnnouncementModal = closeAnnouncementModal;
+        window.closeForgotPasswordModal = closeForgotPasswordModal;
+        window.handleForgotPassword = handleForgotPassword;
+        window.handleForgotPasswordSubmit = handleForgotPasswordSubmit;
+        window.handleSubjectSubmit = handleSubjectSubmit;
+        window.handleTimetableSubmit = handleTimetableSubmit;
+        window.handleNoteSubmit = handleNoteSubmit;
+        window.handleSyllabusSubmit = handleSyllabusSubmit;
+        window.handleResourceSubmit = handleResourceSubmit;
+        window.handleAnnouncementSubmit = handleAnnouncementSubmit;
+        window.deleteSubject = deleteSubject;
+        window.deleteTimetableSlot = deleteTimetableSlot;
+        window.deleteNote = deleteNote;
+        window.deleteResource = deleteResource;
+        window.deleteUser = deleteUser;
+        window.logout = logout;
+        window.showLogin = showLogin;
+        window.showSignup = showSignup;
+        window.selectRole = selectRole;
+        window.handleLogin = handleLogin;
+        window.handleSignup = handleSignup;
+        window.renderAdminUsers = renderAdminUsers;
+        window.renderAttendance = renderAttendance;
+        window.loadAttendance = loadAttendance;
+        window.toggleRoll = toggleRoll;
+        window.markAllPresent = markAllPresent;
+        window.markAllAbsent = markAllAbsent;
+        window.submitAttendance = submitAttendance;
+        window.toggleHistory = toggleHistory;
+        window.onSemesterChange = onSemesterChange;
+        window.renderAdminSettings = renderAdminSettings;
+        window.saveAcademicSettings = saveAcademicSettings;
+        window.openAddBranchModal = openAddBranchModal;
+        window.closeBranchModal = closeBranchModal;
+        window.handleAddBranch = handleAddBranch;
+        window.deleteBranch = deleteBranch;
+        window.openAddDivisionModal = openAddDivisionModal;
+        window.closeDivisionModal = closeDivisionModal;
+        window.handleAddDivision = handleAddDivision;
+        window.deleteDivision = deleteDivision;
+        window.openAddSemesterModal = openAddSemesterModal;
+        window.closeSemesterModal = closeSemesterModal;
+        window.handleAddSemester = handleAddSemester;
+        window.deleteSemester = deleteSemester;
+        window.populateAcademicDropdowns = populateAcademicDropdowns;
+        window.toggleSidebar = toggleSidebar;
+    </script>
+</body>
+</html>
