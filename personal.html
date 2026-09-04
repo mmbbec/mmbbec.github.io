@@ -4,611 +4,329 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Dr. Mahadev Biradar | Resource Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ─── Reset & Base ─── */
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #172554;
+            --primary-light: #eff6ff;
+            --accent: #2563eb;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background: #f4f7fb;
-            color: #263238;
-            line-height: 1.6;
-            padding-bottom: 60px;
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ─── Header ─── */
+        /* ─── Top Navigation Bar ─── */
         header {
-            background: #163b65;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: white;
-            padding: 24px 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 28px 24px;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .header-container {
-            max-width: 1150px;
-            margin: auto;
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
             flex-wrap: wrap;
-            gap: 15px;
         }
 
         .header-title h1 {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .header-title p {
             font-size: 13px;
-            opacity: 0.85;
+            color: #cbd5e1;
+            margin-top: 3px;
+            font-weight: 500;
         }
 
         .header-actions {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
         .btn-nav {
             padding: 8px 18px;
-            border-radius: 20px;
+            border-radius: 9999px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
-            transition: 0.3s;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
 
         .btn-nav-light {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
         }
 
         .btn-nav-light:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-nav-primary {
-            background: #d94a32;
-            color: white;
-            border: 1px solid #d94a32;
-        }
-
-        .btn-nav-primary:hover {
-            background: #b53d28;
-            border-color: #b53d28;
+            background: rgba(255, 255, 255, 0.24);
         }
 
         .btn-nav-profile {
             background: #ffffff;
-            color: #163b65;
+            color: var(--primary-dark);
             border: 1px solid #ffffff;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-nav-profile:hover {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: #ffffff;
+            background: #f1f5f9;
+            transform: translateY(-1px);
         }
 
-        /* ─── Dashboard Container ─── */
+        /* ─── Main Content Canvas ─── */
         .dashboard-container {
-            max-width: 1150px;
-            margin: 30px auto;
-            padding: 0 20px;
+            max-width: 1200px;
+            margin: 36px auto;
+            padding: 0 24px;
+            width: 100%;
         }
 
-        /* ─── Section Headings ─── */
-        .section-heading {
-            font-size: 19px;
-            font-weight: 700;
-            color: #163b65;
-            margin: 35px 0 16px 0;
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+        }
+
+        .section-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ─── Profile Link Sections ─── */
+        .profile-sections-grid {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        .section-heading:first-of-type {
-            margin-top: 0;
+        .profile-section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease;
         }
 
-        /* ─── Profile Buttons Row ─── */
-        .profile-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 30px;
-            padding: 18px 22px;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            align-items: center;
+        .profile-section-card:hover {
+            box-shadow: var(--shadow-md);
         }
 
-        .profile-buttons-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-right: 6px;
-        }
-
-        .profile-btn {
-            padding: 9px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
+        .profile-section-label {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: 0.25s ease;
-            border: 1.5px solid #e2e8f0;
-            background: #f8fafc;
-            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-light);
+            width: 100%;
+        }
+
+        .profile-buttons-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .profile-btn {
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-main);
+        }
+
+        .profile-btn-icon {
+            font-size: 20px;
+            line-height: 1;
         }
 
         .profile-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            border-color: #163b65;
-            background: #ffffff;
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            color: var(--accent);
         }
 
         .profile-btn-highlight {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
+            background: var(--primary-light);
+            border-color: #bfdbfe;
+            color: var(--primary);
         }
 
         .profile-btn-highlight:hover {
-            background: #0f2a4a;
-            border-color: #0f2a4a;
-            color: white;
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
         }
 
-        .profile-btn-icon {
-            font-size: 18px;
-        }
-
-        /* ─── Folders Grid ─── */
-        .folders-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-bottom: 20px;
-        }
-
-        .folder-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            transition: 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .folder-card:hover {
-            transform: translateY(-3px);
-            border-color: #163b65;
-            box-shadow: 0 8px 22px rgba(22, 59, 101, 0.09);
-        }
-
-        .folder-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .folder-icon {
-            font-size: 24px;
-        }
-
-        .folder-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #163b65;
-        }
-
-        .folder-desc {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
-        .btn-folder-open {
-            background: #f1f5f9;
-            color: #163b65;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 700;
-            text-align: center;
-            border: 1px solid #cbd5e1;
-            transition: 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .folder-card:hover .btn-folder-open {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
-        }
-
-        /* ─── Controls ─── */
-        .controls-card {
-            background: white;
-            padding: 20px 22px;
-            border-radius: 10px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 20px;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            min-width: 260px;
-            position: relative;
-        }
-
-        .search-input-wrapper input {
-            width: 100%;
-            padding: 11px 16px 11px 42px;
-            border: 1.5px solid #d0d7de;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .search-input-wrapper input:focus {
-            border-color: #163b65;
-            box-shadow: 0 0 0 3px rgba(22, 59, 101, 0.12);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            color: #888;
-        }
-
-        .filter-select {
-            padding: 11px 16px;
-            border-radius: 8px;
-            border: 1.5px solid #d0d7de;
-            font-size: 14px;
-            background: white;
-            color: #333;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .filter-select:focus {
-            border-color: #163b65;
-        }
-
-        .category-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            border-top: 1px solid #edf2f7;
-            padding-top: 14px;
-        }
-
-        .chip {
-            padding: 5px 14px;
-            border-radius: 20px;
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-
-        .chip:hover {
-            background: #e2e8f0;
-        }
-
-        .chip.active {
-            background: #163b65;
-            color: white;
-        }
-
-        /* ─── Files Table ─── */
-        .files-table-wrapper {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-        }
-
-        .table-header {
-            padding: 15px 22px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fafbfc;
-        }
-
-        .table-header h2 {
-            font-size: 15px;
-            color: #163b65;
-            font-weight: 700;
-        }
-
-        .result-count {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background: #fafbfc;
-            padding: 13px 18px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            font-weight: 700;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        td {
-            padding: 14px 18px;
-            font-size: 14px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .format-badge {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: white;
-            flex-shrink: 0;
-            text-transform: uppercase;
-        }
-
-        .badge-pdf {
-            background: #e53e3e;
-        }
-        .badge-excel {
-            background: #2f855a;
-        }
-        .badge-doc {
-            background: #2b6cb0;
-        }
-
-        .file-title {
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .file-category {
-            font-size: 12px;
-            color: #64748b;
-            display: block;
-        }
-
-        .actions-cell {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            white-space: nowrap;
-        }
-
-        .btn-action {
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: 0.2s;
-        }
-
-        .btn-view {
-            background: #edf2f7;
-            color: #163b65;
-            border: 1px solid #cbd5e1;
-        }
-
-        .btn-view:hover {
-            background: #163b65;
-            color: white;
-            border-color: #163b65;
-        }
-
-        .btn-download {
-            background: #d94a32;
-            color: white;
-            border: 1px solid #d94a32;
-        }
-
-        .btn-download:hover {
-            background: #b53d28;
-            border-color: #b53d28;
-        }
-
-        .empty-state {
-            padding: 45px 20px;
-            text-align: center;
-            color: #64748b;
-            display: none;
-        }
-
-        /* ─── Responsive ─── */
-        @media (max-width: 900px) {
-            .folders-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        /* ─── Responsive Media Queries ─── */
         @media (max-width: 768px) {
-            th:nth-child(2),
-            td:nth-child(2),
-            th:nth-child(3),
-            td:nth-child(3) {
-                display: none;
-            }
-            .profile-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .profile-buttons-label {
-                margin-bottom: 4px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .folders-grid {
-                grid-template-columns: 1fr;
-            }
             .header-container {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .btn-nav {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .profile-buttons-group {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ═══ HEADER ═══ -->
     <header>
         <div class="header-container">
             <div class="header-title">
-                <h1>Dr. Mahadev Biradar | Resource  Hub</h1>
-             
+                <h1>Dr. Mahadev Biradar</h1>
+                <p>Academic & Administrative Resource Portal</p>
             </div>
             <div class="header-actions">
                 <a href="index.html" class="btn-nav btn-nav-profile">
-                    👤 Profile
+                    <span>👤</span> View Profile
                 </a>
                 <a href="index.html" class="btn-nav btn-nav-light">
-                    ← Back to Profile
+                    <span>←</span> Return Home
                 </a>
-               
             </div>
         </div>
     </header>
 
-          <!-- ─── PROFILE BUTTONS ROW ─── -->
-<div class="profile-buttons-row">
-    <!-- Students Section -->
-    <div class="profile-section">
-        <span class="profile-section-label">🎓 Students</span>
-        <div class="profile-buttons-group">
-            <a href="MY BEC Students.html" class="profile-btn">
-                <span class="profile-btn-icon">👤</span> Student Login for Registration
-            </a>
-            <a href="free-tools.html" class="profile-btn profile-btn-highlight">
-                <span class="profile-btn-icon">🛠️</span> Free Tools
-            </a>
-            <a href="calculator.html" class="profile-btn profile-btn-highlight">
-                <span class="profile-btn-icon">🧮</span> Scientific Calculator-MMB
-            </a>
-            <a href="bec.html" class="profile-btn">
-                <span class="profile-btn-icon">📚</span> BEC Syllabus
-            </a>
-        </div>
-    </div>
-
-    <!-- Faculty Section -->
-    <div class="profile-section">
-        <span class="profile-section-label">👨‍🏫 Faculty</span>
-        <div class="profile-buttons-group">
-            <a href="co po calculator.html" class="profile-btn profile-btn-highlight" target="_blank">
-                <span class="profile-btn-icon">📊</span> CO–PO Attainment Calculator
-            </a>
-            <a href="CIE Managent.html" class="profile-btn">
-                <span class="profile-btn-icon">📐</span> CIE Management
-            </a>
-            <a href="MY BEC Students.html" class="profile-btn">
-                <span class="profile-btn-icon">👤</span> Faculty Login for Registration
-            </a>
-        </div>
-    </div>
-
-    <!-- Personal Section -->
-    <div class="profile-section">
-        <span class="profile-section-label">🧑‍💻 Personal</span>
-        <div class="profile-buttons-group">
-            <a href="Rashmi Web Studio.html" class="profile-btn">
-                <span class="profile-btn-icon">📚</span> Rashmi Biradar Web Studio
-            </a>
-        </div>
-    </div>
-</div>
+    <main class="dashboard-container">
+        <div class="section-header">
+            <h2>Quick Portals & Utilities</h2>
+            <p>Access tools, portals, and materials curated for students, faculty, and research.</p>
         </div>
 
-        </div>
+        <div class="profile-sections-grid">
+            <section class="profile-section-card">
+                <div class="profile-section-label">
+                    <span>🎓</span> Student Resources
+                </div>
+                <div class="profile-buttons-group">
+                    <a href="MY BEC Students.html" class="profile-btn">
+                        <span class="profile-btn-icon">👤</span>
+                        <span>Student Registration</span>
+                    </a>
+                    <a href="free-tools.html" class="profile-btn profile-btn-highlight">
+                        <span class="profile-btn-icon">🛠️</span>
+                        <span>Free Academic Tools</span>
+                    </a>
+                    <a href="calculator.html" class="profile-btn profile-btn-highlight">
+                        <span class="profile-btn-icon">🧮</span>
+                        <span>Scientific Calculator</span>
+                    </a>
+                    <a href="bec.html" class="profile-btn">
+                        <span class="profile-btn-icon">📚</span>
+                        <span>BEC Syllabus</span>
+                    </a>
+                </div>
+            </section>
 
-    <script>
-     
-    
-     
-        // ─── INIT ───
-        document.addEventListener("DOMContentLoaded", () => {
-            renderFolders();
-            renderTable(filesData);
-        });
-    </script>
+            <section class="profile-section-card">
+                <div class="profile-section-label">
+                    <span>👨‍🏫</span> Faculty Utilities
+                </div>
+                <div class="profile-buttons-group">
+                    <a href="co po calculator.html" class="profile-btn profile-btn-highlight" target="_blank">
+                        <span class="profile-btn-icon">📊</span>
+                        <span>CO–PO Calculator</span>
+                    </a>
+                    <a href="CIE Managent.html" class="profile-btn">
+                        <span class="profile-btn-icon">📐</span>
+                        <span>CIE Management</span>
+                    </a>
+                    <a href="MY BEC Students.html" class="profile-btn">
+                        <span class="profile-btn-icon">👤</span>
+                        <span>Faculty Registration</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="profile-section-card">
+                <div class="profile-section-label">
+                    <span>🧑‍💻</span> Portals & Initiatives
+                </div>
+                <div class="profile-buttons-group">
+                    <a href="Rashmi Web Studio.html" class="profile-btn">
+                        <span class="profile-btn-icon">🎨</span>
+                        <span>Rashmi Web Studio</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
 
 </body>
 </html>
