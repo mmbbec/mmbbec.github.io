@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com">
     </script>
     <script>
@@ -16,20 +16,23 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#0F172A",
-                        secondary: "#1E40AF",
-                        accent: "#D97706",
-                        success: "#059669",
-                        canvas: "#F8FAFC",
+                        navy: "#0A1628",
+                        primary: "#1A3A6B",
+                        primaryLight: "#2B4F8C",
+                        accent: "#D4A745",
+                        accentLight: "#F5E6B8",
+                        success: "#0B7B4D",
+                        danger: "#B91C1C",
                         surface: "#FFFFFF",
-                        muted: "#F1F5F9",
-                        hairl: "#E2E8F0",
-                        subtext: "#64748B",
-                        body: "#334155",
-                        display: "#0F172A",
+                        bg: "#F0F4F9",
+                        muted: "#E8EEF5",
+                        hairl: "#DCE3ED",
+                        subtext: "#6B7A8F",
+                        body: "#1E293B",
+                        display: "#0A1628",
                     },
                     fontFamily: {
-                        sans: ["Manrope", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
                         display: ["Space Grotesk", "sans-serif"],
                     },
                 },
@@ -42,87 +45,186 @@
             box-sizing: border-box;
         }
         body {
-            font-family: "Manrope", sans-serif;
-            background: #F8FAFC;
-            color: #334155;
+            font-family: "Inter", sans-serif;
+            background: #F0F4F9;
+            color: #1E293B;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
         }
         .font-display {
             font-family: "Space Grotesk", sans-serif;
         }
 
-        /* ── sidebar links ── */
+        /* ── scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F0F4F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* ── sidebar ── */
+        .sidebar-fixed {
+            background: #0A1628 !important;
+            border-right: none !important;
+        }
+        .sidebar-fixed .sidebar-brand {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .sidebar-fixed .sidebar-user {
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .sidebar-fixed .sidebar-user .user-name {
+            color: #F1F5F9;
+        }
+        .sidebar-fixed .sidebar-user .user-role {
+            color: #94A3B8;
+        }
+        .sidebar-fixed .sidebar-user .user-academic {
+            color: #64748B;
+        }
         .sidebar-link {
             display: flex;
             align-items: center;
             gap: .75rem;
-            padding: .6rem .9rem;
-            border-radius: .375rem;
-            color: #64748B;
+            padding: .7rem 1rem;
+            border-radius: .5rem;
+            color: #94A3B8;
             font-size: .8125rem;
-            font-weight: 600;
-            transition: all .15s;
+            font-weight: 500;
+            transition: all .2s;
             cursor: pointer;
             text-decoration: none;
+            border-left: 3px solid transparent;
         }
         .sidebar-link:hover {
-            background: #F1F5F9;
-            color: #0F172A;
+            background: rgba(255, 255, 255, 0.06);
+            color: #F1F5F9;
         }
         .sidebar-link.active {
-            background: #E2E8F0;
-            color: #0F172A;
-            border-left: 3px solid #1E40AF;
+            background: rgba(255, 255, 255, 0.08);
+            color: #F1F5F9;
+            border-left-color: #D4A745;
+        }
+        .sidebar-link .material-symbols-outlined {
+            font-size: 20px;
+        }
+        .sidebar-fixed .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .sidebar-fixed .sidebar-footer .footer-text {
+            color: #64748B;
         }
 
         /* ── cards ── */
         .card {
             background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: .5rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
+            border: 1px solid #E8EEF5;
+            border-radius: .75rem;
+            box-shadow: 0 1px 3px rgba(10, 22, 40, 0.04);
+            transition: box-shadow .2s, transform .2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(10, 22, 40, 0.06);
+        }
+        .card-stat {
+            border: none;
+            background: #FFFFFF;
+            border-radius: .75rem;
+            box-shadow: 0 1px 3px rgba(10, 22, 40, 0.04);
+            padding: 1.25rem 1.5rem;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .card-stat:hover {
+            box-shadow: 0 8px 24px rgba(10, 22, 40, 0.08);
+            transform: translateY(-2px);
+        }
+        .card-stat .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .card-stat .stat-icon.blue {
+            background: #EFF6FF;
+            color: #2563EB;
+        }
+        .card-stat .stat-icon.gold {
+            background: #FFFBEB;
+            color: #D4A745;
+        }
+        .card-stat .stat-icon.green {
+            background: #ECFDF5;
+            color: #0B7B4D;
+        }
+        .card-stat .stat-icon.purple {
+            background: #F5F3FF;
+            color: #7C3AED;
         }
 
         /* ── buttons ── */
         .btn-primary {
-            background: #0F172A;
+            background: #1A3A6B;
             color: #fff;
-            border-radius: .375rem;
-            padding: .5rem 1rem;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
             font-weight: 600;
             font-size: .8125rem;
-            transition: background .15s;
+            transition: all .2s;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
         .btn-primary:hover {
-            background: #1E293B;
+            background: #0F2A4F;
+            box-shadow: 0 4px 12px rgba(26, 58, 107, 0.3);
         }
         .btn-secondary {
-            background: #1E40AF;
+            background: #2563EB;
             color: #fff;
-            border-radius: .375rem;
-            padding: .5rem 1rem;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
             font-weight: 600;
             font-size: .8125rem;
-            transition: background .15s;
+            transition: all .2s;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
         .btn-secondary:hover {
             background: #1D4ED8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         .btn-ghost {
             background: #F1F5F9;
-            color: #334155;
-            border-radius: .375rem;
-            padding: .5rem 1rem;
+            color: #1E293B;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
             font-weight: 600;
             font-size: .8125rem;
-            transition: background .15s;
+            transition: all .2s;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
         .btn-ghost:hover {
             background: #E2E8F0;
@@ -130,90 +232,160 @@
         .btn-danger {
             background: #DC2626;
             color: #fff;
-            border-radius: .375rem;
-            padding: .5rem 1rem;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
             font-weight: 600;
             font-size: .8125rem;
-            transition: background .15s;
+            transition: all .2s;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
         .btn-danger:hover {
             background: #B91C1C;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
         .btn-success {
-            background: #059669;
+            background: #0B7B4D;
             color: #fff;
-            border-radius: .375rem;
-            padding: .5rem 1rem;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
             font-weight: 600;
             font-size: .8125rem;
-            transition: background .15s;
+            transition: all .2s;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
         .btn-success:hover {
-            background: #047857;
+            background: #065F3A;
+            box-shadow: 0 4px 12px rgba(11, 123, 77, 0.3);
         }
-
-        /* ── table rows ── */
-        .table-row {
-            border-bottom: 1px solid #F1F5F9;
+        .btn-outline {
+            background: transparent;
+            color: #2563EB;
+            border: 1.5px solid #2563EB;
+            border-radius: .5rem;
+            padding: .6rem 1.25rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            transition: all .2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
         }
-        .table-row:last-child {
-            border-bottom: none;
+        .btn-outline:hover {
+            background: #EFF6FF;
         }
 
         /* ── tabs ── */
         .tab-btn {
-            padding: .5rem .75rem;
-            border-radius: .375rem;
+            padding: .6rem 1rem;
+            border-radius: .5rem;
             font-size: .8125rem;
             font-weight: 600;
-            color: #64748B;
+            color: #6B7A8F;
             background: transparent;
             border: none;
             cursor: pointer;
-            transition: all .15s;
-            display: flex;
+            transition: all .2s;
+            display: inline-flex;
             align-items: center;
             gap: .375rem;
+            white-space: nowrap;
         }
         .tab-btn.active {
-            background: #0F172A;
+            background: #1A3A6B;
             color: #fff;
         }
-        .tab-btn:hover {
+        .tab-btn:hover:not(.active) {
             background: #F1F5F9;
-            color: #0F172A;
+            color: #1A3A6B;
         }
-        .tab-btn.active:hover {
-            background: #0F172A;
+        .tab-btn .material-symbols-outlined {
+            font-size: 18px;
         }
 
-        /* ── modal overlay ── */
+        /* ── modals ── */
         .modal-overlay {
-            background: rgba(15, 23, 42, .4);
-            backdrop-filter: blur(4px);
+            background: rgba(10, 22, 40, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 24px 64px rgba(10, 22, 40, 0.2);
+            max-width: 560px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: modalIn .25s ease;
+        }
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-content .modal-header {
+            border-bottom: 1px solid #F1F5F9;
+            padding: 1.25rem 1.5rem;
+        }
+        .modal-content .modal-body {
+            padding: 1.5rem;
+        }
+        .modal-content .modal-footer {
+            border-top: 1px solid #F1F5F9;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: .75rem;
+            flex-wrap: wrap;
         }
 
-        /* ── badges ── */
-        .resource-type-badge {
-            font-size: .6875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            padding: .125rem .5rem;
-            border-radius: .25rem;
-            background: #EFF6FF;
-            color: #1E40AF;
+        /* ── form elements ── */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: .65rem .9rem;
+            border: 1.5px solid #E8EEF5;
+            border-radius: .5rem;
+            font-size: .875rem;
+            background: #FAFCFF;
+            transition: border .15s, box-shadow .15s;
+            font-family: "Inter", sans-serif;
+            color: #1E293B;
         }
-        .link-type-badge {
-            font-size: .6875rem;
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #94A3B8;
+        }
+        .form-label {
+            display: block;
+            font-size: .75rem;
             font-weight: 600;
-            padding: .125rem .375rem;
-            border-radius: .25rem;
-            background: #F1F5F9;
-            color: #64748B;
+            color: #475569;
+            margin-bottom: .25rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         /* ── toast ── */
@@ -221,49 +393,69 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 22px;
+            border-radius: 10px;
             color: #fff;
             font-weight: 600;
             font-size: 14px;
             z-index: 9999;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all .3s ease;
+            transform: translateY(20px) scale(0.96);
+            transition: all .35s cubic-bezier(0.22, 1, 0.36, 1);
             pointer-events: none;
-            max-width: 360px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            background: #1A3A6B;
         }
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             pointer-events: auto;
         }
         .toast.success {
-            background: #059669;
+            background: #0B7B4D;
         }
         .toast.error {
             background: #DC2626;
         }
         .toast.info {
-            background: #1E40AF;
-        }
-        .font-code-num {
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
+            background: #1A3A6B;
         }
 
-        /* ── form inputs ── */
-        input,
-        select,
-        textarea {
-            outline: none;
+        /* ── badges ── */
+        .badge-role {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #1E40AF;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+        .badge-role.admin {
+            background: #FFFBEB;
+            color: #D4A745;
+        }
+        .badge-role.teacher {
+            background: #EFF6FF;
+            color: #2563EB;
+        }
+        .badge-role.student {
+            background: #ECFDF5;
+            color: #0B7B4D;
+        }
+        .badge-status {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        .badge-status.present {
+            background: #D1FAE5;
+            color: #065F3A;
+        }
+        .badge-status.absent {
+            background: #FEE2E2;
+            color: #991B1B;
         }
 
         /* ── auth ── */
@@ -272,82 +464,100 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            background: linear-gradient(135deg, #0A1628 0%, #1A3A6B 100%);
             padding: 20px;
+            position: relative;
+        }
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(212, 167, 69, 0.08) 0%, transparent 70%);
+            pointer-events: none;
         }
         .auth-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .08);
-            padding: 40px 36px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+            padding: 44px 40px;
             width: 100%;
             max-width: 480px;
-            border: 1px solid #E2E8F0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
-        .auth-card .logo {
+        .auth-card .logo-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #1A3A6B, #2563EB);
             display: flex;
             align-items: center;
-            gap: 12px;
             justify-content: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            text-align: center;
+            color: #fff;
+            font-size: 26px;
+            font-weight: 800;
+            flex-shrink: 0;
         }
         .auth-card .logo-text {
             font-family: "Space Grotesk", sans-serif;
             font-weight: 700;
-            font-size: 20px;
-            color: #0F172A;
+            font-size: 18px;
+            color: #0A1628;
+            line-height: 1.2;
         }
         .auth-card .logo-sub {
             font-size: 12px;
-            color: #64748B;
-            text-align: center;
-            margin-top: -6px;
-            margin-bottom: 20px;
+            color: #6B7A8F;
+            margin-top: 2px;
         }
         .auth-card .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
         .auth-card .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: #334155;
+            color: #475569;
             margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
         .auth-card .form-group input,
         .auth-card .form-group select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
+            padding: 11px 14px;
+            border: 1.5px solid #E8EEF5;
+            border-radius: 10px;
             font-size: 14px;
-            background: #F8FAFC;
-            transition: border .15s;
-            -webkit-appearance: none;
-            appearance: none;
+            background: #FAFCFF;
+            transition: border .15s, box-shadow .15s;
+            font-family: "Inter", sans-serif;
+            color: #1E293B;
         }
         .auth-card .form-group input:focus,
         .auth-card .form-group select:focus {
-            border-color: #1E40AF;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, .1);
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
         }
         .auth-card .btn-login {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             font-size: 15px;
-            border-radius: 8px;
-            margin-top: 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+            justify-content: center;
         }
         .auth-card .forgot-password {
             text-align: right;
-            margin-top: 4px;
+            margin-top: 2px;
             font-size: 12px;
-            color: #64748B;
+            color: #6B7A8F;
         }
         .auth-card .forgot-password a {
-            color: #1E40AF;
+            color: #2563EB;
             font-weight: 500;
             cursor: pointer;
             text-decoration: none;
@@ -355,66 +565,74 @@
         .auth-card .forgot-password a:hover {
             text-decoration: underline;
         }
-        .hidden {
-            display: none !important;
+        .auth-toggle {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 13px;
+            color: #6B7A8F;
         }
-        .app-wrapper {
-            display: none;
+        .auth-toggle a {
+            color: #2563EB;
+            font-weight: 600;
+            cursor: pointer;
         }
-        .app-wrapper.show {
-            display: block;
+        .auth-toggle a:hover {
+            text-decoration: underline;
         }
-
-        /* ── role selector ── */
         .role-selector {
             display: flex;
             gap: 8px;
-            margin-top: 4px;
+            margin-top: 2px;
         }
         .role-selector button {
             flex: 1;
             padding: 10px 12px;
-            border: 2px solid #E2E8F0;
-            border-radius: 8px;
+            border: 2px solid #E8EEF5;
+            border-radius: 10px;
             background: white;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.15s;
-            color: #64748B;
+            color: #6B7A8F;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            font-family: "Inter", sans-serif;
         }
         .role-selector button:hover {
             border-color: #94A3B8;
             background: #F8FAFC;
         }
         .role-selector button.active {
-            border-color: #1E40AF;
+            border-color: #2563EB;
             background: #EFF6FF;
-            color: #1E40AF;
+            color: #2563EB;
         }
         .role-selector button.active::after {
             content: " ✓";
             font-weight: 700;
         }
-
-        /* ── disabled fields in signup ── */
-        .auth-card .form-group input:disabled,
-        .auth-card .form-group select:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #F1F5F9;
+        .conditional-field {
+            transition: all 0.25s ease;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            padding: 0 4px;
+        }
+        .conditional-field.open {
+            max-height: 120px;
+            opacity: 1;
+            padding: 4px 4px 8px 4px;
         }
 
-        /* ── attendance grid ── */
+        /* ── attendance ── */
         .attendance-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 8px;
-            max-width: 600px;
+            max-width: 700px;
             margin: 12px 0;
         }
         @media (max-width: 640px) {
@@ -431,22 +649,23 @@
         }
         .roll-btn {
             padding: 10px 4px;
-            border: 2px solid #E2E8F0;
+            border: 2px solid #E8EEF5;
             background: white;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 13px;
             transition: all 0.15s;
             text-align: center;
-            color: #0F172A;
+            color: #0A1628;
             touch-action: manipulation;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            font-family: "Inter", sans-serif;
         }
         .roll-btn:hover {
             border-color: #94A3B8;
-            transform: scale(1.03);
+            transform: scale(1.04);
         }
         .roll-btn.absent {
             background: #FEE2E2;
@@ -459,20 +678,18 @@
         .roll-btn.present {
             background: #D1FAE5;
             border-color: #6EE7B7;
-            color: #065F46;
+            color: #065F3A;
         }
-
-        /* ── attendance controls ── */
         .attendance-controls {
             display: flex;
             gap: 12px;
             align-items: center;
             flex-wrap: wrap;
             margin: 16px 0;
-            padding: 16px;
-            background: #F8FAFC;
-            border-radius: 8px;
-            border: 1px solid #E2E8F0;
+            padding: 16px 20px;
+            background: #FAFCFF;
+            border-radius: 10px;
+            border: 1px solid #E8EEF5;
         }
         @media (max-width: 480px) {
             .attendance-controls {
@@ -485,29 +702,44 @@
             }
         }
         .selected-info {
-            padding: 8px 14px;
+            padding: 8px 16px;
             background: white;
-            border-radius: 6px;
-            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            border: 1px solid #E8EEF5;
             font-size: 13px;
             color: #475569;
             flex: 1;
             min-width: 180px;
         }
         .selected-info strong {
-            color: #0F172A;
+            color: #0A1628;
+        }
+        .date-picker {
+            padding: 8px 12px;
+            border: 1.5px solid #E8EEF5;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            color: #0A1628;
+            font-family: "Inter", sans-serif;
+            transition: border .15s, box-shadow .15s;
+        }
+        .date-picker:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* ── history ── */
+        /* ── history items ── */
         .history-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 14px;
-            background: #F8FAFC;
-            border-radius: 6px;
+            padding: 12px 16px;
+            background: #FAFCFF;
+            border-radius: 8px;
             margin-bottom: 6px;
-            border-left: 4px solid #1E40AF;
+            border-left: 4px solid #2563EB;
         }
         @media (max-width: 480px) {
             .history-item {
@@ -522,7 +754,7 @@
         }
         .history-item .date {
             font-weight: 600;
-            color: #0F172A;
+            color: #0A1628;
         }
         .history-item .details {
             display: flex;
@@ -530,65 +762,13 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-absent {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-        .badge-present {
-            background: #D1FAE5;
-            color: #065F46;
-        }
 
-        /* ── date picker ── */
-        .date-picker {
-            padding: 6px 10px;
-            border: 2px solid #E2E8F0;
-            border-radius: 6px;
-            font-size: 13px;
-            background: white;
-            color: #0F172A;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .date-picker:focus {
-            outline: none;
-            border-color: #1E40AF;
-        }
-
-        /* ── role badges ── */
-        .user-role-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 10px;
-            border-radius: 12px;
-            text-transform: uppercase;
-        }
-        .user-role-badge.admin {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-        .user-role-badge.teacher {
-            background: #DBEAFE;
-            color: #1E40AF;
-        }
-        .user-role-badge.student {
-            background: #D1FAE5;
-            color: #059669;
-        }
-
-        /* ── announcements ── */
+        /* ── announcement items ── */
         .announcement-item {
-            border-left: 4px solid #D97706;
-            padding: 12px 16px;
+            border-left: 4px solid #D4A745;
+            padding: 14px 18px;
             background: #FFFBEB;
-            border-radius: 0 6px 6px 0;
+            border-radius: 0 8px 8px 0;
             margin-bottom: 10px;
         }
         .announcement-item .meta {
@@ -597,110 +777,48 @@
             font-weight: 600;
         }
 
-        /* ── attendance history table ── */
-        .attendance-history-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .attendance-history-table th {
-            background: #F8FAFC;
-            color: #64748B;
-            font-weight: 600;
-            padding: 8px 10px;
-            text-align: left;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-        .attendance-history-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #F1F5F9;
-        }
-        .attendance-history-table tr:last-child td {
-            border-bottom: none;
-        }
-        .absent-rolls {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: #991B1B;
-            font-size: 12px;
-        }
-
-        /* ── auth toggle ── */
-        .auth-toggle {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 13px;
-            color: #64748B;
-        }
-        .auth-toggle a {
-            color: #1E40AF;
-            font-weight: 600;
+        /* ── subject cards ── */
+        .subject-card {
+            background: #FFFFFF;
+            border: 1px solid #E8EEF5;
+            border-radius: .75rem;
+            padding: 1.25rem;
+            transition: all .25s;
             cursor: pointer;
         }
-        .auth-toggle a:hover {
-            text-decoration: underline;
+        .subject-card:hover {
+            box-shadow: 0 8px 32px rgba(10, 22, 40, 0.08);
+            transform: translateY(-3px);
+            border-color: #CBD5E1;
+        }
+        .subject-card .code-badge {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #2563EB;
+            font-size: 14px;
+            background: #EFF6FF;
+            padding: 2px 12px;
+            border-radius: 6px;
+        }
+        .subject-card .meta-tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: #6B7A8F;
+            background: #F1F5F9;
+            padding: 2px 10px;
+            border-radius: 12px;
         }
 
-        /* ── conditional field ── */
-        .conditional-field {
-            transition: all 0.25s ease;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            padding: 0 4px;
-        }
-        .conditional-field.open {
-            max-height: 120px;
-            opacity: 1;
-            padding: 4px 4px 8px 4px;
-        }
-
-        @media (max-width: 480px) {
-            .auth-card {
-                padding: 28px 20px;
-            }
-            .role-selector {
-                flex-direction: column;
-            }
-            .auth-card .logo-text {
-                font-size: 16px;
-            }
-        }
-
-        /* ── view animation ── */
-        .view-section {
-            animation: fadeIn 0.25s ease;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ── settings ── */
-        .settings-section {
-            border-bottom: 1px solid #E2E8F0;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-        .settings-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
+        /* ── settings items ── */
         .settings-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
-            background: #F8FAFC;
-            border-radius: 6px;
+            padding: 10px 16px;
+            background: #FAFCFF;
+            border-radius: 8px;
             margin-bottom: 6px;
+            border: 1px solid #F1F5F9;
         }
         @media (max-width: 480px) {
             .settings-item {
@@ -715,14 +833,16 @@
         }
         .settings-item .name {
             font-weight: 500;
+            color: #1E293B;
         }
         .settings-item .actions button {
-            padding: 2px 8px;
-            border-radius: 4px;
+            padding: 3px 12px;
+            border-radius: 6px;
             border: none;
             cursor: pointer;
             font-size: 12px;
             font-weight: 600;
+            font-family: "Inter", sans-serif;
         }
         .settings-item .actions .del {
             background: #FEE2E2;
@@ -732,33 +852,119 @@
             background: #FECACA;
         }
 
-        /* ════════════════════════════════════════════════════
-                   MOBILE RESPONSIVE OVERRIDES
-                   ════════════════════════════════════════════════════ */
+        /* ── table ── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .data-table th {
+            background: #FAFCFF;
+            color: #6B7A8F;
+            font-weight: 600;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid #E8EEF5;
+        }
+        .data-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .data-table tr:hover td {
+            background: #FAFCFF;
+        }
+        .absent-rolls {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #991B1B;
+            font-size: 12px;
+        }
 
-        .hamburger-btn {
+        /* ── user role badge in table ── */
+        .user-role-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .user-role-badge.admin {
+            background: #FFFBEB;
+            color: #D4A745;
+        }
+        .user-role-badge.teacher {
+            background: #EFF6FF;
+            color: #2563EB;
+        }
+        .user-role-badge.student {
+            background: #ECFDF5;
+            color: #0B7B4D;
+        }
+
+        /* ── resource badges ── */
+        .resource-type-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: #EFF6FF;
+            color: #2563EB;
+            letter-spacing: 0.03em;
+        }
+        .link-type-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #F1F5F9;
+            color: #6B7A8F;
+        }
+
+        /* ── misc ── */
+        .font-code-num {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+        }
+        .view-section {
+            animation: fadeSlide .3s ease;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .hidden {
+            display: none !important;
+        }
+        .app-wrapper {
             display: none;
-            background: transparent;
-            border: none;
-            padding: 4px 8px;
-            cursor: pointer;
-            color: #0F172A;
-            font-size: 24px;
-            line-height: 1;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
-        .hamburger-btn:hover {
-            opacity: 0.7;
+        .app-wrapper.show {
+            display: block;
         }
+
+        /* ── sidebar mobile backdrop ── */
         .sidebar-backdrop {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 40;
-            background: rgba(15, 23, 42, 0.35);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
+            background: rgba(10, 22, 40, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             transition: opacity 0.3s ease;
             opacity: 0;
         }
@@ -768,16 +974,25 @@
         .sidebar-backdrop.open {
             display: block;
         }
-
-        @media (max-width: 1024px) {
-            .attendance-grid {
-                grid-template-columns: repeat(8, 1fr);
-            }
+        .hamburger-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: #0A1628;
+            font-size: 24px;
+            line-height: 1;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hamburger-btn:hover {
+            opacity: 0.7;
         }
 
+        /* ── responsive ── */
         @media (max-width: 768px) {
-
-            aside.sidebar-fixed {
+            .sidebar-fixed {
                 position: fixed !important;
                 left: 0 !important;
                 top: 0 !important;
@@ -786,32 +1001,28 @@
                 height: 100vh !important;
                 z-index: 50 !important;
                 transform: translateX(-100%) !important;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08) !important;
-                border-right: 1px solid #E2E8F0 !important;
-                background: #fff !important;
+                transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
+                box-shadow: 4px 0 40px rgba(0, 0, 0, 0.12) !important;
+                border-right: none !important;
                 overflow-y: auto !important;
             }
-            aside.sidebar-fixed.open {
+            .sidebar-fixed.open {
                 transform: translateX(0) !important;
             }
-            aside.sidebar-fixed.open~.sidebar-backdrop {
+            .sidebar-fixed.open~.sidebar-backdrop {
                 display: block !important;
                 opacity: 1 !important;
             }
-
             .main-content {
                 padding-left: 0 !important;
                 min-height: 100vh;
                 width: 100%;
             }
-
             .hamburger-btn {
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
             }
-
             header.app-header {
                 padding-left: 12px !important;
                 padding-right: 12px !important;
@@ -831,28 +1042,24 @@
             header.app-header .header-avatar-wrap {
                 display: flex !important;
             }
-
             main.app-main {
                 padding: 12px !important;
             }
-
             #dash-stats {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 10px !important;
             }
-            #dash-stats .card {
+            #dash-stats .card-stat {
                 padding: 14px !important;
             }
-            #dash-stats .card .text-3xl {
+            #dash-stats .card-stat .text-3xl {
                 font-size: 1.6rem !important;
             }
-
             #subjects-grid,
             #student-subjects {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
-
             #subject-tabs {
                 flex-wrap: nowrap !important;
                 overflow-x: auto !important;
@@ -870,18 +1077,46 @@
             #subject-tabs .tab-btn .material-symbols-outlined {
                 font-size: 14px !important;
             }
-
-            #subject-detail-header .card {
-                padding: 14px !important;
+            .auth-card {
+                padding: 28px 20px !important;
             }
-            #subject-detail-header h1 {
-                font-size: 1.2rem !important;
+            .modal-content {
+                max-width: 100% !important;
+                margin: 12px !important;
+                border-radius: 12px !important;
             }
-            #subject-detail-header .flex-wrap {
-                flex-wrap: wrap !important;
-                gap: 4px !important;
+            .modal-content .modal-body {
+                padding: 1rem !important;
             }
-
+            .modal-content .modal-header {
+                padding: 1rem !important;
+            }
+            .modal-content .modal-footer {
+                padding: .75rem 1rem !important;
+            }
+            .data-table {
+                font-size: 11px !important;
+            }
+            .data-table td,
+            .data-table th {
+                padding: 6px 8px !important;
+                word-break: break-word;
+            }
+            .toast {
+                bottom: 12px !important;
+                right: 12px !important;
+                left: 12px !important;
+                max-width: none !important;
+                font-size: 13px !important;
+                padding: 12px 16px !important;
+                border-radius: 10px !important;
+            }
+            .show-mobile {
+                display: flex !important;
+            }
+            .hide-mobile {
+                display: none !important;
+            }
             #view-attendance .card {
                 padding: 14px !important;
             }
@@ -893,61 +1128,16 @@
             #view-attendance .flex-wrap>* {
                 width: 100% !important;
             }
-            #view-attendance .flex-wrap .date-picker {
-                width: 100% !important;
-                min-width: unset !important;
+            .attendance-grid {
+                gap: 4px !important;
             }
-            #view-attendance #attendance-subject {
-                width: 100% !important;
-                min-width: unset !important;
+            .roll-btn {
+                font-size: 11px !important;
+                padding: 8px 2px !important;
             }
-
-            .auth-card {
-                padding: 24px 18px !important;
+            .auth-card .role-selector {
+                flex-direction: column;
             }
-            .auth-card .logo-text {
-                font-size: 16px !important;
-            }
-
-            .modal-overlay .bg-white {
-                max-width: 100% !important;
-                margin: 12px !important;
-                max-height: 92vh !important;
-                border-radius: 12px !important;
-                padding: 16px !important;
-            }
-            .modal-overlay .bg-white .grid-cols-2 {
-                grid-template-columns: 1fr !important;
-                gap: 10px !important;
-            }
-            .modal-overlay .bg-white .flex-wrap {
-                flex-wrap: wrap !important;
-            }
-            .modal-overlay .bg-white .flex-wrap>* {
-                flex: 1 1 100% !important;
-            }
-
-            #admin-users-table {
-                font-size: 12px !important;
-            }
-            #admin-users-table td,
-            #admin-users-table th {
-                padding: 6px 8px !important;
-                word-break: break-word;
-            }
-            #admin-users-table .user-role-badge {
-                font-size: 9px !important;
-                padding: 1px 6px !important;
-            }
-
-            #view-admin-settings .grid-cols-3 {
-                grid-template-columns: 1fr !important;
-                gap: 12px !important;
-            }
-            #view-admin-settings .grid-cols-3 .flex-end {
-                align-items: stretch !important;
-            }
-
             #student-attendance-history {
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch;
@@ -956,75 +1146,16 @@
                 font-size: 11px !important;
                 min-width: 400px;
             }
-            #student-attendance-history th,
-            #student-attendance-history td {
-                padding: 4px 6px !important;
+            .settings-item {
+                flex-wrap: wrap;
+                gap: 6px;
             }
-
-            .announcement-item {
-                padding: 10px 12px !important;
-            }
-            .announcement-item .font-semibold {
-                font-size: 13px !important;
-            }
-            .announcement-item .text-13 {
-                font-size: 12px !important;
-            }
-
-            .text-2xl {
-                font-size: 1.3rem !important;
-            }
-            .text-\[14px\] {
-                font-size: 12.5px !important;
-            }
-            .gap-4 {
-                gap: 10px !important;
-            }
-            .p-5 {
-                padding: 14px !important;
-            }
-            .p-6 {
-                padding: 12px !important;
-            }
-            .mb-6 {
-                margin-bottom: 14px !important;
-            }
-
-            .hide-mobile {
-                display: none !important;
-            }
-
-            #subjects-grid .card,
-            #student-subjects .card {
-                padding: 14px !important;
-            }
-            #subjects-grid .card h3,
-            #student-subjects .card h3 {
-                font-size: 15px !important;
-            }
-
-            .history-item {
-                padding: 8px 10px !important;
-            }
-            .history-item .date {
-                font-size: 13px !important;
-            }
-            .history-item .details .badge {
-                font-size: 10px !important;
-                padding: 1px 8px !important;
-            }
-
-            .toast {
-                bottom: 12px !important;
-                right: 12px !important;
-                left: 12px !important;
-                max-width: none !important;
-                font-size: 13px !important;
-                padding: 10px 14px !important;
-                border-radius: 8px !important;
+            .settings-item .actions {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
             }
         }
-
         @media (max-width: 400px) {
             main.app-main {
                 padding: 8px !important;
@@ -1033,13 +1164,13 @@
                 grid-template-columns: 1fr 1fr !important;
                 gap: 6px !important;
             }
-            #dash-stats .card {
+            #dash-stats .card-stat {
                 padding: 10px !important;
             }
-            #dash-stats .card .text-3xl {
+            #dash-stats .card-stat .text-3xl {
                 font-size: 1.2rem !important;
             }
-            #dash-stats .card .text-\[12px\] {
+            #dash-stats .card-stat .text-\[12px\] {
                 font-size: 10px !important;
             }
             .card {
@@ -1049,16 +1180,21 @@
             .btn-primary,
             .btn-ghost,
             .btn-danger,
-            .btn-success {
+            .btn-success,
+            .btn-outline {
                 font-size: 11px !important;
                 padding: 6px 12px !important;
             }
-            .roll-btn {
-                font-size: 11px !important;
-                padding: 8px 2px !important;
+            .auth-card {
+                padding: 20px 14px !important;
             }
-            .attendance-grid {
-                gap: 4px !important;
+            .auth-card .logo-text {
+                font-size: 14px !important;
+            }
+            .auth-card .logo-icon {
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 20px !important;
             }
             header.app-header .page-title-wrap {
                 font-size: 11px !important;
@@ -1068,34 +1204,18 @@
                 font-size: 20px !important;
                 padding: 2px 4px !important;
             }
-            .modal-overlay .bg-white {
-                margin: 8px !important;
-                padding: 12px !important;
-            }
-            .auth-card {
-                padding: 16px 12px !important;
-            }
-            .auth-card .logo-text {
-                font-size: 14px !important;
-            }
-            .auth-card .logo svg {
-                width: 36px !important;
-                height: 36px !important;
-            }
         }
-
         @supports (-webkit-touch-callout: none) {
             .sidebar-backdrop {
-                -webkit-backdrop-filter: blur(2px);
-            }
-            .modal-overlay {
                 -webkit-backdrop-filter: blur(4px);
             }
-            aside.sidebar-fixed {
+            .modal-overlay {
+                -webkit-backdrop-filter: blur(6px);
+            }
+            .sidebar-fixed {
                 -webkit-overflow-scrolling: touch;
             }
         }
-
         .show-mobile {
             display: none !important;
         }
@@ -1119,17 +1239,13 @@
     <!-- ============================================================ -->
     <div id="auth-container" class="auth-container">
         <div class="auth-card">
-            <div class="logo">
-                <svg viewBox="0 0 48 48" fill="none" class="h-12 w-12 shrink-0">
-                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
-                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
-                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
-                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
-                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
-                </svg>
-                <span class="logo-text">Basaveshwar Engineering College Bagalkote</span>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="logo-icon">B</div>
+                <div>
+                    <div class="logo-text">BEC Bagalkote</div>
+                    <div class="logo-sub">Subject Management · Dept. of Mathematics</div>
+                </div>
             </div>
-            <div class="logo-sub">Subject Management</div>
 
             <!-- Login -->
             <div id="login-form">
@@ -1144,7 +1260,7 @@
                 <div class="forgot-password">
                     <a onclick="handleForgotPassword()">Forgot Password?</a>
                 </div>
-                <button class="btn-secondary btn-login" onclick="handleLogin()">Sign In</button>
+                <button class="btn-primary btn-login" onclick="handleLogin()">Sign In</button>
                 <div class="auth-toggle">
                     Don't have an account? <a onclick="showSignup()">Create one</a>
                 </div>
@@ -1163,7 +1279,7 @@
                 <div class="form-group">
                     <label>Password</label>
                     <input id="signup-password" type="password" placeholder="••••••••" value="1234" />
-                    <span style="font-size:11px;color:#64748B;">Default: 1234</span>
+                    <span style="font-size:11px;color:#6B7A8F;">Default: 1234</span>
                 </div>
                 <div class="form-group">
                     <label>I am a...</label>
@@ -1173,25 +1289,18 @@
                     </div>
                     <input type="hidden" id="signup-role" value="teacher" />
                 </div>
-
-                <!-- Semester -->
                 <div class="form-group">
-                    <label>Semester <span class="text-[#64748B] text-[11px]">(from admin settings)</span></label>
+                    <label>Semester</label>
                     <select id="signup-semester"></select>
                 </div>
-
-                <!-- Division -->
                 <div class="form-group">
-                    <label>Division <span class="text-[#64748B] text-[11px]">(from admin settings)</span></label>
+                    <label>Division</label>
                     <select id="signup-division"></select>
                 </div>
-
-                <!-- Branch Name (conditional) -->
                 <div id="branch-group" class="form-group conditional-field open">
-                    <label>Branch Name <span class="text-[#64748B] text-[11px]">(required for 3rd–8th sem)</span></label>
+                    <label>Branch Name</label>
                     <select id="signup-branch"></select>
                 </div>
-
                 <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
                 <div class="auth-toggle">
                     Already have an account? <a onclick="showLogin()">Sign In</a>
@@ -1205,106 +1314,102 @@
     <!-- ============================================================ -->
     <div id="app-wrapper" class="app-wrapper">
 
-        <!-- ─── SIDEBAR BACKDROP (mobile) ─── -->
+        <!-- SIDEBAR BACKDROP -->
         <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar(false)"></div>
 
-        <!-- ─── SIDEBAR ─── -->
-        <aside class="sidebar-fixed fixed left-0 top-0 h-screen w-[250px] bg-white border-r border-[#E2E8F0] z-50 flex flex-col">
-            <div class="p-4 border-b border-[#F1F5F9] flex items-center gap-2">
-                <svg viewBox="0 0 48 48" fill="none" class="h-10 w-10 shrink-0">
-                    <rect width="48" height="48" rx="8" fill="#1E40AF" />
-                    <path d="M24 10L8 18L24 26L40 18L24 10Z" fill="#fff" />
-                    <path d="M14 22V32C14 35.5 18.5 38 24 38C29.5 38 34 35.5 34 32V22L24 27L14 22Z" fill="#93C5FD" />
-                    <path d="M38 21.5V31" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" />
-                    <circle cx="38" cy="33" r="1.5" fill="#F59E0B" />
-                </svg>
+        <!-- SIDEBAR -->
+        <aside class="sidebar-fixed fixed left-0 top-0 h-screen w-[260px] bg-white border-r border-[#E8EEF5] z-50 flex flex-col">
+            <div class="sidebar-brand p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A3A6B] to-[#2563EB] flex items-center justify-center text-white font-bold text-[18px] flex-shrink-0">B</div>
                 <div>
-                    <div class="font-display font-bold text-[#0F172A] leading-tight text-[13px]">BEC Bagalkote</div>
-                    <div class="text-[11px] text-[#64748B]">Dept. of Mathematics</div>
+                    <div class="font-display font-bold text-[#F1F5F9] leading-tight text-[14px]">BEC Bagalkote</div>
+                    <div class="text-[11px] text-[#94A3B8]">Dept. of Mathematics</div>
                 </div>
             </div>
+
             <!-- User Info -->
-            <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#F1F5F9]">
+            <div class="sidebar-user px-4 py-3">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-[13px] uppercase" id="sidebar-avatar">MB</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1A3A6B] text-white flex items-center justify-center font-bold text-[14px] uppercase" id="sidebar-avatar">MB</div>
                         <div>
-                            <div class="text-[13px] font-semibold text-[#0F172A]" id="sidebar-name">Dr. Mahadev Biradar</div>
-                            <div class="text-[11px] text-[#64748B]" id="sidebar-role">Faculty Guide</div>
-                            <div class="text-[10px] text-[#64748B]" id="sidebar-academic"></div>
+                            <div class="user-name text-[13px] font-semibold" id="sidebar-name">Dr. Mahadev Biradar</div>
+                            <div class="user-role text-[11px]" id="sidebar-role">Faculty Guide</div>
+                            <div class="user-academic text-[10px]" id="sidebar-academic"></div>
                         </div>
                     </div>
-                    <button onclick="logout()" class="text-[#64748B] hover:text-red-500 transition" title="Logout">
+                    <button onclick="logout()" class="text-[#64748B] hover:text-red-400 transition" title="Logout">
                         <span class="material-symbols-outlined text-[20px]">logout</span>
                     </button>
                 </div>
             </div>
+
             <!-- Nav -->
-            <nav class="flex-1 p-2 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
-            <div class="p-3 border-t border-[#F1F5F9] text-center">
-                <div class="text-[10px] text-[#64748B]">Created by Dr. Mahadev Biradar</div>
-                <div class="text-[10px] text-[#64748B]">© 2026 BEC Bagalkote</div>
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto" id="sidebar-nav"></nav>
+
+            <div class="sidebar-footer p-3 text-center">
+                <div class="footer-text text-[10px]">Created by Dr. Mahadev Biradar</div>
+                <div class="footer-text text-[10px]">© 2026 BEC Bagalkote</div>
             </div>
         </aside>
 
-        <!-- ─── MAIN CONTENT ─── -->
-        <div class="main-content pl-[250px] min-h-screen">
+        <!-- MAIN CONTENT -->
+        <div class="main-content pl-[260px] min-h-screen">
 
-            <!-- ─── HEADER ─── -->
-            <header class="app-header bg-white border-b border-[#E2E8F0] h-14 flex items-center justify-between px-6 sticky top-0 z-40">
+            <!-- HEADER -->
+            <header class="app-header bg-white border-b border-[#E8EEF5] h-16 flex items-center justify-between px-6 sticky top-0 z-40">
                 <div class="flex items-center gap-3 min-w-0">
-                    <!-- Hamburger (mobile) -->
                     <button class="hamburger-btn show-mobile" onclick="toggleSidebar()" aria-label="Toggle navigation">
                         <span class="material-symbols-outlined text-[24px]">menu</span>
                     </button>
-                    <span class="page-title-wrap text-[14px] font-semibold text-[#0F172A] truncate" id="page-title">Dashboard</span>
-                    <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded hide-mobile">Semester System</span>
+                    <span class="page-title-wrap text-[15px] font-semibold text-[#0A1628] truncate" id="page-title">Dashboard</span>
+                    <span class="bg-[#F1F5F9] text-[#6B7A8F] text-[10px] font-semibold px-2.5 py-0.5 rounded-full hide-mobile uppercase tracking-wide">Semester System</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="header-user-wrap text-[12px] text-[#64748B] hidden sm:inline" id="header-user">Dr. Mahadev Biradar</span>
-                    <div class="header-avatar-wrap w-7 h-7 rounded-full bg-[#1E40AF] text-white text-[11px] flex items-center justify-center font-bold uppercase" id="header-avatar">MB</div>
+                    <span class="header-user-wrap text-[13px] text-[#6B7A8F] hidden sm:inline font-medium" id="header-user">Dr. Mahadev Biradar</span>
+                    <div class="header-avatar-wrap w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1A3A6B] text-white text-[12px] flex items-center justify-center font-bold uppercase" id="header-avatar">MB</div>
                 </div>
             </header>
 
-            <!-- ─── MAIN ─── -->
+            <!-- MAIN -->
             <main class="app-main p-6">
 
                 <!-- ===== DASHBOARD ===== -->
                 <div id="view-dashboard" class="view-section">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">Dashboard</h1>
-                            <p class="text-[14px] text-[#64748B]" id="dash-subtitle">Overview of your academic portfolio</p>
+                            <h1 class="text-2xl font-bold text-[#0A1628] font-display">Dashboard</h1>
+                            <p class="text-[14px] text-[#6B7A8F]" id="dash-subtitle">Overview of your academic portfolio</p>
                         </div>
-                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                        <button class="btn-primary" onclick="openAddSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">add</span>
-                            <span>Add Subject</span>
+                            Add Subject
                         </button>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
                     <div class="card p-5 mb-6" id="announcements-section">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
-                            📢 Announcements
+                        <h3 class="font-display font-semibold text-[#0A1628] mb-3 flex items-center gap-2 text-[15px]">
+                            <span class="material-symbols-outlined text-[22px] text-[#D4A745]">campaign</span>
+                            Announcements
                         </h3>
                         <div id="announcements-list" class="space-y-2"></div>
                         <div id="announcement-admin-actions" class="mt-3 hidden">
-                            <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAnnouncementModal()">
+                            <button class="btn-secondary text-[12px]" onclick="openAnnouncementModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Post Announcement
                             </button>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="card p-5">
-                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">event_available</span>
+                            <h3 class="font-display font-semibold text-[#0A1628] mb-3 flex items-center gap-2 text-[15px]">
+                                <span class="material-symbols-outlined text-[22px] text-[#2563EB]">event_available</span>
                                 Today's Classes
                             </h3>
                             <div id="dash-today" class="space-y-2"></div>
                         </div>
                         <div class="card p-5">
-                            <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">pending_actions</span>
+                            <h3 class="font-display font-semibold text-[#0A1628] mb-3 flex items-center gap-2 text-[15px]">
+                                <span class="material-symbols-outlined text-[22px] text-[#2563EB]">pending_actions</span>
                                 Recent Activity
                             </h3>
                             <div id="dash-activity" class="space-y-2"></div>
@@ -1316,12 +1421,12 @@
                 <div id="view-my-subjects" class="view-section hidden">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">My Subjects</h1>
-                            <p class="text-[14px] text-[#64748B]">Manage all subjects in your department</p>
+                            <h1 class="text-2xl font-bold text-[#0A1628] font-display">My Subjects</h1>
+                            <p class="text-[14px] text-[#6B7A8F]">Manage all subjects in your department</p>
                         </div>
-                        <button class="btn-secondary flex items-center gap-2" onclick="openAddSubjectModal()">
+                        <button class="btn-primary" onclick="openAddSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">add</span>
-                            <span>Add Subject</span>
+                            Add Subject
                         </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid"></div>
@@ -1330,17 +1435,17 @@
                 <!-- ===== SUBJECT DETAIL ===== -->
                 <div id="view-subject-detail" class="view-section hidden">
                     <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                        <button class="btn-ghost flex items-center gap-2" onclick="goBackToSubjects()">
+                        <button class="btn-ghost" onclick="goBackToSubjects()">
                             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                            <span>Back to Subjects</span>
+                            Back to Subjects
                         </button>
-                        <button class="btn-ghost flex items-center gap-2" onclick="openEditSubjectModal()">
+                        <button class="btn-ghost" onclick="openEditSubjectModal()">
                             <span class="material-symbols-outlined text-[18px]">edit</span>
-                            <span>Edit Subject</span>
+                            Edit Subject
                         </button>
                     </div>
                     <div id="subject-detail-header"></div>
-                    <div class="card p-3 mb-4 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
+                    <div class="card p-2 mb-4 flex items-center gap-1 overflow-x-auto" id="subject-tabs">
                         <button class="tab-btn active" data-tab="overview" onclick="switchSubjectTab('overview')">
                             <span class="material-symbols-outlined text-[16px]">info</span>Overview
                         </button>
@@ -1363,44 +1468,44 @@
                 <!-- ===== ATTENDANCE ===== -->
                 <div id="view-attendance" class="view-section hidden">
                     <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📋 Attendance</h1>
-                        <p class="text-[14px] text-[#64748B]">Mark student attendance date‑wise</p>
+                        <h1 class="text-2xl font-bold text-[#0A1628] font-display">Attendance</h1>
+                        <p class="text-[14px] text-[#6B7A8F]">Mark student attendance date‑wise</p>
                     </div>
                     <div class="card p-5">
                         <div class="flex flex-wrap items-end gap-4 mb-4">
-                            <div class="flex-1 min-w-[140px]">
-                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Select Subject</label>
-                                <select id="attendance-subject" class="date-picker w-full" style="min-width:auto;"></select>
+                            <div class="flex-1 min-w-[160px]">
+                                <label class="form-label">Select Subject</label>
+                                <select id="attendance-subject" class="form-select" style="min-width:auto;"></select>
                             </div>
-                            <div class="flex-1 min-w-[130px]">
-                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Date</label>
-                                <input type="date" id="attendance-date" class="date-picker w-full">
+                            <div class="flex-1 min-w-[150px]">
+                                <label class="form-label">Date</label>
+                                <input type="date" id="attendance-date" class="form-input">
                             </div>
                             <button class="btn-secondary flex-shrink-0" onclick="loadAttendance()">Load</button>
                         </div>
-                        <h3 class="font-semibold mb-2">Click roll numbers of ABSENT students</h3>
-                        <p class="text-[12px] text-[#64748B] mb-2" id="attendance-strength-info">Strength: --</p>
+                        <h3 class="font-semibold text-[15px] mb-1">Click roll numbers of <span class="text-[#DC2626]">ABSENT</span> students</h3>
+                        <p class="text-[12px] text-[#6B7A8F] mb-3" id="attendance-strength-info">Strength: --</p>
                         <div id="roll-grid" class="attendance-grid"></div>
                         <div class="attendance-controls">
-                            <button class="btn-success flex items-center gap-1" onclick="markAllPresent()">
-                                <span class="material-symbols-outlined text-[18px]">check_circle</span> ALL PRESENT
+                            <button class="btn-success" onclick="markAllPresent()">
+                                <span class="material-symbols-outlined text-[18px]">check_circle</span> All Present
                             </button>
-                            <button class="btn-danger flex items-center gap-1" onclick="markAllAbsent()">
-                                <span class="material-symbols-outlined text-[18px]">cancel</span> ALL ABSENT
+                            <button class="btn-danger" onclick="markAllAbsent()">
+                                <span class="material-symbols-outlined text-[18px]">cancel</span> All Absent
                             </button>
                             <div class="selected-info" id="selected-info">
                                 <strong>Selected Absent:</strong> None / All Present
                             </div>
-                            <button class="btn-secondary flex items-center gap-1" onclick="submitAttendance()">
-                                <span class="material-symbols-outlined text-[18px]">save</span> SUBMIT ATTENDANCE
+                            <button class="btn-secondary" onclick="submitAttendance()">
+                                <span class="material-symbols-outlined text-[18px]">save</span> Submit
                             </button>
                         </div>
                         <div class="mt-4">
-                            <button class="btn-ghost flex items-center gap-1" onclick="toggleHistory()">
+                            <button class="btn-ghost text-[13px]" onclick="toggleHistory()">
                                 <span class="material-symbols-outlined text-[18px]">history</span> Show History
                             </button>
                             <div id="attendance-history" style="display: none; margin-top: 16px;">
-                                <h4 class="font-semibold mb-2">Attendance History</h4>
+                                <h4 class="font-semibold text-[14px] mb-2">Attendance History</h4>
                                 <div id="history-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
                             </div>
                         </div>
@@ -1410,49 +1515,49 @@
                 <!-- ===== STUDENT DASHBOARD ===== -->
                 <div id="view-student" class="view-section hidden">
                     <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📘 Student Dashboard</h1>
-                        <p class="text-[14px] text-[#64748B]" id="student-subtitle">Browse subjects, attendance, and announcements</p>
+                        <h1 class="text-2xl font-bold text-[#0A1628] font-display">Student Dashboard</h1>
+                        <p class="text-[14px] text-[#6B7A8F]" id="student-subtitle">Browse subjects, attendance, and announcements</p>
                     </div>
                     <div class="card p-5 mb-6">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
-                            📢 Announcements
+                        <h3 class="font-display font-semibold text-[#0A1628] mb-3 flex items-center gap-2 text-[15px]">
+                            <span class="material-symbols-outlined text-[22px] text-[#D4A745]">campaign</span>
+                            Announcements
                         </h3>
                         <div id="student-announcements" class="space-y-2"></div>
                     </div>
                     <div class="card p-5 mb-6">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">fact_check</span>
-                            📋 My Attendance Records
+                        <h3 class="font-display font-semibold text-[#0A1628] mb-3 flex items-center gap-2 text-[15px]">
+                            <span class="material-symbols-outlined text-[22px] text-[#2563EB]">fact_check</span>
+                            My Attendance Records
                         </h3>
                         <div id="student-attendance-history" class="overflow-x-auto">
-                            <p class="text-[13px] text-[#64748B]">Loading attendance...</p>
+                            <p class="text-[13px] text-[#6B7A8F]">Loading attendance...</p>
                         </div>
                     </div>
-                    <h3 class="font-display font-semibold text-[#0F172A] mb-3">📚 Subjects</h3>
+                    <h3 class="font-display font-semibold text-[#0A1628] mb-3 text-[15px]">Subjects</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
                 </div>
 
-                <!-- ===== ADMIN: USER MANAGEMENT ===== -->
+                <!-- ===== ADMIN: USERS ===== -->
                 <div id="view-admin-users" class="view-section hidden">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">User Management</h1>
-                            <p class="text-[14px] text-[#64748B]">Manage all registered users</p>
+                            <h1 class="text-2xl font-bold text-[#0A1628] font-display">User Management</h1>
+                            <p class="text-[14px] text-[#6B7A8F]">Manage all registered users</p>
                         </div>
-                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold">Admin Only</span>
+                        <span class="badge-role admin text-[11px]">Admin Only</span>
                     </div>
-                    <div class="card p-4 overflow-x-auto">
-                        <table class="w-full text-left">
+                    <div class="card p-0 overflow-hidden overflow-x-auto">
+                        <table class="data-table">
                             <thead>
-                                <tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase">
-                                    <th class="p-3">User</th>
-                                    <th class="p-3">Email</th>
-                                    <th class="p-3">Role</th>
-                                    <th class="p-3">Semester</th>
-                                    <th class="p-3">Division</th>
-                                    <th class="p-3">Branch</th>
-                                    <th class="p-3 text-right">Actions</th>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Semester</th>
+                                    <th>Division</th>
+                                    <th>Branch</th>
+                                    <th class="text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-users-table"></tbody>
@@ -1464,23 +1569,23 @@
                 <div id="view-admin-settings" class="view-section hidden">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
-                            <h1 class="text-2xl font-bold text-[#0F172A] font-display">⚙️ Academic Settings</h1>
-                            <p class="text-[14px] text-[#64748B]">Manage academic year, semester type, branches, divisions, and semesters</p>
+                            <h1 class="text-2xl font-bold text-[#0A1628] font-display">Academic Settings</h1>
+                            <p class="text-[14px] text-[#6B7A8F]">Manage academic year, semester type, branches, divisions, and semesters</p>
                         </div>
-                        <span class="bg-[#FEF3C7] text-[#D97706] text-[12px] px-3 py-1 rounded-full font-semibold">Admin Only</span>
+                        <span class="badge-role admin text-[11px]">Admin Only</span>
                     </div>
 
                     <!-- Academic Year & Semester Type -->
-                    <div class="card p-5 mb-6 settings-section">
-                        <h3 class="font-display font-semibold text-[#0F172A] mb-4">Current Academic Settings</h3>
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0A1628] mb-4 text-[15px]">Current Academic Settings</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Academic Year</label>
-                                <input id="academic-year" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. 2025-26" />
+                                <label class="form-label">Academic Year</label>
+                                <input id="academic-year" type="text" class="form-input" placeholder="e.g. 2025-26" />
                             </div>
                             <div>
-                                <label class="text-[12px] font-semibold text-[#64748B] block mb-1">Semester Type</label>
-                                <select id="semester-type" class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded">
+                                <label class="form-label">Semester Type</label>
+                                <select id="semester-type" class="form-select">
                                     <option value="ODD">ODD</option>
                                     <option value="EVEN">EVEN</option>
                                     <option value="SUMMER">SUMMER</option>
@@ -1493,10 +1598,10 @@
                     </div>
 
                     <!-- Branches -->
-                    <div class="card p-5 mb-6 settings-section">
+                    <div class="card p-5 mb-6">
                         <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A]">Branches</h3>
-                            <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddBranchModal()">
+                            <h3 class="font-display font-semibold text-[#0A1628] text-[15px]">Branches</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openAddBranchModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Branch
                             </button>
                         </div>
@@ -1504,10 +1609,10 @@
                     </div>
 
                     <!-- Divisions -->
-                    <div class="card p-5 mb-6 settings-section">
+                    <div class="card p-5 mb-6">
                         <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A]">Divisions</h3>
-                            <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddDivisionModal()">
+                            <h3 class="font-display font-semibold text-[#0A1628] text-[15px]">Divisions</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openAddDivisionModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Division
                             </button>
                         </div>
@@ -1515,10 +1620,10 @@
                     </div>
 
                     <!-- Semesters -->
-                    <div class="card p-5 settings-section">
+                    <div class="card p-5">
                         <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 class="font-display font-semibold text-[#0F172A]">Semesters</h3>
-                            <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAddSemesterModal()">
+                            <h3 class="font-display font-semibold text-[#0A1628] text-[15px]">Semesters</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openAddSemesterModal()">
                                 <span class="material-symbols-outlined text-[16px]">add</span> Add Semester
                             </button>
                         </div>
@@ -1535,44 +1640,44 @@
 
         <!-- Subject Modal -->
         <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
-                    <h3 id="subject-modal-title" class="font-display font-bold text-[#0F172A]">Add Subject</h3>
-                    <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="closeSubjectModal()">
-                        <span class="material-symbols-outlined text-[20px]">close</span>
+            <div class="modal-content">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 id="subject-modal-title" class="font-display font-bold text-[#0A1628] text-[18px]">Add Subject</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeSubjectModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
                     </button>
                 </div>
-                <form id="subject-form" class="p-5 space-y-4" onsubmit="handleSubjectSubmit(event)">
+                <form id="subject-form" class="modal-body space-y-4" onsubmit="handleSubjectSubmit(event)">
                     <input type="hidden" id="subject-form-id" />
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Name *</label>
-                            <input id="subject-name" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. Engineering Mathematics" />
+                            <label class="form-label">Subject Name *</label>
+                            <input id="subject-name" required type="text" class="form-input" placeholder="e.g. Engineering Mathematics" />
                         </div>
                         <div>
-                            <label class="text-[12px] font-semibold text-[#64748B]">Subject Code *</label>
-                            <input id="subject-code" required type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. MA-101" />
+                            <label class="form-label">Subject Code *</label>
+                            <input id="subject-code" required type="text" class="form-input" placeholder="e.g. MA-101" />
                         </div>
                     </div>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
-                            <label class="text-[12px] font-semibold text-[#64748B]">Semester</label>
-                            <select id="subject-semester" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
+                            <label class="form-label">Semester</label>
+                            <select id="subject-semester" class="form-select"></select>
                         </div>
                         <div>
-                            <label class="text-[12px] font-semibold text-[#64748B]">Division</label>
-                            <select id="subject-division" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
+                            <label class="form-label">Division</label>
+                            <select id="subject-division" class="form-select"></select>
                         </div>
                         <div>
-                            <label class="text-[12px] font-semibold text-[#64748B]">Branch</label>
-                            <select id="subject-branch" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]"></select>
+                            <label class="form-label">Branch</label>
+                            <select id="subject-branch" class="form-select"></select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-[12px] font-semibold text-[#64748B]">Student Strength (Roll Numbers)</label>
-                        <input id="subject-strength" type="number" min="1" max="200" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. 58" value="58" />
+                        <label class="form-label">Student Strength</label>
+                        <input id="subject-strength" type="number" min="1" max="200" class="form-input" placeholder="e.g. 58" value="58" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9] flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Save Subject</button>
                     </div>
@@ -1580,16 +1685,21 @@
             </div>
         </div>
 
-        <!-- Add Branch Modal -->
+        <!-- Branch Modal -->
         <div id="branch-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Branch</h3>
-                <form onsubmit="handleAddBranch(event)">
-                    <div class="form-group">
-                        <label class="text-[12px] font-semibold text-[#64748B]">Branch Name *</label>
-                        <input id="new-branch" type="text" required class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. Artificial Intelligence" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Branch</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeBranchModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleAddBranch(event)">
+                    <div>
+                        <label class="form-label">Branch Name *</label>
+                        <input id="new-branch" type="text" required class="form-input" placeholder="e.g. Artificial Intelligence" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeBranchModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Add</button>
                     </div>
@@ -1597,16 +1707,21 @@
             </div>
         </div>
 
-        <!-- Add Division Modal -->
+        <!-- Division Modal -->
         <div id="division-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Division</h3>
-                <form onsubmit="handleAddDivision(event)">
-                    <div class="form-group">
-                        <label class="text-[12px] font-semibold text-[#64748B]">Division Name *</label>
-                        <input id="new-division" type="text" required class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. E" maxlength="2" style="text-transform:uppercase;" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Division</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeDivisionModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleAddDivision(event)">
+                    <div>
+                        <label class="form-label">Division Name *</label>
+                        <input id="new-division" type="text" required class="form-input" placeholder="e.g. E" maxlength="2" style="text-transform:uppercase;" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeDivisionModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Add</button>
                     </div>
@@ -1614,16 +1729,21 @@
             </div>
         </div>
 
-        <!-- Add Semester Modal -->
+        <!-- Semester Modal -->
         <div id="semester-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Semester</h3>
-                <form onsubmit="handleAddSemester(event)">
-                    <div class="form-group">
-                        <label class="text-[12px] font-semibold text-[#64748B]">Semester Label *</label>
-                        <input id="new-semester" type="text" required class="w-full px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded" placeholder="e.g. IX Semester" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Semester</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeSemesterModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleAddSemester(event)">
+                    <div>
+                        <label class="form-label">Semester Label *</label>
+                        <input id="new-semester" type="text" required class="form-input" placeholder="e.g. IX Semester" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeSemesterModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Add</button>
                     </div>
@@ -1633,32 +1753,42 @@
 
         <!-- Timetable Modal -->
         <div id="timetable-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Timetable Slot</h3>
-                <form class="space-y-3" onsubmit="handleTimetableSubmit(event)">
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Timetable Slot</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeTimetableModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleTimetableSubmit(event)">
                     <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-[12px] font-semibold">Day</label>
-                            <select id="tt-day" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                        <div>
+                            <label class="form-label">Day</label>
+                            <select id="tt-day" class="form-select">
                                 <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
                                 <option>Thursday</option><option>Friday</option><option>Saturday</option>
                             </select>
                         </div>
-                        <div><label class="text-[12px] font-semibold">Room</label>
-                            <input id="tt-room" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="E-204" />
+                        <div>
+                            <label class="form-label">Room</label>
+                            <input id="tt-room" type="text" class="form-input" placeholder="E-204" />
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-[12px] font-semibold">Start Time</label>
-                            <input id="tt-start" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="09:00 AM" />
+                        <div>
+                            <label class="form-label">Start Time</label>
+                            <input id="tt-start" type="text" class="form-input" placeholder="09:00 AM" />
                         </div>
-                        <div><label class="text-[12px] font-semibold">End Time</label>
-                            <input id="tt-end" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="10:00 AM" />
+                        <div>
+                            <label class="form-label">End Time</label>
+                            <input id="tt-end" type="text" class="form-input" placeholder="10:00 AM" />
                         </div>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Topic / Remarks</label>
-                        <input id="tt-topic" type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Lecture on ..." />
+                    <div>
+                        <label class="form-label">Topic / Remarks</label>
+                        <input id="tt-topic" type="text" class="form-input" placeholder="Lecture on ..." />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeTimetableModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Add Slot</button>
                     </div>
@@ -1668,32 +1798,42 @@
 
         <!-- Resource Modal -->
         <div id="resource-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Resource</h3>
-                <form class="space-y-3" onsubmit="handleResourceSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Resource Title *</label>
-                        <input id="res-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Calculus Notes" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Resource</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeResourceModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleResourceSubmit(event)">
+                    <div>
+                        <label class="form-label">Resource Title *</label>
+                        <input id="res-title" required type="text" class="form-input" placeholder="e.g. Calculus Notes" />
                     </div>
-                    <div><label class="text-[12px] font-semibold">Resource Type</label>
-                        <select id="res-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                    <div>
+                        <label class="form-label">Resource Type</label>
+                        <select id="res-type" class="form-select">
                             <option value="notes">Notes</option><option value="assignment">Assignment</option>
                             <option value="question-paper">Question Paper</option><option value="video">Video</option>
                             <option value="presentation">Presentation</option><option value="reference">Reference</option>
                         </select>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Description</label>
-                        <textarea id="res-desc" rows="2" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Brief description..."></textarea>
+                    <div>
+                        <label class="form-label">Description</label>
+                        <textarea id="res-desc" rows="2" class="form-textarea" placeholder="Brief description..."></textarea>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="res-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                    <div>
+                        <label class="form-label">Link Type</label>
+                        <select id="res-link-type" class="form-select">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link URL *</label>
-                        <input id="res-link" required type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    <div>
+                        <label class="form-label">Link URL *</label>
+                        <input id="res-link" required type="url" class="form-input" placeholder="https://..." />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeResourceModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Save</button>
                     </div>
@@ -1703,25 +1843,34 @@
 
         <!-- Note Modal -->
         <div id="note-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Add Note</h3>
-                <form class="space-y-3" onsubmit="handleNoteSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Note Title *</label>
-                        <input id="note-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Lecture 1 Summary" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Add Note</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeNoteModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleNoteSubmit(event)">
+                    <div>
+                        <label class="form-label">Note Title *</label>
+                        <input id="note-title" required type="text" class="form-input" placeholder="e.g. Lecture 1 Summary" />
                     </div>
-                    <div><label class="text-[12px] font-semibold">Content</label>
-                        <textarea id="note-content" rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write your note..."></textarea>
+                    <div>
+                        <label class="form-label">Content</label>
+                        <textarea id="note-content" rows="3" class="form-textarea" placeholder="Write your note..."></textarea>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="note-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                    <div>
+                        <label class="form-label">Link Type</label>
+                        <select id="note-link-type" class="form-select">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link URL</label>
-                        <input id="note-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    <div>
+                        <label class="form-label">Link URL</label>
+                        <input id="note-link" type="url" class="form-input" placeholder="https://..." />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeNoteModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Save</button>
                     </div>
@@ -1731,22 +1880,30 @@
 
         <!-- Syllabus Modal -->
         <div id="syllabus-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Edit Syllabus</h3>
-                <form class="space-y-3" onsubmit="handleSyllabusSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Syllabus Content</label>
-                        <textarea id="syl-content" rows="4" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Enter syllabus details..."></textarea>
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Edit Syllabus</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeSyllabusModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleSyllabusSubmit(event)">
+                    <div>
+                        <label class="form-label">Syllabus Content</label>
+                        <textarea id="syl-content" rows="4" class="form-textarea" placeholder="Enter syllabus details..."></textarea>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link Type</label>
-                        <select id="syl-link-type" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                    <div>
+                        <label class="form-label">Link Type</label>
+                        <select id="syl-link-type" class="form-select">
                             <option value="google-drive">Google Drive</option><option value="google-sheet">Google Sheet</option>
                             <option value="web-url">Web URL</option>
                         </select>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Link URL</label>
-                        <input id="syl-link" type="url" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="https://..." />
+                    <div>
+                        <label class="form-label">Link URL</label>
+                        <input id="syl-link" type="url" class="form-input" placeholder="https://..." />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeSyllabusModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Save</button>
                     </div>
@@ -1756,14 +1913,20 @@
 
         <!-- Forgot Password Modal -->
         <div id="forgot-password-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">Reset Password</h3>
-                <p class="text-[13px] text-[#64748B] mb-4">Enter your email address and we'll send you a password reset link.</p>
-                <form class="space-y-3" onsubmit="handleForgotPasswordSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Email Address</label>
-                        <input id="forgot-email" type="email" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="you@example.com" required />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Reset Password</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeForgotPasswordModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleForgotPasswordSubmit(event)">
+                    <p class="text-[13px] text-[#6B7A8F]">Enter your email address and we'll send you a password reset link.</p>
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <input id="forgot-email" type="email" class="form-input" placeholder="you@example.com" required />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeForgotPasswordModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Send Reset Link</button>
                     </div>
@@ -1773,23 +1936,31 @@
 
         <!-- Announcement Modal -->
         <div id="announcement-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
-                <h3 class="font-display font-bold text-[#0F172A] mb-3">📢 Post Announcement</h3>
-                <form class="space-y-3" onsubmit="handleAnnouncementSubmit(event)">
-                    <div><label class="text-[12px] font-semibold">Title *</label>
-                        <input id="ann-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Exam Schedule Update" />
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#0A1628] text-[18px]">Post Announcement</h3>
+                    <button class="p-1 rounded hover:bg-[#F1F5F9] transition" onclick="closeAnnouncementModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleAnnouncementSubmit(event)">
+                    <div>
+                        <label class="form-label">Title *</label>
+                        <input id="ann-title" required type="text" class="form-input" placeholder="e.g. Exam Schedule Update" />
                     </div>
-                    <div><label class="text-[12px] font-semibold">Content *</label>
-                        <textarea id="ann-content" required rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write announcement..."></textarea>
+                    <div>
+                        <label class="form-label">Content *</label>
+                        <textarea id="ann-content" required rows="3" class="form-textarea" placeholder="Write announcement..."></textarea>
                     </div>
-                    <div><label class="text-[12px] font-semibold">Target Audience</label>
-                        <select id="ann-target" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                    <div>
+                        <label class="form-label">Target Audience</label>
+                        <select id="ann-target" class="form-select">
                             <option value="all">All (Teachers & Students)</option>
                             <option value="teachers">Teachers Only</option>
                             <option value="students">Students Only</option>
                         </select>
                     </div>
-                    <div class="flex justify-end gap-2 pt-2 flex-wrap">
+                    <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeAnnouncementModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Post</button>
                     </div>
@@ -1800,7 +1971,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCRIPTS -->
+    <!-- SCRIPTS (same logic, enhanced UI) -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -1869,7 +2040,7 @@
         }
 
         // ============================================================
-        //  ACADEMIC SETTINGS (Admin controlled)
+        //  ACADEMIC SETTINGS
         // ============================================================
 
         const ACADEMIC_YEAR_KEY = 'bec_academic_year';
@@ -1957,12 +2128,9 @@
             const divisions = getDivisions();
             const semesters = getSemesters();
 
-            // Signup form
             populateSelect('signup-semester', semesters, semesters[0]);
             populateSelect('signup-division', divisions, divisions[0]);
             populateSelect('signup-branch', branches, branches[0]);
-
-            // Subject form
             populateSelect('subject-semester', semesters, semesters[0]);
             populateSelect('subject-division', divisions, divisions[0]);
             populateSelect('subject-branch', branches, branches[0]);
@@ -1971,7 +2139,6 @@
         function onSemesterChange() {
             const sem = parseInt(document.getElementById('signup-semester').selectedIndex) + 1;
             const branchGroup = document.getElementById('branch-group');
-            // Show branch only for 3rd semester and above (index >= 2)
             if (sem >= 3) {
                 branchGroup.classList.add('open');
             } else {
@@ -1994,7 +2161,6 @@
             selectRole('teacher');
             populateAcademicDropdowns();
             onSemesterChange();
-            // Disable fields for teacher by default
             toggleSignupFields('teacher');
         }
 
@@ -2018,14 +2184,12 @@
                 division.value = '';
                 branch.value = '';
             } else {
-                // Restore first options
                 const semesters = getSemesters();
                 const divisions = getDivisions();
                 const branches = getBranches();
                 if (semesters.length) semester.value = semesters[0];
                 if (divisions.length) division.value = divisions[0];
                 if (branches.length) branch.value = branches[0];
-                // Also trigger onSemesterChange to show/hide branch based on semester
                 onSemesterChange();
             }
         }
@@ -2057,27 +2221,24 @@
             let division = document.getElementById('signup-division').value;
             let branch = document.getElementById('signup-branch').value;
 
-            // For teacher, we ignore semester, division, branch
             if (role === 'teacher') {
                 semester = '';
                 division = '';
                 branch = '';
             } else {
-                // Student: require semester and division always
                 if (!semester || !division) {
                     showToast('Please select Semester and Division.', 'error');
                     return;
                 }
-                // Determine if branch is required (3rd semester and above)
                 const semesters = getSemesters();
                 const semIndex = semesters.indexOf(semester);
-                const isLowerSemester = semIndex < 2; // 1st or 2nd semester
+                const isLowerSemester = semIndex < 2;
                 if (!isLowerSemester && !branch) {
                     showToast('Please select Branch for 3rd semester and above.', 'error');
                     return;
                 }
                 if (isLowerSemester) {
-                    branch = ''; // set empty for lower semesters
+                    branch = '';
                 }
             }
 
@@ -2124,16 +2285,10 @@
         function handleForgotPasswordSubmit(e) {
             e.preventDefault();
             const email = document.getElementById('forgot-email').value.trim();
-            if (!email) {
-                showToast('Please enter your email address.', 'error');
-                return;
-            }
+            if (!email) { showToast('Please enter your email address.', 'error'); return; }
             const users = getUsers();
             const user = users.find(u => u.email === email);
-            if (!user) {
-                showToast('No account found with this email address.', 'error');
-                return;
-            }
+            if (!user) { showToast('No account found with this email address.', 'error'); return; }
             showToast('Your password is: ' + user.password + ' (reset link sent to your email)', 'info');
             closeForgotPasswordModal();
         }
@@ -2150,9 +2305,8 @@
             });
             document.getElementById('forgot-email').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') document.querySelector('#forgot-password-modal form').dispatchEvent(new Event(
-                    'submit'));
+                'submit'));
             });
-            // Semester change listener
             document.getElementById('signup-semester').addEventListener('change', onSemesterChange);
             populateAcademicDropdowns();
         });
@@ -2161,7 +2315,6 @@
             clearSession();
             document.getElementById('app-wrapper').classList.remove('show');
             document.getElementById('auth-container').classList.remove('hidden');
-            // Close sidebar on logout
             if (window.innerWidth <= 768) {
                 document.querySelector('.sidebar-fixed').classList.remove('open');
                 document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -2170,15 +2323,13 @@
         }
 
         // ============================================================
-        //  SIDEBAR TOGGLE (mobile)
+        //  SIDEBAR TOGGLE
         // ============================================================
         function toggleSidebar(forceState) {
             const sidebar = document.querySelector('.sidebar-fixed');
             const backdrop = document.getElementById('sidebar-backdrop');
             const isOpen = sidebar.classList.contains('open');
-
             const newState = forceState !== undefined ? forceState : !isOpen;
-
             if (newState) {
                 sidebar.classList.add('open');
                 backdrop.classList.add('open');
@@ -2190,7 +2341,6 @@
             }
         }
 
-        // Close sidebar on resize to desktop
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
                 const sidebar = document.querySelector('.sidebar-fixed');
@@ -2202,96 +2352,22 @@
         });
 
         // ============================================================
-        //  APP INIT
+        //  TOAST
         // ============================================================
+        let toastTimer = null;
 
-        function initApp() {
-            const user = getCurrentUser();
-            if (!user) {
-                document.getElementById('auth-container').classList.remove('hidden');
-                document.getElementById('app-wrapper').classList.remove('show');
-                return;
-            }
-
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-wrapper').classList.add('show');
-
-            const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-            document.getElementById('sidebar-avatar').textContent = initial;
-            document.getElementById('sidebar-name').textContent = user.name;
-            const roleLabel = user.role === 'admin' ? 'Administrator' : user.role === 'teacher' ? 'Faculty Guide' : 'Student';
-            document.getElementById('sidebar-role').textContent = roleLabel;
-            document.getElementById('sidebar-academic').textContent =
-                `${user.semester || '—'} · Div ${user.division || '—'} ${user.branch ? '· ' + user.branch : ''}`;
-            document.getElementById('header-user').textContent = user.name;
-            document.getElementById('header-avatar').textContent = initial;
-
-            const nav = document.getElementById('sidebar-nav');
-            let links = '';
-            if (user.role === 'admin') {
-                links = `
-                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-                    </a>
-                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-                    </a>
-                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-                    </a>
-                    <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
-                        <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
-                    </a>
-                    <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
-                        <span class="material-symbols-outlined text-[18px]">people</span><span>User Management</span>
-                    </a>
-                    <a class="sidebar-link" data-view="admin-settings" href="#" onclick="switchView('admin-settings')">
-                        <span class="material-symbols-outlined text-[18px]">settings</span><span>Settings</span>
-                    </a>
-                `;
-            } else if (user.role === 'teacher') {
-                links = `
-                    <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span>
-                    </a>
-                    <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
-                        <span class="material-symbols-outlined text-[18px]">auto_stories</span><span>My Subjects</span>
-                    </a>
-                    <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
-                        <span class="material-symbols-outlined text-[18px]">fact_check</span><span>Attendance</span>
-                    </a>
-                `;
-            } else { // student
-                links = `
-                    <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
-                        <span class="material-symbols-outlined text-[18px]">dashboard</span><span>Student Dashboard</span>
-                    </a>
-                `;
-            }
-            nav.innerHTML = links;
-
-            loadData();
-            loadAnnouncements();
-            loadAttendanceData();
-            populateAcademicDropdowns();
-            if (user.role === 'student') {
-                switchView('student');
-            } else {
-                switchView('dashboard');
-            }
-
-            // Close sidebar after navigation on mobile
-            document.querySelectorAll('.sidebar-link').forEach(el => {
-                el.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar(false);
-                    }
-                });
-            });
+        function showToast(message, type = 'info') {
+            const el = document.getElementById('toast');
+            el.textContent = message;
+            el.className = 'toast ' + type;
+            void el.offsetWidth;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         // ============================================================
-        //  SUBJECT DATA
+        //  APP INIT
         // ============================================================
 
         let subjects = [];
@@ -2353,19 +2429,19 @@
             const listEl = document.getElementById('announcements-list');
             if (listEl) {
                 if (filtered.length === 0) {
-                    listEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements yet.</p>';
+                    listEl.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No announcements yet.</p>';
                 } else {
                     listEl.innerHTML = filtered.slice(0, 5).map(a => `
-                        <div class="announcement-item">
-                            <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
-                            <div class="text-[13px] text-[#334155]">${a.content}</div>
-                            <div class="meta flex items-center gap-3 mt-1 flex-wrap">
-                                <span>📅 ${a.date}</span>
-                                <span>👤 ${a.author}</span>
-                                ${a.target !== 'all' ? `<span class="bg-[#F1F5F9] px-2 py-0.5 rounded text-[10px]">${a.target}</span>` : ''}
+                            <div class="announcement-item">
+                                <div class="font-semibold text-[14px] text-[#0A1628]">${a.title}</div>
+                                <div class="text-[13px] text-[#1E293B]">${a.content}</div>
+                                <div class="meta flex items-center gap-3 mt-1 flex-wrap">
+                                    <span>📅 ${a.date}</span>
+                                    <span>👤 ${a.author}</span>
+                                    ${a.target !== 'all' ? `<span class="bg-[#F1F5F9] px-2 py-0.5 rounded text-[10px] font-semibold text-[#6B7A8F]">${a.target}</span>` : ''}
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `).join('');
                 }
             }
 
@@ -2373,19 +2449,19 @@
             if (studentAnnEl) {
                 const studentFiltered = announcements.filter(a => a.target === 'all' || a.target === 'student');
                 if (studentFiltered.length === 0) {
-                    studentAnnEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements for students.</p>';
+                    studentAnnEl.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No announcements for students.</p>';
                 } else {
                     studentAnnEl.innerHTML = studentFiltered.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
                         .map(a => `
-                            <div class="announcement-item">
-                                <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
-                                <div class="text-[13px] text-[#334155]">${a.content}</div>
-                                <div class="meta flex items-center gap-3 mt-1 flex-wrap">
-                                    <span>📅 ${a.date}</span>
-                                    <span>👤 ${a.author}</span>
+                                <div class="announcement-item">
+                                    <div class="font-semibold text-[14px] text-[#0A1628]">${a.title}</div>
+                                    <div class="text-[13px] text-[#1E293B]">${a.content}</div>
+                                    <div class="meta flex items-center gap-3 mt-1 flex-wrap">
+                                        <span>📅 ${a.date}</span>
+                                        <span>👤 ${a.author}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        `).join('');
+                            `).join('');
                 }
             }
 
@@ -2427,21 +2503,6 @@
             renderAnnouncements();
             if (currentView === 'student') renderStudentView();
             showToast('Announcement posted!', 'success');
-        }
-
-        // ============================================================
-        //  TOAST
-        // ============================================================
-        let toastTimer = null;
-
-        function showToast(message, type = 'info') {
-            const el = document.getElementById('toast');
-            el.textContent = message;
-            el.className = 'toast ' + type;
-            void el.offsetWidth;
-            el.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         // ============================================================
@@ -2490,7 +2551,6 @@
                 document.getElementById('announcement-admin-actions').classList.add('hidden');
             }
 
-            // Close sidebar on mobile after view change
             if (window.innerWidth <= 768) {
                 toggleSidebar(false);
             }
@@ -2516,33 +2576,58 @@
                 totalSlots += (s.timetable || []).length;
             });
             stats.innerHTML = `
-                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Subjects</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSubjects}</div></div>
-                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Total Students</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalStudents}</div></div>
-                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Resources</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalResources}</div></div>
-                <div class="card p-4"><div class="text-[12px] text-[#64748B] font-semibold uppercase">Timetable Slots</div><div class="text-3xl font-bold font-display text-[#0F172A]">${totalSlots}</div></div>
-            `;
+                    <div class="card-stat">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-[11px] font-semibold text-[#6B7A8F] uppercase tracking-wider">Total Subjects</div>
+                            <div class="text-3xl font-bold font-display text-[#0A1628] mt-1">${totalSubjects}</div></div>
+                            <div class="stat-icon blue"><span class="material-symbols-outlined">auto_stories</span></div>
+                        </div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-[11px] font-semibold text-[#6B7A8F] uppercase tracking-wider">Total Students</div>
+                            <div class="text-3xl font-bold font-display text-[#0A1628] mt-1">${totalStudents}</div></div>
+                            <div class="stat-icon green"><span class="material-symbols-outlined">groups</span></div>
+                        </div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-[11px] font-semibold text-[#6B7A8F] uppercase tracking-wider">Resources</div>
+                            <div class="text-3xl font-bold font-display text-[#0A1628] mt-1">${totalResources}</div></div>
+                            <div class="stat-icon gold"><span class="material-symbols-outlined">folder_shared</span></div>
+                        </div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="flex items-center justify-between">
+                            <div><div class="text-[11px] font-semibold text-[#6B7A8F] uppercase tracking-wider">Timetable Slots</div>
+                            <div class="text-3xl font-bold font-display text-[#0A1628] mt-1">${totalSlots}</div></div>
+                            <div class="stat-icon purple"><span class="material-symbols-outlined">calendar_today</span></div>
+                        </div>
+                    </div>
+                `;
             const todayEl = document.getElementById('dash-today');
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const todayName = days[new Date().getDay() - 1] || 'Monday';
             let todayHtml = '';
             subjects.forEach(s => {
                 (s.timetable || []).filter(t => t.day === todayName).forEach(t => {
-                    todayHtml += `<div class="flex items-center justify-between bg-[#F8FAFC] p-2 rounded flex-wrap gap-1">
-                        <div><div class="font-semibold text-[14px]">${s.name}</div><div class="text-[12px] text-[#64748B]">${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div></div>
-                        <span class="text-[12px] font-bold text-[#1E40AF]">${t.topic || ''}</span>
-                    </div>`;
+                    todayHtml += `<div class="flex items-center justify-between bg-[#FAFCFF] p-3 rounded-lg border border-[#F1F5F9] flex-wrap gap-1">
+                            <div><div class="font-semibold text-[14px] text-[#0A1628]">${s.name}</div>
+                            <div class="text-[12px] text-[#6B7A8F]">${t.start || ''} - ${t.end || ''} · ${t.room || ''}</div></div>
+                            <span class="text-[12px] font-semibold text-[#2563EB]">${t.topic || ''}</span>
+                        </div>`;
                 });
             });
-            todayEl.innerHTML = todayHtml || '<p class="text-[14px] text-[#64748B]">No classes today.</p>';
+            todayEl.innerHTML = todayHtml || '<p class="text-[14px] text-[#6B7A8F]">No classes today.</p>';
             const actEl = document.getElementById('dash-activity');
             let actHtml = '';
             subjects.slice(0, 5).forEach(s => {
-                actHtml += `<div class="flex items-center gap-2 p-2 bg-[#F8FAFC] rounded flex-wrap">
-                    <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
-                    <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) · ${s.strength || 58} students</span>
-                </div>`;
+                actHtml += `<div class="flex items-center gap-3 p-2.5 bg-[#FAFCFF] rounded-lg border border-[#F1F5F9]">
+                        <span class="w-2 h-2 rounded-full bg-[#2563EB]"></span>
+                        <span class="text-[13px] text-[#1E293B]">${s.name} <span class="text-[#6B7A8F] text-[12px]">(${s.code})</span> · ${s.strength || 58} students</span>
+                    </div>`;
             });
-            actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#64748B]">No activity yet.</p>';
+            actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#6B7A8F]">No activity yet.</p>';
             renderAnnouncements();
         }
 
@@ -2553,26 +2638,30 @@
             const grid = document.getElementById('subjects-grid');
             if (subjects.length === 0) {
                 grid.innerHTML =
-                    `<div class="col-span-3 text-center py-12 text-[#64748B]">No subjects yet. Click "Add Subject" to begin.</div>`;
+                    `<div class="col-span-3 text-center py-16 text-[#6B7A8F]">No subjects yet. Click "Add Subject" to begin.</div>`;
                 return;
             }
             grid.innerHTML = subjects.map(s => `
-                <div class="card p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openSubjectDetail('${s.id}')">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="font-code-num font-bold text-[#1E40AF] text-[14px]">${s.code}</span>
-                        <div class="flex gap-1">
-                            <button class="p-1 rounded hover:bg-[#F1F5F9]" onclick="event.stopPropagation(); openEditSubjectModal('${s.id}')"><span class="material-symbols-outlined text-[16px]">edit</span></button>
-                            <button class="p-1 rounded hover:bg-red-50 text-red-500" onclick="event.stopPropagation(); deleteSubject('${s.id}')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    <div class="subject-card" onclick="openSubjectDetail('${s.id}')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="code-badge">${s.code}</span>
+                            <div class="flex gap-1">
+                                <button class="p-1.5 rounded hover:bg-[#F1F5F9] transition" onclick="event.stopPropagation(); openEditSubjectModal('${s.id}')">
+                                    <span class="material-symbols-outlined text-[16px] text-[#6B7A8F]">edit</span>
+                                </button>
+                                <button class="p-1.5 rounded hover:bg-red-50 transition" onclick="event.stopPropagation(); deleteSubject('${s.id}')">
+                                    <span class="material-symbols-outlined text-[16px] text-[#DC2626]">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-display font-semibold text-[#0A1628] text-[16px]">${s.name}</h3>
+                        <p class="text-[12px] text-[#6B7A8F] mt-1">${s.semester || '—'} · ${s.division || '—'} · ${s.branch || '—'} · <span class="font-medium text-[#0A1628]">🧑‍🎓 ${s.strength || 58}</span></p>
+                        <div class="flex items-center gap-2 mt-3 text-[11px] text-[#6B7A8F] flex-wrap">
+                            <span class="bg-[#F1F5F9] px-2.5 py-0.5 rounded-full font-medium">${(s.timetable||[]).length} slots</span>
+                            <span class="bg-[#F1F5F9] px-2.5 py-0.5 rounded-full font-medium">${(s.resources||[]).length} resources</span>
                         </div>
                     </div>
-                    <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
-                    <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.division || '—'} · ${s.branch || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
-                    <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B] flex-wrap">
-                        <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
-                        <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         // ============================================================
@@ -2590,8 +2679,6 @@
             if (link) link.classList.add('active');
             document.getElementById('page-title').textContent = subj.name;
             renderSubjectDetail();
-
-            // Close sidebar on mobile
             if (window.innerWidth <= 768) {
                 toggleSidebar(false);
             }
@@ -2605,26 +2692,26 @@
             const s = getCurrentSubject();
             if (!s) {
                 document.getElementById('subject-detail-header').innerHTML =
-                    '<div class="card p-5 text-center text-[#64748B]">Subject not found.</div>';
+                    '<div class="card p-5 text-center text-[#6B7A8F]">Subject not found.</div>';
                 document.getElementById('subject-tab-content').innerHTML = '';
                 return;
             }
             const header = document.getElementById('subject-detail-header');
             header.innerHTML = `
-                <div class="card p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1 flex-wrap">
-                            <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
-                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
-                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.division || '—'}</span>
-                            <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.branch || '—'}</span>
-                            <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
+                    <div class="card p-5 mb-4 flex flex-col md:flex-row justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <span class="code-badge">${s.code}</span>
+                                <span class="meta-tag">${s.semester || '—'}</span>
+                                <span class="meta-tag">${s.division || '—'}</span>
+                                <span class="meta-tag">${s.branch || '—'}</span>
+                                <span class="bg-[#EFF6FF] text-[#2563EB] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">🧑‍🎓 ${s.strength || 58}</span>
+                            </div>
+                            <h1 class="text-2xl font-bold font-display text-[#0A1628]">${s.name}</h1>
+                            <p class="text-[13px] text-[#6B7A8F] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
                         </div>
-                        <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
-                        <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
                     </div>
-                </div>
-            `;
+                `;
             document.querySelectorAll('#subject-tabs .tab-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.tab === currentTab) btn.classList.add('active');
@@ -2641,110 +2728,109 @@
             const s = getCurrentSubject();
             if (!s) {
                 document.getElementById('subject-tab-content').innerHTML =
-                    '<div class="card p-4 text-center text-[#64748B]">Subject not available.</div>';
+                    '<div class="card p-4 text-center text-[#6B7A8F]">Subject not available.</div>';
                 return;
             }
             const el = document.getElementById('subject-tab-content');
             if (currentTab === 'overview') {
                 el.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="card p-4"><h3 class="font-semibold mb-2">Subject Info</h3>
-                        <p class="text-[13px] text-[#64748B]">Name: <b>${s.name}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Division: <b>${s.division || '—'}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Branch: <b>${s.branch || '—'}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
-                    </div>
-                    <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
-                        <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Notes: <b>${(s.notes||[]).length}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Resources: <b>${(s.resources||[]).length}</b></p>
-                        <p class="text-[13px] text-[#64748B]">Syllabus: <b>${s.syllabus ? 'Set' : 'Not set'}</b></p>
-                    </div>
-                </div>`;
+                        <div class="card p-5"><h3 class="font-semibold text-[#0A1628] mb-2 text-[15px]">Subject Info</h3>
+                            <div class="space-y-1 text-[13px] text-[#1E293B]"><p><span class="text-[#6B7A8F]">Name:</span> <b>${s.name}</b></p>
+                            <p><span class="text-[#6B7A8F]">Code:</span> <b>${s.code}</b></p>
+                            <p><span class="text-[#6B7A8F]">Semester:</span> <b>${s.semester || '—'}</b></p>
+                            <p><span class="text-[#6B7A8F]">Division:</span> <b>${s.division || '—'}</b></p>
+                            <p><span class="text-[#6B7A8F]">Branch:</span> <b>${s.branch || '—'}</b></p>
+                            <p><span class="text-[#6B7A8F]">Student Strength:</span> <b>${s.strength || 58}</b></p></div>
+                        </div>
+                        <div class="card p-5"><h3 class="font-semibold text-[#0A1628] mb-2 text-[15px]">Quick Stats</h3>
+                            <div class="space-y-1 text-[13px] text-[#1E293B]"><p><span class="text-[#6B7A8F]">Timetable slots:</span> <b>${(s.timetable||[]).length}</b></p>
+                            <p><span class="text-[#6B7A8F]">Notes:</span> <b>${(s.notes||[]).length}</b></p>
+                            <p><span class="text-[#6B7A8F]">Resources:</span> <b>${(s.resources||[]).length}</b></p>
+                            <p><span class="text-[#6B7A8F]">Syllabus:</span> <b>${s.syllabus ? 'Set' : 'Not set'}</b></p></div>
+                        </div>
+                    </div>`;
             } else if (currentTab === 'timetable') {
                 const slots = s.timetable || [];
-                el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold">Weekly Timetable</h3>
-                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
-                    </div>
-                    ${slots.length === 0 ? '<p class="text-[13px] text-[#64748B]">No timetable entries yet.</p>' : ''}
-                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="bg-[#F8FAFC] text-[#64748B] text-[11px] uppercase"><th class="p-2">Day</th><th class="p-2">Time</th><th class="p-2">Room</th><th class="p-2">Topic</th><th class="p-2 text-right">Actions</th></tr></thead><tbody>
-                    ${slots.map((t, i) => `<tr class="table-row"><td class="p-2 font-semibold">${t.day || ''}</td><td class="p-2">${t.start || ''} - ${t.end || ''}</td><td class="p-2">${t.room || ''}</td><td class="p-2">${t.topic || ''}</td><td class="p-2 text-right"><button class="p-1 text-red-500" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
-                    </tbody></table></div>
-                </div>`;
+                el.innerHTML = `<div class="card p-5">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                            <h3 class="font-semibold text-[#0A1628] text-[15px]">Weekly Timetable</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openTimetableModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Slot</button>
+                        </div>
+                        ${slots.length === 0 ? '<p class="text-[13px] text-[#6B7A8F]">No timetable entries yet.</p>' : ''}
+                        <div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Day</th><th>Time</th><th>Room</th><th>Topic</th><th class="text-right">Actions</th></tr></thead><tbody>
+                        ${slots.map((t, i) => `<tr><td class="font-semibold">${t.day || ''}</td><td>${t.start || ''} - ${t.end || ''}</td><td>${t.room || ''}</td><td>${t.topic || ''}</td><td class="text-right"><button class="p-1 text-[#DC2626] hover:text-[#B91C1C]" onclick="deleteTimetableSlot(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button></td></tr>`).join('')}
+                        </tbody></table></div>
+                    </div>`;
             } else if (currentTab === 'notes') {
                 const notes = s.notes || [];
-                el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold">Notes</h3>
-                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
-                    </div>
-                    ${notes.length === 0 ? '<p class="text-[13px] text-[#64748B]">No notes yet.</p>' : ''}
-                    <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
-                        <div><div class="font-semibold text-[14px]">${n.title || ''}</div><div class="text-[12px] text-[#64748B]">${n.content || ''}</div>
-                        ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">open_in_new</span>Open Link</a>` : ''}
+                el.innerHTML = `<div class="card p-5">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                            <h3 class="font-semibold text-[#0A1628] text-[15px]">Notes</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openNoteModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Note</button>
                         </div>
-                        <button class="p-1 text-red-500" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
-                    </div>`).join('')}
-                    </div>
-                </div>`;
+                        ${notes.length === 0 ? '<p class="text-[13px] text-[#6B7A8F]">No notes yet.</p>' : ''}
+                        <div class="space-y-2">${notes.map((n, i) => `<div class="bg-[#FAFCFF] p-3 rounded-lg border border-[#F1F5F9] flex items-center justify-between flex-wrap gap-2">
+                            <div><div class="font-semibold text-[14px] text-[#0A1628]">${n.title || ''}</div>
+                            <div class="text-[12px] text-[#6B7A8F]">${n.content || ''}</div>
+                            ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#2563EB] text-[12px] font-medium inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}
+                            </div>
+                            <button class="p-1 text-[#DC2626] hover:text-[#B91C1C]" onclick="deleteNote(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </div>`).join('')}
+                        </div>
+                    </div>`;
             } else if (currentTab === 'syllabus') {
-                el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold">Syllabus</h3>
-                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
-                    </div>
-                    ${s.syllabus ? `<p class="text-[13px] text-[#334155]">${s.syllabus.content || 'No content'}</p>
-                    ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#1E40AF] text-[13px] underline flex items-center gap-1 mt-2"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}` : '<p class="text-[13px] text-[#64748B]">No syllabus set.</p>'}
-                </div>`;
+                el.innerHTML = `<div class="card p-5">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                            <h3 class="font-semibold text-[#0A1628] text-[15px]">Syllabus</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openSyllabusModal()"><span class="material-symbols-outlined text-[16px]">edit</span>${s.syllabus ? 'Edit' : 'Add'}</button>
+                        </div>
+                        ${s.syllabus ? `<p class="text-[13px] text-[#1E293B]">${s.syllabus.content || 'No content'}</p>
+                        ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#2563EB] text-[13px] font-medium inline-flex items-center gap-1 mt-2"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Open Link</a>` : ''}` : '<p class="text-[13px] text-[#6B7A8F]">No syllabus set.</p>'}
+                    </div>`;
             } else if (currentTab === 'resources') {
                 const resources = s.resources || [];
-                el.innerHTML = `<div class="card p-4">
-                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 class="font-semibold">Resources</h3>
-                        <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
-                    </div>
-                    ${resources.length === 0 ? '<p class="text-[13px] text-[#64748B]">No resources yet.</p>' : ''}
-                    <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#F8FAFC] p-3 rounded flex items-center justify-between flex-wrap gap-2">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="resource-type-badge">${r.type || 'notes'}</span>
-                            <div><div class="font-semibold text-[14px]">${r.title || ''}</div><div class="text-[12px] text-[#64748B]">${r.description || ''}</div></div>
-                            <span class="link-type-badge">${r.linkType || 'web-url'}</span>
+                el.innerHTML = `<div class="card p-5">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                            <h3 class="font-semibold text-[#0A1628] text-[15px]">Resources</h3>
+                            <button class="btn-secondary text-[12px]" onclick="openResourceModal()"><span class="material-symbols-outlined text-[16px]">add</span>Add Resource</button>
                         </div>
-                        <div class="flex items-center gap-1">
-                            ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="p-1 text-[#1E40AF]"><span class="material-symbols-outlined text-[16px]">open_in_new</span></a>` : ''}
-                            <button class="p-1 text-red-500" onclick="deleteResource(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        ${resources.length === 0 ? '<p class="text-[13px] text-[#6B7A8F]">No resources yet.</p>' : ''}
+                        <div class="space-y-2">${resources.map((r, i) => `<div class="bg-[#FAFCFF] p-3 rounded-lg border border-[#F1F5F9] flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="resource-type-badge">${r.type || 'notes'}</span>
+                                <div><div class="font-semibold text-[14px] text-[#0A1628]">${r.title || ''}</div>
+                                <div class="text-[12px] text-[#6B7A8F]">${r.description || ''}</div></div>
+                                <span class="link-type-badge">${r.linkType || 'web-url'}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="p-1 text-[#2563EB] hover:bg-[#EFF6FF] rounded"><span class="material-symbols-outlined text-[16px]">open_in_new</span></a>` : ''}
+                                <button class="p-1 text-[#DC2626] hover:text-[#B91C1C]" onclick="deleteResource(${i})"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                            </div>
+                        </div>`).join('')}
                         </div>
-                    </div>`).join('')}
-                    </div>
-                </div>`;
+                    </div>`;
             }
         }
 
         // ============================================================
-        //  STUDENT VIEW (filter by semester, division, and branch only if >=3rd sem)
+        //  STUDENT VIEW
         // ============================================================
         function renderStudentView() {
             const user = getCurrentUser();
             if (!user) return;
 
-            // Update subtitle with student's info
             document.getElementById('student-subtitle').textContent =
                 `Showing subjects for ${user.branch || 'Common'} · ${user.semester || '—'} · Div ${user.division || '—'}`;
 
             renderAnnouncements();
 
-            // ── Determine if branch should be ignored ──
             const semesters = getSemesters();
             const studentSemester = user.semester;
             const studentDivision = user.division;
             const studentBranch = user.branch || '';
             const semIndex = semesters.indexOf(studentSemester);
-            const ignoreBranch = semIndex < 2; // true for 1st or 2nd semester
+            const ignoreBranch = semIndex < 2;
 
-            // ── Filter subjects ──
             const filteredSubjects = subjects.filter(s => {
                 const matchSemester = s.semester === studentSemester;
                 const matchDivision = s.division === studentDivision;
@@ -2755,96 +2841,87 @@
                 return matchSemester && matchDivision && matchBranch;
             });
 
-            // ── Render subjects with all teacher-posted content ──
             const el = document.getElementById('student-subjects');
             if (filteredSubjects.length === 0) {
                 el.innerHTML =
-                    `<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available for your ${ignoreBranch ? 'semester and division' : 'branch, semester, and division'}.</div>`;
+                    `<div class="col-span-2 text-center py-16 text-[#6B7A8F]">No subjects available for your ${ignoreBranch ? 'semester and division' : 'branch, semester, and division'}.</div>`;
             } else {
                 el.innerHTML = filteredSubjects.map(s => {
-                    // Build timetable HTML
                     let timetableHtml = '';
                     if (s.timetable && s.timetable.length > 0) {
                         timetableHtml = `
-                            <div class="mt-3">
-                                <span class="text-[12px] font-semibold">📅 Timetable:</span>
-                                ${s.timetable.map(t => `
-                                    <div class="text-[12px] text-[#64748B]">
-                                        <span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}
-                                        ${t.topic ? ` (${t.topic})` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
+                                <div class="mt-3">
+                                    <span class="text-[12px] font-semibold text-[#0A1628]">📅 Timetable:</span>
+                                    ${s.timetable.map(t => `
+                                        <div class="text-[12px] text-[#1E293B]">
+                                            <span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}
+                                            ${t.topic ? ` (${t.topic})` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
                     }
-
-                    // Build notes HTML
                     let notesHtml = '';
                     if (s.notes && s.notes.length > 0) {
                         notesHtml = `
-                            <div class="mt-3">
-                                <span class="text-[12px] font-semibold">📝 Notes:</span>
-                                ${s.notes.map(n => `
-                                    <div class="text-[12px] text-[#64748B]">
-                                        ${n.title || ''}
-                                        ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] underline ml-1">📄 Open</a>` : ''}
-                                        ${n.content ? `<div class="text-[11px] text-[#475569]">${n.content}</div>` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
+                                <div class="mt-3">
+                                    <span class="text-[12px] font-semibold text-[#0A1628]">📝 Notes:</span>
+                                    ${s.notes.map(n => `
+                                        <div class="text-[12px] text-[#1E293B]">
+                                            ${n.title || ''}
+                                            ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#2563EB] font-medium ml-1">📄 Open</a>` : ''}
+                                            ${n.content ? `<div class="text-[11px] text-[#6B7A8F]">${n.content}</div>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
                     }
-
-                    // Build syllabus HTML
                     let syllabusHtml = '';
                     if (s.syllabus) {
                         syllabusHtml = `
-                            <div class="mt-3">
-                                <span class="text-[12px] font-semibold">📖 Syllabus:</span>
-                                ${s.syllabus.content ? `<div class="text-[12px] text-[#334155]">${s.syllabus.content}</div>` : ''}
-                                ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline">🔗 Open Syllabus Link</a>` : ''}
-                            </div>
-                        `;
+                                <div class="mt-3">
+                                    <span class="text-[12px] font-semibold text-[#0A1628]">📖 Syllabus:</span>
+                                    ${s.syllabus.content ? `<div class="text-[12px] text-[#1E293B]">${s.syllabus.content}</div>` : ''}
+                                    ${s.syllabus.linkUrl ? `<a href="${s.syllabus.linkUrl}" target="_blank" class="text-[#2563EB] text-[12px] font-medium">🔗 Open Syllabus Link</a>` : ''}
+                                </div>
+                            `;
                     }
-
-                    // Build resources HTML
                     let resourcesHtml = '';
                     if (s.resources && s.resources.length > 0) {
                         resourcesHtml = `
-                            <div class="mt-3">
-                                <span class="text-[12px] font-semibold">🔗 Resources:</span>
-                                ${s.resources.map(r => `
-                                    <div class="text-[12px] text-[#64748B]">
-                                        ${r.title || ''}
-                                        ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] underline ml-1">📎 Open</a>` : ''}
-                                        ${r.description ? `<span class="text-[11px] text-[#475569]"> – ${r.description}</span>` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
+                                <div class="mt-3">
+                                    <span class="text-[12px] font-semibold text-[#0A1628]">🔗 Resources:</span>
+                                    ${s.resources.map(r => `
+                                        <div class="text-[12px] text-[#1E293B]">
+                                            ${r.title || ''}
+                                            ${r.linkUrl ? `<a href="${r.linkUrl}" target="_blank" class="text-[#2563EB] font-medium ml-1">📎 Open</a>` : ''}
+                                            ${r.description ? `<span class="text-[11px] text-[#6B7A8F]"> – ${r.description}</span>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
                     }
 
                     return `
-                        <div class="card p-5">
-                            <div class="flex items-center justify-between mb-2 flex-wrap gap-1">
-                                <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
-                                <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
+                            <div class="subject-card">
+                                <div class="flex items-center justify-between mb-2 flex-wrap gap-1">
+                                    <span class="code-badge">${s.code}</span>
+                                    <span class="meta-tag">${s.semester || '—'}</span>
+                                </div>
+                                <h3 class="font-display font-bold text-[#0A1628] text-[16px]">${s.name}</h3>
+                                <p class="text-[12px] text-[#6B7A8F]">${s.division || '—'} · ${s.branch || 'Common'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
+                                ${timetableHtml}
+                                ${notesHtml}
+                                ${syllabusHtml}
+                                ${resourcesHtml}
+                                ${(!s.timetable || s.timetable.length === 0) && (!s.notes || s.notes.length === 0) && (!s.syllabus) && (!s.resources || s.resources.length === 0) ? `
+                                    <div class="mt-3 text-[12px] text-[#6B7A8F]">No content available yet.</div>
+                                ` : ''}
                             </div>
-                            <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
-                            <p class="text-[12px] text-[#64748B]">${s.division || '—'} · ${s.branch || 'Common'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
-                            ${timetableHtml}
-                            ${notesHtml}
-                            ${syllabusHtml}
-                            ${resourcesHtml}
-                            ${(!s.timetable || s.timetable.length === 0) && (!s.notes || s.notes.length === 0) && (!s.syllabus) && (!s.resources || s.resources.length === 0) ? `
-                                <div class="mt-3 text-[12px] text-[#64748B]">No content available yet.</div>
-                            ` : ''}
-                        </div>
-                    `;
+                        `;
                 }).join('');
             }
 
-            // ── Filter attendance records ──
             const attEl = document.getElementById('student-attendance-history');
             if (attEl) {
                 const allRecords = [];
@@ -2852,7 +2929,6 @@
                     const rec = attendanceData[key];
                     const subject = subjects.find(s => s.id === rec.subjectId);
                     if (!subject) continue;
-                    // Apply same filtering logic
                     if (subject.semester !== studentSemester || subject.division !== studentDivision) continue;
                     if (!ignoreBranch && subject.branch !== studentBranch) continue;
                     const absentArr = rec.absent ? Array.from(rec.absent) : [];
@@ -2868,22 +2944,23 @@
                 allRecords.sort((a, b) => b.date.localeCompare(a.date));
 
                 if (allRecords.length === 0) {
-                    attEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No attendance records available for your subjects.</p>';
+                    attEl.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No attendance records available for your subjects.</p>';
                 } else {
-                    let html = `<div class="overflow-x-auto"><table class="attendance-history-table">
-                        <thead><tr><th>Date</th><th>Subject</th><th>Absent Roll Numbers</th><th>Present</th></tr></thead><tbody>`;
+                    let html = `<div class="overflow-x-auto"><table class="data-table">
+                            <thead><tr><th>Date</th><th>Subject</th><th>Absent Roll Numbers</th><th>Present</th></tr></thead><tbody>`;
                     allRecords.slice(0, 20).forEach(r => {
                         const absentStr = r.absent.length > 0 ? r.absent.sort((a, b) => a - b).join(', ') :
                             'None (All Present)';
                         html += `<tr>
-                            <td><strong>${r.date}</strong></td>
-                            <td><span class="font-code-num text-[#1E40AF]">${r.subjectCode}</span> ${r.subjectName}</td>
-                            <td><span class="absent-rolls">${absentStr}</span></td>
-                            <td><span class="badge badge-present">${r.presentCount}</span></td>
-                        </tr>`;
+                                <td><strong>${r.date}</strong></td>
+                                <td><span class="font-code-num text-[#2563EB]">${r.subjectCode}</span> ${r.subjectName}</td>
+                                <td><span class="absent-rolls">${absentStr}</span></td>
+                                <td><span class="badge-status present">${r.presentCount}</span></td>
+                            </tr>`;
                     });
                     html += '</tbody></table></div>';
-                    if (allRecords.length > 20) html += `<p class="text-[11px] text-[#64748B] mt-2">Showing last 20 records.</p>`;
+                    if (allRecords.length > 20) html +=
+                        `<p class="text-[11px] text-[#6B7A8F] mt-2">Showing last 20 records.</p>`;
                     attEl.innerHTML = html;
                 }
             }
@@ -2925,7 +3002,8 @@
 
         function renderAttendance() {
             const select = document.getElementById('attendance-subject');
-            select.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58} students)</option>`)
+            select.innerHTML = subjects.map(s =>
+                    `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58} students)</option>`)
                 .join('');
             if (subjects.length > 0) {
                 select.value = subjects[0].id;
@@ -2966,10 +3044,10 @@
             for (let i = 1; i <= total; i++) {
                 const isAbsent = selectedAbsent.has(i);
                 html += `
-                    <button class="roll-btn ${isAbsent ? 'absent' : ''}" onclick="toggleRoll(${i})">
-                        ${i}
-                    </button>
-                `;
+                        <button class="roll-btn ${isAbsent ? 'absent' : ''}" onclick="toggleRoll(${i})">
+                            ${i}
+                        </button>
+                    `;
             }
             grid.innerHTML = html;
         }
@@ -3026,7 +3104,8 @@
             const subject = subjects.find(s => s.id === subjectId);
             const strength = subject ? (subject.strength || 58) : 58;
             const presentCount = strength - selectedAbsent.size;
-            showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`, 'success');
+            showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`,
+                'success');
             if (document.getElementById('attendance-history').style.display !== 'none') renderHistory();
         }
 
@@ -3055,23 +3134,23 @@
                 }
             }
             if (records.length === 0) {
-                list.innerHTML = '<div class="text-sm text-[#64748B]">No attendance records for this subject.</div>';
+                list.innerHTML = '<div class="text-sm text-[#6B7A8F]">No attendance records for this subject.</div>';
                 return;
             }
             records.sort((a, b) => b.date.localeCompare(a.date));
             list.innerHTML = records.map(r => `
-                <div class="history-item">
-                    <div>
-                        <div class="date">📅 ${r.date}</div>
-                        <div class="text-xs text-[#64748B]">${r.absent.length} absent · ${r.presentCount} present</div>
+                    <div class="history-item">
+                        <div>
+                            <div class="date">📅 ${r.date}</div>
+                            <div class="text-xs text-[#6B7A8F]">${r.absent.length} absent · ${r.presentCount} present</div>
+                        </div>
+                        <div class="details">
+                            <span class="badge-status present">${r.presentCount} Present</span>
+                            <span class="badge-status absent">${r.absent.length} Absent</span>
+                            ${r.absent.length > 0 ? `<span class="text-xs text-[#6B7A8F]">Rolls: ${r.absent.slice(0, 10).join(', ')}${r.absent.length > 10 ? '...' : ''}</span>` : ''}
+                        </div>
                     </div>
-                    <div class="details">
-                        <span class="badge badge-present">${r.presentCount} Present</span>
-                        <span class="badge badge-absent">${r.absent.length} Absent</span>
-                        ${r.absent.length > 0 ? `<span class="text-xs text-[#64748B]">Rolls: ${r.absent.slice(0, 10).join(', ')}${r.absent.length > 10 ? '...' : ''}</span>` : ''}
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         // ============================================================
@@ -3081,22 +3160,22 @@
             const users = getUsers();
             const tbody = document.getElementById('admin-users-table');
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-[#64748B]">No users found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-[#6B7A8F]">No users found.</td></tr>';
                 return;
             }
             tbody.innerHTML = users.map((u, idx) => `
-                <tr class="table-row">
-                    <td class="p-3 font-semibold">${u.name}</td>
-                    <td class="p-3 text-[#64748B] text-[13px]">${u.email}</td>
-                    <td class="p-3"><span class="user-role-badge ${u.role}">${u.role}</span></td>
-                    <td class="p-3 text-[13px]">${u.semester || '—'}</td>
-                    <td class="p-3 text-[13px]">${u.division || '—'}</td>
-                    <td class="p-3 text-[13px]">${u.branch || '—'}</td>
-                    <td class="p-3 text-right">
-                        ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-red-500 hover:text-red-700 text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#64748B] text-[12px]">Protected</span>'}
-                    </td>
-                </tr>
-            `).join('');
+                    <tr>
+                        <td class="font-semibold">${u.name}</td>
+                        <td class="text-[#6B7A8F] text-[13px]">${u.email}</td>
+                        <td><span class="user-role-badge ${u.role}">${u.role}</span></td>
+                        <td>${u.semester || '—'}</td>
+                        <td>${u.division || '—'}</td>
+                        <td>${u.branch || '—'}</td>
+                        <td class="text-right">
+                            ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-[#DC2626] hover:text-[#B91C1C] text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#6B7A8F] text-[12px] font-medium">Protected</span>'}
+                        </td>
+                    </tr>
+                `).join('');
         }
 
         function deleteUser(email) {
@@ -3113,11 +3192,8 @@
         //  ADMIN: SETTINGS
         // ============================================================
         function renderAdminSettings() {
-            // Academic year & semester type
             document.getElementById('academic-year').value = getAcademicYear();
             document.getElementById('semester-type').value = getSemesterType();
-
-            // Branches
             renderBranches();
             renderDivisions();
             renderSemesters();
@@ -3127,51 +3203,51 @@
             const branches = getBranches();
             const container = document.getElementById('branches-list');
             if (branches.length === 0) {
-                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No branches defined.</p>';
+                container.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No branches defined.</p>';
                 return;
             }
             container.innerHTML = branches.map((b, idx) => `
-                <div class="settings-item">
-                    <span class="name">${b}</span>
-                    <div class="actions">
-                        <button class="del" onclick="deleteBranch(${idx})">Delete</button>
+                    <div class="settings-item">
+                        <span class="name">${b}</span>
+                        <div class="actions">
+                            <button class="del" onclick="deleteBranch(${idx})">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         function renderDivisions() {
             const divisions = getDivisions();
             const container = document.getElementById('divisions-list');
             if (divisions.length === 0) {
-                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No divisions defined.</p>';
+                container.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No divisions defined.</p>';
                 return;
             }
             container.innerHTML = divisions.map((d, idx) => `
-                <div class="settings-item">
-                    <span class="name">${d}</span>
-                    <div class="actions">
-                        <button class="del" onclick="deleteDivision(${idx})">Delete</button>
+                    <div class="settings-item">
+                        <span class="name">${d}</span>
+                        <div class="actions">
+                            <button class="del" onclick="deleteDivision(${idx})">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         function renderSemesters() {
             const semesters = getSemesters();
             const container = document.getElementById('semesters-list');
             if (semesters.length === 0) {
-                container.innerHTML = '<p class="text-[13px] text-[#64748B]">No semesters defined.</p>';
+                container.innerHTML = '<p class="text-[13px] text-[#6B7A8F]">No semesters defined.</p>';
                 return;
             }
             container.innerHTML = semesters.map((s, idx) => `
-                <div class="settings-item">
-                    <span class="name">${s}</span>
-                    <div class="actions">
-                        <button class="del" onclick="deleteSemester(${idx})">Delete</button>
+                    <div class="settings-item">
+                        <span class="name">${s}</span>
+                        <div class="actions">
+                            <button class="del" onclick="deleteSemester(${idx})">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
         }
 
         function saveAcademicSettings() {
@@ -3183,7 +3259,6 @@
             showToast('Academic settings saved!', 'success');
         }
 
-        // Branch CRUD
         function openAddBranchModal() {
             document.getElementById('new-branch').value = '';
             document.getElementById('branch-modal').classList.remove('hidden');
@@ -3217,7 +3292,6 @@
             showToast('Branch deleted.', 'info');
         }
 
-        // Division CRUD
         function openAddDivisionModal() {
             document.getElementById('new-division').value = '';
             document.getElementById('division-modal').classList.remove('hidden');
@@ -3251,7 +3325,6 @@
             showToast('Division deleted.', 'info');
         }
 
-        // Semester CRUD
         function openAddSemesterModal() {
             document.getElementById('new-semester').value = '';
             document.getElementById('semester-modal').classList.remove('hidden');
@@ -3286,7 +3359,7 @@
         }
 
         // ============================================================
-        //  SUBJECT CRUD (allow same code for different branches)
+        //  SUBJECT CRUD
         // ============================================================
         function openAddSubjectModal() {
             document.getElementById('subject-modal-title').textContent = 'Add Subject';
@@ -3331,7 +3404,6 @@
             if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
 
             if (id) {
-                // Editing: update existing
                 const s = subjects.find(x => x.id === id);
                 if (s) {
                     s.name = name;
@@ -3346,7 +3418,6 @@
                     return;
                 }
             } else {
-                // Adding new: check if same code already exists for the same branch
                 const exists = subjects.some(s => s.code.toLowerCase() === code.toLowerCase() && s.branch === branch);
                 if (exists) {
                     showToast(`A subject with code "${code}" already exists for branch "${branch}".`, 'error');
@@ -3544,6 +3615,90 @@
         // ============================================================
         //  INIT
         // ============================================================
+        function initApp() {
+            const user = getCurrentUser();
+            if (!user) {
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('app-wrapper').classList.remove('show');
+                return;
+            }
+
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-wrapper').classList.add('show');
+
+            const initial = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            document.getElementById('sidebar-avatar').textContent = initial;
+            document.getElementById('sidebar-name').textContent = user.name;
+            const roleLabel = user.role === 'admin' ? 'Administrator' : user.role === 'teacher' ? 'Faculty Guide' : 'Student';
+            document.getElementById('sidebar-role').textContent = roleLabel;
+            document.getElementById('sidebar-academic').textContent =
+                `${user.semester || '—'} · Div ${user.division || '—'} ${user.branch ? '· ' + user.branch : ''}`;
+            document.getElementById('header-user').textContent = user.name;
+            document.getElementById('header-avatar').textContent = initial;
+
+            const nav = document.getElementById('sidebar-nav');
+            let links = '';
+            if (user.role === 'admin') {
+                links = `
+                        <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                            <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+                        </a>
+                        <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                            <span class="material-symbols-outlined">auto_stories</span><span>My Subjects</span>
+                        </a>
+                        <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                            <span class="material-symbols-outlined">fact_check</span><span>Attendance</span>
+                        </a>
+                        <a class="sidebar-link" data-view="student" href="#" onclick="switchView('student')">
+                            <span class="material-symbols-outlined">visibility</span><span>Student View</span>
+                        </a>
+                        <a class="sidebar-link" data-view="admin-users" href="#" onclick="switchView('admin-users')">
+                            <span class="material-symbols-outlined">people</span><span>User Management</span>
+                        </a>
+                        <a class="sidebar-link" data-view="admin-settings" href="#" onclick="switchView('admin-settings')">
+                            <span class="material-symbols-outlined">settings</span><span>Settings</span>
+                        </a>
+                    `;
+            } else if (user.role === 'teacher') {
+                links = `
+                        <a class="sidebar-link active" data-view="dashboard" href="#" onclick="switchView('dashboard')">
+                            <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+                        </a>
+                        <a class="sidebar-link" data-view="my-subjects" href="#" onclick="switchView('my-subjects')">
+                            <span class="material-symbols-outlined">auto_stories</span><span>My Subjects</span>
+                        </a>
+                        <a class="sidebar-link" data-view="attendance" href="#" onclick="switchView('attendance')">
+                            <span class="material-symbols-outlined">fact_check</span><span>Attendance</span>
+                        </a>
+                    `;
+            } else {
+                links = `
+                        <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
+                            <span class="material-symbols-outlined">dashboard</span><span>Student Dashboard</span>
+                        </a>
+                    `;
+            }
+            nav.innerHTML = links;
+
+            loadData();
+            loadAnnouncements();
+            loadAttendanceData();
+            populateAcademicDropdowns();
+            if (user.role === 'student') {
+                switchView('student');
+            } else {
+                switchView('dashboard');
+            }
+
+            document.querySelectorAll('.sidebar-link').forEach(el => {
+                el.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar(false);
+                    }
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             loadAttendanceData();
             loadAnnouncements();
