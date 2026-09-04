@@ -1188,7 +1188,7 @@
 
                 <!-- Branch Name (conditional) -->
                 <div id="branch-group" class="form-group conditional-field open">
-                    <label>Branch Name <span class="text-[#64748B] text-[11px]">(for 3rd–8th sem)</span></label>
+                    <label>Branch Name <span class="text-[#64748B] text-[11px]">(required for 3rd–8th sem)</span></label>
                     <select id="signup-branch"></select>
                 </div>
 
@@ -1971,6 +1971,7 @@
         function onSemesterChange() {
             const sem = parseInt(document.getElementById('signup-semester').selectedIndex) + 1;
             const branchGroup = document.getElementById('branch-group');
+            // Show branch only for 3rd semester and above (index >= 2)
             if (sem >= 3) {
                 branchGroup.classList.add('open');
             } else {
@@ -2012,8 +2013,6 @@
             semester.disabled = isTeacher;
             division.disabled = isTeacher;
             branch.disabled = isTeacher;
-            // Also style them visually: we'll use CSS for disabled styling
-            // We can also set value to empty or placeholder
             if (isTeacher) {
                 semester.value = '';
                 division.value = '';
@@ -2026,6 +2025,8 @@
                 if (semesters.length) semester.value = semesters[0];
                 if (divisions.length) division.value = divisions[0];
                 if (branches.length) branch.value = branches[0];
+                // Also trigger onSemesterChange to show/hide branch based on semester
+                onSemesterChange();
             }
         }
 
@@ -2052,21 +2053,31 @@
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value.trim() || '1234';
             const role = document.getElementById('signup-role').value;
-            // For teacher, we ignore semester, division, branch (set to empty string)
             let semester = document.getElementById('signup-semester').value;
             let division = document.getElementById('signup-division').value;
             let branch = document.getElementById('signup-branch').value;
 
+            // For teacher, we ignore semester, division, branch
             if (role === 'teacher') {
-                // If fields are disabled, we don't need to validate them
                 semester = '';
                 division = '';
                 branch = '';
             } else {
-                // For student, require them
-                if (!semester || !division || !branch) {
-                    showToast('Please select Semester, Division, and Branch.', 'error');
+                // Student: require semester and division always
+                if (!semester || !division) {
+                    showToast('Please select Semester and Division.', 'error');
                     return;
+                }
+                // Determine if branch is required (3rd semester and above)
+                const semesters = getSemesters();
+                const semIndex = semesters.indexOf(semester);
+                const isLowerSemester = semIndex < 2; // 1st or 2nd semester
+                if (!isLowerSemester && !branch) {
+                    showToast('Please select Branch for 3rd semester and above.', 'error');
+                    return;
+                }
+                if (isLowerSemester) {
+                    branch = ''; // set empty for lower semesters
                 }
             }
 
@@ -2713,7 +2724,7 @@
         }
 
         // ============================================================
-        //  STUDENT VIEW (FILTERED BY STUDENT'S BRANCH, SEMESTER, DIVISION)
+        //  STUDENT VIEW (filter by semester, division, and branch only if >=3rd sem)
         // ============================================================
         function renderStudentView() {
             const user = getCurrentUser();
@@ -2721,22 +2732,26 @@
 
             // Update subtitle with student's info
             document.getElementById('student-subtitle').textContent =
-                `Showing subjects for ${user.branch || '—'} · ${user.semester || '—'} · Div ${user.division || '—'}`;
+                `Showing subjects for ${user.branch || 'Common'} · ${user.semester || '—'} · Div ${user.division || '—'}`;
 
             renderAnnouncements();
 
-            // ── Filter subjects matching student's profile ──
+            // ── Determine if branch should be ignored ──
+            const semesters = getSemesters();
             const studentSemester = user.semester;
             const studentDivision = user.division;
-            const studentBranch = user.branch;
+            const studentBranch = user.branch || '';
+            const semIndex = semesters.indexOf(studentSemester);
+            const ignoreBranch = semIndex < 2; // true for 1st or 2nd semester
 
-            // Allow empty values (if not set, show all? but we should match exactly)
-            // Only show subjects that have the same semester, division, branch.
-            // If student has empty fields (shouldn't happen for students), we might show none.
+            // ── Filter subjects ──
             const filteredSubjects = subjects.filter(s => {
                 const matchSemester = s.semester === studentSemester;
                 const matchDivision = s.division === studentDivision;
-                const matchBranch = s.branch === studentBranch;
+                let matchBranch = true;
+                if (!ignoreBranch) {
+                    matchBranch = s.branch === studentBranch;
+                }
                 return matchSemester && matchDivision && matchBranch;
             });
 
@@ -2744,7 +2759,7 @@
             const el = document.getElementById('student-subjects');
             if (filteredSubjects.length === 0) {
                 el.innerHTML =
-                    `<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available for your branch, semester, and division.</div>`;
+                    `<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available for your ${ignoreBranch ? 'semester and division' : 'branch, semester, and division'}.</div>`;
             } else {
                 el.innerHTML = filteredSubjects.map(s => `
                     <div class="card p-5">
@@ -2753,7 +2768,7 @@
                             <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                         </div>
                         <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
-                        <p class="text-[12px] text-[#64748B]">${s.division || '—'} · ${s.branch || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
+                        <p class="text-[12px] text-[#64748B]">${s.division || '—'} · ${s.branch || 'Common'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
                         ${(s.timetable||[]).length > 0 ? `
                             <div class="mt-3">
                                 <span class="text-[12px] font-semibold">Timetable:</span>
@@ -2791,18 +2806,17 @@
                 `).join('');
             }
 
-            // ── Filter attendance records for subjects matching student's profile ──
+            // ── Filter attendance records ──
             const attEl = document.getElementById('student-attendance-history');
             if (attEl) {
                 const allRecords = [];
                 for (const key in attendanceData) {
                     const rec = attendanceData[key];
-                    // Find subject
                     const subject = subjects.find(s => s.id === rec.subjectId);
                     if (!subject) continue;
-                    // Check if subject matches student's profile
-                    if (subject.semester !== studentSemester || subject.division !== studentDivision || subject.branch !==
-                        studentBranch) continue;
+                    // Apply same filtering logic
+                    if (subject.semester !== studentSemester || subject.division !== studentDivision) continue;
+                    if (!ignoreBranch && subject.branch !== studentBranch) continue;
                     const absentArr = rec.absent ? Array.from(rec.absent) : [];
                     allRecords.push({
                         date: rec.date,
