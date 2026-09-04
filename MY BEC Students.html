@@ -477,9 +477,93 @@
             .auth-card {
                 padding: 28px 20px;
             }
-            .auth-card .role-selector {
+            .role-selector {
                 flex-direction: column;
             }
+        }
+
+        /* Role Selector - fixed visible buttons */
+        .role-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .role-selector button {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .role-selector button:hover {
+            border-color: #94A3B8;
+            background: #F8FAFC;
+        }
+        .role-selector button.active {
+            border-color: #1E40AF;
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+        .role-selector button.active::after {
+            content: " ✓";
+            font-weight: 700;
+        }
+
+        /* Strength input inline */
+        .strength-input {
+            max-width: 80px;
+        }
+
+        /* Announcement card */
+        .announcement-item {
+            border-left: 4px solid #D97706;
+            padding: 12px 16px;
+            background: #FFFBEB;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 10px;
+        }
+        .announcement-item .meta {
+            font-size: 11px;
+            color: #92400E;
+            font-weight: 600;
+        }
+
+        /* Student attendance history table */
+        .attendance-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .attendance-history-table th {
+            background: #F8FAFC;
+            color: #64748B;
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .attendance-history-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .attendance-history-table tr:last-child td {
+            border-bottom: none;
+        }
+        .absent-rolls {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #991B1B;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -521,8 +605,8 @@
                     <a onclick="handleForgotPassword()">Forgot Password?</a>
                 </div>
                 <button class="btn-secondary btn-login" onclick="handleLogin()">Sign In</button>
-                <div class="auth-toggle">
-                    Don't have an account? <a onclick="showSignup()">Create one</a>
+                <div class="auth-toggle" style="margin-top:12px;text-align:center;font-size:13px;color:#64748B;">
+                    Don't have an account? <a onclick="showSignup()" style="color:#1E40AF;font-weight:600;cursor:pointer;">Create one</a>
                 </div>
             </div>
 
@@ -543,15 +627,16 @@
                 </div>
                 <div class="form-group">
                     <label>I am a...</label>
+                    <!-- Role Selector: fixed visible buttons -->
                     <div class="role-selector">
-                        <button id="role-teacher" class="active" onclick="selectRole('teacher')">👨‍🏫 Teacher</button>
-                        <button id="role-student" onclick="selectRole('student')">🎓 Student</button>
+                        <button id="role-teacher" class="active" type="button" onclick="selectRole('teacher')">👨‍🏫 Teacher</button>
+                        <button id="role-student" type="button" onclick="selectRole('student')">🎓 Student</button>
                     </div>
                     <input type="hidden" id="signup-role" value="teacher" />
                 </div>
                 <button class="btn-success btn-login" onclick="handleSignup()">Create Account</button>
-                <div class="auth-toggle">
-                    Already have an account? <a onclick="showLogin()">Sign In</a>
+                <div class="auth-toggle" style="margin-top:12px;text-align:center;font-size:13px;color:#64748B;">
+                    Already have an account? <a onclick="showLogin()" style="color:#1E40AF;font-weight:600;cursor:pointer;">Sign In</a>
                 </div>
             </div>
         </div>
@@ -594,7 +679,7 @@
                 </div>
             </div>
             <!-- Nav -->
-            <nav class="flex-1 p-2 space-y-1" id="sidebar-nav">
+            <nav class="flex-1 p-2 space-y-1 overflow-y-auto" id="sidebar-nav">
                 <!-- Dynamic nav links -->
             </nav>
             <!-- Footer -->
@@ -631,7 +716,21 @@
                             <span>Add Subject</span>
                         </button>
                     </div>
+                    <!-- Stats -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
+                    <!-- Announcements (visible to all) -->
+                    <div class="card p-5 mb-6" id="announcements-section">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
+                            📢 Announcements
+                        </h3>
+                        <div id="announcements-list" class="space-y-2"></div>
+                        <div id="announcement-admin-actions" class="mt-3 hidden">
+                            <button class="btn-secondary text-[12px] flex items-center gap-1" onclick="openAnnouncementModal()">
+                                <span class="material-symbols-outlined text-[16px]">add</span> Post Announcement
+                            </button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="card p-5">
                             <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
@@ -698,16 +797,36 @@
                     <div id="subject-tab-content"></div>
                 </div>
 
-                <!-- ===== STUDENT VIEW ===== -->
+                <!-- ===== STUDENT VIEW (improved) ===== -->
                 <div id="view-student" class="view-section hidden">
                     <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">Student View</h1>
-                        <p class="text-[14px] text-[#64748B]">Browse all subjects with timetable, notes, and resources</p>
+                        <h1 class="text-2xl font-bold text-[#0F172A] font-display">📘 Student Dashboard</h1>
+                        <p class="text-[14px] text-[#64748B]">Browse subjects, attendance records, and announcements</p>
                     </div>
+                    <!-- Announcements for students -->
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-[#D97706]">campaign</span>
+                            📢 Announcements
+                        </h3>
+                        <div id="student-announcements" class="space-y-2"></div>
+                    </div>
+                    <!-- Attendance History for Student -->
+                    <div class="card p-5 mb-6">
+                        <h3 class="font-display font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-[#1E40AF]">fact_check</span>
+                            📋 My Attendance Records
+                        </h3>
+                        <div id="student-attendance-history" class="overflow-x-auto">
+                            <p class="text-[13px] text-[#64748B]">Loading attendance...</p>
+                        </div>
+                    </div>
+                    <!-- Subjects -->
+                    <h3 class="font-display font-semibold text-[#0F172A] mb-3">📚 Subjects</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="student-subjects"></div>
                 </div>
 
-                <!-- ===== ATTENDANCE VIEW (NEW) ===== -->
+                <!-- ===== ATTENDANCE VIEW ===== -->
                 <div id="view-attendance" class="view-section hidden">
                     <div class="mb-6">
                         <h1 class="text-2xl font-bold text-[#0F172A] font-display">📋 Attendance</h1>
@@ -728,6 +847,7 @@
                         </div>
 
                         <h3 class="font-semibold mb-2">Click roll numbers of ABSENT students</h3>
+                        <p class="text-[12px] text-[#64748B] mb-2" id="attendance-strength-info">Strength: --</p>
                         <div id="roll-grid" class="attendance-grid"></div>
 
                         <div class="attendance-controls">
@@ -786,10 +906,10 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- MODALS (Subject, Timetable, Note, Syllabus, Resource, Forgot) -->
+        <!-- MODALS -->
         <!-- ============================================================ -->
 
-        <!-- Add/Edit Subject Modal -->
+        <!-- Add/Edit Subject Modal (with Strength) -->
         <div id="subject-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-4 border-b border-[#F1F5F9] flex items-center justify-between">
@@ -823,6 +943,11 @@
                             <label class="text-[12px] font-semibold text-[#64748B]">Class / Section</label>
                             <input id="subject-section" type="text" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. III-A" />
                         </div>
+                    </div>
+                    <div>
+                        <label class="text-[12px] font-semibold text-[#64748B]">Student Strength (Roll Numbers)</label>
+                        <input id="subject-strength" type="number" min="1" max="200" class="w-full mt-1 px-3 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[14px]" placeholder="e.g. 58" value="58" />
+                        <span class="text-[11px] text-[#64748B]">Number of students in this class. Attendance grid will show 1 to this number.</span>
                     </div>
                     <div class="flex justify-end gap-2 pt-2 border-t border-[#F1F5F9]">
                         <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
@@ -972,6 +1097,32 @@
             </div>
         </div>
 
+        <!-- Announcement Modal -->
+        <div id="announcement-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-4">
+                <h3 class="font-display font-bold text-[#0F172A] mb-3">📢 Post Announcement</h3>
+                <form class="space-y-3" onsubmit="handleAnnouncementSubmit(event)">
+                    <div><label class="text-[12px] font-semibold">Title *</label>
+                        <input id="ann-title" required type="text" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="e.g. Exam Schedule Update" />
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Content *</label>
+                        <textarea id="ann-content" required rows="3" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded" placeholder="Write announcement..."></textarea>
+                    </div>
+                    <div><label class="text-[12px] font-semibold">Target Audience</label>
+                        <select id="ann-target" class="w-full px-3 py-2 bg-[#F8FAFC] border rounded">
+                            <option value="all">All (Teachers & Students)</option>
+                            <option value="teachers">Teachers Only</option>
+                            <option value="students">Students Only</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" class="btn-ghost" onclick="closeAnnouncementModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div> <!-- end app-wrapper -->
 
     <!-- ============================================================ -->
@@ -1045,12 +1196,16 @@
         function showSignup() {
             document.getElementById('login-form').classList.add('hidden');
             document.getElementById('signup-form').classList.remove('hidden');
+            // Reset role selector
+            selectRole('teacher');
         }
 
         function selectRole(role) {
             document.getElementById('signup-role').value = role;
-            document.getElementById('role-teacher').classList.toggle('active', role === 'teacher');
-            document.getElementById('role-student').classList.toggle('active', role === 'student');
+            const tBtn = document.getElementById('role-teacher');
+            const sBtn = document.getElementById('role-student');
+            tBtn.classList.toggle('active', role === 'teacher');
+            sBtn.classList.toggle('active', role === 'student');
         }
 
         function handleLogin() {
@@ -1221,7 +1376,7 @@
             } else { // student
                 links = `
               <a class="sidebar-link active" data-view="student" href="#" onclick="switchView('student')">
-                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student View</span>
+                <span class="material-symbols-outlined text-[18px]">visibility</span><span>Student Dashboard</span>
               </a>
             `;
             }
@@ -1229,6 +1384,8 @@
 
             // Load data and render
             loadData();
+            loadAnnouncements();
+            loadAttendanceData();
             if (user.role === 'student') {
                 switchView('student');
             } else {
@@ -1252,6 +1409,7 @@
                 subjects = raw ? JSON.parse(raw) : [];
                 subjects = subjects.map(s => ({
                     ...s,
+                    strength: parseInt(s.strength) || 58,
                     timetable: Array.isArray(s.timetable) ? s.timetable : [],
                     notes: Array.isArray(s.notes) ? s.notes : [],
                     resources: Array.isArray(s.resources) ? s.resources : [],
@@ -1264,6 +1422,121 @@
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
             } catch (e) { showToast('Failed to save data.', 'error'); }
+        }
+
+        // ============================================================
+        //  ANNOUNCEMENTS
+        // ============================================================
+        const ANNOUNCE_KEY = 'bec_announcements';
+        let announcements = [];
+
+        function loadAnnouncements() {
+            try {
+                const raw = localStorage.getItem(ANNOUNCE_KEY);
+                announcements = raw ? JSON.parse(raw) : [];
+            } catch (e) { announcements = []; }
+        }
+
+        function saveAnnouncements() {
+            try {
+                localStorage.setItem(ANNOUNCE_KEY, JSON.stringify(announcements));
+            } catch (e) { showToast('Failed to save announcement.', 'error'); }
+        }
+
+        function renderAnnouncements(target = 'all') {
+            const user = getCurrentUser();
+            if (!user) return;
+            // Filter: show all if admin, or target matches user role, or 'all'
+            let filtered = announcements;
+            if (user.role !== 'admin') {
+                filtered = announcements.filter(a => a.target === 'all' || a.target === user.role);
+            }
+            // Sort by date descending
+            filtered = filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // For dashboard
+            const listEl = document.getElementById('announcements-list');
+            if (listEl) {
+                if (filtered.length === 0) {
+                    listEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements yet.</p>';
+                } else {
+                    listEl.innerHTML = filtered.slice(0, 5).map(a => `
+                        <div class="announcement-item">
+                            <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
+                            <div class="text-[13px] text-[#334155]">${a.content}</div>
+                            <div class="meta flex items-center gap-3 mt-1">
+                                <span>📅 ${a.date}</span>
+                                <span>👤 ${a.author}</span>
+                                ${a.target !== 'all' ? `<span class="bg-[#F1F5F9] px-2 py-0.5 rounded text-[10px]">${a.target}</span>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // For student dashboard
+            const studentAnnEl = document.getElementById('student-announcements');
+            if (studentAnnEl) {
+                const studentFiltered = announcements.filter(a => a.target === 'all' || a.target === 'student' || a.target ===
+                    'all');
+                if (studentFiltered.length === 0) {
+                    studentAnnEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No announcements for students.</p>';
+                } else {
+                    studentAnnEl.innerHTML = studentFiltered.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
+                        .map(a => `
+                            <div class="announcement-item">
+                                <div class="font-semibold text-[14px] text-[#0F172A]">${a.title}</div>
+                                <div class="text-[13px] text-[#334155]">${a.content}</div>
+                                <div class="meta flex items-center gap-3 mt-1">
+                                    <span>📅 ${a.date}</span>
+                                    <span>👤 ${a.author}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                }
+            }
+
+            // Show/hide admin post button
+            const adminActions = document.getElementById('announcement-admin-actions');
+            if (adminActions) {
+                adminActions.classList.toggle('hidden', user.role !== 'admin' && user.role !== 'teacher');
+            }
+        }
+
+        function openAnnouncementModal() {
+            document.getElementById('ann-title').value = '';
+            document.getElementById('ann-content').value = '';
+            document.getElementById('ann-target').value = 'all';
+            document.getElementById('announcement-modal').classList.remove('hidden');
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcement-modal').classList.add('hidden');
+        }
+
+        function handleAnnouncementSubmit(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) { showToast('Please log in.', 'error'); return; }
+            const title = document.getElementById('ann-title').value.trim();
+            const content = document.getElementById('ann-content').value.trim();
+            const target = document.getElementById('ann-target').value;
+            if (!title || !content) { showToast('Title and content are required.', 'error'); return; }
+            const ann = {
+                id: Date.now().toString(),
+                title,
+                content,
+                target,
+                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+                author: user.name
+            };
+            announcements.push(ann);
+            saveAnnouncements();
+            closeAnnouncementModal();
+            renderAnnouncements();
+            // Also refresh student view if visible
+            if (currentView === 'student') renderStudentView();
+            showToast('Announcement posted!', 'success');
         }
 
         // ============================================================
@@ -1305,11 +1578,22 @@
                 dashboard: 'Dashboard',
                 'my-subjects': 'My Subjects',
                 attendance: 'Attendance',
-                student: 'Student View',
+                student: 'Student Dashboard',
                 'admin-users': 'User Management',
                 'subject-detail': 'Subject Details'
             };
             document.getElementById('page-title').textContent = titles[view] || 'Dashboard';
+            // Re-render announcements on dashboard/student
+            if (view === 'dashboard' || view === 'student') {
+                renderAnnouncements();
+            }
+            // Show admin announcement button on dashboard
+            const user = getCurrentUser();
+            if (view === 'dashboard' && (user && (user.role === 'admin' || user.role === 'teacher'))) {
+                document.getElementById('announcement-admin-actions').classList.remove('hidden');
+            } else if (view === 'dashboard') {
+                document.getElementById('announcement-admin-actions').classList.add('hidden');
+            }
         }
 
         function goBackToSubjects() {
@@ -1327,7 +1611,7 @@
                 totalResources = 0,
                 totalSlots = 0;
             subjects.forEach(s => {
-                totalStudents += 60;
+                totalStudents += parseInt(s.strength) || 58;
                 totalResources += (s.resources || []).length + (s.notes || []).length;
                 totalSlots += (s.timetable || []).length;
             });
@@ -1355,10 +1639,11 @@
             subjects.slice(0, 5).forEach(s => {
                 actHtml += `<div class="flex items-center gap-2 p-2 bg-[#F8FAFC] rounded">
               <span class="w-2 h-2 rounded-full bg-[#1E40AF]"></span>
-              <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) active</span>
+              <span class="text-[13px] text-[#334155]">${s.name} (${s.code}) · ${s.strength || 58} students</span>
             </div>`;
             });
             actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#64748B]">No activity yet.</p>';
+            renderAnnouncements();
         }
 
         // ============================================================
@@ -1381,7 +1666,7 @@
                 </div>
               </div>
               <h3 class="font-display font-semibold text-[#0F172A] text-[16px]">${s.name}</h3>
-              <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.section || '—'}</p>
+              <p class="text-[12px] text-[#64748B] mt-1">${s.semester || '—'} · ${s.section || '—'} · 🧑‍🎓 ${s.strength || 58} students</p>
               <div class="flex items-center gap-2 mt-3 text-[11px] text-[#64748B]">
                 <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.timetable||[]).length} slots</span>
                 <span class="bg-[#F1F5F9] px-2 py-0.5 rounded">${(s.resources||[]).length} resources</span>
@@ -1427,6 +1712,7 @@
                   <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
                   <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
                   <span class="bg-[#F1F5F9] text-[#64748B] text-[11px] px-2 py-0.5 rounded">${s.section || '—'}</span>
+                  <span class="bg-[#DBEAFE] text-[#1E40AF] text-[11px] px-2 py-0.5 rounded">🧑‍🎓 ${s.strength || 58} students</span>
                 </div>
                 <h1 class="text-2xl font-bold font-display text-[#0F172A]">${s.name}</h1>
                 <p class="text-[13px] text-[#64748B] mt-1">Dr. Mahadev Biradar · Dept. of Mathematics</p>
@@ -1460,6 +1746,7 @@
                 <p class="text-[13px] text-[#64748B]">Code: <b>${s.code}</b></p>
                 <p class="text-[13px] text-[#64748B]">Semester: <b>${s.semester || '—'}</b></p>
                 <p class="text-[13px] text-[#64748B]">Section: <b>${s.section || '—'}</b></p>
+                <p class="text-[13px] text-[#64748B]">Student Strength: <b>${s.strength || 58}</b></p>
               </div>
               <div class="card p-4"><h3 class="font-semibold mb-2">Quick Stats</h3>
                 <p class="text-[13px] text-[#64748B]">Timetable slots: <b>${(s.timetable||[]).length}</b></p>
@@ -1530,80 +1817,128 @@
         }
 
         // ============================================================
-//  STUDENT VIEW - FIXED to show notes and full timetable
-// ============================================================
-function renderStudentView() {
-    const el = document.getElementById('student-subjects');
-    if (subjects.length === 0) {
-        el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
-        return;
-    }
-    el.innerHTML = subjects.map(s => `
-        <div class="card p-5">
-            <div class="flex items-center justify-between mb-2">
-                <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
-                <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
-            </div>
-            <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
-            <p class="text-[12px] text-[#64748B]">${s.section || '—'} · Dr. Mahadev Biradar</p>
-            
-            <!-- Timetable -->
-            ${(s.timetable||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Timetable:</span>
-                    ${s.timetable.map(t => `
-                        <div class="text-[12px] text-[#64748B]">
-                            <span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}
-                            ${t.topic ? ` (${t.topic})` : ''}
+        //  STUDENT VIEW - with attendance history and announcements
+        // ============================================================
+        function renderStudentView() {
+            // Announcements
+            renderAnnouncements();
+
+            // Attendance History for this student (show all records with date, subject code, absent rolls)
+            const attEl = document.getElementById('student-attendance-history');
+            if (attEl) {
+                const allRecords = [];
+                for (const key in attendanceData) {
+                    const rec = attendanceData[key];
+                    const subject = subjects.find(s => s.id === rec.subjectId);
+                    if (subject) {
+                        const absentArr = rec.absent ? Array.from(rec.absent) : [];
+                        allRecords.push({
+                            date: rec.date,
+                            subjectCode: subject.code,
+                            subjectName: subject.name,
+                            absent: absentArr,
+                            strength: subject.strength || 58,
+                            presentCount: (subject.strength || 58) - absentArr.length
+                        });
+                    }
+                }
+                allRecords.sort((a, b) => b.date.localeCompare(a.date));
+
+                if (allRecords.length === 0) {
+                    attEl.innerHTML = '<p class="text-[13px] text-[#64748B]">No attendance records available.</p>';
+                } else {
+                    let html = `<table class="attendance-history-table">
+                        <thead><tr>
+                            <th>Date</th>
+                            <th>Subject</th>
+                            <th>Absent Roll Numbers</th>
+                            <th>Present</th>
+                        </tr></thead><tbody>`;
+                    allRecords.slice(0, 20).forEach(r => {
+                        const absentStr = r.absent.length > 0 ? r.absent.sort((a, b) => a - b).join(', ') :
+                            'None (All Present)';
+                        html += `<tr>
+                            <td><strong>${r.date}</strong></td>
+                            <td><span class="font-code-num text-[#1E40AF]">${r.subjectCode}</span> ${r.subjectName}</td>
+                            <td><span class="absent-rolls">${absentStr}</span></td>
+                            <td><span class="badge badge-present">${r.presentCount}</span></td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    if (allRecords.length > 20) {
+                        html += `<p class="text-[11px] text-[#64748B] mt-2">Showing last 20 records.</p>`;
+                    }
+                    attEl.innerHTML = html;
+                }
+            }
+
+            // Subjects
+            const el = document.getElementById('student-subjects');
+            if (subjects.length === 0) {
+                el.innerHTML = '<div class="col-span-2 text-center py-12 text-[#64748B]">No subjects available.</div>';
+                return;
+            }
+            el.innerHTML = subjects.map(s => `
+                <div class="card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-code-num font-bold text-[#1E40AF]">${s.code}</span>
+                        <span class="bg-[#F1F5F9] text-[11px] px-2 py-0.5 rounded">${s.semester || '—'}</span>
+                    </div>
+                    <h3 class="font-display font-bold text-[#0F172A] text-[16px]">${s.name}</h3>
+                    <p class="text-[12px] text-[#64748B]">${s.section || '—'} · Dr. Mahadev Biradar · 🧑‍🎓 ${s.strength || 58}</p>
+
+                    ${(s.timetable||[]).length > 0 ? `
+                        <div class="mt-3">
+                            <span class="text-[12px] font-semibold">Timetable:</span>
+                            ${s.timetable.map(t => `
+                                <div class="text-[12px] text-[#64748B]">
+                                    <span class="font-semibold">${t.day || ''}:</span> ${t.start || ''} - ${t.end || ''} · ${t.room || ''}
+                                    ${t.topic ? ` (${t.topic})` : ''}
+                                </div>
+                            `).join('')}
                         </div>
-                    `).join('')}
-                </div>
-            ` : ''}
-            
-            <!-- Notes -->
-            ${(s.notes||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Notes:</span>
-                    ${s.notes.map(n => `
-                        <div class="text-[12px] text-[#64748B]">
-                            ${n.title || ''}
-                            ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] underline ml-1">📄 Open</a>` : ''}
+                    ` : ''}
+
+                    ${(s.notes||[]).length > 0 ? `
+                        <div class="mt-3">
+                            <span class="text-[12px] font-semibold">Notes:</span>
+                            ${s.notes.map(n => `
+                                <div class="text-[12px] text-[#64748B]">
+                                    ${n.title || ''}
+                                    ${n.linkUrl ? `<a href="${n.linkUrl}" target="_blank" class="text-[#1E40AF] underline ml-1">📄 Open</a>` : ''}
+                                </div>
+                            `).join('')}
                         </div>
-                    `).join('')}
+                    ` : ''}
+
+                    ${(s.resources||[]).length > 0 ? `
+                        <div class="mt-3">
+                            <span class="text-[12px] font-semibold">Resources:</span>
+                            ${s.resources.map(r => `
+                                <a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline mr-2">${r.title}</a>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    ${(s.timetable||[]).length === 0 && (s.notes||[]).length === 0 && (s.resources||[]).length === 0 ? `
+                        <div class="mt-3 text-[12px] text-[#64748B]">No content available yet.</div>
+                    ` : ''}
                 </div>
-            ` : ''}
-            
-            <!-- Resources -->
-            ${(s.resources||[]).length > 0 ? `
-                <div class="mt-3">
-                    <span class="text-[12px] font-semibold">Resources:</span>
-                    ${s.resources.map(r => `
-                        <a href="${r.linkUrl}" target="_blank" class="text-[#1E40AF] text-[12px] underline mr-2">${r.title}</a>
-                    `).join('')}
-                </div>
-            ` : ''}
-            
-            ${(s.timetable||[]).length === 0 && (s.notes||[]).length === 0 && (s.resources||[]).length === 0 ? `
-                <div class="mt-3 text-[12px] text-[#64748B]">No content available yet.</div>
-            ` : ''}
-        </div>
-    `).join('');
-}
+            `).join('');
+        }
 
         // ============================================================
-        //  ATTENDANCE (NEW)
+        //  ATTENDANCE
         // ============================================================
         const ATTENDANCE_KEY = 'bec_attendance';
         let attendanceData = {};
         let selectedAbsent = new Set();
         let currentAttendanceSubjectId = null;
-        const TOTAL_ROLLS = 58;
 
         function loadAttendanceData() {
             try {
                 const raw = localStorage.getItem(ATTENDANCE_KEY);
                 attendanceData = raw ? JSON.parse(raw) : {};
-                // Convert stored arrays back to Sets
                 for (const key in attendanceData) {
                     if (attendanceData[key].absent && Array.isArray(attendanceData[key].absent)) {
                         attendanceData[key].absent = new Set(attendanceData[key].absent);
@@ -1614,7 +1949,6 @@ function renderStudentView() {
 
         function saveAttendanceData() {
             try {
-                // Convert Sets to arrays for storage
                 const toStore = {};
                 for (const key in attendanceData) {
                     toStore[key] = {
@@ -1629,14 +1963,14 @@ function renderStudentView() {
 
         function renderAttendance() {
             const select = document.getElementById('attendance-subject');
-            select.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
+            select.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58} students)</option>`)
+                .join('');
             if (subjects.length > 0) {
                 select.value = subjects[0].id;
-                currentAttendanceSubjectId = parseInt(select.value);
+                currentAttendanceSubjectId = subjects[0].id;
             } else {
                 currentAttendanceSubjectId = null;
             }
-            // Set default date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attendance-date').value = today;
             loadAttendance();
@@ -1644,7 +1978,7 @@ function renderStudentView() {
         }
 
         function loadAttendance() {
-            const subjectId = parseInt(document.getElementById('attendance-subject').value);
+            const subjectId = document.getElementById('attendance-subject').value;
             const date = document.getElementById('attendance-date').value;
             if (!subjectId || !date) {
                 showToast('Please select a subject and date.', 'error');
@@ -1660,14 +1994,19 @@ function renderStudentView() {
                 };
             }
             selectedAbsent = attendanceData[key].absent || new Set();
-            renderRollNumbers();
+            // Show strength info
+            const subj = subjects.find(s => s.id === subjectId);
+            const strength = subj ? (subj.strength || 58) : 58;
+            document.getElementById('attendance-strength-info').textContent = `Strength: ${strength} students (Roll 1 – ${strength})`;
+            renderRollNumbers(strength);
             updateSelectedInfo();
         }
 
-        function renderRollNumbers() {
+        function renderRollNumbers(strength) {
             const grid = document.getElementById('roll-grid');
+            const total = strength || 58;
             let html = '';
-            for (let i = 1; i <= TOTAL_ROLLS; i++) {
+            for (let i = 1; i <= total; i++) {
                 const isAbsent = selectedAbsent.has(i);
                 html += `
                     <button class="roll-btn ${isAbsent ? 'absent' : ''}" 
@@ -1689,7 +2028,9 @@ function renderStudentView() {
             if (attendanceData[key]) {
                 attendanceData[key].absent = selectedAbsent;
             }
-            renderRollNumbers();
+            const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
+            const strength = subj ? (subj.strength || 58) : 58;
+            renderRollNumbers(strength);
             updateSelectedInfo();
         }
 
@@ -1699,19 +2040,23 @@ function renderStudentView() {
             if (attendanceData[key]) {
                 attendanceData[key].absent = selectedAbsent;
             }
-            renderRollNumbers();
+            const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
+            const strength = subj ? (subj.strength || 58) : 58;
+            renderRollNumbers(strength);
             updateSelectedInfo();
         }
 
         function markAllAbsent() {
-            for (let i = 1; i <= TOTAL_ROLLS; i++) {
+            const subj = subjects.find(s => s.id === currentAttendanceSubjectId);
+            const strength = subj ? (subj.strength || 58) : 58;
+            for (let i = 1; i <= strength; i++) {
                 selectedAbsent.add(i);
             }
             const key = `${currentAttendanceSubjectId}_${document.getElementById('attendance-date').value}`;
             if (attendanceData[key]) {
                 attendanceData[key].absent = selectedAbsent;
             }
-            renderRollNumbers();
+            renderRollNumbers(strength);
             updateSelectedInfo();
         }
 
@@ -1734,7 +2079,6 @@ function renderStudentView() {
                 return;
             }
             const key = `${subjectId}_${date}`;
-            // Ensure we store the current selection
             attendanceData[key] = {
                 subjectId: subjectId,
                 date: date,
@@ -1742,9 +2086,9 @@ function renderStudentView() {
             };
             saveAttendanceData();
             const subject = subjects.find(s => s.id === subjectId);
-            const presentCount = TOTAL_ROLLS - selectedAbsent.size;
+            const strength = subject ? (subject.strength || 58) : 58;
+            const presentCount = strength - selectedAbsent.size;
             showToast(`✅ Attendance submitted for ${subject ? subject.code : 'Subject'} on ${date}\nPresent: ${presentCount}, Absent: ${selectedAbsent.size}`, 'success');
-            // Refresh history if visible
             if (document.getElementById('attendance-history').style.display !== 'none') {
                 renderHistory();
             }
@@ -1767,16 +2111,17 @@ function renderStudentView() {
                 list.innerHTML = '<div class="text-sm text-muted">No subject selected.</div>';
                 return;
             }
-            // Collect all records for this subject
             const records = [];
             for (const key in attendanceData) {
                 const rec = attendanceData[key];
                 if (rec.subjectId === subjectId && rec.date) {
+                    const subject = subjects.find(s => s.id === subjectId);
+                    const strength = subject ? (subject.strength || 58) : 58;
                     records.push({
                         date: rec.date,
                         absent: rec.absent ? Array.from(rec.absent) : [],
-                        total: TOTAL_ROLLS,
-                        presentCount: TOTAL_ROLLS - (rec.absent ? rec.absent.size : 0)
+                        total: strength,
+                        presentCount: strength - (rec.absent ? rec.absent.size : 0)
                     });
                 }
             }
@@ -1784,7 +2129,6 @@ function renderStudentView() {
                 list.innerHTML = '<div class="text-sm text-[#64748B]">No attendance records for this subject.</div>';
                 return;
             }
-            // Sort by date descending
             records.sort((a, b) => b.date.localeCompare(a.date));
             list.innerHTML = records.map(r => `
                 <div class="history-item">
@@ -1846,6 +2190,7 @@ function renderStudentView() {
             document.getElementById('subject-code').value = '';
             document.getElementById('subject-section').value = '';
             document.getElementById('subject-semester').value = 'I Semester';
+            document.getElementById('subject-strength').value = '58';
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
@@ -1858,6 +2203,7 @@ function renderStudentView() {
             document.getElementById('subject-code').value = s.code;
             document.getElementById('subject-section').value = s.section || '';
             document.getElementById('subject-semester').value = s.semester || 'I Semester';
+            document.getElementById('subject-strength').value = s.strength || 58;
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
@@ -1872,20 +2218,23 @@ function renderStudentView() {
             const code = document.getElementById('subject-code').value.trim();
             const semester = document.getElementById('subject-semester').value;
             const section = document.getElementById('subject-section').value.trim();
+            const strength = parseInt(document.getElementById('subject-strength').value) || 58;
             if (!name || !code) { showToast('Subject name and code are required.', 'error'); return; }
+            if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
             if (id) {
                 const s = subjects.find(x => x.id === id);
                 if (s) { s.name = name;
                     s.code = code;
                     s.semester = semester;
                     s.section = section;
+                    s.strength = strength;
                     showToast('Subject updated!', 'success'); } else { showToast('Subject not found.', 'error'); return; }
             } else {
                 if (subjects.some(s => s.code.toLowerCase() === code.toLowerCase())) {
                     showToast('A subject with this code already exists.', 'error');
                     return;
                 }
-                subjects.push({ id: Date.now().toString(), name, code, semester, section, timetable: [], notes: [],
+                subjects.push({ id: Date.now().toString(), name, code, semester, section, strength, timetable: [], notes: [],
                     resources: [], syllabus: null });
                 showToast('Subject added!', 'success');
             }
@@ -1895,6 +2244,8 @@ function renderStudentView() {
             else if (currentView === 'my-subjects') renderMySubjects();
             else if (currentView === 'student') renderStudentView();
             if (currentSubjectId) renderSubjectDetail();
+            // Refresh attendance subject list if visible
+            if (currentView === 'attendance') renderAttendance();
         }
 
         function deleteSubject(id) {
@@ -2078,6 +2429,7 @@ function renderStudentView() {
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             loadAttendanceData();
+            loadAnnouncements();
             const session = getSession();
             if (session) {
                 const users = getUsers();
@@ -2107,11 +2459,13 @@ function renderStudentView() {
         window.openNoteModal = openNoteModal;
         window.openSyllabusModal = openSyllabusModal;
         window.openResourceModal = openResourceModal;
+        window.openAnnouncementModal = openAnnouncementModal;
         window.closeSubjectModal = closeSubjectModal;
         window.closeTimetableModal = closeTimetableModal;
         window.closeNoteModal = closeNoteModal;
         window.closeSyllabusModal = closeSyllabusModal;
         window.closeResourceModal = closeResourceModal;
+        window.closeAnnouncementModal = closeAnnouncementModal;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
         window.handleForgotPassword = handleForgotPassword;
         window.handleForgotPasswordSubmit = handleForgotPasswordSubmit;
@@ -2120,6 +2474,7 @@ function renderStudentView() {
         window.handleNoteSubmit = handleNoteSubmit;
         window.handleSyllabusSubmit = handleSyllabusSubmit;
         window.handleResourceSubmit = handleResourceSubmit;
+        window.handleAnnouncementSubmit = handleAnnouncementSubmit;
         window.deleteSubject = deleteSubject;
         window.deleteTimetableSlot = deleteTimetableSlot;
         window.deleteNote = deleteNote;
