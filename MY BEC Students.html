@@ -187,6 +187,66 @@
             color: #7C3AED;
         }
 
+        /* ── academic info bar ── */
+        .academic-info-bar {
+            background: linear-gradient(135deg, #0A1628 0%, #1a0e2e 100%);
+            border-radius: .75rem;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(10, 22, 40, 0.12);
+        }
+        .academic-info-bar .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .academic-info-bar .info-item .label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .academic-info-bar .info-item .value {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            font-family: "Space Grotesk", sans-serif;
+        }
+        .academic-info-bar .info-item .badge-semester {
+            background: rgba(212, 167, 69, 0.2);
+            color: #D4A745;
+            padding: 0.15rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid rgba(212, 167, 69, 0.2);
+        }
+        .academic-info-bar .divider {
+            width: 1px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        @media (max-width: 480px) {
+            .academic-info-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                padding: 0.9rem 1rem;
+            }
+            .academic-info-bar .divider {
+                display: none;
+            }
+        }
+
         /* ── buttons ── */
         .btn-primary {
             background: #7F1D1D;
@@ -1240,6 +1300,68 @@
                 display: none !important;
             }
         }
+        /* ── color refinements ── */
+        .bg-accent-soft {
+            background: #FFF8F5;
+        }
+        .border-accent-soft {
+            border-color: #F5E6E0;
+        }
+        .text-primary-deep {
+            color: #5C1515;
+        }
+        .shadow-glow {
+            box-shadow: 0 4px 24px rgba(127, 29, 29, 0.06);
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #7F1D1D, #DC2626);
+        }
+        .badge-division {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            background: #F1EDEB;
+            color: #6B5A55;
+            letter-spacing: 0.04em;
+        }
+        .badge-division.primary {
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+        .badge-division.gold {
+            background: #FFFBEB;
+            color: #B8860B;
+        }
+        .badge-division.green {
+            background: #ECFDF5;
+            color: #065F3A;
+        }
+        .badge-division.blue {
+            background: #EFF6FF;
+            color: #1D4ED8;
+        }
+        .badge-division.purple {
+            background: #F5F3FF;
+            color: #6D28D9;
+        }
+        .accent-divider {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #7F1D1D, #D4A745, #7F1D1D);
+            border-radius: 4px;
+            opacity: 0.3;
+        }
+        .bg-settings-card {
+            background: #FDFBFA;
+        }
+        .border-settings-card {
+            border-color: #F0E8E6;
+        }
+        .text-muted-strong {
+            color: #4A3A35;
+        }
     </style>
 </head>
 <body>
@@ -1399,6 +1521,41 @@
                             Add Subject
                         </button>
                     </div>
+
+                    <!-- ═══ ACADEMIC INFO BAR ═══ -->
+                    <div id="academic-info-bar" class="academic-info-bar mb-6">
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">calendar_month</span>
+                            <div>
+                                <div class="label">Academic Year</div>
+                                <div class="value" id="dash-academic-year">2025-26</div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">event_note</span>
+                            <div>
+                                <div class="label">Semester Type</div>
+                                <div class="value flex items-center gap-2">
+                                    <span id="dash-semester-type">ODD</span>
+                                    <span class="badge-semester" id="dash-semester-badge">ODD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">school</span>
+                            <div>
+                                <div class="label">Session</div>
+                                <div class="value text-[0.85rem] font-normal text-[#94A3B8]" id="dash-session-label">Even Semester</div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item ml-auto">
+                            <span class="badge-semester" id="dash-status-badge" style="background:rgba(212,167,69,0.15);color:#D4A745;border-color:rgba(212,167,69,0.15);">Active</span>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="dash-stats"></div>
                     <div class="card p-5 mb-6" id="announcements-section">
                         <h3 class="font-display font-semibold text-[#1A0E0C] mb-3 flex items-center gap-2 text-[15px]">
@@ -1531,6 +1688,42 @@
                         <h1 class="text-2xl font-bold text-[#1A0E0C] font-display">Student Dashboard</h1>
                         <p class="text-[14px] text-[#6B5A55]" id="student-subtitle">Browse subjects, attendance, and announcements</p>
                     </div>
+
+                    <!-- ═══ ACADEMIC INFO BAR (student) ═══ -->
+                    <div id="student-academic-info-bar" class="academic-info-bar mb-6">
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">calendar_month</span>
+                            <div>
+                                <div class="label">Academic Year</div>
+                                <div class="value" id="student-dash-academic-year">2025-26</div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">event_note</span>
+                            <div>
+                                <div class="label">Semester Type</div>
+                                <div class="value flex items-center gap-2">
+                                    <span id="student-dash-semester-type">ODD</span>
+                                    <span class="badge-semester" id="student-dash-semester-badge">ODD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item">
+                            <span class="material-symbols-outlined text-[#D4A745] text-[20px]">school</span>
+                            <div>
+                                <div class="label">Your Semester</div>
+                                <div class="value text-[0.85rem] font-normal text-[#94A3B8]" id="student-dash-my-semester">I Semester</div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-item">
+                            <span class="badge-division primary" id="student-dash-division">Div A</span>
+                            <span class="badge-division blue" id="student-dash-branch">CSE</span>
+                        </div>
+                    </div>
+
                     <div class="card p-5 mb-6">
                         <h3 class="font-display font-semibold text-[#1A0E0C] mb-3 flex items-center gap-2 text-[15px]">
                             <span class="material-symbols-outlined text-[22px] text-[#D4A745]">campaign</span>
@@ -2062,6 +2255,24 @@
         const DIVISIONS_KEY = 'bec_divisions';
         const SEMESTERS_KEY = 'bec_semesters';
 
+        // ── updated default branches ──
+        const DEFAULT_BRANCHES = [
+            'Civil Engineering',
+            'Mechanical Engineering',
+            'Electrical and Electronics Engineering',
+            'Electronics and Communication Engineering',
+            'Computer Science and Engineering',
+            'Information Science and Engineering',
+            'Electronics and Computer Engineering',
+            'Artificial Intelligence and Machine Learning',
+            'Automobile Engineering',
+            'Industrial and Production Engineering',
+            'Biotechnology'
+        ];
+
+        // ── updated default divisions A–O ──
+        const DEFAULT_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+
         function getAcademicYear() {
             return localStorage.getItem(ACADEMIC_YEAR_KEY) || '2025-26';
         }
@@ -2081,12 +2292,15 @@
         function getBranches() {
             try {
                 const raw = localStorage.getItem(BRANCHES_KEY);
-                return raw ? JSON.parse(raw) : ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical',
-                    'Information Science', 'Mathematics', 'Physics', 'Chemistry', 'Other'
-                ];
-            } catch (e) { return ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical',
-                    'Information Science', 'Mathematics', 'Physics', 'Chemistry', 'Other'
-                ]; }
+                const branches = raw ? JSON.parse(raw) : null;
+                if (branches && Array.isArray(branches) && branches.length > 0) return branches;
+                // Initialize with defaults
+                setBranches(DEFAULT_BRANCHES);
+                return DEFAULT_BRANCHES;
+            } catch (e) {
+                setBranches(DEFAULT_BRANCHES);
+                return DEFAULT_BRANCHES;
+            }
         }
 
         function setBranches(branches) {
@@ -2096,8 +2310,14 @@
         function getDivisions() {
             try {
                 const raw = localStorage.getItem(DIVISIONS_KEY);
-                return raw ? JSON.parse(raw) : ['A', 'B', 'C', 'D'];
-            } catch (e) { return ['A', 'B', 'C', 'D']; }
+                const divisions = raw ? JSON.parse(raw) : null;
+                if (divisions && Array.isArray(divisions) && divisions.length > 0) return divisions;
+                setDivisions(DEFAULT_DIVISIONS);
+                return DEFAULT_DIVISIONS;
+            } catch (e) {
+                setDivisions(DEFAULT_DIVISIONS);
+                return DEFAULT_DIVISIONS;
+            }
         }
 
         function setDivisions(divisions) {
@@ -2154,7 +2374,6 @@
             const semIndex = semSelect.selectedIndex;
             const semesters = getSemesters();
             const branchGroup = document.getElementById('branch-group');
-            // Show branch only for semesters 3 and above (index >= 2)
             if (semIndex >= 2) {
                 branchGroup.classList.add('open');
             } else {
@@ -2378,7 +2597,7 @@
 
         function showToast(message, type = 'info') {
             const el = document.getElementById('toast');
-            el.innerHTML = message; // Use innerHTML to support line breaks
+            el.innerHTML = message;
             el.className = 'toast ' + type;
             void el.offsetWidth;
             el.classList.add('show');
@@ -2571,9 +2790,37 @@
                 document.getElementById('announcement-admin-actions').classList.add('hidden');
             }
 
-            // Close sidebar on mobile after view change
+            // update academic info bar
+            updateAcademicInfoBars();
+
             if (window.innerWidth <= 768) {
                 toggleSidebar(false);
+            }
+        }
+
+        // ── update academic info bars ──
+        function updateAcademicInfoBars() {
+            const year = getAcademicYear();
+            const type = getSemesterType();
+            const sessionLabel = type === 'ODD' ? 'Odd Semester' : type === 'EVEN' ? 'Even Semester' : 'Summer Semester';
+
+            // Dashboard bar
+            document.getElementById('dash-academic-year').textContent = year;
+            document.getElementById('dash-semester-type').textContent = type;
+            document.getElementById('dash-semester-badge').textContent = type;
+            document.getElementById('dash-session-label').textContent = sessionLabel;
+            document.getElementById('dash-status-badge').textContent = 'Active';
+
+            // Student bar
+            document.getElementById('student-dash-academic-year').textContent = year;
+            document.getElementById('student-dash-semester-type').textContent = type;
+            document.getElementById('student-dash-semester-badge').textContent = type;
+
+            const user = getCurrentUser();
+            if (user && user.role === 'student') {
+                document.getElementById('student-dash-my-semester').textContent = user.semester || 'I Semester';
+                document.getElementById('student-dash-division').textContent = 'Div ' + (user.division || 'A');
+                document.getElementById('student-dash-branch').textContent = user.branch || 'General';
             }
         }
 
@@ -2650,6 +2897,7 @@
             });
             actEl.innerHTML = actHtml || '<p class="text-[14px] text-[#6B5A55]">No activity yet.</p>';
             renderAnnouncements();
+            updateAcademicInfoBars();
         }
 
         // ============================================================
@@ -2844,6 +3092,7 @@
                 `Showing subjects for ${user.branch || 'Common'} · ${user.semester || '—'} · Div ${user.division || '—'}`;
 
             renderAnnouncements();
+            updateAcademicInfoBars();
 
             const semesters = getSemesters();
             const studentSemester = user.semester;
@@ -3277,6 +3526,7 @@
             if (!year) { showToast('Please enter an academic year.', 'error'); return; }
             setAcademicYear(year);
             setSemesterType(type);
+            updateAcademicInfoBars();
             showToast('Academic settings saved!', 'success');
         }
 
@@ -3304,14 +3554,12 @@
         }
 
         function deleteBranch(index) {
-            // Check if branch is in use by any subject
             const branch = getBranches()[index];
             const inUse = subjects.some(s => s.branch === branch);
             if (inUse) {
                 showToast('Cannot delete: Branch is assigned to one or more subjects.', 'error');
                 return;
             }
-            // Check if branch is in use by any user
             const users = getUsers();
             const userInUse = users.some(u => u.branch === branch);
             if (userInUse) {
@@ -3442,7 +3690,6 @@
             const semSelect = document.getElementById('subject-semester');
             const divSelect = document.getElementById('subject-division');
             const branchSelect = document.getElementById('subject-branch');
-            // Ensure the subject's values exist in dropdown, otherwise add them temporarily
             const semesters = getSemesters();
             if (!semesters.includes(s.semester)) {
                 semSelect.innerHTML += `<option value="${s.semester}">${s.semester}</option>`;
@@ -3476,7 +3723,6 @@
             if (strength < 1) { showToast('Strength must be at least 1.', 'error'); return; }
 
             if (id) {
-                // EDIT: Check duplicate code for same branch, excluding current subject
                 const duplicate = subjects.some(s =>
                     s.id !== id && s.code.toLowerCase() === code.toLowerCase() && s.branch === branch
                 );
@@ -3498,7 +3744,6 @@
                     return;
                 }
             } else {
-                // ADD: Check duplicate code for same branch
                 const exists = subjects.some(s => s.code.toLowerCase() === code.toLowerCase() && s.branch === branch);
                 if (exists) {
                     showToast(`A subject with code "${code}" already exists for branch "${branch}".`, 'error');
@@ -3521,7 +3766,6 @@
             if (!confirm('Delete this subject and all its data?')) return;
             const idx = subjects.findIndex(s => s.id === id);
             if (idx === -1) { showToast('Subject not found.', 'error'); return; }
-            // Clean up orphaned attendance records
             for (const key in attendanceData) {
                 if (attendanceData[key].subjectId === id) {
                     delete attendanceData[key];
@@ -3543,7 +3787,6 @@
         // ============================================================
         function openTimetableModal() {
             if (!getCurrentSubject()) { showToast('No subject selected.', 'error'); return; }
-            // Default to today's day
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const today = days[new Date().getDay() - 1] || 'Monday';
             document.getElementById('tt-day').value = today;
@@ -3794,6 +4037,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadAttendanceData();
             loadAnnouncements();
+            // Ensure default branches and divisions are set on first load
+            getBranches();
+            getDivisions();
             const session = getSession();
             if (session) {
                 const users = getUsers();
@@ -3870,6 +4116,7 @@
         window.deleteSemester = deleteSemester;
         window.populateAcademicDropdowns = populateAcademicDropdowns;
         window.toggleSidebar = toggleSidebar;
+        window.updateAcademicInfoBars = updateAcademicInfoBars;
     </script>
 </body>
 </html>
