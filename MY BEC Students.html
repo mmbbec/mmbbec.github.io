@@ -2490,16 +2490,9 @@
             populateSelect('subject-branch', branches, branches[0]);
         }
 
+        // ── removed onSemesterChange – branch is always shown for students ──
         function onSemesterChange() {
-            const semSelect = document.getElementById('signup-semester');
-            const semIndex = semSelect.selectedIndex;
-            const semesters = getSemesters();
-            const branchGroup = document.getElementById('branch-group');
-            if (semIndex >= 2) {
-                branchGroup.classList.add('open');
-            } else {
-                branchGroup.classList.remove('open');
-            }
+            // No longer hides branch – kept for compatibility
         }
 
         // ============================================================
@@ -2516,7 +2509,7 @@
             document.getElementById('signup-form').classList.remove('hidden');
             selectRole('teacher');
             populateAcademicDropdowns();
-            onSemesterChange();
+            // Branch is always open for students – we set it based on role
             toggleSignupFields('teacher');
         }
 
@@ -2531,23 +2524,27 @@
             const semester = document.getElementById('signup-semester');
             const division = document.getElementById('signup-division');
             const branch = document.getElementById('signup-branch');
+            const branchGroup = document.getElementById('branch-group');
             const isTeacher = (role === 'teacher');
+
             semester.disabled = isTeacher;
             division.disabled = isTeacher;
             branch.disabled = isTeacher;
+
             if (isTeacher) {
                 semester.value = '';
                 division.value = '';
                 branch.value = '';
-                document.getElementById('branch-group').classList.remove('open');
+                branchGroup.classList.remove('open');
             } else {
+                // For students, always show branch and enable it
+                branchGroup.classList.add('open');
                 const semesters = getSemesters();
                 const divisions = getDivisions();
                 const branches = getBranches();
                 if (semesters.length) semester.value = semesters[0];
                 if (divisions.length) division.value = divisions[0];
                 if (branches.length) branch.value = branches[0];
-                onSemesterChange();
             }
         }
 
@@ -2583,19 +2580,9 @@
                 division = '';
                 branch = '';
             } else {
-                if (!semester || !division) {
-                    showToast('Please select Semester and Division.', 'error');
+                if (!semester || !division || !branch) {
+                    showToast('Please select Semester, Division, and Branch.', 'error');
                     return;
-                }
-                const semesters = getSemesters();
-                const semIndex = semesters.indexOf(semester);
-                const isLowerSemester = semIndex < 2;
-                if (!isLowerSemester && !branch) {
-                    showToast('Please select Branch for 3rd semester and above.', 'error');
-                    return;
-                }
-                if (isLowerSemester) {
-                    branch = '';
                 }
             }
 
@@ -2664,10 +2651,6 @@
                 if (e.key === 'Enter') document.querySelector('#forgot-password-modal form').dispatchEvent(new Event(
                     'submit'));
             });
-            const semSelect = document.getElementById('signup-semester');
-            if (semSelect) {
-                semSelect.addEventListener('change', onSemesterChange);
-            }
             populateAcademicDropdowns();
         });
 
@@ -3644,7 +3627,7 @@
         }
 
         // ============================================================
-        //  STUDENT WEBSITE (simplified, kept from previous)
+        //  STUDENT WEBSITE (branch filtering for all semesters)
         // ============================================================
 
         let studentTab = 'home';
@@ -3676,14 +3659,11 @@
         }
 
         function renderStudentHome(container, user) {
-            const semesters = getSemesters();
-            const semIndex = semesters.indexOf(user.semester);
-            const ignoreBranch = semIndex < 2;
+            // Always filter by branch, semester, division
             const mySubjects = subjects.filter(s => {
                 const matchSemester = s.semester === user.semester;
                 const matchDivision = s.division === user.division;
-                let matchBranch = true;
-                if (!ignoreBranch) matchBranch = s.branch === user.branch;
+                const matchBranch = s.branch === user.branch;
                 return matchSemester && matchDivision && matchBranch;
             });
             const totalStudents = mySubjects.reduce((sum, s) => sum + (parseInt(s.strength) || 58), 0);
@@ -3742,20 +3722,16 @@
         }
 
         function renderStudentSubjects(container, user) {
-            const semesters = getSemesters();
-            const semIndex = semesters.indexOf(user.semester);
-            const ignoreBranch = semIndex < 2;
             const mySubjects = subjects.filter(s => {
                 const matchSemester = s.semester === user.semester;
                 const matchDivision = s.division === user.division;
-                let matchBranch = true;
-                if (!ignoreBranch) matchBranch = s.branch === user.branch;
+                const matchBranch = s.branch === user.branch;
                 return matchSemester && matchDivision && matchBranch;
             });
 
             if (mySubjects.length === 0) {
                 container.innerHTML =
-                    `<div class="card p-5 text-center text-[#6B5A55] py-12">📭 No subjects available for your ${ignoreBranch ? 'semester and division' : 'branch, semester and division'}.</div>`;
+                    `<div class="card p-5 text-center text-[#6B5A55] py-12">📭 No subjects available for your branch, semester, and division.</div>`;
                 return;
             }
 
@@ -3847,14 +3823,10 @@
         }
 
         function renderStudentAttendance(container, user) {
-            const semesters = getSemesters();
-            const semIndex = semesters.indexOf(user.semester);
-            const ignoreBranch = semIndex < 2;
             const mySubjects = subjects.filter(s => {
                 const matchSemester = s.semester === user.semester;
                 const matchDivision = s.division === user.division;
-                let matchBranch = true;
-                if (!ignoreBranch) matchBranch = s.branch === user.branch;
+                const matchBranch = s.branch === user.branch;
                 return matchSemester && matchDivision && matchBranch;
             });
 
@@ -3864,7 +3836,7 @@
                 const subject = subjects.find(s => s.id === rec.subjectId);
                 if (!subject) continue;
                 if (subject.semester !== user.semester || subject.division !== user.division) continue;
-                if (!ignoreBranch && subject.branch !== user.branch) continue;
+                if (subject.branch !== user.branch) continue;
                 const absentArr = rec.absent ? Array.from(rec.absent) : [];
                 records.push({
                     date: rec.date,
@@ -3915,14 +3887,10 @@
         }
 
         function renderStudentResources(container, user) {
-            const semesters = getSemesters();
-            const semIndex = semesters.indexOf(user.semester);
-            const ignoreBranch = semIndex < 2;
             const mySubjects = subjects.filter(s => {
                 const matchSemester = s.semester === user.semester;
                 const matchDivision = s.division === user.division;
-                let matchBranch = true;
-                if (!ignoreBranch) matchBranch = s.branch === user.branch;
+                const matchBranch = s.branch === user.branch;
                 return matchSemester && matchDivision && matchBranch;
             });
 
