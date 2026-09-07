@@ -203,42 +203,47 @@
     <!-- ============================================================ -->
     <!-- GOOGLE SHEETS CONFIG -->
     <!-- ============================================================ -->
-    <div id="setup-container" class="auth-container">
-        <div class="auth-card">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#7F1D1D] to-[#DC2626] flex items-center justify-center text-white font-bold text-3xl flex-shrink-0">B</div>
-                <div>
-                    <div class="font-display font-bold text-[20px] text-[#0A1628]">BEC Bagalkote</div>
-                    <div class="text-[13px] text-[#6B5A55]">Google Sheets Cloud Sync</div>
-                </div>
-            </div>
+  // ============================================================
+// SAVE DATA TO GOOGLE SHEETS
+// ============================================================
 
-            <div class="setup-box">
-                <h3 class="font-bold text-[#5D4037] text-sm mb-2">📋 Google Sheets Setup Required</h3>
-                <p class="text-sm text-[#6B5A55] mb-2">This app uses Google Sheets as a shared database. All devices will sync automatically.</p>
-                <ol class="text-sm text-[#4E342E] space-y-1 list-decimal list-inside">
-                    <li>Create a Google Sheet with 4 tabs: <code>Subjects</code>, <code>Users</code>, <code>Attendance</code>, <code>Announcements</code></li>
-                    <li>Share the sheet with "Anyone with the link can edit"</li>
-                    <li>Get the <strong>Sheet ID</strong> from the URL: <code>https://docs.google.com/spreadsheets/d/<strong>YOUR_SHEET_ID</strong>/edit</code></li>
-                    <li>Paste the Sheet ID below</li>
-                </ol>
-            </div>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxO104VOpJteSUM9eBhNV03miqc99mWetVfdYVnQxNBJlAW3oKGXkLHUN4KVmq_-HV1/exec';
 
-            <div class="form-group mb-4">
-                <label class="form-label">Google Sheet ID</label>
-                <input id="sheet-id-input" type="text" class="form-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" />
-                <p class="text-xs text-[#6B5A55] mt-1">Example: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms</p>
-            </div>
+async function saveToGoogleSheets(sheetName, data) {
+  if (!WEB_APP_URL) {
+    showToast('⚠️ Web App URL not set. Data saved only locally.', 'error');
+    // Fallback to localStorage
+    localStorage.setItem('bec_subjects_backup', JSON.stringify(subjects));
+    localStorage.setItem('bec_users_backup', JSON.stringify(users));
+    localStorage.setItem('bec_attendance_backup', JSON.stringify(attendanceData));
+    localStorage.setItem('bec_announcements_backup', JSON.stringify(announcements));
+    return false;
+  }
 
-            <button class="btn-primary w-full py-3 text-center" onclick="connectGoogleSheets()">
-                <span class="material-symbols-outlined align-middle text-[20px]">cloud_sync</span> Connect to Google Sheets
-            </button>
-
-            <div class="mt-4 text-center text-sm text-[#6B5A55]">
-                <span id="connection-status">🔴 Not connected</span>
-            </div>
-
-            <!-- Login Form (hidden until connected) -->
+  try {
+    // Use no-cors mode to avoid CORS issues
+    await fetch(`${WEB_APP_URL}?sheet=${sheetName}`, {
+      method: 'POST',
+      mode: 'no-cors', // This is important for Apps Script
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    
+    showToast(`✅ Synced ${sheetName} to Google Sheets!`, 'success');
+    return true;
+  } catch (error) {
+    console.error('Save error:', error);
+    showToast(`⚠️ Failed to sync ${sheetName}. Saved locally.`, 'error');
+    // Fallback to localStorage
+    localStorage.setItem('bec_subjects_backup', JSON.stringify(subjects));
+    localStorage.setItem('bec_users_backup', JSON.stringify(users));
+    localStorage.setItem('bec_attendance_backup', JSON.stringify(attendanceData));
+    localStorage.setItem('bec_announcements_backup', JSON.stringify(announcements));
+    return false;
+  }
+}            <!-- Login Form (hidden until connected) -->
             <div id="login-section" class="hidden mt-6 border-t border-[#E8DCD8] pt-6">
                 <div class="form-group">
                     <label class="form-label">Email</label>
