@@ -1479,6 +1479,55 @@
             border-radius: 6px;
             border: 1px dashed #E8DCD8;
         }
+        /* debug panel */
+        .debug-panel {
+            background: #FEF9E7;
+            border: 1px solid #F1C40F;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #1E1A18;
+        }
+        .debug-panel .label {
+            font-weight: 600;
+            color: #6B5A55;
+        }
+        .debug-panel .value {
+            font-weight: 600;
+            color: #B91C1C;
+        }
+        .debug-panel .subject-line {
+            border-bottom: 1px dashed #E8DCD8;
+            padding: 4px 0;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .debug-panel .match-yes {
+            color: #065F3A;
+            background: #D1FAE5;
+            padding: 0 6px;
+            border-radius: 4px;
+        }
+        .debug-panel .match-no {
+            color: #991B1B;
+            background: #FEE2E2;
+            padding: 0 6px;
+            border-radius: 4px;
+        }
+        .subject-preview-box {
+            background: #F0F7FF;
+            border: 1px solid #B8D4F0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 4px;
+            font-size: 13px;
+            color: #1A3A5C;
+        }
+        .subject-preview-box strong {
+            color: #0A1628;
+        }
     </style>
 </head>
 <body>
@@ -1931,7 +1980,7 @@
                 </div>
 
                 <!-- ========================================================== -->
-                <!-- STUDENT WEBSITE VIEW (enhanced mapping) -->
+                <!-- STUDENT WEBSITE VIEW (enhanced mapping + debug) -->
                 <!-- ========================================================== -->
                 <div id="view-student" class="view-section hidden">
                     <div class="hero-teacher mb-6" style="background:linear-gradient(135deg,#0A1628 0%,#1a3a5c 100%);">
@@ -2006,6 +2055,13 @@
                     <div>
                         <label class="form-label">Student Strength</label>
                         <input id="subject-strength" type="number" min="1" max="200" class="form-input" placeholder="e.g. 58" value="58" />
+                    </div>
+                    <!-- Preview of selected values -->
+                    <div class="subject-preview-box" id="subject-preview">
+                        <span class="text-[11px] text-[#6B5A55]">Preview:</span>
+                        <strong id="preview-semester">I Semester</strong> ·
+                        <strong id="preview-division">A</strong> ·
+                        <strong id="preview-branch">CSE</strong>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeSubjectModal()">Cancel</button>
@@ -2541,10 +2597,23 @@
             populateSelect('subject-semester', semesters, semesters[0]);
             populateSelect('subject-division', divisions, divisions[0]);
             populateSelect('subject-branch', branches, branches[0]);
-            // admin edit dropdowns
             populateSelect('admin-edit-semester', semesters, semesters[0]);
             populateSelect('admin-edit-division', divisions, divisions[0]);
             populateSelect('admin-edit-branch', branches, branches[0]);
+
+            // Live preview in subject modal
+            document.getElementById('subject-semester')?.addEventListener('change', updateSubjectPreview);
+            document.getElementById('subject-division')?.addEventListener('change', updateSubjectPreview);
+            document.getElementById('subject-branch')?.addEventListener('change', updateSubjectPreview);
+        }
+
+        function updateSubjectPreview() {
+            const sem = document.getElementById('subject-semester')?.value || '—';
+            const div = document.getElementById('subject-division')?.value || '—';
+            const br = document.getElementById('subject-branch')?.value || '—';
+            document.getElementById('preview-semester').textContent = sem;
+            document.getElementById('preview-division').textContent = div;
+            document.getElementById('preview-branch').textContent = br;
         }
 
         function onSemesterChange() { /* kept for compatibility */ }
@@ -2694,7 +2763,6 @@
             const user = users.find(u => u.email === email);
             if (!user) { showToast('No account found with this email address.', 'error'); return; }
 
-            // If we haven't shown the reset section yet, show it
             const resetSection = document.getElementById('reset-pw-section');
             if (resetSection.style.display === 'none') {
                 _resetEmail = email;
@@ -2706,7 +2774,6 @@
                 return;
             }
 
-            // Otherwise, perform the password reset
             const newPw = document.getElementById('reset-new-password').value.trim();
             const confirmPw = document.getElementById('reset-confirm-password').value.trim();
             if (!newPw || newPw.length < 4) { showToast('Password must be at least 4 characters.', 'error'); return; }
@@ -2722,7 +2789,6 @@
             document.getElementById('login-password').value = newPw;
         }
 
-        // Close modal on Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 const fpModal = document.getElementById('forgot-password-modal');
@@ -2822,6 +2888,8 @@
                     ...s,
                     strength: parseInt(s.strength) || 58,
                     branch: s.branch || '',
+                    semester: s.semester || '',
+                    division: s.division || '',
                     timetable: Array.isArray(s.timetable) ? s.timetable : [],
                     notes: Array.isArray(s.notes) ? s.notes : [],
                     resources: Array.isArray(s.resources) ? s.resources : [],
@@ -3719,7 +3787,7 @@
         }
 
         // ============================================================
-        //  STUDENT WEBSITE (enhanced mapping with robust matching)
+        //  STUDENT WEBSITE (enhanced mapping + debug)
         // ============================================================
 
         let studentTab = 'home';
@@ -3743,7 +3811,12 @@
             const uDiv = (user.division || '').trim().toLowerCase();
             const sBr = (subject.branch || '').trim().toLowerCase();
             const uBr = (user.branch || '').trim().toLowerCase();
-            return sSem === uSem && sDiv === uDiv && sBr === uBr;
+            const match = sSem === uSem && sDiv === uDiv && sBr === uBr;
+            // For debugging, log if there is any mismatch
+            if (!match && (sSem || uSem || sDiv || uDiv || sBr || uBr)) {
+                console.debug('Mismatch:', { subject: { sSem, sDiv, sBr }, user: { uSem, uDiv, uBr } });
+            }
+            return match;
         }
 
         function switchStudentTab(tab) {
@@ -3821,13 +3894,38 @@
         function renderStudentSubjects(container, user) {
             const mySubjects = subjects.filter(s => matchesSubject(s, user));
 
+            // Build debug panel
+            let debugHtml = `
+                <div class="debug-panel">
+                    <div><span class="label">Your Semester:</span> <span class="value">${user.semester || '—'}</span></div>
+                    <div><span class="label">Your Division:</span> <span class="value">${user.division || '—'}</span></div>
+                    <div><span class="label">Your Branch:</span> <span class="value">${user.branch || '—'}</span></div>
+                    <div class="mt-2"><span class="label">All subjects in system (${subjects.length}):</span></div>
+                    ${subjects.length === 0 ? '<div>No subjects found.</div>' : ''}
+                    ${subjects.map(s => `
+                        <div class="subject-line">
+                            <span>${s.code} — ${s.name}</span>
+                            <span>Sem: ${s.semester || '—'}</span>
+                            <span>Div: ${s.division || '—'}</span>
+                            <span>Br: ${s.branch || '—'}</span>
+                            <span class="${matchesSubject(s, user) ? 'match-yes' : 'match-no'}">
+                                ${matchesSubject(s, user) ? '✅ Matches' : '❌ No'}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
             if (mySubjects.length === 0) {
-                container.innerHTML =
-                    `<div class="card p-5 text-center text-[#6B5A55] py-12">📭 No subjects available for your branch, semester, and division.</div>`;
+                container.innerHTML = debugHtml + `
+                    <div class="card p-5 text-center text-[#6B5A55] py-12">
+                        📭 No subjects available for your branch, semester, and division.<br>
+                        <span class="text-[12px]">Check the debug panel above to see why.</span>
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            container.innerHTML = debugHtml + `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     ${mySubjects.map(s => `
                         <div class="subject-card">
                             <div class="flex items-center justify-between mb-2">
@@ -4460,6 +4558,8 @@
             document.getElementById('subject-code').value = '';
             document.getElementById('subject-strength').value = '58';
             populateAcademicDropdowns();
+            // Set preview
+            updateSubjectPreview();
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
@@ -4490,6 +4590,7 @@
             semSelect.value = s.semester || semSelect.options[0].value;
             divSelect.value = s.division || divSelect.options[0].value;
             branchSelect.value = s.branch || branchSelect.options[0].value;
+            updateSubjectPreview();
             document.getElementById('subject-modal').classList.remove('hidden');
         }
 
@@ -4958,6 +5059,7 @@
         window.closeAdminEditUserModal = closeAdminEditUserModal;
         window.handleAdminEditUserSubmit = handleAdminEditUserSubmit;
         window.adminResetPassword = adminResetPassword;
+        window.updateSubjectPreview = updateSubjectPreview;
     </script>
 </body>
 </html>
