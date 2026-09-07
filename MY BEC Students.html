@@ -1470,6 +1470,15 @@
                 padding: 0.35rem 0.7rem;
             }
         }
+        /* ── reset password specific ── */
+        .reset-pw-hint {
+            font-size: 12px;
+            color: #6B5A55;
+            background: #FDFBFA;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px dashed #E8DCD8;
+        }
     </style>
 </head>
 <body>
@@ -1501,7 +1510,7 @@
                     <input id="login-password" type="password" placeholder="••••••••" />
                 </div>
                 <div class="forgot-password">
-                    <a onclick="handleForgotPassword()">Forgot Password?</a>
+                    <a onclick="openForgotPasswordModal()">Forgot Password?</a>
                 </div>
                 <button class="btn-primary btn-login" onclick="handleLogin()">Sign In</button>
                 <div class="auth-toggle">
@@ -1796,13 +1805,13 @@
                 </div>
 
                 <!-- ========================================================== -->
-                <!-- ADMIN: USERS (legacy) -->
+                <!-- ADMIN: USERS (enhanced with edit/reset) -->
                 <!-- ========================================================== -->
                 <div id="view-admin-users" class="view-section hidden">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
                             <h1 class="text-2xl font-bold text-[#1A0E0C] font-display">User Management</h1>
-                            <p class="text-[14px] text-[#6B5A55]">Manage all registered users</p>
+                            <p class="text-[14px] text-[#6B5A55]">Manage all registered users — edit details or reset passwords</p>
                         </div>
                         <span class="badge-role admin text-[11px]">Admin Only</span>
                     </div>
@@ -1892,7 +1901,6 @@
                 <!-- TEACHER WEBSITE VIEW (enhanced) -->
                 <!-- ========================================================== -->
                 <div id="view-teacher" class="view-section hidden">
-                    <!-- Hero -->
                     <div class="hero-teacher mb-6">
                         <div class="hero-title" id="teacher-hero-title">👨‍🏫 Faculty Portal</div>
                         <div class="hero-sub" id="teacher-hero-sub">Manage your subjects, attendance & timetable</div>
@@ -1902,8 +1910,6 @@
                             <span>📅 <span id="teacher-hero-year">2025-26</span></span>
                         </div>
                     </div>
-
-                    <!-- Tab Bar -->
                     <div class="role-tab-bar mb-6" id="teacher-tab-bar">
                         <button class="tab-btn active" data-teacher-tab="home" onclick="switchTeacherTab('home')">
                             <span class="material-symbols-outlined text-[16px]">home</span> Home
@@ -1921,16 +1927,13 @@
                             <span class="material-symbols-outlined text-[16px]">folder_shared</span> Resources
                         </button>
                     </div>
-
-                    <!-- Teacher Tab Content -->
                     <div id="teacher-tab-content" class="website-tab-content"></div>
                 </div>
 
                 <!-- ========================================================== -->
-                <!-- STUDENT WEBSITE VIEW -->
+                <!-- STUDENT WEBSITE VIEW (enhanced mapping) -->
                 <!-- ========================================================== -->
                 <div id="view-student" class="view-section hidden">
-                    <!-- Hero -->
                     <div class="hero-teacher mb-6" style="background:linear-gradient(135deg,#0A1628 0%,#1a3a5c 100%);">
                         <div class="hero-title" id="student-hero-title">🎓 Student Portal</div>
                         <div class="hero-sub" id="student-hero-sub">Welcome to your academic dashboard</div>
@@ -1941,8 +1944,6 @@
                             <span>📅 <span id="student-hero-year">2025-26</span></span>
                         </div>
                     </div>
-
-                    <!-- Tab Bar -->
                     <div class="role-tab-bar mb-6" id="student-tab-bar">
                         <button class="tab-btn active" data-student-tab="home" onclick="switchStudentTab('home')">
                             <span class="material-symbols-outlined text-[16px]">home</span> Home
@@ -1957,8 +1958,6 @@
                             <span class="material-symbols-outlined text-[16px]">folder_shared</span> Resources
                         </button>
                     </div>
-
-                    <!-- Student Tab Content -->
                     <div id="student-tab-content" class="website-tab-content"></div>
                 </div>
 
@@ -2242,7 +2241,7 @@
             </div>
         </div>
 
-        <!-- Forgot Password Modal -->
+        <!-- ========== FORGOT / RESET PASSWORD MODAL (enhanced) ========== -->
         <div id="forgot-password-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <div class="modal-content max-w-md">
                 <div class="modal-header flex items-center justify-between">
@@ -2252,14 +2251,25 @@
                     </button>
                 </div>
                 <form class="modal-body space-y-4" onsubmit="handleForgotPasswordSubmit(event)">
-                    <p class="text-[13px] text-[#6B5A55]">Enter your email address and we'll send you a password reset link.</p>
+                    <p class="text-[13px] text-[#6B5A55]">Enter your email address. If an account exists, you can reset your password.</p>
                     <div>
                         <label class="form-label">Email Address</label>
                         <input id="forgot-email" type="email" class="form-input" placeholder="you@example.com" required />
                     </div>
+                    <div id="reset-pw-section" style="display:none;">
+                        <div class="reset-pw-hint mb-2" id="reset-pw-hint"></div>
+                        <div>
+                            <label class="form-label">New Password</label>
+                            <input id="reset-new-password" type="password" class="form-input" placeholder="Enter new password" minlength="4" />
+                        </div>
+                        <div>
+                            <label class="form-label">Confirm Password</label>
+                            <input id="reset-confirm-password" type="password" class="form-input" placeholder="Confirm new password" minlength="4" />
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeForgotPasswordModal()">Cancel</button>
-                        <button type="submit" class="btn-secondary">Send Reset Link</button>
+                        <button type="submit" class="btn-secondary" id="reset-submit-btn">Send Reset Link</button>
                     </div>
                 </form>
             </div>
@@ -2294,6 +2304,49 @@
                     <div class="modal-footer">
                         <button type="button" class="btn-ghost" onclick="closeAnnouncementModal()">Cancel</button>
                         <button type="submit" class="btn-secondary">Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== ADMIN EDIT USER MODAL ========== -->
+        <div id="admin-edit-user-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content max-w-md">
+                <div class="modal-header flex items-center justify-between">
+                    <h3 class="font-display font-bold text-[#1A0E0C] text-[18px]">Edit User</h3>
+                    <button class="p-1 rounded hover:bg-[#F1EDEB] transition" onclick="closeAdminEditUserModal()">
+                        <span class="material-symbols-outlined text-[22px]">close</span>
+                    </button>
+                </div>
+                <form class="modal-body space-y-4" onsubmit="handleAdminEditUserSubmit(event)">
+                    <input type="hidden" id="admin-edit-email" />
+                    <div>
+                        <label class="form-label">Full Name</label>
+                        <input id="admin-edit-name" type="text" class="form-input" placeholder="Full name" />
+                    </div>
+                    <div>
+                        <label class="form-label">Role</label>
+                        <select id="admin-edit-role" class="form-select">
+                            <option value="admin">Admin</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Semester</label>
+                        <select id="admin-edit-semester" class="form-select"></select>
+                    </div>
+                    <div>
+                        <label class="form-label">Division</label>
+                        <select id="admin-edit-division" class="form-select"></select>
+                    </div>
+                    <div>
+                        <label class="form-label">Branch</label>
+                        <select id="admin-edit-branch" class="form-select"></select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-ghost" onclick="closeAdminEditUserModal()">Cancel</button>
+                        <button type="submit" class="btn-secondary">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -2488,12 +2541,13 @@
             populateSelect('subject-semester', semesters, semesters[0]);
             populateSelect('subject-division', divisions, divisions[0]);
             populateSelect('subject-branch', branches, branches[0]);
+            // admin edit dropdowns
+            populateSelect('admin-edit-semester', semesters, semesters[0]);
+            populateSelect('admin-edit-division', divisions, divisions[0]);
+            populateSelect('admin-edit-branch', branches, branches[0]);
         }
 
-        // ── removed onSemesterChange – branch is always shown for students ──
-        function onSemesterChange() {
-            // No longer hides branch – kept for compatibility
-        }
+        function onSemesterChange() { /* kept for compatibility */ }
 
         // ============================================================
         //  AUTH ACTIONS
@@ -2509,7 +2563,6 @@
             document.getElementById('signup-form').classList.remove('hidden');
             selectRole('teacher');
             populateAcademicDropdowns();
-            // Branch is always open for students – we set it based on role
             toggleSignupFields('teacher');
         }
 
@@ -2537,7 +2590,6 @@
                 branch.value = '';
                 branchGroup.classList.remove('open');
             } else {
-                // For students, always show branch and enable it
                 branchGroup.classList.add('open');
                 const semesters = getSemesters();
                 const divisions = getDivisions();
@@ -2614,12 +2666,19 @@
         }
 
         // ============================================================
-        //  FORGOT PASSWORD
+        //  FORGOT / RESET PASSWORD (enhanced)
         // ============================================================
 
-        function handleForgotPassword() {
+        let _resetEmail = '';
+
+        function openForgotPasswordModal() {
             document.getElementById('forgot-password-modal').classList.remove('hidden');
             document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+            document.getElementById('reset-pw-section').style.display = 'none';
+            document.getElementById('reset-submit-btn').textContent = 'Send Reset Link';
+            document.getElementById('reset-new-password').value = '';
+            document.getElementById('reset-confirm-password').value = '';
+            _resetEmail = '';
         }
 
         function closeForgotPasswordModal() {
@@ -2630,12 +2689,48 @@
             e.preventDefault();
             const email = document.getElementById('forgot-email').value.trim();
             if (!email) { showToast('Please enter your email address.', 'error'); return; }
+
             const users = getUsers();
             const user = users.find(u => u.email === email);
             if (!user) { showToast('No account found with this email address.', 'error'); return; }
-            showToast('Your password is: ' + user.password + ' (reset link sent to your email)', 'info');
+
+            // If we haven't shown the reset section yet, show it
+            const resetSection = document.getElementById('reset-pw-section');
+            if (resetSection.style.display === 'none') {
+                _resetEmail = email;
+                document.getElementById('reset-pw-hint').textContent =
+                    '🔐 Account found for ' + email + '. Enter a new password below.';
+                resetSection.style.display = 'block';
+                document.getElementById('reset-submit-btn').textContent = 'Reset Password';
+                document.getElementById('reset-new-password').focus();
+                return;
+            }
+
+            // Otherwise, perform the password reset
+            const newPw = document.getElementById('reset-new-password').value.trim();
+            const confirmPw = document.getElementById('reset-confirm-password').value.trim();
+            if (!newPw || newPw.length < 4) { showToast('Password must be at least 4 characters.', 'error'); return; }
+            if (newPw !== confirmPw) { showToast('Passwords do not match.', 'error'); return; }
+
+            const userToUpdate = users.find(u => u.email === _resetEmail);
+            if (!userToUpdate) { showToast('User not found.', 'error'); return; }
+
+            userToUpdate.password = newPw;
+            saveUsers(users);
+            showToast('✅ Password reset successfully! You can now log in.', 'success');
             closeForgotPasswordModal();
+            document.getElementById('login-password').value = newPw;
         }
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const fpModal = document.getElementById('forgot-password-modal');
+                if (fpModal && !fpModal.classList.contains('hidden')) {
+                    closeForgotPasswordModal();
+                }
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('login-password').addEventListener('keydown', function(e) {
@@ -3307,7 +3402,7 @@
                 `;
         }
 
-        // ── Teacher ATTENDANCE (enhanced with registered students list) ──
+        // ── Teacher ATTENDANCE ──
         function renderTeacherAttendance(container, user) {
             const selectHtml = subjects.map(s =>
                     `<option value="${s.id}">${s.code} - ${s.name} (${s.strength||58} students)</option>`)
@@ -3327,7 +3422,6 @@
                             <button class="btn-secondary flex-shrink-0" onclick="loadTeacherAttendance()">Load</button>
                         </div>
 
-                        <!-- Registered Students Summary -->
                         <div id="teacher-registered-summary" class="bg-[#FDFBFA] p-3 rounded-lg border border-[#E8DCD8] mb-4">
                             <span class="text-[13px] font-semibold text-[#1A0E0C]">🧑‍🎓 Registered Students:</span>
                             <span id="teacher-registered-list" class="text-[13px] text-[#6B5A55]">Select a subject and click Load</span>
@@ -3374,7 +3468,6 @@
             window._teacherSubjectId = subjects.length > 0 ? subjects[0].id : null;
         }
 
-        // Teacher attendance functions (enhanced with registered students list)
         function loadTeacherAttendance() {
             const subjectId = document.getElementById('teacher-attendance-subject')?.value;
             const date = document.getElementById('teacher-attendance-date')?.value;
@@ -3390,7 +3483,6 @@
             document.getElementById('teacher-attendance-strength-info').textContent =
                 `Strength: ${strength} students (Roll 1 – ${strength})`;
 
-            // Show registered students list
             const listEl = document.getElementById('teacher-registered-list');
             if (listEl && subj) {
                 const rolls = Array.from({ length: strength }, (_, i) => i + 1);
@@ -3405,7 +3497,7 @@
 
         function renderTeacherRollNumbers(strength) {
             const grid = document.getElementById('teacher-roll-grid');
-            if (!grid) { console.warn('teacher-roll-grid not found'); return; }
+            if (!grid) return;
             const total = strength || 58;
             let html = '';
             for (let i = 1; i <= total; i++) {
@@ -3521,7 +3613,7 @@
                 `).join('');
         }
 
-        // ── Teacher TIMETABLE (shows registered students per subject) ──
+        // ── Teacher TIMETABLE ──
         function renderTeacherTimetable(container, user) {
             if (subjects.length === 0) {
                 container.innerHTML =
@@ -3627,7 +3719,7 @@
         }
 
         // ============================================================
-        //  STUDENT WEBSITE (branch filtering for all semesters)
+        //  STUDENT WEBSITE (enhanced mapping with robust matching)
         // ============================================================
 
         let studentTab = 'home';
@@ -3641,6 +3733,17 @@
             document.getElementById('student-hero-year').textContent = getAcademicYear();
             switchStudentTab(studentTab);
             updateAcademicInfoBars();
+        }
+
+        // ---- robust matcher: trim + case-insensitive ----
+        function matchesSubject(subject, user) {
+            const sSem = (subject.semester || '').trim().toLowerCase();
+            const uSem = (user.semester || '').trim().toLowerCase();
+            const sDiv = (subject.division || '').trim().toLowerCase();
+            const uDiv = (user.division || '').trim().toLowerCase();
+            const sBr = (subject.branch || '').trim().toLowerCase();
+            const uBr = (user.branch || '').trim().toLowerCase();
+            return sSem === uSem && sDiv === uDiv && sBr === uBr;
         }
 
         function switchStudentTab(tab) {
@@ -3659,13 +3762,7 @@
         }
 
         function renderStudentHome(container, user) {
-            // Always filter by branch, semester, division
-            const mySubjects = subjects.filter(s => {
-                const matchSemester = s.semester === user.semester;
-                const matchDivision = s.division === user.division;
-                const matchBranch = s.branch === user.branch;
-                return matchSemester && matchDivision && matchBranch;
-            });
+            const mySubjects = subjects.filter(s => matchesSubject(s, user));
             const totalStudents = mySubjects.reduce((sum, s) => sum + (parseInt(s.strength) || 58), 0);
             const totalResources = mySubjects.reduce((sum, s) => sum + (s.resources || []).length + (s.notes || []).length, 0);
             const totalSlots = mySubjects.reduce((sum, s) => sum + (s.timetable || []).length, 0);
@@ -3722,12 +3819,7 @@
         }
 
         function renderStudentSubjects(container, user) {
-            const mySubjects = subjects.filter(s => {
-                const matchSemester = s.semester === user.semester;
-                const matchDivision = s.division === user.division;
-                const matchBranch = s.branch === user.branch;
-                return matchSemester && matchDivision && matchBranch;
-            });
+            const mySubjects = subjects.filter(s => matchesSubject(s, user));
 
             if (mySubjects.length === 0) {
                 container.innerHTML =
@@ -3823,20 +3915,14 @@
         }
 
         function renderStudentAttendance(container, user) {
-            const mySubjects = subjects.filter(s => {
-                const matchSemester = s.semester === user.semester;
-                const matchDivision = s.division === user.division;
-                const matchBranch = s.branch === user.branch;
-                return matchSemester && matchDivision && matchBranch;
-            });
+            const mySubjects = subjects.filter(s => matchesSubject(s, user));
 
             const records = [];
             for (const key in attendanceData) {
                 const rec = attendanceData[key];
                 const subject = subjects.find(s => s.id === rec.subjectId);
                 if (!subject) continue;
-                if (subject.semester !== user.semester || subject.division !== user.division) continue;
-                if (subject.branch !== user.branch) continue;
+                if (!matchesSubject(subject, user)) continue;
                 const absentArr = rec.absent ? Array.from(rec.absent) : [];
                 records.push({
                     date: rec.date,
@@ -3887,12 +3973,7 @@
         }
 
         function renderStudentResources(container, user) {
-            const mySubjects = subjects.filter(s => {
-                const matchSemester = s.semester === user.semester;
-                const matchDivision = s.division === user.division;
-                const matchBranch = s.branch === user.branch;
-                return matchSemester && matchDivision && matchBranch;
-            });
+            const mySubjects = subjects.filter(s => matchesSubject(s, user));
 
             const allItems = [];
             mySubjects.forEach(s => {
@@ -3930,7 +4011,7 @@
         }
 
         // ============================================================
-        //  ADMIN: USER MANAGEMENT (legacy)
+        //  ADMIN: USER MANAGEMENT (enhanced with edit & reset)
         // ============================================================
 
         function renderAdminUsers() {
@@ -3949,7 +4030,13 @@
                         <td>${u.division || '—'}</td>
                         <td>${u.branch || '—'}</td>
                         <td class="text-right">
-                            ${u.email !== 'mmbbec@gmail.com' ? `<button class="text-[#B91C1C] hover:text-[#7F1D1D] text-[13px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>` : '<span class="text-[#6B5A55] text-[12px] font-medium">Protected</span>'}
+                            <div class="flex items-center justify-end gap-1 flex-wrap">
+                                ${u.email !== 'mmbbec@gmail.com' ? `
+                                    <button class="text-[#DC2626] hover:underline text-[12px] font-semibold" onclick="openAdminEditUser('${u.email}')">✎ Edit</button>
+                                    <button class="text-[#B91C1C] hover:underline text-[12px] font-semibold" onclick="adminResetPassword('${u.email}')">🔑 Reset</button>
+                                    <button class="text-[#B91C1C] hover:underline text-[12px] font-semibold" onclick="deleteUser('${u.email}')">Delete</button>
+                                ` : `<span class="text-[#6B5A55] text-[12px] font-medium">🔒 Protected</span>`}
+                            </div>
                         </td>
                     </tr>
                 `).join('');
@@ -3963,6 +4050,63 @@
             saveUsers(users);
             renderAdminUsers();
             showToast('User deleted.', 'info');
+        }
+
+        // ---- Admin: Edit User ----
+        function openAdminEditUser(email) {
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+            if (!user) { showToast('User not found.', 'error'); return; }
+            document.getElementById('admin-edit-email').value = email;
+            document.getElementById('admin-edit-name').value = user.name || '';
+            document.getElementById('admin-edit-role').value = user.role || 'student';
+            populateSelect('admin-edit-semester', getSemesters(), user.semester || getSemesters()[0]);
+            populateSelect('admin-edit-division', getDivisions(), user.division || getDivisions()[0]);
+            populateSelect('admin-edit-branch', getBranches(), user.branch || getBranches()[0]);
+            document.getElementById('admin-edit-user-modal').classList.remove('hidden');
+        }
+
+        function closeAdminEditUserModal() {
+            document.getElementById('admin-edit-user-modal').classList.add('hidden');
+        }
+
+        function handleAdminEditUserSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('admin-edit-email').value;
+            const name = document.getElementById('admin-edit-name').value.trim();
+            const role = document.getElementById('admin-edit-role').value;
+            const semester = document.getElementById('admin-edit-semester').value;
+            const division = document.getElementById('admin-edit-division').value;
+            const branch = document.getElementById('admin-edit-branch').value;
+
+            if (!name) { showToast('Name is required.', 'error'); return; }
+
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+            if (!user) { showToast('User not found.', 'error'); return; }
+
+            user.name = name;
+            user.role = role;
+            user.semester = semester;
+            user.division = division;
+            user.branch = branch;
+
+            saveUsers(users);
+            closeAdminEditUserModal();
+            renderAdminUsers();
+            showToast('User updated successfully!', 'success');
+        }
+
+        // ---- Admin: Reset Password ----
+        function adminResetPassword(email) {
+            if (!confirm('Reset password for ' + email + ' to "1234"?')) return;
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+            if (!user) { showToast('User not found.', 'error'); return; }
+            user.password = '1234';
+            saveUsers(users);
+            renderAdminUsers();
+            showToast('Password reset to 1234 for ' + email, 'info');
         }
 
         // ============================================================
@@ -4747,7 +4891,7 @@
         window.closeResourceModal = closeResourceModal;
         window.closeAnnouncementModal = closeAnnouncementModal;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
-        window.handleForgotPassword = handleForgotPassword;
+        window.openForgotPasswordModal = openForgotPasswordModal;
         window.handleForgotPasswordSubmit = handleForgotPasswordSubmit;
         window.handleSubjectSubmit = handleSubjectSubmit;
         window.handleTimetableSubmit = handleTimetableSubmit;
@@ -4810,6 +4954,10 @@
         window.renderStudentSubjects = renderStudentSubjects;
         window.renderStudentAttendance = renderStudentAttendance;
         window.renderStudentResources = renderStudentResources;
+        window.openAdminEditUser = openAdminEditUser;
+        window.closeAdminEditUserModal = closeAdminEditUserModal;
+        window.handleAdminEditUserSubmit = handleAdminEditUserSubmit;
+        window.adminResetPassword = adminResetPassword;
     </script>
 </body>
 </html>
