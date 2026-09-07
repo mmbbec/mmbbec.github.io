@@ -203,47 +203,91 @@
     <!-- ============================================================ -->
     <!-- GOOGLE SHEETS CONFIG -->
     <!-- ============================================================ -->
-  // ============================================================
-// SAVE DATA TO GOOGLE SHEETS
+ // ============================================================
+// LOAD ALL DATA FROM GOOGLE SHEETS (via Apps Script)
 // ============================================================
 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxO104VOpJteSUM9eBhNV03miqc99mWetVfdYVnQxNBJlAW3oKGXkLHUN4KVmq_-HV1/exec';
-
-async function saveToGoogleSheets(sheetName, data) {
-  if (!WEB_APP_URL) {
-    showToast('⚠️ Web App URL not set. Data saved only locally.', 'error');
-    // Fallback to localStorage
-    localStorage.setItem('bec_subjects_backup', JSON.stringify(subjects));
-    localStorage.setItem('bec_users_backup', JSON.stringify(users));
-    localStorage.setItem('bec_attendance_backup', JSON.stringify(attendanceData));
-    localStorage.setItem('bec_announcements_backup', JSON.stringify(announcements));
-    return false;
-  }
-
+async function loadAllData() {
   try {
-    // Use no-cors mode to avoid CORS issues
-    await fetch(`${WEB_APP_URL}?sheet=${sheetName}`, {
-      method: 'POST',
-      mode: 'no-cors', // This is important for Apps Script
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+    showToast('🔄 Syncing data from Google Sheets...', 'info');
+
+    // Read all 4 sheets using the Apps Script
+    const sheetNames = ['Subjects', 'Users', 'Attendance', 'Announcements'];
+    const results = await Promise.all(sheetNames.map(name => 
+      fetch(`${WEB_APP_URL}?sheet=${name}`)
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.text();
+        })
+        .then(text => {
+          try { return JSON.parse(text); } catch(e) { return []; }
+        })
+        .catch(() => [])
+    ));
+
+    // Assign results
+    const [subjectData, userData, attendanceDataRaw, announcementData] = results;
+
+    // Process Subjects
+    subjects = subjectData.map(row => ({
+      id: row.id || Date.now().toString() + Math.random().toString(36).substr(2, 5),
+      name: row.name || '',
+      code: row.code || '',
+      semester: row.semester || '',
+      division: row.division || '',
+      branch: row.branch || '',
+      strength: parseInt(row.strength) || 58,
+      timetable: row.timetable ? JSON.parse(row.timetable) : [],
+      notes: row.notes ? JSON.parse(row.notes) : [],
+      resources: row.resources ? JSON.parse(row.resources) : [],
+      syllabus: row.syllabus ? JSON.parse(row.syllabus) : null
+    }));
+
+    // Process Users
+    users = userData.map(row => ({
+      name: row.name || '',
+      email: row.email || '',
+      password: row.password || '1234',
+      role: row.role || 'student',
+      semester: row.semester || '',
+      division: row.division || '',
+      branch: row.branch || ''
+    }));
+
+    // Process Attendance
+    attendanceData = {};
+    attendanceDataRaw.forEach(row => {
+      const key = `${row.subjectId}_${row.date}`;
+      attendanceData[key] = {
+        subjectId: row.subjectId,
+        date: row.date,
+        absent: row.absent ? new Set(row.absent.split(',').map(Number)) : new Set()
+      };
     });
-    
-    showToast(`✅ Synced ${sheetName} to Google Sheets!`, 'success');
-    return true;
+
+    // Process Announcements
+    announcements = announcementData.map(row => ({
+      id: row.id || Date.now().toString(),
+      title: row.title || '',
+      content: row.content || '',
+      target: row.target || 'all',
+      date: row.date || new Date().toLocaleDateString(),
+      author: row.author || 'Admin'
+    }));
+
+    showToast('✅ Data synced successfully!', 'success');
+
+    // Update UI if user is already logged in
+    if (currentUser) {
+      renderView(currentView);
+    }
+
   } catch (error) {
-    console.error('Save error:', error);
-    showToast(`⚠️ Failed to sync ${sheetName}. Saved locally.`, 'error');
-    // Fallback to localStorage
-    localStorage.setItem('bec_subjects_backup', JSON.stringify(subjects));
-    localStorage.setItem('bec_users_backup', JSON.stringify(users));
-    localStorage.setItem('bec_attendance_backup', JSON.stringify(attendanceData));
-    localStorage.setItem('bec_announcements_backup', JSON.stringify(announcements));
-    return false;
+    console.error('Error loading data:', error);
+    showToast('⚠️ Error loading data from Google Sheets. Using cached data.', 'error');
   }
-}            <!-- Login Form (hidden until connected) -->
+}
+    <!-- Login Form (hidden until connected) -->
             <div id="login-section" class="hidden mt-6 border-t border-[#E8DCD8] pt-6">
                 <div class="form-group">
                     <label class="form-label">Email</label>
