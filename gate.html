@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#9f1239">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR0FURSBFTkcgTUFUSCBNQ1EiLCJzaG9ydF9uYW1lIjoiR0FURSBFTkciLCJzdGFydF91cmwiOiIuL2luZGV4Lmh0bWwiLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjOWYxMjM5Iiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCJ9">
+<title>GATE Engineering Mathematics MCQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+--red:#9f1239;--red-dark:#881337;--red-light:#fff1f2;--red-mid:#fecdd3;
+--bg:#ffffff;--bg2:#f8fafc;--card:#ffffff;
+--text:#0f172a;--text2:#64748b;--border:#e2e8f0;
+--green:#16a34a;--green-bg:#f0fdf4;
+--red-err:#dc2626;--red-err-bg:#fef2f2;
+--amber:#d97706;--amber-bg:#fffbeb;
+--shadow:0 4px 20px rgba(15,23,42,0.06);
+--shadow2:0 8px 30px rgba(15,23,42,0.10);
+--radius:18px;--radius-sm:12px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg2);color:var(--text);overscroll-behavior:none;padding-bottom:88px;}
+button{font-family:inherit}
+.header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--red),#e11d48);display:grid;place-items:center;color:white;font-weight:800;font-size:22px;box-shadow:0 6px 18px rgba(159,18,57,0.35)}
+.h-title{font-weight:800;font-size:16px;line-height:1.1;letter-spacing:-0.3px}
+.h-sub{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text2);font-weight:600;margin-top:2px}
+.container{max-width:480px;margin:0 auto;padding:14px 14px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card-hover:active{transform:scale(0.98)}
+.hero-card{background:linear-gradient(135deg,#fff 0%,var(--red-light) 100%);border-color:#ffe4e6;position:relative;overflow:hidden}
+.hero-card::after{content:"∑ ∫ ∂";position:absolute;right:12px;top:8px;font-size:42px;opacity:0.07;font-weight:800;letter-spacing:6px}
+.badge{display:inline-flex;padding:4px 10px;border-radius:100px;background:var(--red);color:white;font-size:11px;font-weight:700;letter-spacing:0.5px}
+.badge-light{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid)}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid #fde68a}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid #bbf7d0}
+.btn{border:0;border-radius:14px;padding:14px 18px;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:0.15s}
+.btn-primary{background:var(--red);color:white;box-shadow:0 8px 20px rgba(159,18,57,0.28)}
+.btn-primary:active{transform:scale(0.98);background:var(--red-dark)}
+.btn-ghost{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
+.btn:disabled{opacity:0.4;pointer-events:none}
+.progress{height:8px;background:#f1f5f9;border-radius:100px;overflow:hidden}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--red),#e11d48);border-radius:100px;transition:width 0.35s}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.topic-card{padding:14px;border-radius:16px;border:1px solid var(--border);background:white;cursor:pointer;transition:0.15s;position:relative}
+.topic-card:active{transform:scale(0.97)}
+.topic-card .count{font-size:11px;color:var(--text2);margin-top:6px}
+.topic-card .dot{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:16px}
+.quiz-top{position:sticky;top:61px;z-index:20;background:rgba(248,250,252,0.9);backdrop-filter:blur(10px);padding:10px 0 8px;border-bottom:1px solid var(--border);margin:-14px -14px 14px;padding-left:14px;padding-right:14px}
+.q-card{padding:18px}
+.q-text{font-size:17px;line-height:1.45;font-weight:600;letter-spacing:-0.2px;margin:10px 0 16px}
+.opt{border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;background:white;margin-bottom:10px;transition:0.15s;font-size:15px}
+.opt:active{transform:scale(0.985)}
+.opt.selected{border-color:var(--red);background:var(--red-light)}
+.opt.correct{border-color:var(--green);background:var(--green-bg);color:#14532d}
+.opt.wrong{border-color:var(--red-err);background:var(--red-err-bg);color:#7f1d1d}
+.opt-letter{width:30px;height:30px;border-radius:9px;background:var(--bg2);border:1px solid var(--border);display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+.opt.correct .opt-letter{background:var(--green);color:white;border-color:var(--green)}
+.opt.wrong .opt-letter{background:var(--red-err);color:white;border-color:var(--red-err)}
+.feedback{border-radius:12px;padding:12px 14px;font-size:14px;font-weight:600;margin-top:10px}
+.feedback.ok{background:var(--green-bg);color:var(--green);border:1px solid #bbf7d0}
+.feedback.bad{background:var(--red-err-bg);color:var(--red-err);border:1px solid #fecaca}
+.exp{margin-top:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:12px;font-size:13px;line-height:1.5}
+.exp b{color:var(--text)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 20px}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 18px;border-radius:12px;cursor:pointer;color:var(--text2);font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+.nav-item.active{color:var(--red)}
+.nav-item .ico{font-size:20px;line-height:1}
+.search{width:100%;border:1.5px solid var(--border);border-radius:14px;padding:13px 14px 13px 40px;font-size:14px;outline:none;background:white}
+.search-wrap{position:relative}
+.search-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text2)}
+.small{font-size:12px;color:var(--text2)}
+.pill{display:inline-flex;padding:5px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);font-size:11px;font-weight:600;gap:6px;align-items:center;cursor:pointer}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:14px;border-radius:14px;background:white;border:1px solid var(--border);text-align:center}
+.stat b{font-size:22px;display:block}
+.hidden{display:none !important}
+.mono{font-family:'JetBrains Mono',monospace}
+.timer{font-weight:800;letter-spacing:-0.5px}
+.divider{height:1px;background:var(--border);margin:12px 0}
+/* Palette sheet */
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);display:flex;align-items:flex-end;justify-content:center}
+.sheet-content{background:white;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px;max-height:80vh;overflow:auto;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.palette-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0}
+.q-num{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--border);background:white;display:grid;place-items:center;font-weight:700;font-size:13px;cursor:pointer;color:var(--text2)}
+.q-num.answered{background:var(--green);color:white;border-color:var(--green)}
+.q-num.wrong{background:var(--red-err);color:white;border-color:var(--red-err)}
+.q-num.marked{background:var(--amber);color:white;border-color:var(--amber)}
+.q-num.current{border-color:var(--red);border-width:2.5px;box-shadow:0 0 0 3px rgba(159,18,57,0.15)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:white;margin-bottom:8px}
+.switch{position:relative;width:44px;height:24px;background:#cbd5e1;border-radius:100px;cursor:pointer;transition:.2s}
+.switch.on{background:var(--red)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:white;border-radius:50%;transition:.2s}
+.switch.on::after{left:22px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-row .label{flex:1;font-size:12px;font-weight:600}
+.bar-track{height:8px;background:#f1f5f9;border-radius:100px;overflow:hidden;width:110px}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--red),#e11d48)}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="logo">∑</div>
+<div>
+<div class="h-title">GATE Engineering Mathematics</div>
+<div class="h-sub">Practice • Test • Improve</div>
+<div style="font-size:10px;color:#9f1239;font-weight:800;margin-top:3px;letter-spacing:0.2px">Created by Dr Mahadev Biradar • BEC Bagalkote</div>
+</div>
+<div style="margin-left:auto;display:flex;gap:8px">
+<button class="pill" onclick="showSearch()"><span>⌕</span> Search</button>
+</div>
+</div>
+
+<div class="container" id="app">
+
+<!-- HOME -->
+<div id="screen-home">
+<div class="card hero-card" style="margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+<div>
+<div class="badge">GATE MOCK</div>
+<h2 style="margin:10px 0 4px;font-size:20px;letter-spacing:-0.5px">Quick Mock Test</h2>
+<p class="small" style="margin:0">Random 20 Questions • All Chapters • 10 min</p>
+</div>
+<div style="background:white;border:1px solid var(--border);border-radius:12px;padding:8px 10px;text-align:center;min-width:62px">
+<b id="home-total-q" style="font-size:20px">195</b><div class="small">Questions</div>
+</div>
+</div>
+<button class="btn btn-primary" onclick="startMockTest(20)">▶ Start Mock Test</button>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="btn btn-ghost btn-sm" style="flex:1" onclick="startMockTest(10)">10 Qs • 5m</button>
+<button class="btn btn-ghost btn-sm" style="flex:1" onclick="startMockTest(30)">30 Qs • 15m</button>
+</div>
+</div>
+
+<div id="last-result-card" class="card hidden" style="margin-bottom:12px"></div>
+
+<div class="card" style="margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h3 style="margin:0;font-size:15px">Practice by Chapter</h3>
+<button class="small" style="border:0;background:none;color:var(--red);font-weight:700;cursor:pointer" onclick="navigate('practice')">View All</button>
+</div>
+<div class="topic-grid" id="home-topic-grid"></div>
+</div>
+
+<div class="card" style="margin-bottom:12px">
+<h3 style="margin:0 0 10px;font-size:15px">Quick Actions</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button class="btn btn-ghost btn-sm" onclick="startWrongPractice()">⚠ Wrong Answers <span id="wrong-count" class="badge-light" style="padding:2px 6px;border-radius:100px">0</span></button>
+<button class="btn btn-ghost btn-sm" onclick="navigate('bookmarks')">★ Bookmarks <span id="bm-count" class="badge-light" style="padding:2px 6px;border-radius:100px">0</span></button>
+</div>
+</div>
+
+<div class="card" id="progress-mini"></div>
+</div>
+
+<!-- PRACTICE LIST -->
+<div id="screen-practice" class="hidden">
+<h2 style="margin:4px 0 4px">All Chapters</h2>
+<p class="small">Choose a chapter to start focused practice</p>
+<div id="practice-topic-list" style="display:grid;gap:10px;margin-top:12px"></div>
+</div>
+
+<!-- TOPIC SETUP -->
+<div id="screen-topic-setup" class="hidden">
+<button class="pill" onclick="navigate('practice')">← Back</button>
+<div class="card" style="margin-top:12px;text-align:center;padding:22px">
+<div id="setup-icon" class="dot" style="width:56px;height:56px;margin:0 auto 12px;font-size:28px;background:var(--red-light);color:var(--red)"></div>
+<h2 id="setup-title" style="margin:0"></h2>
+<p class="small" id="setup-desc"></p>
+
+<div style="margin-top:16px;text-align:left">
+<div class="toggle" onclick="toggleMode()">
+  <div><b style="font-size:13px">GATE Test Mode</b><div class="small">Negative marking (−⅓) • No instant feedback</div></div>
+  <div id="mode-switch" class="switch"></div>
+</div>
+</div>
+
+<div style="display:grid;gap:10px;margin-top:14px">
+<button class="btn btn-primary" onclick="startTopicTest(10)">Start with 10 Questions • 5 min</button>
+<button class="btn btn-ghost" onclick="startTopicTest(20)">20 Questions • 10 min</button>
+<button class="btn btn-ghost" onclick="startTopicTest(30)">30 Questions • 15 min</button>
+</div>
+</div>
+<div class="card" style="margin-top:12px">
+<h4 style="margin:0 0 8px">Sample questions from this chapter</h4>
+<div id="setup-preview" class="small" style="display:grid;gap:8px"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="hidden">
+<div class="quiz-top">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span class="badge-light badge" id="quiz-topic-badge">Topic</span>
+<span class="mono timer" id="quiz-timer">10:00</span>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span class="small" style="font-weight:600"><span id="quiz-cur">1</span> / <span id="quiz-total">20</span></span>
+<span class="small">Score: <b id="quiz-score">0</b></span>
+</div>
+<div class="progress"><div id="quiz-progress" style="width:0%"></div></div>
+</div>
+<div class="card q-card" id="quiz-card"></div>
+<div style="display:flex;gap:10px;margin-top:12px">
+<button class="btn btn-ghost" style="flex:1" id="btn-prev" onclick="prevQuestion()">← Previous</button>
+<button class="btn btn-primary" style="flex:1" id="btn-next" onclick="nextQuestion()">Next →</button>
+</div>
+<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+<button class="pill" onclick="openPalette()">☰ Palette</button>
+<button class="small" style="border:0;background:none;color:var(--text2);cursor:pointer" onclick="submitQuiz()">Submit Test</button>
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="hidden">
+<div class="card" style="text-align:center;padding:24px 18px">
+<div style="width:72px;height:72px;border-radius:100%;margin:0 auto 12px;display:grid;place-items:center;font-size:30px" id="result-icon"></div>
+<h2 style="margin:0">TEST COMPLETED</h2>
+<div style="font-size:48px;font-weight:800;letter-spacing:-1.5px;margin:8px 0" id="result-score-big">16 / 20</div>
+<div style="font-size:22px;font-weight:700;color:var(--red)" id="result-percent">80%</div>
+<p class="small" id="result-msg" style="margin-top:8px"></p>
+<div class="divider"></div>
+<div class="stat-grid" style="text-align:left">
+<div class="stat"><span class="small">Correct</span><b id="r-correct" style="color:var(--green)">16</b></div>
+<div class="stat"><span class="small">Wrong</span><b id="r-wrong" style="color:var(--red-err)">4</b></div>
+<div class="stat"><span class="small">Skipped</span><b id="r-skip" style="color:var(--text2)">0</b></div>
+<div class="stat"><span class="small">Time</span><b id="r-time">--</b></div>
+</div>
+<div id="result-analysis" style="margin-top:16px;text-align:left"></div>
+<div style="display:grid;gap:10px;margin-top:16px">
+<button class="btn btn-primary" onclick="reviewLast()">Review Questions</button>
+<div style="display:flex;gap:10px">
+<button class="btn btn-ghost" style="flex:1" onclick="retryLast()">Retry Test</button>
+<button class="btn btn-ghost" style="flex:1" onclick="navigate('home')">Home</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="screen-review" class="hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<button class="pill" onclick="navigate('result')">← Result</button>
+<h3 style="margin:0">Question Review</h3>
+</div>
+<div id="review-list" style="display:grid;gap:12px"></div>
+</div>
+
+<!-- BOOKMARKS -->
+<div id="screen-bookmarks" class="hidden">
+<h2 style="margin:4px 0">★ Bookmarks</h2>
+<p class="small">Saved questions for later revision</p>
+<div id="bookmark-list" style="display:grid;gap:10px;margin-top:12px"></div>
+</div>
+
+<!-- PROGRESS -->
+<div id="screen-progress" class="hidden">
+<h2 style="margin:4px 0">My Progress</h2>
+<div id="progress-full" style="display:grid;gap:12px;margin-top:12px"></div>
+<div class="card" style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h3 style="margin:0;font-size:15px">Test History</h3>
+<button class="small" style="border:0;background:none;color:var(--red-err);font-weight:700;cursor:pointer" onclick="clearHistory()">Clear</button>
+</div>
+<div id="history-list" style="display:grid;gap:8px;margin-top:12px"></div>
+</div>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay" class="hidden" style="position:fixed;inset:0;z-index:50;background:var(--bg2);padding:14px;overflow:auto">
+<div style="display:flex;gap:8px;align-items:center">
+<div class="search-wrap" style="flex:1">
+<span>⌕</span>
+<input id="search-input" class="search" placeholder="Search Laplace, matrix, integral..." oninput="doSearch(this.value)">
+</div>
+<button class="pill" onclick="hideSearch()">Close</button>
+</div>
+<div id="search-results" style="display:grid;gap:10px;margin-top:14px"></div>
+</div>
+
+</div>
+
+<!-- PALETTE SHEET -->
+<div id="palette-sheet" class="sheet hidden" onclick="if(event.target===this)closePalette()">
+<div class="sheet-content">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h3 style="margin:0">Question Palette</h3>
+<button class="pill" onclick="closePalette()">Close</button>
+</div>
+<div class="palette-grid" id="palette-grid"></div>
+<div class="legend">
+<span><i style="background:#16a34a"></i>Answered</span>
+<span><i style="background:#dc2626"></i>Wrong</span>
+<span><i style="background:#d97706"></i>Marked</span>
+<span><i style="background:#fff;border:1.5px solid #e2e8f0"></i>Not visited</span>
+</div>
+</div>
+</div>
+
+<div id="creator-footer" style="max-width:480px;margin:16px auto 0;padding:0 14px 0;text-align:center">
+<div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px;box-shadow:0 4px 20px rgba(15,23,42,0.06)">
+<div style="font-weight:800;font-size:13px">Created by Dr Mahadev Biradar</div>
+<div style="font-size:11px;color:#64748b;font-weight:600;margin-top:2px;letter-spacing:0.5px;text-transform:uppercase">BEC Bagalkote • Engineering Mathematics</div>
+<div style="margin-top:6px;font-size:10px;color:#94a3b8">© 2026 • Made for GATE Aspirants</div>
+</div>
+</div>
+
+<div class="bottom-nav" id="bottom-nav">
+<div class="nav-item active" data-nav="home" onclick="navigate('home')"><div class="ico">⌂</div>Home</div>
+<div class="nav-item" data-nav="practice" onclick="navigate('practice')"><div class="ico">◫</div>Chapters</div>
+<div class="nav-item" data-nav="bookmarks" onclick="navigate('bookmarks')"><div class="ico">★</div>Bookmarks</div>
+<div class="nav-item" data-nav="progress" onclick="navigate('progress')"><div class="ico">◍</div>Progress</div>
+</div>
+
+<script>
+/* ============================================================
+   CHAPTERS (13 GATE Engineering Mathematics topics)
+   ============================================================ */
+const TOPICS = [
+{name:"Linear Algebra",           icon:"⊞", color:"#dcfce7", tcolor:"#166534"},
+{name:"Differential Calculus",    icon:"∂", color:"#fee2e2", tcolor:"#9f1239"},
+{name:"Integral Calculus",        icon:"∫", color:"#ffedd5", tcolor:"#9a3412"},
+{name:"Differential Equations",   icon:"Δ", color:"#fef3c7", tcolor:"#92400e"},
+{name:"Complex Variables",        icon:"ℂ", color:"#dbeafe", tcolor:"#1e40af"},
+{name:"Laplace Transform",        icon:"ℒ", color:"#e0e7ff", tcolor:"#3730a3"},
+{name:"Fourier Series",           icon:"∿", color:"#f3e8ff", tcolor:"#6b21a8"},
+{name:"Partial Differential Eq.", icon:"∂²",color:"#fce7f3", tcolor:"#9d174d"},
+{name:"Vector Calculus",          icon:"∇", color:"#ccfbf1", tcolor:"#115e59"},
+{name:"Numerical Methods",        icon:"≋", color:"#e7e5ff", tcolor:"#4338ca"},
+{name:"Probability & Statistics", icon:"P", color:"#fef9c3", tcolor:"#854d0e"},
+{name:"Discrete Mathematics",     icon:"∈", color:"#e0f2fe", tcolor:"#075985"},
+{name:"Z-Transform",              icon:"Z", color:"#ede9fe", tcolor:"#5b21b6"},
+];
+
+/* ============================================================
+   QUESTION BANK  (short keys: t=topic, q=question, o=options, a=answer, e=explanation)
+   Correct option is always listed FIRST; it gets shuffled at runtime.
+   ============================================================ */
+const RAW = [
+/* ---------- Linear Algebra (18) ---------- */
+{t:"Linear Algebra",q:"Determinant of identity matrix I_n is:",o:["1","0","n","−1"],a:0,e:"det(I)=1 for every n."},
+{t:"Linear Algebra",q:"If A is 3×3 with rank 2, then dim Null(A) =",o:["1","2","3","0"],a:0,e:"Rank + Nullity = n ⇒ 2 + Nullity = 3 ⇒ Nullity = 1."},
+{t:"Linear Algebra",q:"Eigenvalues of [[2,0],[0,3]] are:",o:["2, 3","1, 6","0, 5","2, 2"],a:0,e:"For a diagonal/triangular matrix, eigenvalues are the diagonal entries."},
+{t:"Linear Algebra",q:"A matrix is orthogonal if:",o:["AᵀA = I","A² = I","det A = 1","Aᵀ = A"],a:0,e:"Definition of orthogonal matrix: AᵀA = AAᵀ = I."},
+{t:"Linear Algebra",q:"Trace of a matrix equals:",o:["Sum of eigenvalues","Product of eigenvalues","Determinant","Rank"],a:0,e:"Trace = sum of eigenvalues (with multiplicity)."},
+{t:"Linear Algebra",q:"Ax = 0 has a non-trivial solution iff:",o:["det A = 0","det A ≠ 0","Rank A = n","A = I"],a:0,e:"Singular matrix ⇒ non-trivial null space."},
+{t:"Linear Algebra",q:"If λ is an eigenvalue of A, then eigenvalue of A² is:",o:["λ²","2λ","λ + 2","1/λ"],a:0,e:"A²x = A(λx) = λ²x."},
+{t:"Linear Algebra",q:"Cayley–Hamilton theorem states:",o:["Every matrix satisfies its characteristic equation","A is diagonalizable","det A = 0","A is invertible"],a:0,e:"p(A) = 0 where p(λ)=det(A−λI)."},
+{t:"Linear Algebra",q:"Dimension of ℝ² is:",o:["2","1","4","Infinite"],a:0,e:"Standard basis {(1,0),(0,1)} has 2 vectors."},
+{t:"Linear Algebra",q:"A real symmetric matrix has:",o:["Real eigenvalues","Complex eigenvalues only","Zero eigenvalues","Imaginary eigenvalues"],a:0,e:"Spectral theorem: real symmetric ⇒ all eigenvalues real."},
+{t:"Linear Algebra",q:"Rank of [[1,2],[2,4]] is:",o:["1","2","0","3"],a:0,e:"Second row = 2 × first row ⇒ only 1 independent row."},
+{t:"Linear Algebra",q:"A⁻¹ exists if and only if:",o:["det A ≠ 0","det A = 0","Trace ≠ 0","Rank < n"],a:0,e:"Non-singular (invertible) condition."},
+{t:"Linear Algebra",q:"If A is n×n and det(A) = 0, then:",o:["A is singular","A is orthogonal","A is symmetric","A is diagonal"],a:0,e:"det = 0 ⇒ A is singular (not invertible)."},
+{t:"Linear Algebra",q:"Eigenvalues of an upper triangular matrix are:",o:["Diagonal entries","Off-diagonal entries","Always 1","Always 0"],a:0,e:"Triangular matrix ⇒ eigenvalues = diagonal entries."},
+{t:"Linear Algebra",q:"Number of linearly independent rows of a matrix is called:",o:["Row rank","Nullity","Trace","Determinant"],a:0,e:"Row rank = column rank = rank."},
+{t:"Linear Algebra",q:"If A is 4×4 with det(A)=2, then det(2A) =",o:["32","8","16","4"],a:0,e:"det(kA) = kⁿ det(A) = 2⁴·2 = 32."},
+{t:"Linear Algebra",q:"Two matrices A, B are similar if:",o:["B = P⁻¹AP for some invertible P","A = B","AB = BA","det A = det B"],a:0,e:"Similar matrices have the same eigenvalues."},
+{t:"Linear Algebra",q:"Nullity of a 5×5 matrix with rank 5 is:",o:["0","5","1","25"],a:0,e:"Rank + Nullity = n ⇒ 5 + 0 = 5."},
+
+/* ---------- Differential Calculus (16) ---------- */
+{t:"Differential Calculus",q:"d/dx (sin x) =",o:["cos x","−cos x","sin x","−sin x"],a:0,e:"Standard derivative: d/dx(sin x) = cos x."},
+{t:"Differential Calculus",q:"If y = xⁿ, then dy/dx =",o:["n xⁿ⁻¹","xⁿ","n xⁿ","xⁿ⁺¹/(n+1)"],a:0,e:"Power rule: d/dx(xⁿ)= n xⁿ⁻¹."},
+{t:"Differential Calculus",q:"lim(x→0) sin x / x =",o:["1","0","∞","Does not exist"],a:0,e:"Fundamental limit: sin x / x → 1."},
+{t:"Differential Calculus",q:"Rolle's theorem: if f(a)=f(b), f continuous on [a,b], differentiable on (a,b), then there exists c with:",o:["f′(c)=0","f(c)=0","f′(c)=1","f″(c)=0"],a:0,e:"At least one interior point with zero derivative."},
+{t:"Differential Calculus",q:"For f(x)=eˣ, f′(x) =",o:["eˣ","x eˣ⁻¹","0","ln x"],a:0,e:"d/dx(eˣ)=eˣ."},
+{t:"Differential Calculus",q:"If f′(a)=0 and f″(a)>0, then x=a is a:",o:["Local minimum","Local maximum","Inflection point","Saddle point"],a:0,e:"Second derivative positive ⇒ concave up ⇒ local minimum."},
+{t:"Differential Calculus",q:"d/dx (ln x) =",o:["1/x","x","ln x","eˣ"],a:0,e:"Derivative of natural log is 1/x for x>0."},
+{t:"Differential Calculus",q:"If y = xˣ, then dy/dx =",o:["xˣ(1+ln x)","xˣ⁻¹","xˣ ln x","xˣ"],a:0,e:"y = e^{x ln x} ⇒ y′ = xˣ(1+ln x)."},
+{t:"Differential Calculus",q:"L'Hospital's rule applies directly to indeterminate forms:",o:["0/0 or ∞/∞","0×∞","∞−∞","1^∞"],a:0,e:"Others must first be converted to 0/0 or ∞/∞."},
+{t:"Differential Calculus",q:"d/dx(tan⁻¹x) =",o:["1/(1+x²)","1/(1−x²)","1/√(1+x²)","sec²x"],a:0,e:"Standard derivative of arctan."},
+{t:"Differential Calculus",q:"If f(x,y) = x²+y², ∂f/∂x =",o:["2x","2y","2x+2y","0"],a:0,e:"Treat y as constant."},
+{t:"Differential Calculus",q:"Taylor series of eˣ about 0 begins:",o:["1 + x + x²/2! + …","x − x³/3! + …","1 − x + …","x + …"],a:0,e:"eˣ = Σ xⁿ/n!."},
+{t:"Differential Calculus",q:"Mean Value Theorem guarantees existence of c ∈ (a,b) with:",o:["f′(c) = [f(b)−f(a)]/(b−a)","f′(c) = 0","f(c) = 0","f′(c) = 1"],a:0,e:"MVT: average slope attained somewhere inside."},
+{t:"Differential Calculus",q:"If f(x)=|x|, then at x=0 function is:",o:["Continuous but not differentiable","Differentiable","Discontinuous","Constant"],a:0,e:"Corner at origin ⇒ continuous but not differentiable."},
+{t:"Differential Calculus",q:"d/dx(x·eˣ) =",o:["eˣ(1+x)","eˣ","x eˣ","eˣ + 1"],a:0,e:"Product rule: eˣ + x eˣ = eˣ(1+x)."},
+{t:"Differential Calculus",q:"For f(x)=x³−3x, local minima occur at:",o:["x = 1","x = −1","x = 0","x = 3"],a:0,e:"f′=3x²−3=0 ⇒ x=±1; f″(1)=6>0 min, f″(−1)<0 max."},
+
+/* ---------- Integral Calculus (16) ---------- */
+{t:"Integral Calculus",q:"∫ cos x dx =",o:["sin x + C","−sin x + C","cos x + C","tan x + C"],a:0,e:"∫cos = sin."},
+{t:"Integral Calculus",q:"∫₀¹ x² dx =",o:["1/3","1/2","1","2/3"],a:0,e:"[x³/3]₀¹ = 1/3."},
+{t:"Integral Calculus",q:"∫₁^∞ (1/x²) dx =",o:["1","∞","0","Diverges"],a:0,e:"[−1/x]₁^∞ = 1 ⇒ convergent."},
+{t:"Integral Calculus",q:"∫ (1/x) dx =",o:["ln|x| + C","1/x² + C","eˣ + C","x + C"],a:0,e:"Standard integral."},
+{t:"Integral Calculus",q:"Integration by parts formula:",o:["∫u dv = uv − ∫v du","∫u dv = uv + ∫v du","∫u dv = u+v","∫u dv = uv"],a:0,e:"Standard formula."},
+{t:"Integral Calculus",q:"Area under y = x from 0 to 2 is:",o:["2","1","4","0"],a:0,e:"∫₀² x dx = [x²/2] = 2."},
+{t:"Integral Calculus",q:"∫ eˣ dx =",o:["eˣ + C","eˣ/x + C","x eˣ + C","ln x + C"],a:0,e:"Self-derivative."},
+{t:"Integral Calculus",q:"Γ(1/2) =",o:["√π","π","1/2","2√π"],a:0,e:"Standard Gamma value."},
+{t:"Integral Calculus",q:"∫₀^π sin x dx =",o:["2","0","1","−2"],a:0,e:"[−cos x]₀^π = 2."},
+{t:"Integral Calculus",q:"If f continuous, f ≥ 0 on [a,b] and ∫ₐᵇ f = 0 then:",o:["f ≡ 0 on [a,b]","f is odd","a = b","f is negative"],a:0,e:"Non-negative continuous integral zero ⇒ identically zero."},
+{t:"Integral Calculus",q:"∫ sec²x dx =",o:["tan x + C","sec x + C","cot x + C","sin x + C"],a:0,e:"Derivative of tan is sec²."},
+{t:"Integral Calculus",q:"Beta function B(m,n) =",o:["Γ(m)Γ(n)/Γ(m+n)","Γ(m+n)/Γ(m)Γ(n)","mn/(m+n)","1/(m+n)"],a:0,e:"Beta–Gamma relation."},
+{t:"Integral Calculus",q:"∫₀^{π/2} sin²x dx =",o:["π/4","π/2","π","1"],a:0,e:"Using Wallis: (1/2)(π/2) = π/4."},
+{t:"Integral Calculus",q:"∫ dx/(1+x²) =",o:["tan⁻¹x + C","ln(1+x²)+C","sin⁻¹x + C","sec⁻¹x + C"],a:0,e:"Standard inverse tangent."},
+{t:"Integral Calculus",q:"∫₋₁¹ x³ dx =",o:["0","2","1","−2"],a:0,e:"Odd function over symmetric interval."},
+{t:"Integral Calculus",q:"Double integral ∬_R dA gives:",o:["Area of region R","Volume","Perimeter","Density"],a:0,e:"Integrating 1 over R gives area."},
+
+/* ---------- Differential Equations (16) ---------- */
+{t:"Differential Equations",q:"Order of dy/dx + y = 0 is:",o:["1","2","0","Not defined"],a:0,e:"Highest derivative is first order."},
+{t:"Differential Equations",q:"Solution of dy/dx = y is:",o:["y = Ceˣ","y = x + C","y = e^{Cx}","y = Cx"],a:0,e:"Separable: dy/y = dx ⇒ y = Ceˣ."},
+{t:"Differential Equations",q:"y″ + y = 0 has solution:",o:["C₁cos x + C₂sin x","C₁eˣ + C₂e⁻ˣ","C₁x + C₂","C₁cosh x + C₂sinh x"],a:0,e:"r²+1=0 ⇒ r=±i."},
+{t:"Differential Equations",q:"Integrating factor of dy/dx + P(x)y = Q(x) is:",o:["e^{∫P dx}","e^{∫Q dx}","∫P dx","P(x)"],a:0,e:"IF = exp(∫P dx)."},
+{t:"Differential Equations",q:"Wronskian of eˣ, e⁻ˣ is:",o:["−2","2","0","1"],a:0,e:"W = eˣ(−e⁻ˣ) − e⁻ˣ(eˣ) = −2."},
+{t:"Differential Equations",q:"A DE M dx + N dy = 0 is exact if:",o:["∂M/∂y = ∂N/∂x","∂M/∂x = ∂N/∂y","M = N","M_x + N_y = 0"],a:0,e:"Exactness condition."},
+{t:"Differential Equations",q:"Complementary function of (D²−3D+2)y = 0:",o:["C₁eˣ + C₂e²ˣ","C₁e⁻ˣ + C₂e⁻²ˣ","(C₁+C₂x)eˣ","C₁cos x + C₂sin x"],a:0,e:"(r−1)(r−2)=0 ⇒ r=1,2."},
+{t:"Differential Equations",q:"Method of undetermined coefficients is used for:",o:["Linear ODE with constant coefficients","Non-linear ODE","Variable coefficients only","First order only"],a:0,e:"Works for constant-coefficient linear ODEs with special RHS."},
+{t:"Differential Equations",q:"Solution of y′ = 2x is:",o:["x² + C","2 + C","x + C","x²"],a:0,e:"∫2x dx = x² + C."},
+{t:"Differential Equations",q:"Bernoulli equation dy/dx + Py = Qyⁿ becomes linear when:",o:["n = 0 or 1","n = 2","n arbitrary","Never"],a:0,e:"Substitution z = y^{1−n} linearizes otherwise."},
+{t:"Differential Equations",q:"If y₁, y₂ solve a homogeneous linear ODE, then:",o:["c₁y₁ + c₂y₂ is also a solution","y₁y₂ is a solution","y₁/y₂ is a solution","None"],a:0,e:"Superposition principle."},
+{t:"Differential Equations",q:"Particular integral of (D²+1)y = sin x is of the form:",o:["−(x cos x)/2","(sin x)/2","cos x","x sin x"],a:0,e:"Resonance case ⇒ multiply by x."},
+{t:"Differential Equations",q:"A first-order ODE y′ = f(x)g(y) is solved by:",o:["Separation of variables","Laplace transform","Variation of parameters","Cayley–Hamilton"],a:0,e:"Separable form."},
+{t:"Differential Equations",q:"The general solution of y″ − 5y′ + 6y = 0 is:",o:["C₁e²ˣ + C₂e³ˣ","C₁eˣ + C₂e⁶ˣ","C₁cos2x + C₂sin3x","C₁ + C₂x"],a:0,e:"r²−5r+6=0 ⇒ r=2,3."},
+{t:"Differential Equations",q:"If the Wronskian of two solutions is zero, they are:",o:["Linearly dependent","Linearly independent","Orthogonal","Identical"],a:0,e:"W ≡ 0 ⇒ dependent."},
+{t:"Differential Equations",q:"Order and degree of (d²y/dx²)³ + y = 0 are:",o:["2 and 3","3 and 2","2 and 1","1 and 3"],a:0,e:"Highest derivative order = 2; power = 3."},
+
+/* ---------- Complex Variables (15) ---------- */
+{t:"Complex Variables",q:"Modulus of 3 + 4i is:",o:["5","7","1","25"],a:0,e:"√(3²+4²) = 5."},
+{t:"Complex Variables",q:"Cauchy–Riemann equations for f = u+iv are:",o:["u_x = v_y, u_y = −v_x","u_x = v_x, u_y = v_y","u_x = −v_y, u_y = v_x","u_x = 0, v_y = 0"],a:0,e:"Standard CR equations."},
+{t:"Complex Variables",q:"e^{iπ} =",o:["−1","1","0","i"],a:0,e:"Euler: e^{iπ} = cos π + i sin π = −1."},
+{t:"Complex Variables",q:"f(z) is analytic if it:",o:["Satisfies CR with continuous partials","Is continuous only","Is real only","Is imaginary only"],a:0,e:"Differentiable in a neighbourhood ⇔ CR + continuity."},
+{t:"Complex Variables",q:"Residue of 1/z at z = 0 is:",o:["1","0","∞","−1"],a:0,e:"Coefficient of 1/z in Laurent series."},
+{t:"Complex Variables",q:"∮_C dz/z around origin (CCW) =",o:["2πi","0","πi","1"],a:0,e:"Standard contour integral."},
+{t:"Complex Variables",q:"|e^{iθ}| =",o:["1","e^θ","0","θ"],a:0,e:"e^{iθ} = cos θ + i sin θ has modulus 1."},
+{t:"Complex Variables",q:"A harmonic conjugate exists for a harmonic function on a:",o:["Simply connected domain","Multiply connected domain","Punctured plane","Annulus"],a:0,e:"Simply connected ⇒ conjugate exists."},
+{t:"Complex Variables",q:"Principal value of arg(−1) =",o:["π","0","−π","π/2"],a:0,e:"Principal Arg lies in (−π, π]."},
+{t:"Complex Variables",q:"Mapping w = z² is conformal:",o:["Everywhere except z = 0","Everywhere","Nowhere","Only at origin"],a:0,e:"f′(z)=2z ≠ 0 except at z = 0."},
+{t:"Complex Variables",q:"Zeros of sin z are:",o:["nπ, n ∈ ℤ","nπ/2","(2n+1)π","None"],a:0,e:"sin z = 0 ⇔ z = nπ."},
+{t:"Complex Variables",q:"Liouville's theorem says:",o:["A bounded entire function is constant","Every entire function is bounded","Every entire function has a zero","No entire functions exist"],a:0,e:"Bounded + entire ⇒ constant."},
+{t:"Complex Variables",q:"The function f(z) = 1/(z−2) has a pole at:",o:["z = 2","z = 0","z = −2","No pole"],a:0,e:"Simple pole at z = 2."},
+{t:"Complex Variables",q:"Value of ∮ e^z / z dz around |z| = 1 (CCW):",o:["2πi","0","πi","1"],a:0,e:"Cauchy integral formula: 2πi·e⁰ = 2πi."},
+{t:"Complex Variables",q:"If f is analytic and f′(z) = 0 everywhere, then f is:",o:["Constant","Linear","Zero","Exponential"],a:0,e:"Zero derivative on a domain ⇒ constant."},
+
+/* ---------- Laplace Transform (15) ---------- */
+{t:"Laplace Transform",q:"L{1} =",o:["1/s","s","1/s²","0"],a:0,e:"L{1} = ∫₀^∞ e^{−st} dt = 1/s."},
+{t:"Laplace Transform",q:"L{e^{at}} =",o:["1/(s−a)","1/(s+a)","s/(s−a)","a/(s−a)"],a:0,e:"Standard transform (Re s > a)."},
+{t:"Laplace Transform",q:"L{sin at} =",o:["a/(s²+a²)","s/(s²+a²)","1/(s²+a²)","a/(s²−a²)"],a:0,e:"Standard transform."},
+{t:"Laplace Transform",q:"L{tⁿ}, n ∈ ℕ =",o:["n!/s^{n+1}","n/s^{n+1}","s^{n+1}/n!","1/sⁿ"],a:0,e:"Γ(n+1)/s^{n+1} = n!/s^{n+1}."},
+{t:"Laplace Transform",q:"Shifting theorem: L{e^{at}f(t)} =",o:["F(s−a)","F(s+a)","e^{as}F(s)","F(as)"],a:0,e:"First shifting theorem."},
+{t:"Laplace Transform",q:"L{cos at} =",o:["s/(s²+a²)","a/(s²+a²)","1/(s²+a²)","s/(s²−a²)"],a:0,e:"Standard transform."},
+{t:"Laplace Transform",q:"Initial value theorem: lim_{t→0+} f(t) =",o:["lim_{s→∞} sF(s)","lim_{s→0} sF(s)","lim_{s→∞} F(s)","F(0)"],a:0,e:"Standard IVT."},
+{t:"Laplace Transform",q:"Convolution theorem: L{f * g} =",o:["F(s)G(s)","F(s)+G(s)","F(s)/G(s)","F(s)−G(s)"],a:0,e:"Product of transforms."},
+{t:"Laplace Transform",q:"L{δ(t)} =",o:["1","0","1/s","s"],a:0,e:"Dirac delta transform is 1."},
+{t:"Laplace Transform",q:"L⁻¹{1/(s²+1)} =",o:["sin t","cos t","e^t","t"],a:0,e:"Inverse of standard transform."},
+{t:"Laplace Transform",q:"L{t e^{at}} =",o:["1/(s−a)²","1/(s−a)","s/(s−a)²","a/(s−a)²"],a:0,e:"Differentiate 1/(s−a) w.r.t. s."},
+{t:"Laplace Transform",q:"Final value theorem requires:",o:["All poles of sF(s) in left half-plane","No condition","F(s) is polynomial","f is periodic"],a:0,e:"Stability condition."},
+{t:"Laplace Transform",q:"L{f′(t)} =",o:["sF(s) − f(0⁻)","sF(s)","F(s)/s","F(s) + f(0)"],a:0,e:"Derivative property."},
+{t:"Laplace Transform",q:"L{t sin at} =",o:["2as/(s²+a²)²","a/(s²+a²)","s/(s²+a²)²","1/(s²+a²)²"],a:0,e:"Differentiate w.r.t. a."},
+{t:"Laplace Transform",q:"L{u(t−a)} (unit step) =",o:["e^{−as}/s","e^{as}/s","1/s","a/s"],a:0,e:"Time-shift property."},
+
+/* ---------- Fourier Series (14) ---------- */
+{t:"Fourier Series",q:"Fourier series of an even function contains only:",o:["Cosine terms","Sine terms","Both","Constant only"],a:0,e:"Even ⇒ symmetric ⇒ cosine (plus a₀)."},
+{t:"Fourier Series",q:"Fourier series of an odd function contains only:",o:["Sine terms","Cosine terms","Both","Constant"],a:0,e:"Odd ⇒ sine only."},
+{t:"Fourier Series",q:"Period of Fourier series of sin x is:",o:["2π","π","1","π/2"],a:0,e:"sin x has period 2π."},
+{t:"Fourier Series",q:"Dirichlet conditions require:",o:["Finite discontinuities and finite extrema","Continuity everywhere","Differentiability","Period 1"],a:0,e:"Piecewise monotonic with finite jumps."},
+{t:"Fourier Series",q:"a₀ = (1/π)∫_{−π}^{π} f(x) dx relates to:",o:["Twice the average value","Zero","Infinity","Derivative"],a:0,e:"a₀/2 is the mean value."},
+{t:"Fourier Series",q:"Parseval's identity relates:",o:["Energy in time and frequency","Derivative and integral","Even and odd","Convergence"],a:0,e:"∫|f|² = Σ|coeff|²."},
+{t:"Fourier Series",q:"Fourier series of constant C has:",o:["a₀ = 2C, rest zero","All zero","Only sine terms","Only cosine n > 0"],a:0,e:"Constant = a₀/2."},
+{t:"Fourier Series",q:"Half-range cosine series extends f as:",o:["Even function","Odd function","Periodic 2L","Zero"],a:0,e:"Cosine half-range ⇒ even extension."},
+{t:"Fourier Series",q:"At a discontinuity x₀, Fourier series converges to:",o:["[f(x₀⁺)+f(x₀⁻)]/2","f(x₀⁺)","f(x₀⁻)","0"],a:0,e:"Mean of one-sided limits."},
+{t:"Fourier Series",q:"Fourier coefficients are computed using:",o:["Orthogonality of trig functions","Integration by parts","Laplace transform","Taylor series"],a:0,e:"Orthogonality of {1, cos nx, sin nx}."},
+{t:"Fourier Series",q:"Complex Fourier series uses basis:",o:["e^{inx}","sin nx only","xⁿ","e^{nx}"],a:0,e:"Complex exponential basis."},
+{t:"Fourier Series",q:"Gibbs phenomenon is:",o:["~9% overshoot near a jump","Undershoot to zero","Convergence to zero","No phenomenon"],a:0,e:"Overshoot ≈ 9% of jump."},
+{t:"Fourier Series",q:"For period 2L, the fundamental frequency is:",o:["π/L","2πL","L","1/L"],a:0,e:"ω₀ = 2π/(2L) = π/L."},
+{t:"Fourier Series",q:"If f is odd, its Fourier coefficient aₙ equals:",o:["0","2aₙ","1","∞"],a:0,e:"Odd ⇒ all cosine coefficients zero."},
+
+/* ---------- Partial Differential Equations (14) ---------- */
+{t:"Partial Differential Eq.",q:"u_t = c²u_xx is the:",o:["Heat equation","Wave equation","Laplace equation","Transport equation"],a:0,e:"One-dimensional heat (diffusion) equation."},
+{t:"Partial Differential Eq.",q:"Order of u_xx + u_yy = 0 is:",o:["2","1","0","4"],a:0,e:"Second-order Laplace equation."},
+{t:"Partial Differential Eq.",q:"The wave equation is:",o:["u_tt = c²u_xx","u_t = c²u_xx","∇²u = 0","u_t + c u_x = 0"],a:0,e:"Second order in time and space."},
+{t:"Partial Differential Eq.",q:"Method of separation of variables assumes:",o:["u(x,t) = X(x)T(t)","u = X + T","u = 0","u constant"],a:0,e:"Product form."},
+{t:"Partial Differential Eq.",q:"∇²u = 0 represents:",o:["Steady-state heat / potential","Transient heat","Wave","Advection"],a:0,e:"Laplace equation (steady state)."},
+{t:"Partial Differential Eq.",q:"Lagrange's auxiliary equations for Pp + Qq = R are:",o:["dx/P = dy/Q = du/R","dy/dx = 0","du = 0","dx + dy = 0"],a:0,e:"Standard characteristic equations."},
+{t:"Partial Differential Eq.",q:"d'Alembert's solution applies to:",o:["Wave equation","Heat equation","Laplace","Poisson"],a:0,e:"Infinite string wave problem."},
+{t:"Partial Differential Eq.",q:"A PDE is linear if:",o:["u and its derivatives appear linearly","u² appears","Coefficients are constant","It is second order"],a:0,e:"Linearity in the dependent variable."},
+{t:"Partial Differential Eq.",q:"Heat equation u_t = u_xx requires:",o:["Initial and boundary conditions","Only initial condition","Only boundary conditions","No conditions"],a:0,e:"Parabolic PDE needs both."},
+{t:"Partial Differential Eq.",q:"Elliptic PDE example:",o:["Laplace equation","Heat equation","Wave equation","Transport equation"],a:0,e:"Classification: elliptic."},
+{t:"Partial Differential Eq.",q:"Parabolic PDE example:",o:["Heat equation","Laplace equation","Wave equation","Biharmonic"],a:0,e:"Heat is parabolic."},
+{t:"Partial Differential Eq.",q:"Solution of u_x = 0 is:",o:["u = f(y)","u = f(x)","u = 0","u = x + y"],a:0,e:"Independent of x ⇒ function of y only."},
+{t:"Partial Differential Eq.",q:"B² − 4AC < 0 for a second-order PDE means:",o:["Elliptic","Parabolic","Hyperbolic","Singular"],a:0,e:"Discriminant test."},
+{t:"Partial Differential Eq.",q:"B² − 4AC > 0 for a second-order PDE means:",o:["Hyperbolic","Elliptic","Parabolic","Degenerate"],a:0,e:"Wave equation is hyperbolic."},
+
+/* ---------- Vector Calculus (15) ---------- */
+{t:"Vector Calculus",q:"Gradient ∇f is:",o:["A vector of partial derivatives","A scalar","Divergence","Curl"],a:0,e:"∇f = (f_x, f_y, f_z)."},
+{t:"Vector Calculus",q:"Divergence of curl is always:",o:["0","1","∞","Non-zero"],a:0,e:"∇·(∇×F) = 0."},
+{t:"Vector Calculus",q:"Curl of gradient is always:",o:["Zero vector","1","Non-zero","Scalar"],a:0,e:"∇×(∇f) = 0."},
+{t:"Vector Calculus",q:"For F = xi + yj + zk, div F =",o:["3","0","1","x+y+z"],a:0,e:"∂x/∂x + ∂y/∂y + ∂z/∂z = 3."},
+{t:"Vector Calculus",q:"Line integral ∫_C F·dr represents:",o:["Work done","Flux","Divergence","Curl"],a:0,e:"Work integral."},
+{t:"Vector Calculus",q:"Green's theorem relates:",o:["Line integral to double integral","Surface to volume","Line to surface","Double to triple"],a:0,e:"In the plane."},
+{t:"Vector Calculus",q:"Stokes' theorem: ∮_C F·dr =",o:["∬_S (∇×F)·n dS","∬_S F·n dS","∭ div F dV","0"],a:0,e:"Standard statement."},
+{t:"Vector Calculus",q:"Gauss divergence theorem: ∯_S F·n dS =",o:["∭_V div F dV","∮ F·dr","0","∬ curl F"],a:0,e:"Divergence theorem."},
+{t:"Vector Calculus",q:"Laplacian ∇²f =",o:["div(grad f)","grad(div f)","curl(curl f)","f²"],a:0,e:"Definition."},
+{t:"Vector Calculus",q:"Unit vector in direction of a is:",o:["a/|a|","|a|/a","a²","0"],a:0,e:"Normalization."},
+{t:"Vector Calculus",q:"A conservative field satisfies:",o:["∮_C F·dr = 0 for every closed C","div F = 0","curl F ≠ 0","flux = 0"],a:0,e:"Path independence ⇔ conservative."},
+{t:"Vector Calculus",q:"∇·(∇f) = 0 implies f is:",o:["Harmonic","Not harmonic","Constant","Zero"],a:0,e:"Laplace equation ⇒ harmonic."},
+{t:"Vector Calculus",q:"If F = ∇φ, then curl F =",o:["0","1","∇φ","∇²φ"],a:0,e:"Curl of gradient vanishes."},
+{t:"Vector Calculus",q:"Directional derivative of f in direction u is:",o:["∇f · û","∇f × û","|∇f|","∇²f"],a:0,e:"Dot product with unit vector."},
+{t:"Vector Calculus",q:"For a solenoidal field F:",o:["div F = 0","curl F = 0","F = 0","F = ∇φ"],a:0,e:"Solenoidal ⇔ divergence-free."},
+
+/* ---------- Numerical Methods (15) ---------- */
+{t:"Numerical Methods",q:"Newton–Raphson iteration:",o:["x_{n+1} = x_n − f(x_n)/f′(x_n)","x_{n+1} = x_n + f/f′","x_{n+1} = f(x_n)","x_{n+1} = x_n − f′/f"],a:0,e:"Standard NR formula."},
+{t:"Numerical Methods",q:"Bisection method requires:",o:["f(a)f(b) < 0","f(a) = f(b)","f′(a) = 0","No continuity"],a:0,e:"Opposite signs bracket the root."},
+{t:"Numerical Methods",q:"Order of convergence of Newton–Raphson is:",o:["2","1","3","4"],a:0,e:"Quadratic convergence (simple root)."},
+{t:"Numerical Methods",q:"Simpson's 1/3 rule requires n to be:",o:["Even","Odd","Any","Prime"],a:0,e:"Even number of subintervals."},
+{t:"Numerical Methods",q:"Which is more accurate for smooth functions?",o:["Simpson's rule","Trapezoidal rule","Both same","None"],a:0,e:"Simpson O(h⁴) vs Trapezoidal O(h²)."},
+{t:"Numerical Methods",q:"Gauss elimination is used for:",o:["Solving linear systems","Finding roots","Integration","Interpolation"],a:0,e:"Direct method for Ax = b."},
+{t:"Numerical Methods",q:"Forward Euler method for y′ = f(x,y):",o:["y_{n+1} = y_n + h f(x_n, y_n)","y_{n+1} = y_n + h f′","y_{n+1} = y_n + h² f","y_{n+1} = f"],a:0,e:"First-order explicit method."},
+{t:"Numerical Methods",q:"Runge–Kutta 4th order is:",o:["4th order accurate","1st order","2nd order","Exact"],a:0,e:"RK4 has order 4."},
+{t:"Numerical Methods",q:"Interpolation passing through all points:",o:["Lagrange interpolation","Least squares","Regression","Bisection"],a:0,e:"Lagrange polynomial."},
+{t:"Numerical Methods",q:"Jacobi method is:",o:["Iterative method for linear systems","Direct method","Root finding","Integration"],a:0,e:"Stationary iterative method."},
+{t:"Numerical Methods",q:"Relative error =",o:["|True − Approx|/|True|","|True − Approx|","True/Approx","Approx/True"],a:0,e:"Definition."},
+{t:"Numerical Methods",q:"Regula Falsi is also called:",o:["False position method","Newton method","Bisection","Secant"],a:0,e:"False position."},
+{t:"Numerical Methods",q:"Trapezoidal rule error is of order:",o:["O(h²)","O(h)","O(h³)","O(h⁴)"],a:0,e:"Second-order accurate."},
+{t:"Numerical Methods",q:"Newton's forward difference formula is used for:",o:["Equal intervals","Unequal intervals","Only endpoints","Only integrals"],a:0,e:"Requires uniform spacing."},
+{t:"Numerical Methods",q:"Secant method converges with order:",o:["≈ 1.618","2","1","3"],a:0,e:"Golden ratio order."},
+
+/* ---------- Probability & Statistics (18) ---------- */
+{t:"Probability & Statistics",q:"P(A ∪ B) =",o:["P(A)+P(B)−P(A∩B)","P(A)+P(B)","P(A)P(B)","P(A)−P(B)"],a:0,e:"Inclusion–exclusion."},
+{t:"Probability & Statistics",q:"Mean of Poisson distribution is:",o:["λ","λ²","√λ","1/λ"],a:0,e:"Mean = Variance = λ."},
+{t:"Probability & Statistics",q:"Variance of Binomial(n,p) is:",o:["np(1−p)","np","n²p","p(1−p)"],a:0,e:"Standard result."},
+{t:"Probability & Statistics",q:"For normal distribution, mean = median = mode is:",o:["True","False","Only if σ = 1","Only if μ = 0"],a:0,e:"Symmetric bell curve."},
+{t:"Probability & Statistics",q:"Bayes' theorem: P(A|B) =",o:["P(B|A)P(A)/P(B)","P(A)P(B)","P(A∩B)","P(A)+P(B)"],a:0,e:"Standard formula."},
+{t:"Probability & Statistics",q:"Conditional probability P(A|B) =",o:["P(A∩B)/P(B)","P(A)/P(B)","P(A∪B)","P(A)P(B)"],a:0,e:"Definition (P(B)>0)."},
+{t:"Probability & Statistics",q:"Variance of standard normal is:",o:["1","0","μ","σ"],a:0,e:"N(0,1) has variance 1."},
+{t:"Probability & Statistics",q:"E[X] for uniform [a,b] is:",o:["(a+b)/2","ab","b−a","(a+b)"],a:0,e:"Midpoint."},
+{t:"Probability & Statistics",q:"Variance of exponential(λ) is:",o:["1/λ²","λ","1/λ","λ²"],a:0,e:"Mean 1/λ, variance 1/λ²."},
+{t:"Probability & Statistics",q:"Correlation coefficient ranges over:",o:["[−1, 1]","[0, 1]","[0, ∞)","(−∞, ∞)"],a:0,e:"Bounded measure of linear dependence."},
+{t:"Probability & Statistics",q:"If A and B are independent:",o:["P(A∩B) = P(A)P(B)","P(A∩B) = 0","P(A∪B) = P(A)+P(B)","A = B"],a:0,e:"Definition of independence."},
+{t:"Probability & Statistics",q:"Central Limit Theorem states sample means approach:",o:["Normal distribution","Poisson","Binomial","Uniform"],a:0,e:"As n → ∞, distribution → N(μ, σ²/n)."},
+{t:"Probability & Statistics",q:"Var(aX + b) =",o:["a²Var(X)","a Var(X)","Var(X) + b","a Var(X) + b"],a:0,e:"Translation doesn't affect variance."},
+{t:"Probability & Statistics",q:"Poisson distribution variance =",o:["λ","λ²","√λ","1/λ"],a:0,e:"Equal to mean."},
+{t:"Probability & Statistics",q:"Coefficient of variation =",o:["σ/μ","μ/σ","σ²/μ","μ²/σ"],a:0,e:"Relative dispersion."},
+{t:"Probability & Statistics",q:"Binomial mean =",o:["np","np(1−p)","n/p","p"],a:0,e:"E[X] = np."},
+{t:"Probability & Statistics",q:"Sum of probabilities over all outcomes equals:",o:["1","0","n","∞"],a:0,e:"Axiom of probability."},
+{t:"Probability & Statistics",q:"If X ~ N(μ, σ²), then P(X = μ) =",o:["0","0.5","1","1/σ"],a:0,e:"Continuous distribution ⇒ point probability is 0."},
+
+/* ---------- Discrete Mathematics (18) ---------- */
+{t:"Discrete Mathematics",q:"Number of edges in complete graph Kₙ is:",o:["n(n−1)/2","n(n+1)/2","n²","n−1"],a:0,e:"Choosing 2 vertices from n."},
+{t:"Discrete Mathematics",q:"Euler's formula for a connected planar graph:",o:["V − E + F = 2","V + E + F = 2","V − E − F = 0","V + E = F"],a:0,e:"Euler's polyhedron formula."},
+{t:"Discrete Mathematics",q:"Pigeonhole principle says if n items placed in m < n boxes, then:",o:["Some box contains ≥ 2 items","Each box has 1","All boxes full","No box empty"],a:0,e:"Basic principle."},
+{t:"Discrete Mathematics",q:"Number of subsets of an n-element set is:",o:["2ⁿ","n²","n!","nⁿ"],a:0,e:"Each element in/out."},
+{t:"Discrete Mathematics",q:"Handshaking lemma: sum of degrees =",o:["2 × number of edges","number of edges","number of vertices","0"],a:0,e:"Each edge contributes 2 to degree sum."},
+{t:"Discrete Mathematics",q:"A tree with n vertices has:",o:["n − 1 edges","n edges","n + 1 edges","2n edges"],a:0,e:"Tree edges = n − 1."},
+{t:"Discrete Mathematics",q:"Chromatic number of Kₙ is:",o:["n","1","2","n−1"],a:0,e:"All vertices adjacent ⇒ n colours."},
+{t:"Discrete Mathematics",q:"Number of functions from m-set to n-set is:",o:["nᵐ","mⁿ","m!", "n!"],a:0,e:"Each of m elements has n choices."},
+{t:"Discrete Mathematics",q:"A group must satisfy:",o:["Closure, associativity, identity, inverse","Only closure","Only associativity","Commutativity only"],a:0,e:"Group axioms."},
+{t:"Discrete Mathematics",q:"A group of prime order is:",o:["Cyclic","Trivial","Infinite","Non-abelian"],a:0,e:"Every group of prime order is cyclic."},
+{t:"Discrete Mathematics",q:"Number of relations on an n-element set is:",o:["2^{n²}","2ⁿ","n²","n!"],a:0,e:"Subsets of A × A."},
+{t:"Discrete Mathematics",q:"Which graph has an Eulerian circuit?",o:["Every vertex has even degree","Every vertex has odd degree","Exactly two odd vertices","No condition"],a:0,e:"Euler's criterion for closed trail."},
+{t:"Discrete Mathematics",q:"A Hamiltonian path visits:",o:["Every vertex exactly once","Every edge exactly once","Only start and end","Only endpoints"],a:0,e:"Vertex-covering path."},
+{t:"Discrete Mathematics",q:"Pascal's identity:",o:["ⁿCᵣ + ⁿC_{r−1} = ^{n+1}Cᵣ","ⁿCᵣ = n!","ⁿCᵣ = r!","ⁿCᵣ = 2ⁿ"],a:0,e:"Binomial coefficient identity."},
+{t:"Discrete Mathematics",q:"Hasse diagram represents a:",o:["Partially ordered set","Group","Ring","Field"],a:0,e:"Visualising posets."},
+{t:"Discrete Mathematics",q:"A bipartite graph has chromatic number at most:",o:["2","1","3","n"],a:0,e:"Two-colourable."},
+{t:"Discrete Mathematics",q:"The number of edges in a tree with n vertices is:",o:["n − 1","n","n + 1","2n − 1"],a:0,e:"Definition of tree."},
+{t:"Discrete Mathematics",q:"In a lattice, every pair of elements has:",o:["A lub and glb","Only lub","Only glb","Neither"],a:0,e:"Lattice definition."},
+
+/* ---------- Z-Transform (12) ---------- */
+{t:"Z-Transform",q:"Z{1} (unit step u(n)) =",o:["z/(z−1)","1/(z−1)","z","1/z"],a:0,e:"Standard pair for |z|>1."},
+{t:"Z-Transform",q:"Z{aⁿ} =",o:["z/(z−a)","z/(z+a)","1/(z−a)","a/z"],a:0,e:"Geometric series sum."},
+{t:"Z-Transform",q:"Z{δ(n)} =",o:["1","0","z","1/z"],a:0,e:"Unit impulse transform."},
+{t:"Z-Transform",q:"Z{n} =",o:["z/(z−1)²","z/(z−1)","1/(z−1)²","z²"],a:0,e:"Differentiate the step transform."},
+{t:"Z-Transform",q:"ROC of Z{aⁿu(n)} is:",o:["|z| > |a|","|z| < |a|","|z| = |a|","All z"],a:0,e:"Causal sequence ROC."},
+{t:"Z-Transform",q:"Z{n aⁿ} =",o:["az/(z−a)²","z/(z−a)","1/(z−a)²","a/(z−a)"],a:0,e:"Differentiate w.r.t. a."},
+{t:"Z-Transform",q:"Z-transform is linear because:",o:["Z{af+bg} = aZ{f}+bZ{g}","It is a power series","It is invertible","It is periodic"],a:0,e:"Linearity of summation."},
+{t:"Z-Transform",q:"Time-shift: Z{x(n−k)} =",o:["z^{−k}X(z)","z^{k}X(z)","X(z−k)","X(z+k)"],a:0,e:"Delay property."},
+{t:"Z-Transform",q:"Initial value theorem for Z-transform:",o:["x(0) = lim_{z→∞} X(z)","x(0) = lim_{z→0} X(z)","x(0) = X(1)","x(0) = 0"],a:0,e:"Direct from definition."},
+{t:"Z-Transform",q:"Final value theorem: lim_{n→∞} x(n) =",o:["lim_{z→1}(z−1)X(z)","lim_{z→0} X(z)","lim_{z→∞} X(z)","X(0)"],a:0,e:"Valid if poles inside unit circle."},
+{t:"Z-Transform",q:"Inverse Z-transform of z/(z−2) is:",o:["2ⁿu(n)","2ⁿ","(−2)ⁿ","n·2ⁿ"],a:0,e:"Standard pair."},
+{t:"Z-Transform",q:"Z{u(n)−u(n−N)} =",o:["(1−z^{−N})/(1−z^{−1})","z^N/(z−1)","1/(z−1)","z^{−N}"],a:0,e:"Finite-length rectangular pulse."},
+];
+
+/* ---------- Normalise to full keys ---------- */
+const QUESTIONS = RAW.map(r => ({
+  topic: r.t,
+  question: r.q,
+  options: r.o,
+  answer: r.a,
+  explanation: r.e
+}));
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let state = {
+  currentScreen:'home',
+  currentTopic:null,
+  quizQuestions:[],
+  currentIdx:0,
+  answers:[],
+  marked:[],
+  timer:null,
+  timeLeft:0,
+  totalTime:0,
+  mode:'practice',        // 'practice' | 'test'
+  negativeMarking:false,
+  quizLabel:'',
+  history:[],
+  bookmarks:[],
+  wrongIds:[],
+  stats:{tests:0, qs:0, correct:0},
+  topicStats:{}           // {topic: {attempted, correct}}
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function getTopicCount(name){ return QUESTIONS.filter(q => q.topic === name).length; }
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+function loadStorage(){
+  try{
+    state.history     = JSON.parse(localStorage.getItem('emcq_history')||'[]');
+    state.bookmarks   = JSON.parse(localStorage.getItem('emcq_bookmarks')||'[]');
+    state.wrongIds    = JSON.parse(localStorage.getItem('emcq_wrong')||'[]');
+    state.stats       = JSON.parse(localStorage.getItem('emcq_stats')||'{"tests":0,"qs":0,"correct":0}');
+    state.topicStats  = JSON.parse(localStorage.getItem('emcq_topicstats')||'{}');
+  }catch(e){}
+}
+function saveStorage(){
+  localStorage.setItem('emcq_history', JSON.stringify(state.history.slice(0,50)));
+  localStorage.setItem('emcq_bookmarks', JSON.stringify(state.bookmarks));
+  localStorage.setItem('emcq_wrong', JSON.stringify(state.wrongIds.slice(0,300)));
+  localStorage.setItem('emcq_stats', JSON.stringify(state.stats));
+  localStorage.setItem('emcq_topicstats', JSON.stringify(state.topicStats));
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function navigate(screen){
+  document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById('screen-'+screen);
+  if(target) target.classList.remove('hidden');
+  state.currentScreen = screen;
+
+  const map = { 'topic-setup':'practice', 'quiz':'home', 'result':'home', 'review':'home' };
+  const activeNav = map[screen] || screen;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === activeNav));
+  window.scrollTo(0,0);
+  if(screen==='home')       renderHome();
+  if(screen==='practice')   renderPractice();
+  if(screen==='bookmarks')  renderBookmarks();
+  if(screen==='progress')   renderProgress();
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function showSearch(){
+  document.getElementById('search-overlay').classList.remove('hidden');
+  document.getElementById('search-input').focus();
+  doSearch(document.getElementById('search-input').value);
+}
+function hideSearch(){ document.getElementById('search-overlay').classList.add('hidden'); }
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHome(){
+  document.getElementById('home-total-q').textContent = QUESTIONS.length;
+
+  const grid = document.getElementById('home-topic-grid');
+  grid.innerHTML = TOPICS.slice(0,8).map(t => `
+    <div class="topic-card" onclick="openTopic('${t.name}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="dot" style="background:${t.color};color:${t.tcolor}">${t.icon}</div>
+        <span class="small" style="background:${t.color};color:${t.tcolor};padding:3px 8px;border-radius:100px;font-weight:700">${getTopicCount(t.name)}</span>
+      </div>
+      <div style="font-weight:700;margin-top:10px;font-size:12.5px;line-height:1.2">${t.name}</div>
+      <div class="count">Tap to practice</div>
+    </div>`).join('');
+
+  const last = state.history[0];
+  const card = document.getElementById('last-result-card');
+  if(last){
+    card.classList.remove('hidden');
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3 style="margin:0;font-size:14px">Last Result</h3>
+        <span class="badge-light badge">${escapeHtml(last.topic)}</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="width:52px;height:52px;border-radius:100%;background:var(--red-light);display:grid;place-items:center;font-weight:800;color:var(--red);font-size:18px">${last.percent}%</div>
+        <div><b style="font-size:18px">${last.score}/${last.total}</b> • ${last.percent}%
+        <div class="small">${last.dateStr} • ${last.correct} correct</div></div>
+      </div>`;
+  } else card.classList.add('hidden');
+
+  document.getElementById('wrong-count').textContent = state.wrongIds.length;
+  document.getElementById('bm-count').textContent = state.bookmarks.length;
+
+  const avg = state.stats.qs ? Math.round(state.stats.correct/state.stats.qs*100) : 0;
+  document.getElementById('progress-mini').innerHTML = `
+    <h3 style="margin:0 0 10px;font-size:14px">My Progress</h3>
+    <div class="stat-grid">
+      <div class="stat"><span class="small">Tests</span><b>${state.stats.tests}</b></div>
+      <div class="stat"><span class="small">Avg %</span><b style="color:var(--red)">${avg}%</b></div>
+      <div class="stat"><span class="small">Qs Done</span><b>${state.stats.qs}</b></div>
+      <div class="stat"><span class="small">Best</span><b>${bestPercent()}%</b></div>
+    </div>`;
+}
+function bestPercent(){ return state.history.length ? Math.max(...state.history.map(h=>h.percent)) : 0; }
+
+/* ============================================================
+   PRACTICE LIST
+   ============================================================ */
+function renderPractice(){
+  document.getElementById('practice-topic-list').innerHTML = TOPICS.map(t => `
+    <div class="card topic-card" style="display:flex;gap:12px;align-items:center" onclick="openTopic('${t.name}')">
+      <div class="dot" style="background:${t.color};color:${t.tcolor};width:44px;height:44px">${t.icon}</div>
+      <div style="flex:1">
+        <div style="font-weight:700">${t.name}</div>
+        <div class="small">${getTopicCount(t.name)} questions • GATE pattern</div>
+      </div>
+      <div style="color:var(--text2)">›</div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   TOPIC SETUP
+   ============================================================ */
+let selectedTopicName = null;
+function openTopic(name){
+  selectedTopicName = name;
+  state.currentTopic = name;
+  const meta = TOPICS.find(t => t.name === name);
+  document.getElementById('setup-icon').textContent = meta.icon;
+  document.getElementById('setup-icon').style.background = meta.color;
+  document.getElementById('setup-icon').style.color = meta.tcolor;
+  document.getElementById('setup-title').textContent = name;
+  document.getElementById('setup-desc').textContent = `${getTopicCount(name)} questions • randomised options • instant explanations`;
+
+  const preview = QUESTIONS.filter(q => q.topic === name).slice(0,3);
+  document.getElementById('setup-preview').innerHTML = preview.map((q,i) =>
+    `<div style="padding:8px;background:white;border:1px solid var(--border);border-radius:10px">${i+1}. ${escapeHtml(q.question)}</div>`
+  ).join('');
+
+  updateModeSwitch();
+  navigate('topic-setup');
+}
+function toggleMode(){
+  state.mode = state.mode === 'practice' ? 'test' : 'practice';
+  state.negativeMarking = state.mode === 'test';
+  updateModeSwitch();
+}
+function updateModeSwitch(){
+  const sw = document.getElementById('mode-switch');
+  sw.classList.toggle('on', state.mode === 'test');
+}
+
+/* ============================================================
+   QUIZ ENGINE
+   ============================================================ */
+function prepareQuestions(pool, count){
+  const picked = shuffle(pool).slice(0, Math.min(count, pool.length));
+  return picked.map(q => {
+    const origIdx = QUESTIONS.indexOf(q);
+    const opts = q.options.map((text,i) => ({ text, orig:i }));
+    const shuffled = shuffle(opts);
+    const newAns = shuffled.findIndex(o => o.orig === q.answer);
+    return {
+      ...q,
+      origIndex: origIdx,
+      options: shuffled.map(o => o.text),
+      answer: newAns,
+      origAnswerText: q.options[q.answer]
+    };
+  });
+}
+
+function startMockTest(count){
+  const qs = prepareQuestions(QUESTIONS, count);
+  startQuiz(qs, 'Mock Test', { mode:'test', negative:true, time: count*30 });
+}
+function startTopicTest(count){
+  const pool = QUESTIONS.filter(q => q.topic === selectedTopicName);
+  const qs = prepareQuestions(pool, count);
+  const isTest = state.mode === 'test';
+  startQuiz(qs, selectedTopicName, {
+    mode: state.mode,
+    negative: isTest,
+    time: count*30
+  });
+}
+function startWrongPractice(){
+  if(!state.wrongIds.length){ alert('No wrong answers yet. Take a test first!'); return; }
+  const pool = state.wrongIds.map(i => QUESTIONS[i]).filter(Boolean);
+  if(!pool.length){ alert('No data'); return; }
+  const qs = prepareQuestions(pool, Math.min(20, pool.length));
+  startQuiz(qs, 'Wrong Answers Practice', { mode:'practice', negative:false, time: qs.length*30 });
+}
+
+function startQuiz(qs, topicLabel, opts={}){
+  state.quizQuestions = qs;
+  state.currentIdx = 0;
+  state.answers = Array(qs.length).fill(null);
+  state.marked = Array(qs.length).fill(false);
+  state.quizLabel = topicLabel;
+  state.mode = opts.mode || 'practice';
+  state.negativeMarking = !!opts.negative;
+  state.totalTime = opts.time || qs.length*30;
+  state.timeLeft = state.totalTime;
+
+  document.getElementById('quiz-topic-badge').textContent = topicLabel;
+  document.getElementById('quiz-total').textContent = qs.length;
+  navigate('quiz');
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(state.timer);
+  updateTimerUI();
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    updateTimerUI();
+    if(state.timeLeft <= 0){ clearInterval(state.timer); submitQuiz(true); }
+  }, 1000);
+}
+function updateTimerUI(){
+  const m = Math.floor(state.timeLeft/60);
+  const s = state.timeLeft%60;
+  const el = document.getElementById('quiz-timer');
+  el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+  el.style.color = state.timeLeft < 60 ? 'var(--red-err)' : 'var(--text)';
+}
+
+function renderQuestion(){
+  const idx = state.currentIdx;
+  const q = state.quizQuestions[idx];
+  document.getElementById('quiz-cur').textContent = idx + 1;
+  document.getElementById('quiz-progress').style.width = ((idx+1)/state.quizQuestions.length*100)+'%';
+
+  // Live score (practice mode only)
+  let live = 0;
+  if(state.mode === 'practice'){
+    live = state.answers.filter(a => a && a.isCorrect).length;
+  } else {
+    // test mode: don't reveal
+    live = '—';
+  }
+  document.getElementById('quiz-score').textContent = live;
+
+  const answered = state.answers[idx];
+  const isBookmarked = state.bookmarks.includes(q.origIndex);
+  const isMarked = state.marked[idx];
+
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="small" style="font-weight:700">Q${idx+1} • ${q.topic}</span>
+      <div style="display:flex;gap:6px">
+        <button class="pill" onclick="toggleMark(${idx})">${isMarked?'⚑ Marked':'⚐ Mark'}</button>
+        <button class="pill" onclick="toggleBookmark(${q.origIndex})">${isBookmarked?'★':'☆'}</button>
+      </div>
+    </div>
+    <div class="q-text">${escapeHtml(q.question)}</div>
+    <div id="options">
+      ${q.options.map((opt,i) => {
+        let cls = 'opt';
+        if(answered){
+          if(state.mode === 'practice'){
+            if(i === q.answer) cls += ' correct';
+            else if(i === answered.selected && !answered.isCorrect) cls += ' wrong';
+          } else {
+            if(i === answered.selected) cls += ' selected';
+          }
+        }
+        return `<div class="${cls}" onclick="selectOption(${i})">
+          <div class="opt-letter">${String.fromCharCode(65+i)}</div>
+          <div style="flex:1">${escapeHtml(opt)}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  if(answered && state.mode === 'practice'){
+    html += `
+      <div class="feedback ${answered.isCorrect?'ok':'bad'}">${answered.isCorrect?'✓ Correct!':'✗ Incorrect!'}</div>
+      <div class="exp"><b>Correct Answer: ${String.fromCharCode(65+q.answer)}. ${escapeHtml(q.origAnswerText)}</b><br><br>${escapeHtml(q.explanation)}</div>`;
+  }
+
+  document.getElementById('quiz-card').innerHTML = html;
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').textContent = idx === state.quizQuestions.length-1 ? 'Submit' : 'Next →';
+}
+
+function selectOption(i){
+  const idx = state.currentIdx;
+  const q = state.quizQuestions[idx];
+  const existing = state.answers[idx];
+
+  // Practice mode: lock once answered
+  if(state.mode === 'practice' && existing) return;
+
+  const isCorrect = i === q.answer;
+  state.answers[idx] = { selected:i, correct:q.answer, isCorrect, origIndex:q.origIndex };
+
+  if(state.mode === 'practice'){
+    if(!isCorrect && !state.wrongIds.includes(q.origIndex)) state.wrongIds.push(q.origIndex);
+    saveStorage();
+  }
+  renderQuestion();
+}
+
+function toggleMark(idx){
+  state.marked[idx] = !state.marked[idx];
+  renderQuestion();
+}
+
+function prevQuestion(){ if(state.currentIdx > 0){ state.currentIdx--; renderQuestion(); } }
+function nextQuestion(){
+  if(state.currentIdx < state.quizQuestions.length-1){
+    state.currentIdx++;
+    renderQuestion();
+  } else {
+    submitQuiz();
+  }
+}
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+function computeScore(){
+  let correct = 0, wrong = 0, skipped = 0;
+  state.answers.forEach(a => {
+    if(!a) skipped++;
+    else if(a.isCorrect) correct++;
+    else wrong++;
+  });
+  let score = correct;
+  if(state.negativeMarking) score = correct - wrong/3;
+  return { correct, wrong, skipped, score: Math.max(0, Math.round(score*100)/100) };
+}
+
+function submitQuiz(auto=false){
+  if(!auto){
+    const unanswered = state.answers.filter(a => !a).length;
+    if(unanswered > 0 && !confirm(`${unanswered} questions unanswered. Submit anyway?`)) return;
+  }
+  clearInterval(state.timer);
+
+  const total = state.quizQuestions.length;
+  const { correct, wrong, skipped } = computeScore();
+  const percent = total ? Math.round(correct/total*100) : 0;
+  const timeUsed = state.totalTime - state.timeLeft;
+
+  // Update stats + wrong list
+  state.quizQuestions.forEach((q,i) => {
+    const a = state.answers[i];
+    if(a && !a.isCorrect){
+      if(!state.wrongIds.includes(q.origIndex)) state.wrongIds.push(q.origIndex);
+    }
+    // topic stats
+    const ts = state.topicStats[q.topic] || { attempted:0, correct:0 };
+    ts.attempted++;
+    if(a && a.isCorrect) ts.correct++;
+    state.topicStats[q.topic] = ts;
+  });
+
+  const record = {
+    date: Date.now(),
+    dateStr: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    topic: state.quizLabel,
+    score: correct,
+    total,
+    percent,
+    correct,
+    wrong,
+    skipped,
+    timeUsed,
+    mode: state.mode,
+    breakdown: state.quizQuestions.map((q,i) => {
+      const a = state.answers[i];
+      return { topic: q.topic, correct: !!(a && a.isCorrect) };
+    })
+  };
+
+  state.history.unshift(record);
+  state.stats.tests++;
+  state.stats.qs += total;
+  state.stats.correct += correct;
+  saveStorage();
+
+  showResult(record);
+}
+
+/* ============================================================
+   RESULT
+   ============================================================ */
+function showResult(rec){
+  navigate('result');
+  document.getElementById('result-score-big').textContent = `${rec.correct} / ${rec.total}`;
+  document.getElementById('result-percent').textContent = rec.percent + '%';
+  document.getElementById('r-correct').textContent = rec.correct;
+  document.getElementById('r-wrong').textContent = rec.wrong;
+  document.getElementById('r-skip').textContent = rec.skipped;
+  document.getElementById('r-time').textContent = Math.floor(rec.timeUsed/60)+':'+String(rec.timeUsed%60).padStart(2,'0');
+
+  let msg='', icon='';
+  if(rec.percent >= 90){ msg='Outstanding! You have mastered this chapter.'; icon='🏆'; }
+  else if(rec.percent >= 75){ msg='Great work! Keep pushing to perfection.'; icon='🎉'; }
+  else if(rec.percent >= 60){ msg='Good effort. Review explanations and retry.'; icon='💪'; }
+  else if(rec.percent >= 40){ msg='Needs improvement. Focus on fundamentals.'; icon='📘'; }
+  else { msg='Keep learning! Practice wrong answers to improve.'; icon='🌱'; }
+  document.getElementById('result-msg').textContent = msg;
+
+  const el = document.getElementById('result-icon');
+  el.textContent = icon;
+  el.style.background = rec.percent >= 60 ? 'var(--green-bg)' : 'var(--red-err-bg)';
+
+  // Topic-wise analysis
+  const byTopic = {};
+  (rec.breakdown||[]).forEach(b => {
+    byTopic[b.topic] = byTopic[b.topic] || { total:0, correct:0 };
+    byTopic[b.topic].total++;
+    if(b.correct) byTopic[b.topic].correct++;
+  });
+  const topics = Object.keys(byTopic);
+  if(topics.length > 1){
+    let html = `<h4 style="margin:0 0 10px;font-size:13px">Topic-wise Analysis</h4>`;
+    topics.forEach(t => {
+      const p = Math.round(byTopic[t].correct/byTopic[t].total*100);
+      html += `<div class="bar-row">
+        <div class="label">${escapeHtml(t)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+        <div class="small" style="min-width:52px;text-align:right"><b>${byTopic[t].correct}/${byTopic[t].total}</b></div>
+      </div>`;
+    });
+    document.getElementById('result-analysis').innerHTML = html;
+  } else {
+    document.getElementById('result-analysis').innerHTML = '';
+  }
+}
+
+function retryLast(){
+  if(!state.quizQuestions.length){ navigate('home'); return; }
+  const label = state.quizLabel;
+  const count = state.quizQuestions.length;
+  let pool = (label === 'Mock Test' || label === 'Wrong Answers Practice')
+    ? QUESTIONS
+    : QUESTIONS.filter(q => q.topic === label);
+  if(!pool.length) pool = QUESTIONS;
+  const qs = prepareQuestions(pool, count);
+  startQuiz(qs, label, { mode: state.mode, negative: state.negativeMarking, time: state.totalTime });
+}
+
+/* ============================================================
+   REVIEW
+   ============================================================ */
+function reviewLast(){ renderReview(); navigate('review'); }
+function renderReview(){
+  document.getElementById('review-list').innerHTML = state.quizQuestions.map((q,i) => {
+    const ans = state.answers[i];
+    const userOpt = ans ? q.options[ans.selected] : 'Not answered';
+    const status = ans ? (ans.isCorrect ? 'Correct' : 'Wrong') : 'Skipped';
+    const color = ans ? (ans.isCorrect ? 'var(--green)' : 'var(--red-err)') : 'var(--text2)';
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between">
+        <span class="badge-light badge">${escapeHtml(q.topic)}</span>
+        <span style="font-weight:700;color:${color}">${status}</span>
+      </div>
+      <div class="q-text" style="font-size:15px">${i+1}. ${escapeHtml(q.question)}</div>
+      <div class="small">Your answer: <b>${escapeHtml(userOpt)}</b></div>
+      <div class="small">Correct: <b style="color:var(--green)">${String.fromCharCode(65+q.answer)}. ${escapeHtml(q.origAnswerText)}</b></div>
+      <div class="exp">${escapeHtml(q.explanation)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   BOOKMARKS
+   ============================================================ */
+function toggleBookmark(origIdx){
+  const i = state.bookmarks.indexOf(origIdx);
+  if(i >= 0) state.bookmarks.splice(i,1); else state.bookmarks.push(origIdx);
+  saveStorage();
+  if(state.currentScreen === 'quiz') renderQuestion();
+  if(state.currentScreen === 'bookmarks') renderBookmarks();
+  document.getElementById('bm-count').textContent = state.bookmarks.length;
+}
+function renderBookmarks(){
+  const list = document.getElementById('bookmark-list');
+  if(!state.bookmarks.length){
+    list.innerHTML = `<div class="card" style="text-align:center;padding:24px"><div style="font-size:32px">☆</div><p class="small">No bookmarks yet. Tap ☆ on any question to save it.</p></div>`;
+    return;
+  }
+  list.innerHTML = state.bookmarks.map(origIdx => {
+    const q = QUESTIONS[origIdx];
+    if(!q) return '';
+    return `<div class="card">
+      <div class="badge-light badge">${escapeHtml(q.topic)}</div>
+      <div class="q-text" style="font-size:15px">${escapeHtml(q.question)}</div>
+      <div style="display:grid;gap:6px;margin-top:8px">
+        ${q.options.map((o,i) =>
+          `<div class="small" style="padding:6px 8px;border-radius:8px;border:1px solid ${i===q.answer?'var(--green)':'var(--border)'};background:${i===q.answer?'var(--green-bg)':'white'}">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</div>`
+        ).join('')}
+      </div>
+      <div class="exp">${escapeHtml(q.explanation)}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="toggleBookmark(${origIdx})">Remove Bookmark</button>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+function renderProgress(){
+  const avg = state.stats.qs ? Math.round(state.stats.correct/state.stats.qs*100) : 0;
+
+  // Chapter-wise progress bars
+  const topicBars = TOPICS.map(t => {
+    const ts = state.topicStats[t.name];
+    if(!ts || !ts.attempted) return '';
+    const p = Math.round(ts.correct/ts.attempted*100);
+    return `<div class="bar-row">
+      <div class="label">${escapeHtml(t.name)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+      <div class="small" style="min-width:44px;text-align:right"><b>${p}%</b></div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  document.getElementById('progress-full').innerHTML = `
+    <div class="card">
+      <h3 style="margin:0 0 12px">My Progress</h3>
+      <div class="stat-grid">
+        <div class="stat"><span class="small">Tests attempted</span><b>${state.stats.tests}</b></div>
+        <div class="stat"><span class="small">Questions answered</span><b>${state.stats.qs}</b></div>
+        <div class="stat"><span class="small">Correct answers</span><b style="color:var(--green)">${state.stats.correct}</b></div>
+        <div class="stat"><span class="small">Average %</span><b style="color:var(--red)">${avg}%</b></div>
+        <div class="stat"><span class="small">Best %</span><b>${bestPercent()}%</b></div>
+        <div class="stat"><span class="small">Bookmarks</span><b>${state.bookmarks.length}</b></div>
+      </div>
+    </div>
+    ${topicBars ? `<div class="card"><h3 style="margin:0 0 12px;font-size:14px">Chapter-wise Accuracy</h3>${topicBars}</div>` : ''}
+  `;
+
+  const hl = document.getElementById('history-list');
+  if(!state.history.length){
+    hl.innerHTML = `<div class="small" style="text-align:center;padding:12px">No tests yet</div>`;
+  } else {
+    hl.innerHTML = state.history.map(h => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:12px;background:white">
+        <div><div style="font-weight:700;font-size:13px">${escapeHtml(h.topic)}</div><div class="small">${h.dateStr}</div></div>
+        <div style="text-align:right"><b>${h.correct}/${h.total}</b>
+          <div class="small" style="color:${h.percent>=60?'var(--green)':'var(--red-err)'};font-weight:700">${h.percent}%</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function clearHistory(){
+  if(confirm('Clear all history and progress?')){
+    state.history = [];
+    state.stats = {tests:0, qs:0, correct:0};
+    state.topicStats = {};
+    localStorage.removeItem('emcq_history');
+    localStorage.removeItem('emcq_stats');
+    localStorage.removeItem('emcq_topicstats');
+    saveStorage();
+    renderProgress();
+    renderHome();
+  }
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function doSearch(q){
+  const out = document.getElementById('search-results');
+  if(!q.trim()){
+    out.innerHTML = `<div class="small" style="text-align:center;padding:20px">Type a keyword like Laplace, matrix, integral…</div>`;
+    return;
+  }
+  const term = q.toLowerCase();
+  const matches = QUESTIONS.filter(x =>
+    x.question.toLowerCase().includes(term) ||
+    x.topic.toLowerCase().includes(term) ||
+    x.options.join(' ').toLowerCase().includes(term) ||
+    x.explanation.toLowerCase().includes(term)
+  ).slice(0,40);
+
+  if(!matches.length){
+    out.innerHTML = `<div class="small" style="text-align:center;padding:20px">No results for "${escapeHtml(q)}"</div>`;
+    return;
+  }
+  out.innerHTML = matches.map(m => {
+    const idx = QUESTIONS.indexOf(m);
+    return `<div class="card">
+      <span class="badge-light badge">${escapeHtml(m.topic)}</span>
+      <div style="font-weight:600;margin-top:6px;font-size:14px">${escapeHtml(m.question)}</div>
+      <div class="small" style="margin-top:6px">${m.options.map((o,i)=>`${String.fromCharCode(65+i)}. ${escapeHtml(o)}`).join(' • ')}</div>
+      <div class="exp" style="margin-top:8px"><b>Ans:</b> ${String.fromCharCode(65+m.answer)} • ${escapeHtml(m.explanation)}</div>
+      <button class="pill" style="margin-top:8px" onclick="toggleBookmark(${idx});doSearch(document.getElementById('search-input').value)">
+        ${state.bookmarks.includes(idx)?'★ Bookmarked':'☆ Bookmark'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   QUESTION PALETTE
+   ============================================================ */
+function openPalette(){
+  const grid = document.getElementById('palette-grid');
+  grid.innerHTML = state.quizQuestions.map((q,i) => {
+    const a = state.answers[i];
+    let cls = 'q-num';
+    if(a){
+      if(state.mode === 'practice' && !a.isCorrect) cls += ' wrong';
+      else cls += ' answered';
+    }
+    if(state.marked[i]) cls += ' marked';
+    if(i === state.currentIdx) cls += ' current';
+    return `<div class="${cls}" onclick="jumpTo(${i})">${i+1}</div>`;
+  }).join('');
+  document.getElementById('palette-sheet').classList.remove('hidden');
+}
+function closePalette(){ document.getElementById('palette-sheet').classList.add('hidden'); }
+function jumpTo(i){ state.currentIdx = i; closePalette(); renderQuestion(); }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadStorage();
+renderHome();
+renderPractice();
+
+/* PWA Service Worker (blob) */
+if('serviceWorker' in navigator){
+  const swCode = `
+    const CACHE='emcq-v2';
+    self.addEventListener('install', e=>{
+      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./index.html'])).catch(()=>{}));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e=>{ e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', e=>{
+      e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request).catch(()=>caches.match('./'))));
+    });
+  `;
+  try{
+    const blob = new Blob([swCode], {type:'text/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }catch(e){}
+}
+</script>
+</body>
+</html>
