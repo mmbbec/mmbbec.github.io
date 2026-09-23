@@ -3244,195 +3244,6 @@
         let selectedAbsent = new Set();
         let currentAttendanceSubjectId = null;
 
-<script>
-    // ============================================================
-    //  CENTRALIZED CLOUD CACHE & SYNC ENGINE
-    // ============================================================
-    const CLOUD_CACHE = {};
-
-    // Session remains in local storage so each user's login state is private to their browser
-    const SESSION_KEY = 'bec_session';
-
-    const DEFAULT_ADMIN = {
-        email: 'mmbbec@gmail.com',
-        password: 'admin123',
-        name: 'Admin',
-        role: 'admin',
-        semester: 'I Semester',
-        division: 'A',
-        branch: 'Mathematics'
-    };
-
-    /**
-     * Reads an entity from the Cloud Cache (with fallback to LocalStorage).
-     */
-    function cloudGet(key, fallback) {
-        if (CLOUD_CACHE[key] !== undefined && CLOUD_CACHE[key] !== null) {
-            return CLOUD_CACHE[key];
-        }
-        try {
-            const local = localStorage.getItem(key);
-            return local ? JSON.parse(local) : fallback;
-        } catch (e) {
-            return fallback;
-        }
-    }
-
-    /**
-     * Saves an entity to memory, updates local storage, and pushes to Google Sheets.
-     */
-    function cloudSet(key, value) {
-        CLOUD_CACHE[key] = value;
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (e) {}
-
-        // Send to Google Sheets asynchronously in the background
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withFailureHandler(err => console.error("Cloud sync failed for: " + key, err))
-                .apiSaveSyncData(key, value);
-        }
-    }
-
-    // ============================================================
-    //  CLOUD-CONNECTED DATA ACCESSORS
-    // ============================================================
-    const USERS_KEY = 'bec_users';
-    const ACADEMIC_YEAR_KEY = 'bec_academic_year';
-    const SEMESTER_TYPE_KEY = 'bec_semester_type';
-    const BRANCHES_KEY = 'bec_branches';
-    const DIVISIONS_KEY = 'bec_divisions';
-    const SEMESTERS_KEY = 'bec_semesters';
-    const STORAGE_KEY = 'bec_math_subjects';
-    const ANNOUNCE_KEY = 'bec_announcements';
-    const ATTENDANCE_KEY = 'bec_attendance';
-
-    const DEFAULT_BRANCHES = [
-        'Civil Engineering', 'Mechanical Engineering', 'Electrical and Electronics Engineering',
-        'Electronics and Communication Engineering', 'Computer Science and Engineering',
-        'Information Science and Engineering', 'Electronics and Computer Engineering',
-        'Artificial Intelligence and Machine Learning', 'Automobile Engineering',
-        'Industrial and Production Engineering', 'Biotechnology'
-    ];
-    const DEFAULT_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
-
-    function getUsers() {
-        let users = cloudGet(USERS_KEY, []);
-        if (!users || !Array.isArray(users) || users.length === 0) {
-            users = [{ ...DEFAULT_ADMIN }];
-            cloudSet(USERS_KEY, users);
-        }
-        return users;
-    }
-
-    function saveUsers(users) {
-        cloudSet(USERS_KEY, users);
-    }
-
-    function getSession() {
-        try {
-            const raw = localStorage.getItem(SESSION_KEY);
-            return raw ? JSON.parse(raw) : null;
-        } catch (e) { return null; }
-    }
-
-    function setSession(user) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify({
-            email: user.email,
-            role: user.role,
-            name: user.name,
-            semester: user.semester || 'I Semester',
-            division: user.division || '',
-            branch: user.branch || ''
-        }));
-    }
-
-    function clearSession() {
-        localStorage.removeItem(SESSION_KEY);
-    }
-
-    function getCurrentUser() {
-        const session = getSession();
-        if (!session) return null;
-        const users = getUsers();
-        return users.find(u => u.email === session.email) || null;
-    }
-
-    function getAcademicYear() { return cloudGet(ACADEMIC_YEAR_KEY, '2025-26'); }
-    function setAcademicYear(yr) { cloudSet(ACADEMIC_YEAR_KEY, yr); }
-
-    function getSemesterType() { return cloudGet(SEMESTER_TYPE_KEY, 'ODD'); }
-    function setSemesterType(st) { cloudSet(SEMESTER_TYPE_KEY, st); }
-
-    function getBranches() {
-        let b = cloudGet(BRANCHES_KEY, null);
-        if (!b || !Array.isArray(b) || b.length === 0) {
-            b = DEFAULT_BRANCHES;
-            cloudSet(BRANCHES_KEY, b);
-        }
-        return b;
-    }
-    function setBranches(b) { cloudSet(BRANCHES_KEY, b); }
-
-    function getDivisions() {
-        let d = cloudGet(DIVISIONS_KEY, null);
-        if (!d || !Array.isArray(d) || d.length === 0) {
-            d = DEFAULT_DIVISIONS;
-            cloudSet(DIVISIONS_KEY, d);
-        }
-        return d;
-    }
-    function setDivisions(d) { cloudSet(DIVISIONS_KEY, d); }
-
-    function getSemesters() {
-        return cloudGet(SEMESTERS_KEY, [
-            'I Semester', 'II Semester', 'III Semester', 'IV Semester',
-            'V Semester', 'VI Semester', 'VII Semester', 'VIII Semester'
-        ]);
-    }
-    function setSemesters(s) { cloudSet(SEMESTERS_KEY, s); }
-
-    function loadData() {
-        subjects = cloudGet(STORAGE_KEY, []);
-        subjects = subjects.map(s => ({
-            ...s,
-            strength: parseInt(s.strength) || 58,
-            branch: s.branch || '',
-            timetable: Array.isArray(s.timetable) ? s.timetable : [],
-            notes: Array.isArray(s.notes) ? s.notes : [],
-            resources: Array.isArray(s.resources) ? s.resources : [],
-            syllabus: s.syllabus || null,
-        }));
-    }
-    function saveData() { cloudSet(STORAGE_KEY, subjects); }
-
-    function loadAnnouncements() {
-        announcements = cloudGet(ANNOUNCE_KEY, []);
-    }
-    function saveAnnouncements() { cloudSet(ANNOUNCE_KEY, announcements); }
-
-    function loadAttendanceData() {
-        const raw = cloudGet(ATTENDANCE_KEY, {});
-        attendanceData = raw || {};
-        for (const key in attendanceData) {
-            if (attendanceData[key].absent && Array.isArray(attendanceData[key].absent)) {
-                attendanceData[key].absent = new Set(attendanceData[key].absent);
-            }
-        }
-    }
-    function saveAttendanceData() {
-        const toStore = {};
-        for (const key in attendanceData) {
-            toStore[key] = {
-                subjectId: attendanceData[key].subjectId,
-                date: attendanceData[key].date,
-                absent: attendanceData[key].absent ? Array.from(attendanceData[key].absent) : [],
-            };
-        }
-        cloudSet(ATTENDANCE_KEY, toStore);
-    }
-
         function loadAttendanceData() {
             try {
                 const raw = localStorage.getItem(ATTENDANCE_KEY);
@@ -4223,61 +4034,22 @@
             });
         }
 
-        // ============================================================
-    //  INITIALIZATION & CLOUD BOOTSTRAP
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        showToast('🔄 Connecting to College Cloud Database...', 'info');
-
-        // Check if running inside Google Apps Script
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(rawJson) {
-                    try {
-                        const cloudStore = JSON.parse(rawJson);
-                        for (const k in cloudStore) {
-                            CLOUD_CACHE[k] = cloudStore[k];
-                        }
-                    } catch (e) {
-                        console.warn("Using local cache state.");
-                    }
-                    startApp();
-                    showToast('✅ Cloud Database Synced!', 'success');
-                })
-                .withFailureHandler(function(err) {
-                    console.error(err);
-                    showToast('⚠️ Offline mode: Loaded local cache.', 'error');
-                    startApp();
-                })
-                .apiGetInitialSyncData();
-        } else {
-            // Standalone browser fallback
-            startApp();
-        }
-    });
-
-    function startApp() {
-        loadAttendanceData();
-        loadAnnouncements();
-        loadData();
-        getBranches();
-        getDivisions();
-        
-        const session = getSession();
-        if (session) {
-            const users = getUsers();
-            const user = users.find(u => u.email === session.email);
-            if (user) {
-                initApp();
-                return;
-            } else {
-                clearSession();
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAttendanceData();
+            loadAnnouncements();
+            // Ensure default branches and divisions are set on first load
+            getBranches();
+            getDivisions();
+            const session = getSession();
+            if (session) {
+                const users = getUsers();
+                const user = users.find(u => u.email === session.email);
+                if (user) { initApp(); return; } else { clearSession(); }
             }
-        }
-        document.getElementById('auth-container').classList.remove('hidden');
-        document.getElementById('app-wrapper').classList.remove('show');
-        showLogin();
-    }
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('app-wrapper').classList.remove('show');
+            showLogin();
+           });
 
         // Expose globals
         window.switchView = switchView;
