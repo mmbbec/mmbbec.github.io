@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ramanujan Magic Square — view Ramanujan's classic square alongside Dr. Mahadev Biradar's interactive date-driven 4 × 4 square.">
+  <title>Ramanujan Magic Square | Dr. Mahadev Biradar</title>
+
+  <style>
+    /* ==========================================================
+       Design tokens
+       ========================================================== */
+    :root {
+      --navy:      #1e3a8a;
+      --navy-dark: #172554;
+      --blue:      #2563eb;
+      --ink:       #0f172a;
+      --muted:     #64748b;
+      --line:      #cbd5e1;
+      --page:      #eef2f7;
+      --surface:   #ffffff;
+      --shadow-lg: 0 18px 40px -18px rgba(15, 23, 42, .35);
+      --shadow-sm: 0 8px 20px -10px rgba(30, 58, 138, .75);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      background-color: var(--page);
+      background-image: radial-gradient(1200px 600px at 50% -10%, #dfe9f8 0%, rgba(238, 242, 247, 0) 60%);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================
+       Layout shell
+       ========================================================== */
+    .app {
+      width: min(940px, 100%);
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .app__header {
+      padding: 26px 32px;
+      background: linear-gradient(135deg, var(--navy-dark), var(--blue));
+      color: #fff;
+    }
+
+    .app__header h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .app__header p {
+      margin: 6px 0 0;
+      max-width: 64ch;
+      font-size: .875rem;
+      color: rgba(255, 255, 255, .82);
+    }
+
+    /* ==========================================================
+       Tabs
+       ========================================================== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 32px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .tab {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 16px 18px 14px;
+      font: inherit;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color .16s ease, border-color .16s ease;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--navy); }
+
+    .tab[aria-selected="true"] {
+      color: var(--navy);
+      border-bottom-color: var(--blue);
+    }
+
+    .tab:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: -4px;
+      border-radius: 6px;
+    }
+
+    /* ==========================================================
+       Panel content
+       ========================================================== */
+    .panel {
+      display: none;
+      padding: 32px;
+    }
+
+    .panel.is-active { display: block; }
+
+    .panel__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+      gap: 32px;
+      align-items: start;
+    }
+
+    .panel__title {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .panel__lede {
+      margin: 0 0 18px;
+      font-size: .85rem;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+
+    .label-caption {
+      margin: 0 0 12px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ==========================================================
+       Magic square table
+       ========================================================== */
+    .square-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 4px 0;
+    }
+
+    .magic-square {
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 28px -16px rgba(30, 58, 138, .65);
+      table-layout: fixed;
+    }
+
+    .magic-square td {
+      width: 54px;
+      height: 48px;
+      border: 1px solid rgba(148, 163, 184, .35);
+      text-align: center;
+      vertical-align: middle;
+      font-size: 1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      transition: background-color .18s ease;
+    }
+
+    .magic-square td.cell--ring {
+      background: var(--navy);
+      color: #ffffff;
+      font-size: .88rem;
+    }
+
+    .magic-square td.cell--row1 { background: #fef3c7; color: #92400e; }
+    .magic-square td.cell--row2 { background: #ffe4e6; color: #9f1239; }
+    .magic-square td.cell--row3 { background: #d1fae5; color: #065f46; }
+    .magic-square td.cell--row4 { background: #dbeafe; color: #1e40af; }
+
+    /* ==========================================================
+       Info list / static details
+       ========================================================== */
+    .facts {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .facts li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: .85rem;
+    }
+
+    .facts li:last-child { border-bottom: 0; }
+
+    .facts .label { color: var(--muted); font-weight: 600; }
+    .facts .value { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    /* ==========================================================
+       Date inputs
+       ========================================================== */
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 8px 8px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .field + .field { margin-top: 8px; }
+
+    .field label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .key {
+      display: inline-grid;
+      place-items: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 5px;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    .field input {
+      width: 88px;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .field input:focus,
+    .field input:focus-visible {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .18);
+    }
+
+    /* ==========================================================
+       Total card
+       ========================================================== */
+    .total-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .total-card span {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+
+    .total-card strong {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================
+       Note
+       ========================================================== */
+    .note {
+      margin-top: 20px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: .78rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    /* ==========================================================
+       Footer
+       ========================================================== */
+    .app__footer {
+      padding: 16px 32px 20px;
+      border-top: 1px solid #eef2f7;
+      background: #f8fafc;
+      text-align: center;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: var(--muted);
+    }
+
+    .app__footer strong { color: var(--navy); font-weight: 700; }
+
+    /* ==========================================================
+       Responsive
+       ========================================================== */
+    @media (max-width: 760px) {
+      .panel { padding: 24px; }
+      .tabs { padding: 0 24px; }
+      .app__header { padding: 22px 24px; }
+
+      .panel__grid {
+        grid-template-columns: 1fr;
+        gap: 26px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .magic-square td {
+        width: 46px;
+        height: 42px;
+        font-size: .92rem;
+      }
+      .magic-square td.cell--ring { font-size: .78rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1>Ramanujan Magic Square</h1>
+      <p>
+        View the 4 × 4 square Ramanujan created from his own birth date,
+        and generate your own date-driven square with the interactive version.
+      </p>
+    </header>
+
+    <!-- ==========================================================
+         Tabs
+         ========================================================== -->
+    <div class="tabs" role="tablist" aria-label="Magic square views">
+      <button class="tab" id="tab-original" role="tab" aria-selected="true"
+              aria-controls="panel-original" data-panel="panel-original">
+        Ramanujan Magic Square
+      </button>
+      <button class="tab" id="tab-interactive" role="tab" aria-selected="false"
+              aria-controls="panel-interactive" data-panel="panel-interactive" tabindex="-1">
+        Dr. Mahadev Biradar Magic Square
+      </button>
+    </div>
+
+    <!-- ==========================================================
+         Panel 1 — Ramanujan square (static)
+         ========================================================== -->
+    <section class="panel is-active" id="panel-original" role="tabpanel"
+             aria-labelledby="tab-original" tabindex="0">
+      <div class="panel__grid">
+        <div>
+          <h2 class="panel__title">Ramanujan Magic Square</h2>
+          <p class="panel__lede">
+            Ramanujan built this square from his own birth date: 22 December 1887.
+            Every row, column, diagonal and the outer ring sums to <strong>139</strong>.
+          </p>
+
+          <p class="label-caption">The Square</p>
+          <div class="square-wrap">
+            <table class="magic-square" id="square-original"
+                   aria-label="Ramanujan's magic square, magic constant 139"></table>
+          </div>
+        </div>
+
+        <aside>
+          <p class="label-caption">Birth Date</p>
+          <ul class="facts">
+            <li><span class="label">Date (A)</span><span class="value">22</span></li>
+            <li><span class="label">Month (B)</span><span class="value">12</span></li>
+            <li><span class="label">Century (C)</span><span class="value">18</span></li>
+            <li><span class="label">Year (D)</span><span class="value">87</span></li>
+            <li><span class="label">Magic Total</span><span class="value">139</span></li>
+          </ul>
+
+          <div class="total-card">
+            <span>Magic Total</span>
+            <strong>139</strong>
+          </div>
+
+          <p class="note">
+            Srinivasa Ramanujan (22 Dec 1887 – 26 Apr 1920) famously arranged his
+            birth date into a 4 × 4 grid where every line sums to the same value.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         Panel 2 — Interactive Dr. Mahadev Biradar square
+         ========================================================== -->
+    <section class="panel" id="panel-interactive" role="tabpanel"
+             aria-labelledby="tab-interactive" tabindex="0" hidden>
+      <div class="panel__grid">
+        <div>
+          <h2 class="panel__title">Dr. Mahadev Biradar Magic Square</h2>
+          <p class="panel__lede">
+            Enter any date below. The four values build a fresh 4 × 4 magic square
+            where every row, column, diagonal and the outer ring share one total.
+          </p>
+
+          <p class="label-caption">Your Square</p>
+          <div class="square-wrap">
+            <table class="magic-square" id="square-interactive"
+                   aria-label="Interactive magic square"></table>
+          </div>
+        </div>
+
+        <aside>
+          <p class="label-caption">Date Details</p>
+
+          <form id="controls" autocomplete="off" novalidate>
+            <div class="field">
+              <label for="input-date">Date <span class="key">A</span></label>
+              <input type="number" id="input-date" value="12" min="1" max="31" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="input-month">Month <span class="key">B</span></label>
+              <input type="number" id="input-month" value="7" min="1" max="12" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="input-century">Century <span class="key">C</span></label>
+              <input type="number" id="input-century" value="20" min="0" max="99" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="input-year">Year <span class="key">D</span></label>
+              <input type="number" id="input-year" value="7" min="0" max="99" inputmode="numeric">
+            </div>
+          </form>
+
+          <div class="total-card">
+            <span>Magic Total</span>
+            <strong id="total-value" aria-live="polite">46</strong>
+          </div>
+
+          <p class="note">
+            The date-driven construction only applies to the 4 × 4 layout —
+            Ramanujan's formula is defined exclusively for this order.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <footer class="app__footer">
+      Created by <strong>Dr. Mahadev Biradar</strong>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      /* ==========================================================
+         Ramanujan's 4 × 4 date square
+         ========================================================== */
+      const ramanujanSquare = (A, B, C, D) => [
+        [A,     B,     C,     D    ],
+        [D + 1, C - 1, B - 3, A + 3],
+        [B - 2, A + 2, D + 2, C - 2],
+        [C + 1, D - 1, A + 1, B - 1]
+      ];
+
+      /* ==========================================================
+         Build a magic square table into a <table> element
+         ========================================================== */
+      function renderSquare(table, grid, constant) {
+        const size = grid.length;
+        const dim  = size + 2;                // grid + surrounding ring
+        const frag = document.createDocumentFragment();
+
+        const ringCell = () => {
+          const td = document.createElement('td');
+          td.className = 'cell--ring';
+          td.textContent = constant;
+          return td;
+        };
+
+        const ringRow = () => {
+          const tr = document.createElement('tr');
+          for (let i = 0; i < dim; i++) tr.appendChild(ringCell());
+          return tr;
+        };
+
+        frag.appendChild(ringRow());
+
+        grid.forEach((row, r) => {
+          const tr = document.createElement('tr');
+          tr.appendChild(ringCell());
+
+          row.forEach(value => {
+            const td = document.createElement('td');
+            td.className = `cell--row${(r % 4) + 1}`;
+            td.textContent = value;
+            tr.appendChild(td);
+          });
+
+          tr.appendChild(ringCell());
+          frag.appendChild(tr);
+        });
+
+        frag.appendChild(ringRow());
+
+        table.replaceChildren(frag);
+      }
+
+      /* ==========================================================
+         Panel 1 — Ramanujan square (static)
+         ========================================================== */
+      const BIRTH = { date: 22, month: 12, century: 18, year: 87 };
+      const birthTotal = BIRTH.date + BIRTH.month + BIRTH.century + BIRTH.year;
+
+      renderSquare(
+        document.getElementById('square-original'),
+        ramanujanSquare(BIRTH.date, BIRTH.month, BIRTH.century, BIRTH.year),
+        birthTotal
+      );
+
+      /* ==========================================================
+         Panel 2 — Interactive square
+         ========================================================== */
+      const FIELDS = [
+        { key: 'a', id: 'input-date',    min: 1,  max: 31 },
+        { key: 'b', id: 'input-month',   min: 1,  max: 12 },
+        { key: 'c', id: 'input-century', min: 0,  max: 99 },
+        { key: 'd', id: 'input-year',    min: 0,  max: 99 }
+      ];
+
+      const table    = document.getElementById('square-interactive');
+      const totalEl  = document.getElementById('total-value');
+      const form     = document.getElementById('controls');
+
+      const inputs = {};
+      FIELDS.forEach(field => {
+        inputs[field.key] = document.getElementById(field.id);
+      });
+
+      const toInt = value => {
+        const n = parseInt(value, 10);
+        return Number.isNaN(n) ? 0 : n;
+      };
+
+      const readValues = () => ({
+        a: toInt(inputs.a.value),
+        b: toInt(inputs.b.value),
+        c: toInt(inputs.c.value),
+        d: toInt(inputs.d.value)
+      });
+
+      function renderInteractive() {
+        const v = readValues();
+        const total = v.a + v.b + v.c + v.d;
+
+        totalEl.textContent = total;
+        renderSquare(table, ramanujanSquare(v.a, v.b, v.c, v.d), total);
+      }
+
+      /* ==========================================================
+         Events
+         ========================================================== */
+      FIELDS.forEach(field => {
+        const input = inputs[field.key];
+
+        input.addEventListener('input', renderInteractive);
+
+        input.addEventListener('blur', () => {
+          const n = toInt(input.value);
+          input.value = Math.min(field.max, Math.max(field.min, n));
+          renderInteractive();
+        });
+      });
+
+      form.addEventListener('submit', event => event.preventDefault());
+
+      renderInteractive();
+
+      /* ==========================================================
+         Tab switching
+         ========================================================== */
+      const tabs   = document.querySelectorAll('.tab');
+      const panels = document.querySelectorAll('.panel');
+
+      function activateTab(tab) {
+        tabs.forEach(t => {
+          const selected = t === tab;
+          t.setAttribute('aria-selected', String(selected));
+          t.tabIndex = selected ? 0 : -1;
+        });
+
+        panels.forEach(panel => {
+          const active = panel.id === tab.dataset.panel;
+          panel.classList.toggle('is-active', active);
+          if (active) {
+            panel.removeAttribute('hidden');
+          } else {
+            panel.setAttribute('hidden', '');
+          }
+        });
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab));
+
+        tab.addEventListener('keydown', event => {
+          const index = [...tabs].indexOf(tab);
+          let next = null;
+
+          if (event.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+          if (event.key === 'ArrowLeft')  next = tabs[(index - 1 + tabs.length) % tabs.length];
+          if (event.key === 'Home')       next = tabs[0];
+          if (event.key === 'End')        next = tabs[tabs.length - 1];
+
+          if (next) {
+            event.preventDefault();
+            activateTab(next);
+            next.focus();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
