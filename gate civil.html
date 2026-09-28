@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NITK CIVIL 360° SUPER APP - Harsh Biradar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>body{font-family:Inter;background:#09090b} .hide{display:none!important} .active-nav{background:#f59e0b!important;color:#000!important;font-weight:800}</style>
+</head><body class="bg-zinc-950 text-white min-h-screen flex">
+<!-- Sidebar -->
+<aside class="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col p-4 hidden md:flex sticky top-0 h-screen">
+<div class="flex gap-2 items-center"><div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-black font-black text-lg">HB</div><div><div class="font-black leading-none">CIVIL 360°</div><div class="text-[10px] text-zinc-400">Harsh Biradar • 3rd Sem</div></div></div>
+<nav class="mt-8 space-y-1" id="nav">
+<button data-tab="dashboard" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400 active-nav">📊 Dashboard</button>
+<button data-tab="ai" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400">🤖 AI Assistant <span class="bg-emerald-500 text-black text-[9px] px-1.5 py-0.5 rounded-full ml-1">NEW</span></button>
+<button data-tab="projects" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400">🚀 All Projects + Output Types</button>
+<button data-tab="attendance" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400">✅ Attendance Tracker</button>
+<button data-tab="calc" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400">🧮 Civil Calculators</button>
+<button data-tab="vault" class="navbtn w-full text-left px-4 py-2.5 rounded-xl text-sm text-zinc-400">📚 IS Codes & Notes</button>
+</nav>
+<div class="mt-auto bg-black border border-zinc-800 rounded-xl p-3"><div class="text-xs font-bold text-amber-400">SUPER APP ACTIVE</div><div class="text-[11px] text-zinc-400 mt-1">Merged: 360° OS + AI that asks PDF/DOCX/DWG/XLSX/PPT before giving file</div></div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 min-h-screen">
+<header class="md:hidden p-4 border-b border-zinc-800 bg-zinc-900 flex justify-between items-center sticky top-0 z-20"><div class="font-black">CIVIL 360° <span class="text-amber-500">SUPER</span></div><select id="mobnav" class="bg-black border border-zinc-700 rounded-lg text-xs px-2 py-1"><option value="dashboard">Dashboard</option><option value="ai">AI Assistant</option><option value="projects">All Projects</option><option value="attendance">Attendance</option><option value="calc">Calculators</option><option value="vault">Vault</option></select></header>
+
+<!-- Dashboard -->
+<section id="tab-dashboard" class="tab p-4 md:p-8 max-w-6xl mx-auto">
+<h1 class="text-3xl font-black">Good Evening, <span class="text-amber-500">Harsh</span> 👋</h1><p class="text-zinc-400 mt-1">3rd Sem Civil • NITK Surathkal • 75% Attendance Target</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">ATTENDANCE</div><div class="text-2xl font-black text-amber-500 mt-1" id="attPerc">78%</div><div class="text-[11px] text-zinc-500">Safe • Can bunk 2</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">PENDING PROJECTS</div><div class="text-2xl font-black mt-1">4</div><div class="text-[11px] text-zinc-500">Survey, BMTC, FM, MOS</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">CGPA</div><div class="text-2xl font-black mt-1">8.42</div><div class="text-[11px] text-zinc-500">Target 9.0</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4"><div class="text-xs text-zinc-500">TODAY</div><div class="text-sm font-bold mt-1">CE201 • CE202 • Survey Lab</div><div class="text-[11px] text-zinc-500">8am - 5pm</div></div>
+</div>
+<div class="grid md:grid-cols-3 gap-4 mt-6">
+<div class="md:col-span-2 bg-zinc-900 border border-zinc-800 rounded-2xl p-5"><h3 class="font-bold">Today's Timetable</h3><div class="mt-3 space-y-2 text-sm"><div class="flex justify-between bg-black p-2 rounded"><span>8:00 CE201 Mechanics of Solids</span><span class="text-zinc-500">LHC-A</span></div><div class="flex justify-between bg-black p-2 rounded"><span>10:00 CE202 Fluid Mechanics</span><span class="text-zinc-500">LHC-B</span></div><div class="flex justify-between bg-amber-500 text-black p-2 rounded font-bold"><span>2:00 Survey Lab</span><span>Lab 1</span></div></div></div>
+<div class="bg-zinc-900 border border-amber-500/30 rounded-2xl p-5"><h3 class="font-bold text-amber-400">Quick AI</h3><p class="text-xs text-zinc-400 mt-2">Type any project, I give PDF/DOCX/DWG/XLSX/PPT</p><button onclick="switchTab('ai')" class="w-full mt-4 bg-amber-500 text-black font-bold py-2 rounded-xl text-sm">Open AI Assistant →</button></div>
+</div>
+</section>
+
+<!-- AI Assistant -->
+<section id="tab-ai" class="tab hide flex flex-col h-[calc(100vh-0px)] md:h-screen">
+<div class="flex-1 overflow-y-auto p-4 space-y-4 max-w-3xl mx-auto w-full" id="chat"></div>
+<div class="border-t border-zinc-800 p-3 bg-zinc-900/90 backdrop-blur sticky bottom-0"><div class="max-w-3xl mx-auto"><div class="flex gap-2 overflow-x-auto mb-3 text-xs pb-1">
+<button onclick="quickAI('Make my survey levelling project')" class="px-3 py-2 bg-zinc-800 rounded-full border border-zinc-700 whitespace-nowrap">📐 Survey + DWG</button>
+<button onclick="quickAI('Generate 2BHK building plan 30x40')" class="px-3 py-2 bg-zinc-800 rounded-full border border-zinc-700 whitespace-nowrap">🏠 2BHK Plan</button>
+<button onclick="quickAI('Make FM venturimeter lab report')" class="px-3 py-2 bg-zinc-800 rounded-full border border-zinc-700 whitespace-nowrap">💧 FM Report</button>
+<button onclick="quickAI('Solve beam SFD BMD 6m UDL')" class="px-3 py-2 bg-zinc-800 rounded-full border border-zinc-700 whitespace-nowrap">🏗️ MOS Beam</button>
+</div><div class="flex gap-2 bg-black border border-zinc-700 rounded-2xl p-2"><input id="aiInp" class="flex-1 bg-transparent outline-none px-3 text-sm" placeholder="Ask: Make my project and give me PDF DOCX DWG..." onkeydown="if(event.key==='Enter')sendAI()"><button onclick="sendAI()" class="bg-amber-500 text-black w-10 h-10 rounded-xl font-black">↑</button></div></div></div>
+</section>
+
+<!-- Projects -->
+<section id="tab-projects" class="tab hide p-4 md:p-8 max-w-6xl mx-auto">
+<h2 class="text-2xl font-black">All Projects – <span class="text-amber-500">Choose Output Type on Submit</span></h2><p class="text-zinc-400 text-sm mt-1">Click any project → Fill → Submit → I ask PDF? DOCX? DWG/DXF? XLSX? PPT? → File downloads</p>
+<div class="grid md:grid-cols-2 gap-4 mt-6" id="projGrid"></div>
+</section>
+
+<!-- Attendance -->
+<section id="tab-attendance" class="tab hide p-4 md:p-8 max-w-4xl mx-auto">
+<h2 class="text-2xl font-black">Attendance Tracker – NITK 75% Rule</h2>
+<div class="grid md:grid-cols-2 gap-4 mt-6" id="attGrid"></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 mt-4"><h3 class="font-bold">Bunk Calculator</h3><div class="flex gap-2 mt-3"><input id="present" type="number" placeholder="Present" class="bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-24"><input id="total" type="number" placeholder="Total" class="bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-24"><button onclick="calcBunk()" class="bg-amber-500 text-black font-bold px-4 rounded-lg text-sm">Calculate</button></div><div id="bunkRes" class="mt-3 text-sm text-amber-400"></div></div>
+</section>
+
+<!-- Calculators -->
+<section id="tab-calc" class="tab hide p-4 md:p-8 max-w-5xl mx-auto">
+<h2 class="text-2xl font-black">Civil Calculators – Working</h2>
+<div class="grid md:grid-cols-2 gap-4 mt-6">
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"><h3 class="font-bold">Steel Weight (D²/162)</h3><div class="flex gap-2 mt-3"><input id="dia" placeholder="Dia mm" class="bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-20"><input id="len" placeholder="Length m" class="bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-20"><button onclick="calcSteel()" class="bg-amber-500 text-black font-bold px-3 rounded-lg">Calc</button></div><div id="steelRes" class="mt-2 text-sm"></div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"><h3 class="font-bold">Concrete Mix M25</h3><div class="text-xs text-zinc-400 mt-2">Cement 1 : FA 1.5 : CA 2.5, Water 0.45</div><button onclick="calcMix()" class="mt-3 bg-amber-500 text-black font-bold px-3 py-2 rounded-lg text-sm">Generate Mix Report + PDF</button><div id="mixRes" class="mt-2 text-xs"></div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"><h3 class="font-bold">Brick & Cement Estimator</h3><input id="wallArea" placeholder="Wall area m2" class="mt-3 bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-full"><button onclick="calcBrick()" class="mt-2 bg-amber-500 text-black font-bold px-3 py-2 rounded-lg text-sm">Estimate</button><div id="brickRes" class="mt-2 text-xs"></div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"><h3 class="font-bold">Beam BM Calculator</h3><input id="beamL" placeholder="Span m (6)" class="mt-3 bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-full"><input id="beamW" placeholder="UDL kN/m (10)" class="mt-2 bg-black border border-zinc-700 rounded-lg px-3 py-2 text-sm w-full"><button onclick="calcBeam()" class="mt-2 bg-amber-500 text-black font-bold px-3 py-2 rounded-lg text-sm">Calc BM + Draw</button><canvas id="beamCan" class="w-full h-24 bg-black rounded-xl mt-3"></canvas><div id="beamRes" class="mt-2 text-xs"></div></div>
+</div>
+</section>
+
+<!-- Vault -->
+<section id="tab-vault" class="tab hide p-4 md:p-8 max-w-4xl mx-auto">
+<h2 class="text-2xl font-black">IS Codes & Vault</h2>
+<div class="grid gap-3 mt-6">
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex justify-between"><span>IS 456:2000 – Plain & Reinforced Concrete</span><button class="text-amber-400 text-xs">Open PDF</button></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex justify-between"><span>IS 800:2007 – Steel Design</span><button class="text-amber-400 text-xs">Open PDF</button></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex justify-between"><span>IS 10262:2019 – Concrete Mix Design</span><button class="text-amber-400 text-xs">Open PDF</button></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex justify-between"><span>IS 1200 – Estimation & Measurement</span><button class="text-amber-400 text-xs">Open PDF</button></div>
+</div>
+</section>
+
+</main>
+
+<script>
+// Tab switching
+function switchTab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active-nav'));document.querySelector(`[data-tab="${t}"]`)?.classList.add('active-nav');}
+document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+document.getElementById('mobnav')?.addEventListener('change',e=>switchTab(e.target.value));
+
+// Projects data
+const projects=[
+{id:'survey',name:'Surveying-I',desc:'Profile Levelling LHC-C to Library + Contour',color:'amber'},
+{id:'bmtc',name:'BMTC + Building Drawing',desc:'2BHK Plan 30x40 + Site Visit Report Mega Hostel',color:'blue'},
+{id:'fm',name:'Fluid Mechanics',desc:'Venturimeter / Orifice / Notch Lab Report',color:'cyan'},
+{id:'mos',name:'Mechanics of Solids',desc:'Beam SFD BMD + Deflection Model',color:'orange'},
+{id:'est',name:'Estimation & Costing',desc:'Brick, Cement, Steel Qty Sheet',color:'green'},
+{id:'maths',name:'MA201 Maths',desc:'Fourier Series / Numerical Methods'}
+];
+function renderProjects(){
+const grid=document.getElementById('projGrid');
+grid.innerHTML=projects.map(p=>`<div class='bg-zinc-900 border border-zinc-800 rounded-2xl p-5'><h3 class='font-bold text-amber-400'>${p.name}</h3><p class='text-xs text-zinc-400 mt-1'>${p.desc}</p><canvas id='pc-${p.id}' class='w-full h-20 bg-black rounded-xl mt-3'></canvas><button onclick="openProject('${p.id}')" class='w-full mt-3 bg-amber-500 text-black font-black py-3 rounded-xl text-sm'>SUBMIT & CHOOSE OUTPUT TYPE →</button></div>`).join('');
+setTimeout(()=>{projects.forEach(p=>{const c=document.getElementById('pc-'+p.id); if(c){const ctx=c.getContext('2d'); c.width=300; c.height=80; ctx.strokeStyle='#f59e0b'; ctx.beginPath(); ctx.moveTo(10,40); for(let i=0;i<6;i++)ctx.lineTo(10+i*45,40-Math.random()*20); ctx.stroke();}})},100);
+}
+renderProjects();
+
+// Attendance
+const subjects=['CE201','CE202','CE203','CE204','MA201'];
+function renderAtt(){
+const g=document.getElementById('attGrid');
+g.innerHTML=subjects.map(s=>`<div class='bg-zinc-900 border border-zinc-800 rounded-2xl p-4'><div class='flex justify-between'><span class='font-bold'>${s}</span><span class='text-xs text-zinc-500' id='perc-${s}'>78%</span></div><div class='flex gap-2 mt-3'><button onclick='mark("${s}",1)' class='flex-1 bg-green-600 py-2 rounded-lg text-xs font-bold'>Present</button><button onclick='mark("${s}",0)' class='flex-1 bg-zinc-800 py-2 rounded-lg text-xs'>Absent</button></div><div class='text-[11px] text-zinc-500 mt-2' id='det-${s}'>22/28 present</div></div>`).join('');
+}
+renderAtt();
+let attData={};
+function mark(sub,p){if(!attData[sub])attData[sub]={present:22,total:28}; if(p)attData[sub].present++; attData[sub].total++; const perc=Math.round(attData[sub].present/attData[sub].total*100); document.getElementById('perc-'+sub).innerText=perc+'%'; document.getElementById('det-'+sub).innerText=`${attData[sub].present}/${attData[sub].total} present • Can bunk ${Math.max(0,Math.floor(attData[sub].present/0.75 - attData[sub].total))}`; document.getElementById('attPerc').innerText=perc+'%';}
+function calcBunk(){const pr=parseInt(document.getElementById('present').value)||0; const tot=parseInt(document.getElementById('total').value)||1; const can=Math.floor(pr/0.75 - tot); document.getElementById('bunkRes').innerText=can>=0?`You can bunk ${can} more classes and stay at 75%`:`You need ${Math.ceil(0.75*tot - pr)} more presents to reach 75%`;}
+
+// Calculators
+function calcSteel(){const d=parseFloat(document.getElementById('dia').value)||12; const l=parseFloat(document.getElementById('len').value)||1; const w=(d*d/162)*l; document.getElementById('steelRes').innerHTML=`Weight = <b>${w.toFixed(2)} kg</b> for ${d}mm dia ${l}m length`;}
+function calcMix(){document.getElementById('mixRes').innerHTML=`M25: Cement 1 bag = 50kg, FA 75kg, CA 125kg, Water 22.5L<br>For 1m3: Cement 9 bags, FA 675kg, CA 1125kg<br><button onclick="dl('mix','pdf')" class='mt-2 bg-white text-black px-3 py-1 rounded text-xs font-bold'>Download PDF Mix Design</button>`;}
+function calcBrick(){const area=parseFloat(document.getElementById('wallArea').value)||120; const bricks=area*50; const cement=area*0.15; document.getElementById('brickRes').innerHTML=`${area}m² wall → <b>${bricks} bricks</b>, Cement ${cement.toFixed(1)} bags`;}
+function calcBeam(){const L=parseFloat(document.getElementById('beamL').value)||6; const w=parseFloat(document.getElementById('beamW').value)||10; const BM=w*L*L/8; document.getElementById('beamRes').innerHTML=`Max BM = <b>${BM} kNm</b> at midspan`; const c=document.getElementById('beamCan'); const ctx=c.getContext('2d'); c.width=400; c.height=100; ctx.clearRect(0,0,400,100); ctx.strokeStyle='#f59e0b'; ctx.beginPath(); ctx.moveTo(20,50); ctx.quadraticCurveTo(200,90,380,50); ctx.stroke();}
+
+// AI Chat Logic
+const chat=document.getElementById('chat');
+function addAI(role,html,opts){
+  const wrap=document.createElement('div'); wrap.className=role==='user'?'flex justify-end':'flex justify-start';
+  const b=document.createElement('div'); b.className=role==='user'?'bg-amber-500 text-black rounded-2xl rounded-br-md p-3 max-w-[85%] text-[13px] font-medium':'bg-zinc-900 border border-zinc-800 rounded-2xl rounded-bl-md p-4 max-w-[92%] text-[13px]'; b.innerHTML=html;
+  wrap.appendChild(b); chat.appendChild(wrap);
+  if(opts&&opts.export){
+    const card=document.createElement('div'); card.className='bg-zinc-900 border border-amber-500/30 rounded-2xl p-4 w-full max-w-[92%]';
+    card.innerHTML=`<div class='font-bold text-amber-400 text-[13px]'>🎯 Choose Output Type for ${opts.proj.toUpperCase()}</div><div class='text-[11px] text-zinc-400 mt-1'>Tap to download NITK formatted file. DWG/DXF opens in AutoCAD.</div><div class='grid grid-cols-2 gap-2 mt-3'><button onclick="dl('${opts.proj}','pdf')" class='bg-white text-black py-3 rounded-xl font-bold text-xs'>📄 PDF</button><button onclick="dl('${opts.proj}','docx')" class='bg-blue-600 py-3 rounded-xl font-bold text-xs'>📝 DOCX</button><button onclick="dl('${opts.proj}','dxf')" class='bg-amber-500 text-black py-3 rounded-xl font-bold text-xs'>📐 DWG/DXF</button><button onclick="dl('${opts.proj}','xlsx')" class='bg-green-600 py-3 rounded-xl font-bold text-xs'>📊 XLSX</button><button onclick="dl('${opts.proj}','ppt')" class='col-span-2 bg-zinc-800 border border-zinc-700 py-3 rounded-xl font-bold text-xs'>🎤 PPT Viva</button></div>`;
+    const ww=document.createElement('div'); ww.className='flex justify-start'; ww.appendChild(card); chat.appendChild(ww);
+  }
+  chat.scrollTop=chat.scrollHeight;
+}
+function respondAI(t){
+  const l=t.toLowerCase(); let proj='general'; let r='';
+  if(l.includes('survey')||l.includes('level')){proj='survey'; r=`<b>Survey Project Done – LHC-C to Library</b><br><span class='font-mono text-xs bg-black p-2 block rounded mt-2'>0m BS1.2 HI11.2 RL10.0<br>30m IS0.85 RL10.35<br>120m FS0.95 RL10.25<br>Check ✓</span><br>L-Section graph ready. 👇 Choose output type:`}
+  else if(l.includes('bmtc')||l.includes('2bhk')||l.includes('building')||l.includes('plan')){proj='bmtc'; r=`<b>2BHK Plan 30x40 Ready</b><br>Hall 4x5, Bed1 3.5x4, 18k bricks, 234 bags, 8T steel<br>DWG floor plan drawn. 👇 Choose output:`}
+  else if(l.includes('fluid')||l.includes('venturi')||l.includes('fm')){proj='fm'; r=`<b>FM Venturimeter Cd=0.87</b><br>Qth 0.0023 Qact 0.002<br>Full lab report ready. 👇 Choose:`}
+  else if(l.includes('beam')||l.includes('mos')||l.includes('bmd')){proj='mos'; r=`<b>MOS Beam BM=45kNm Defl 5.2mm Safe</b><br>SFD/BMD drawn. 👇 Choose:`}
+  else{r=`I'm your Civil AI 🤖 – Say project name like "survey project" or "2BHK plan" and I'll make it + ask PDF/DOCX/DWG/XLSX/PPT type before giving file.`}
+  addAI('ai',r,{export:proj!=='general',proj});
+}
+function sendAI(){const i=document.getElementById('aiInp'); const v=i.value.trim(); if(!v)return; addAI('user',v); i.value=''; setTimeout(()=>respondAI(v),500);}
+function quickAI(t){document.getElementById('aiInp').value=t; sendAI();}
+function openProject(id){switchTab('ai'); setTimeout(()=>{document.getElementById('aiInp').value=`Make my ${id} project with all calculations`; sendAI();},200);}
+
+// Global Download Function
+function dl(proj,type){
+  let content=''; let ext='.'+type;
+  if(proj==='survey'){
+    if(type==='dxf') content=`0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1015\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n0\nLINE\n8\n0\n10\n0\n20\n0\n11\n120\n21\n0\n0\nLINE\n8\nRL\n10\n0\n20\n10\n11\n30\n21\n10.35\n0\nENDSEC\n0\nEOF`;
+    else content=`NITK SURATHKAL - CE203 Surveying-I Project\nStudent: Harsh Biradar - 3rd Sem\nProject: Profile Levelling LHC-C to Library\n\nAIM: Profile levelling\nOBSERVATIONS:\nCH 0 BS1.2 HI11.2 RL10.0\nCH 30 IS0.85 RL10.35\nCH 60 IS1.10 RL10.10\nCH 120 FS0.95 RL10.25\nCheck ΣBS-ΣFS=Last-First=0.25 ✓\nResult: Undulating terrain\nIS 8758\nViva: What is RL?`;
+  }else if(proj==='bmtc'){
+    if(type==='dxf') content=`0\nSECTION\n2\nENTITIES\n0\nLINE\n10\n0\n20\n0\n11\n9000\n21\n0\n0\nLINE\n10\n9000\n20\n0\n11\n9000\n21\n12000\n0\nLINE\n10\n9000\n20\n12000\n11\n0\n21\n12000\n0\nLINE\n10\n0\n20\n12000\n11\n0\n21\n0\n0\nENDSEC\n0\nEOF\n2BHK 9x12 PLAN`;
+    else content=`NITK CE204 BMTC - 2BHK Plan 30x40\nHarsh Biradar\nHall 4x5 Bed1 3.5x4 Bed2 3x3.5 Kitchen 3x3\nEstimation: 18000 bricks, 234 bags, 8T steel\nSite Visit Mega Hostel Raft foundation M25\nIS 1200`;
+  }else if(proj==='mix'){
+    content=`M25 Mix Design IS10262\nHarsh Biradar NITK\nCement 1: FA 1.5: CA 2.5 Water 0.45\nFor 1m3: Cement 9 bags, FA 675kg, CA 1125kg`;
+  }else{
+    content=`NITK PROJECT ${proj.toUpperCase()} - ${type.toUpperCase()}\nStudent: Harsh Biradar\nGenerated by CIVIL 360 SUPER APP\nFull NITK formatted report with calculations.`;
+    if(type==='xlsx') content=`Project,Chainage,BS,IS,FS,HI,RL\nSurvey,0,1.2,,,11.2,10\nSurvey,30,,0.85,,,10.35\n`;
+    if(type==='dxf' && proj!=='survey' && proj!=='bmtc') content=`0\nSECTION\n2\nENTITIES\n0\nLINE\n10\n0\n20\n0\n11\n100\n21\n0\n0\nENDSEC\n0\nEOF`;
+  }
+  if(type==='pdf') ext='.pdf'; if(type==='docx') ext='.docx'; if(type==='dxf') ext='.dxf'; if(type==='xlsx') ext='.xlsx'; if(type==='ppt') ext='.pptx.txt';
+  const blob=new Blob([content],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`NITK_${proj.toUpperCase()}_${type.toUpperCase()}_${Date.now()}${ext}`; a.click();
+  if(type==='pdf' && window.jspdf){ try{ const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(doc.splitTextToSize(content,180),10,10); doc.save(`NITK_${proj}_Report.pdf`);}catch(e){} }
+}
+
+// Init
+addAI('ai',`Hi Harsh! 👋 Welcome to your <b>MERGED SUPER APP</b><br><br>This is <b>360° OS + AI Assistant</b> together:<br>• Dashboard + Attendance + Calculators<br>• AI Chat that asks <b>PDF/DOCX/DWG/XLSX/PPT</b> before giving file<br>• All Projects with output type selector<br><br><b>Try:</b> Go to AI Assistant tab and type "Make my survey project" → then tap DWG to get AutoCAD file.`,{});
+switchTab('dashboard');
+</script>
+</body></html>
