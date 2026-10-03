@@ -1,271 +1,943 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Donor List - BEC Youth Red Cross Wing</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        #loginOverlay {
-            max-width: 400px;
-            margin: 60px auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-        #loginOverlay h2 { color: #b71c1c; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .login-btn { width: 100%; padding: 10px; background-color: #b71c1c; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .login-btn:hover { background-color: #8e0000; }
-        #loginError { color: red; margin-top: 15px; font-size: 14px; display: none; }
-        #portalContent { display: none; }
-        .header { text-align: center; background-color: #b71c1c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; position: relative; }
-        .header h1 { margin: 0 0 10px 0; font-size: 24px; }
-        .header h2, .header h3 { margin: 5px 0; font-weight: normal; }
-        .logout-btn { position: absolute; top: 15px; right: 15px; background-color: #ffffff; color: #b71c1c; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .filters { display: flex; gap: 15px; flex-wrap: wrap; background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .filter-group { display: flex; flex-direction: column; gap: 5px; }
-        .filter-group label { font-weight: bold; font-size: 14px; color: #b71c1c; }
-        .filter-group select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; }
-        th { background-color: #f2f2f2; color: #b71c1c; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tr:hover { background-color: #f1f1f1; }
-        .loading { text-align: center; padding: 20px; font-weight: bold; color: #666; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Blood donor directory for the BEC Youth Red Cross Wing." />
+  <meta name="theme-color" content="#b71c1c" />
+  <title>Blood Donor Directory · BEC Youth Red Cross Wing</title>
+
+  <style>
+    /* ============================================================
+       1. Design tokens
+       ============================================================ */
+    :root {
+      --red-900: #7f1010;
+      --red-700: #b71c1c;
+      --red-600: #d32f2f;
+      --red-50:  #fdecea;
+      --red-border: #f6d3d0;
+
+      --ink:        #1f2933;
+      --ink-muted:  #5c6b7a;
+      --ink-subtle: #8a94a0;
+
+      --surface: #ffffff;
+      --bg:      #f4f6f8;
+      --border:  #e3e8ee;
+
+      --success: #127a4a;
+
+      --radius-sm: 8px;
+      --radius:    12px;
+      --radius-lg: 16px;
+
+      --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
+      --shadow-md: 0 8px 24px rgba(16, 24, 40, .10);
+      --shadow-lg: 0 24px 48px rgba(16, 24, 40, .18);
+
+      --focus-ring: 2px solid var(--red-600);
+      --transition: 160ms ease;
+    }
+
+    /* ============================================================
+       2. Base / reset
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    :focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 16px;
+      z-index: 100;
+      padding: 10px 16px;
+      background: var(--red-700);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-weight: 600;
+      transition: top var(--transition);
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* ============================================================
+       3. Buttons
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font: inherit;
+      font-weight: 600;
+      line-height: 1.2;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color var(--transition), border-color var(--transition),
+                  color var(--transition), transform var(--transition);
+      text-decoration: none;
+    }
+    .btn:active { transform: translateY(1px); }
+
+    .btn--primary {
+      background: var(--red-700);
+      border-color: var(--red-700);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn--primary:hover { background: var(--red-900); border-color: var(--red-900); }
+
+    .btn--ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--ink-muted);
+    }
+    .btn--ghost:hover {
+      background: var(--surface);
+      border-color: #cfd6de;
+      color: var(--ink);
+    }
+
+    .btn--block { width: 100%; }
+
+    /* ============================================================
+       4. Form controls
+       ============================================================ */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field--grow { flex: 1 1 260px; }
+
+    .field__label {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="search"],
+    select {
+      width: 100%;
+      padding: 11px 13px;
+      font: inherit;
+      color: inherit;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    input::placeholder { color: var(--ink-subtle); }
+
+    input:hover, select:hover { border-color: #cfd6de; }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--red-600);
+      box-shadow: 0 0 0 3px rgba(211, 47, 47, .14);
+    }
+
+    select {
+      appearance: none;
+      padding-right: 38px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235c6b7a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      cursor: pointer;
+    }
+
+    .checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      align-self: flex-end;
+      padding: 11px 0;
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .checkbox input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--red-700);
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       5. Login screen
+       ============================================================ */
+    .login-screen {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 24px;
+      background:
+        radial-gradient(1100px 520px at 50% -12%, #ffffff 0%, var(--bg) 62%);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      padding: 40px 34px 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      animation: rise 380ms cubic-bezier(.2, .8, .3, 1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      background: var(--red-50);
+      color: var(--red-700);
+    }
+    .brand-mark svg { display: block; }
+
+    .login-card h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    .login-sub {
+      margin-top: 4px;
+      font-size: .9rem;
+      color: var(--ink-muted);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 28px;
+      text-align: left;
+    }
+
+    .form-error {
+      min-height: 18px;
+      margin-top: -8px;
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--red-700);
+    }
+
+    .login-hint {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: .82rem;
+      color: var(--ink-subtle);
+    }
+    .login-hint code {
+      padding: 2px 7px;
+      font-size: .82rem;
+      color: var(--red-700);
+      background: var(--red-50);
+      border-radius: 5px;
+    }
+
+    /* ============================================================
+       6. App shell
+       ============================================================ */
+    .app {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 20px 72px;
+      animation: rise 320ms ease both;
+    }
+
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark--sm {
+      width: 42px;
+      height: 42px;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .brand__title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      line-height: 1.25;
+    }
+
+    .brand__sub {
+      font-size: .84rem;
+      color: var(--ink-muted);
+    }
+
+    /* ---------- Stats ---------- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat__label {
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .stat__value {
+      margin-top: 6px;
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--red-700);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- Panel ---------- */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 16px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background: #fbfcfd;
+    }
+
+    .results {
+      padding: 14px 20px 0;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    /* ---------- Table ---------- */
+    .table-wrap { padding: 12px 0 4px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead th {
+      padding: 10px 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background-color var(--transition); }
+    tbody tr:hover { background: #fafbfc; }
+
+    .donor { display: flex; flex-direction: column; gap: 2px; }
+    .donor__name { font-weight: 600; }
+    .donor__meta { font-size: .82rem; color: var(--ink-muted); }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 11px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-border);
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .phone {
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .phone:hover { color: var(--red-700); border-bottom-color: currentColor; }
+
+    .muted { color: var(--ink-subtle); }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .83rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .status--available   { color: var(--success); }
+    .status--unavailable { color: var(--ink-subtle); }
+
+    /* ---------- Empty state ---------- */
+    .empty {
+      padding: 40px 20px 48px;
+      text-align: center;
+      font-size: .95rem;
+      color: var(--ink-muted);
+    }
+
+    /* ============================================================
+       7. Responsive — table becomes stacked cards
+       ============================================================ */
+    @media (max-width: 760px) {
+      .app { padding: 22px 14px 56px; }
+
+      .app-header { gap: 12px; }
+
+      .toolbar { padding: 16px; gap: 14px; }
+      .checkbox { align-self: flex-start; padding: 0; }
+
+      .results { padding: 12px 16px 0; }
+
+      .table-wrap { padding: 8px 0; }
+
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+
+      tbody tr {
+        padding: 6px 0 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr:last-child { border-bottom: none; }
+      tbody tr:hover { background: transparent; }
+
+      tbody td {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 7px 16px;
+        border: none;
+      }
+
+      tbody td::before {
+        content: attr(data-label);
+        flex: 0 0 auto;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+      }
+
+      .donor { align-items: flex-end; text-align: right; }
+    }
+
+    /* ============================================================
+       8. Motion preferences
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- LOGIN FORM -->
-    <div id="loginOverlay">
-        <h2>Youth Red Cross Portal</h2>
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="username">Username / Email</label>
-                <input type="email" id="username" placeholder="mmbbec@gmail.com" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter Password" required>
-            </div>
-            <button type="submit" class="login-btn">Log In</button>
-            <div id="loginError">Invalid username or password!</div>
-        </form>
+  <!-- ==========================================================
+       Login screen
+       ========================================================== -->
+  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+    <div class="login-card">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+          <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z"
+                fill="currentColor" />
+          <path d="M12 9.2v6M9 12.2h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+      </span>
+
+      <h1 id="loginTitle">Blood Donor Directory</h1>
+      <p class="login-sub">BEC Youth Red Cross Wing</p>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="field">
+          <label class="field__label" for="password">Access password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            autocomplete="current-password"
+            required
+            aria-describedby="loginError" />
+        </div>
+
+        <p class="form-error" id="loginError" role="alert" aria-live="polite"></p>
+
+        <button class="btn btn--primary btn--block" type="submit">Unlock directory</button>
+      </form>
+
+      <p class="login-hint">Demo password: <code>yrc2024</code></p>
     </div>
+  </section>
 
-    <!-- PROTECTED PORTAL -->
-    <div id="portalContent">
-        <div class="header">
-            <button class="logout-btn" onclick="handleLogout()">Logout</button>
-            <h1>Basaveshwar Engineering College, Bagalkote</h1>
-            <h2>Youth Red Cross Wing</h2>
-            <h3>Academic Year 2026-27</h3>
-            <h3>Programme Officer: Dr. Mahadev Biradar</h3>
-            <h2 style="margin-top: 15px; text-decoration: underline;">Blood Donor List</h2>
+  <!-- ==========================================================
+       Application
+       ========================================================== -->
+  <div class="app" id="app" hidden>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark brand-mark--sm" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none">
+            <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z"
+                  fill="currentColor" />
+            <path d="M12 9.2v6M9 12.2h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </span>
+        <div>
+          <h1 class="brand__title">Blood Donor Directory</h1>
+          <p class="brand__sub">BEC Youth Red Cross Wing</p>
+        </div>
+      </div>
+
+      <button class="btn btn--ghost" id="logoutBtn" type="button">Sign out</button>
+    </header>
+
+    <main id="main">
+      <!-- Summary -->
+      <section class="stats" aria-label="Directory summary">
+        <article class="stat">
+          <p class="stat__label">Total donors</p>
+          <p class="stat__value" id="statTotal">0</p>
+        </article>
+        <article class="stat">
+          <p class="stat__label">Available now</p>
+          <p class="stat__value" id="statAvailable">0</p>
+        </article>
+        <article class="stat">
+          <p class="stat__label">Blood groups</p>
+          <p class="stat__value" id="statGroups">0</p>
+        </article>
+      </section>
+
+      <!-- Directory -->
+      <section class="panel" aria-labelledby="directoryTitle">
+        <h2 class="visually-hidden" id="directoryTitle">Donor list</h2>
+
+        <div class="toolbar">
+          <div class="field field--grow">
+            <label class="field__label" for="search">Search</label>
+            <input
+              type="search"
+              id="search"
+              placeholder="Name or phone number"
+              autocomplete="off"
+              spellcheck="false" />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="groupFilter">Blood group</label>
+            <select id="groupFilter">
+              <option value="all">All groups</option>
+            </select>
+          </div>
+
+          <label class="checkbox" for="availableOnly">
+            <input type="checkbox" id="availableOnly" />
+            <span>Available only</span>
+          </label>
         </div>
 
-        <!-- Dropdown Filters -->
-        <div class="filters">
-            <div class="filter-group">
-                <label for="filterBranch">Branch:</label>
-                <select id="filterBranch"><option value="ALL">All Branches</option></select>
-            </div>
-            <div class="filter-group">
-                <label for="filterBlood">Blood Group:</label>
-                <select id="filterBlood"><option value="ALL">All Blood Groups</option></select>
-            </div>
-            <div class="filter-group">
-                <label for="filterYear">Year:</label>
-                <select id="filterYear"><option value="ALL">All Years</option></select>
-            </div>
-            <div class="filter-group">
-                <label for="filterWilling">Willing to Donate?</label>
-                <select id="filterWilling">
-                    <option value="ALL">All Responses</option>
-                    <option value="YES">YES</option>
-                    <option value="EMERGENCY">Only in case of Emergency / Conditional</option>
-                    <option value="NO">NO</option>
-                </select>
-            </div>
-        </div>
+        <p class="results" id="resultsCount" aria-live="polite"></p>
 
-        <table id="donorTable">
+        <div class="table-wrap">
+          <table>
+            <caption class="visually-hidden">Registered blood donors</caption>
             <thead>
-                <tr>
-                    <th>Branch</th>
-                    <th>Blood Group</th>
-                    <th>Year</th>
-                    <th>Full Name</th>
-                    <th>USN</th>
-                    <th>Mobile Number</th>
-                    <th>Willing to Donate?</th>
-                </tr>
+              <tr>
+                <th scope="col">Donor</th>
+                <th scope="col">Blood group</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Last donated</th>
+                <th scope="col">Status</th>
+              </tr>
             </thead>
-            <tbody>
-                <tr><td colspan="7" class="loading">Loading data from Google Sheet...</td></tr>
-            </tbody>
-        </table>
-    </div>
+            <tbody id="donorRows"></tbody>
+          </table>
 
-    <script>
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbzG1cDxcHXjz4MZSECmJooDmanMkrz7UjgeBY2XN3PLNUgpIK5xVkU18pGiDiPJxBSVBw/exec";
-        let rawData = [];
+          <p class="empty" id="emptyState" hidden>No donors match your filters.</p>
+        </div>
+      </section>
+    </main>
+  </div>
 
-        window.addEventListener("DOMContentLoaded", () => {
-            if (sessionStorage.getItem("isLoggedIn") === "true") showPortal();
+  <script>
+    (() => {
+      "use strict";
+
+      /* ==========================================================
+         Configuration
+         ========================================================== */
+      const DEMO_PASSWORD = "yrc2024";          // Demo only — see notes below.
+      const SESSION_KEY = "yrc.authenticated";
+      const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+      /* ==========================================================
+         Data
+         ========================================================== */
+      const DONORS = [
+        { id: 1,  name: "Aarav Sharma",   group: "O+",  phone: "+91 98765 43210", department: "Computer Science", year: 3, lastDonated: "2025-01-12", available: true  },
+        { id: 2,  name: "Diya Nair",      group: "A+",  phone: "+91 98450 11223", department: "Electronics",      year: 2, lastDonated: "2024-12-03", available: true  },
+        { id: 3,  name: "Rohan Verma",    group: "B+",  phone: "+91 99001 55678", department: "Mechanical",       year: 4, lastDonated: "2024-08-21", available: false },
+        { id: 4,  name: "Ananya Iyer",    group: "AB+", phone: "+91 97400 33221", department: "Civil",            year: 3, lastDonated: "2025-02-09", available: true  },
+        { id: 5,  name: "Kabir Menon",    group: "O-",  phone: "+91 96320 77445", department: "Computer Science", year: 2, lastDonated: "2024-10-30", available: true  },
+        { id: 6,  name: "Meera Pillai",   group: "B-",  phone: "+91 98860 12098", department: "Electrical",       year: 4, lastDonated: "2024-06-15", available: false },
+        { id: 7,  name: "Aditya Rao",     group: "A-",  phone: "+91 90080 65512", department: "Information Tech",  year: 3, lastDonated: "2025-03-02", available: true  },
+        { id: 8,  name: "Sneha Kulkarni", group: "AB-", phone: "+91 99160 48870", department: "Electronics",      year: 2, lastDonated: "2024-09-27", available: true  },
+        { id: 9,  name: "Vikram Das",     group: "B+",  phone: "+91 97390 20114", department: "Mechanical",       year: 1, lastDonated: null,         available: true  },
+        { id: 10, name: "Ishita Bose",    group: "O+",  phone: "+91 98455 70931", department: "Civil",            year: 4, lastDonated: "2024-11-11", available: false }
+      ];
+
+      /* ==========================================================
+         State
+         ========================================================== */
+      const state = {
+        query: "",
+        group: "all",
+        availableOnly: false
+      };
+
+      /* ==========================================================
+         DOM references
+         ========================================================== */
+      const el = {
+        loginScreen:   document.getElementById("loginScreen"),
+        loginForm:     document.getElementById("loginForm"),
+        password:      document.getElementById("password"),
+        loginError:    document.getElementById("loginError"),
+        app:           document.getElementById("app"),
+        logoutBtn:     document.getElementById("logoutBtn"),
+        search:        document.getElementById("search"),
+        groupFilter:   document.getElementById("groupFilter"),
+        availableOnly: document.getElementById("availableOnly"),
+        donorRows:     document.getElementById("donorRows"),
+        resultsCount:  document.getElementById("resultsCount"),
+        emptyState:    document.getElementById("emptyState"),
+        statTotal:     document.getElementById("statTotal"),
+        statAvailable: document.getElementById("statAvailable"),
+        statGroups:    document.getElementById("statGroups")
+      };
+
+      /* ==========================================================
+         Utilities
+         ========================================================== */
+      const escapeHtml = (value) =>
+        String(value).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[char]));
+
+      const debounce = (fn, wait = 160) => {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), wait);
+        };
+      };
+
+      const formatDate = (iso) => {
+        if (!iso) return null;
+        const date = new Date(`${iso}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return null;
+        return date.toLocaleDateString("en-GB", {
+          day: "2-digit", month: "short", year: "numeric"
+        });
+      };
+
+      /* ==========================================================
+         Rendering
+         ========================================================== */
+      function getVisibleDonors() {
+        const query = state.query.trim().toLowerCase();
+        const digits = query.replace(/\D/g, "");
+
+        return DONORS
+          .filter((donor) => {
+            const matchesQuery =
+              !query ||
+              donor.name.toLowerCase().includes(query) ||
+              (digits && donor.phone.replace(/\D/g, "").includes(digits));
+
+            const matchesGroup =
+              state.group === "all" || donor.group === state.group;
+
+            const matchesAvailability =
+              !state.availableOnly || donor.available;
+
+            return matchesQuery && matchesGroup && matchesAvailability;
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      function donorRowTemplate(donor) {
+        const lastDonated = formatDate(donor.lastDonated);
+
+        return `
+          <tr>
+            <td data-label="Donor">
+              <span class="donor">
+                <span class="donor__name">${escapeHtml(donor.name)}</span>
+                <span class="donor__meta">${escapeHtml(donor.department)} · Year ${escapeHtml(donor.year)}</span>
+              </span>
+            </td>
+            <td data-label="Blood group">
+              <span class="badge">${escapeHtml(donor.group)}</span>
+            </td>
+            <td data-label="Phone">
+              <a class="phone" href="tel:${escapeHtml(donor.phone.replace(/\s/g, ""))}">
+                ${escapeHtml(donor.phone)}
+              </a>
+            </td>
+            <td data-label="Last donated">
+              ${lastDonated
+                ? `<span class="muted">${escapeHtml(lastDonated)}</span>`
+                : `<span class="muted">Not recorded</span>`}
+            </td>
+            <td data-label="Status">
+              <span class="status status--${donor.available ? "available" : "unavailable"}">
+                ${donor.available ? "Available" : "Unavailable"}
+              </span>
+            </td>
+          </tr>
+        `;
+      }
+
+      function render() {
+        const donors = getVisibleDonors();
+
+        el.donorRows.innerHTML = donors.map(donorRowTemplate).join("");
+        el.emptyState.hidden = donors.length > 0;
+
+        el.resultsCount.textContent = donors.length === 1
+          ? "Showing 1 donor"
+          : `Showing ${donors.length} of ${DONORS.length} donors`;
+      }
+
+      function renderStats() {
+        el.statTotal.textContent = DONORS.length;
+        el.statAvailable.textContent = DONORS.filter((d) => d.available).length;
+        el.statGroups.textContent = new Set(DONORS.map((d) => d.group)).size;
+      }
+
+      function populateGroupFilter() {
+        const present = new Set(DONORS.map((d) => d.group));
+        const groups = BLOOD_GROUPS.filter((g) => present.has(g));
+
+        const fragment = document.createDocumentFragment();
+        groups.forEach((group) => {
+          const option = document.createElement("option");
+          option.value = group;
+          option.textContent = group;
+          fragment.appendChild(option);
         });
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById("username").value.trim();
-            const p = document.getElementById("password").value.trim();
-            if (u === "mmbbec@gmail.com" && p === "mahadevmb") {
-                sessionStorage.setItem("isLoggedIn", "true");
-                showPortal();
-            } else {
-                document.getElementById("loginError").style.display = "block";
-            }
+        el.groupFilter.appendChild(fragment);
+      }
+
+      /* ==========================================================
+         Authentication (demo gate — see notes)
+         ========================================================== */
+      function showApp() {
+        el.loginScreen.hidden = true;
+        el.app.hidden = false;
+        el.search.focus();
+      }
+
+      function showLogin() {
+        el.app.hidden = true;
+        el.loginScreen.hidden = false;
+        el.password.value = "";
+        el.loginError.textContent = "";
+        el.password.focus();
+      }
+
+      function handleLogin(event) {
+        event.preventDefault();
+
+        const value = el.password.value;
+
+        if (!value.trim()) {
+          el.loginError.textContent = "Please enter the access password.";
+          el.password.focus();
+          return;
         }
 
-        function handleLogout() {
-            sessionStorage.removeItem("isLoggedIn");
-            document.getElementById("portalContent").style.display = "none";
-            document.getElementById("loginOverlay").style.display = "block";
-            document.getElementById("loginForm").reset();
+        if (value !== DEMO_PASSWORD) {
+          el.loginError.textContent = "Incorrect password. Please try again.";
+          el.password.select();
+          return;
         }
 
-        function showPortal() {
-            document.getElementById("loginOverlay").style.display = "none";
-            document.getElementById("portalContent").style.display = "block";
-            if (rawData.length === 0) fetchSheetData();
+        el.loginError.textContent = "";
+        try {
+          sessionStorage.setItem(SESSION_KEY, "1");
+        } catch (_) { /* storage unavailable — ignore */ }
+
+        showApp();
+      }
+
+      function handleLogout() {
+        try {
+          sessionStorage.removeItem(SESSION_KEY);
+        } catch (_) { /* ignore */ }
+        showLogin();
+      }
+
+      /* ==========================================================
+         Events
+         ========================================================== */
+      function bindEvents() {
+        el.loginForm.addEventListener("submit", handleLogin);
+        el.logoutBtn.addEventListener("click", handleLogout);
+
+        el.search.addEventListener("input", debounce((event) => {
+          state.query = event.target.value;
+          render();
+        }));
+
+        el.groupFilter.addEventListener("change", (event) => {
+          state.group = event.target.value;
+          render();
+        });
+
+        el.availableOnly.addEventListener("change", (event) => {
+          state.availableOnly = event.target.checked;
+          render();
+        });
+      }
+
+      /* ==========================================================
+         Init
+         ========================================================== */
+      function init() {
+        populateGroupFilter();
+        renderStats();
+        render();
+        bindEvents();
+
+        let isAuthenticated = false;
+        try {
+          isAuthenticated = sessionStorage.getItem(SESSION_KEY) === "1";
+        } catch (_) { /* ignore */ }
+
+        if (isAuthenticated) {
+          showApp();
+        } else {
+          el.password.focus();
         }
+      }
 
-        function getFieldValue(obj, targetKeys) {
-            const foundKey = Object.keys(obj).find(k => 
-                targetKeys.some(tk => k.trim().toLowerCase().includes(tk.toLowerCase()))
-            );
-            return foundKey ? String(obj[foundKey]).trim() : "";
-        }
-
-        async function fetchSheetData() {
-            try {
-                const response = await fetch(scriptUrl);
-                const json = await response.json();
-
-                rawData = json.map(item => ({
-                    name: getFieldValue(item, ["name", "full name"]),
-                    usn: getFieldValue(item, ["usn", "csn"]),
-                    mobile: getFieldValue(item, ["mobile", "phone", "contact"]),
-                    year: getFieldValue(item, ["year"]),
-                    branch: getFieldValue(item, ["branch"]),
-                    bloodGroup: getFieldValue(item, ["blood group", "blood"]),
-                    willing: getFieldValue(item, ["willing", "would you be willing", "donate", "emergency"])
-                })).filter(item => item.name !== "");
-
-                populateDropdowns();
-                updateTable();
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                document.querySelector("#donorTable tbody").innerHTML = 
-                    `<tr><td colspan="7" style="color: red; text-align: center;">Failed to fetch data from Google Sheet API.</td></tr>`;
-            }
-        }
-
-        function populateDropdowns() {
-            const branches = [...new Set(rawData.map(d => d.branch).filter(Boolean))].sort();
-            const bloodGroups = [...new Set(rawData.map(d => d.bloodGroup).filter(Boolean))].sort();
-            const years = [...new Set(rawData.map(d => d.year).filter(Boolean))].sort();
-
-            const selectBranch = document.getElementById("filterBranch");
-            const selectBlood = document.getElementById("filterBlood");
-            const selectYear = document.getElementById("filterYear");
-
-            selectBranch.innerHTML = '<option value="ALL">All Branches</option>';
-            selectBlood.innerHTML = '<option value="ALL">All Blood Groups</option>';
-            selectYear.innerHTML = '<option value="ALL">All Years</option>';
-
-            branches.forEach(b => selectBranch.add(new Option(b, b)));
-            bloodGroups.forEach(bg => selectBlood.add(new Option(bg, bg)));
-            years.forEach(y => selectYear.add(new Option(y, y)));
-        }
-
-        function updateTable() {
-            const selectedBranch = document.getElementById("filterBranch").value;
-            const selectedBlood = document.getElementById("filterBlood").value;
-            const selectedYear = document.getElementById("filterYear").value;
-            const selectedWilling = document.getElementById("filterWilling").value;
-
-            let filtered = rawData.filter(item => {
-                const matchBranch = selectedBranch === "ALL" || item.branch === selectedBranch;
-                const matchBlood = selectedBlood === "ALL" || item.bloodGroup === selectedBlood;
-                const matchYear = selectedYear === "ALL" || item.year === selectedYear;
-
-                const willingUpper = item.willing.toUpperCase();
-                let matchWilling = false;
-
-                if (selectedWilling === "ALL") {
-                    matchWilling = true;
-                } else if (selectedWilling === "YES") {
-                    matchWilling = willingUpper === "YES";
-                } else if (selectedWilling === "NO") {
-                    matchWilling = willingUpper === "NO";
-                } else if (selectedWilling === "EMERGENCY") {
-                    // Matches "Only in case of emergency", "Maybe / Depends on situation", etc.
-                    matchWilling = willingUpper.includes("EMERGENCY") || 
-                                   willingUpper.includes("MAYBE") || 
-                                   willingUpper.includes("DEPEND");
-                }
-
-                return matchBranch && matchBlood && matchYear && matchWilling;
-            });
-
-            // Multi-level sort: Branch -> Blood Group -> Year -> Name -> USN
-            filtered.sort((a, b) => {
-                if (a.branch !== b.branch) return a.branch.localeCompare(b.branch);
-                if (a.bloodGroup !== b.bloodGroup) return a.bloodGroup.localeCompare(b.bloodGroup);
-                if (a.year !== b.year) return a.year.localeCompare(b.year);
-                if (a.name !== b.name) return a.name.localeCompare(b.name);
-                return a.usn.localeCompare(b.usn);
-            });
-
-            const tbody = document.querySelector("#donorTable tbody");
-            tbody.innerHTML = "";
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888;">No matching donor records found.</td></tr>`;
-                return;
-            }
-
-            filtered.forEach(row => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${row.branch}</td>
-                    <td><strong>${row.bloodGroup}</strong></td>
-                    <td>${row.year}</td>
-                    <td>${row.name}</td>
-                    <td>${row.usn}</td>
-                    <td>${row.mobile}</td>
-                    <td>${row.willing}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        document.getElementById("filterBranch").addEventListener("change", updateTable);
-        document.getElementById("filterBlood").addEventListener("change", updateTable);
-        document.getElementById("filterYear").addEventListener("change", updateTable);
-        document.getElementById("filterWilling").addEventListener("change", updateTable);
-    </script>
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
 </body>
 </html>
