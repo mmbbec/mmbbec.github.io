@@ -8,9 +8,6 @@
   <title>Blood Donor Directory · BEC Youth Red Cross Wing</title>
 
   <style>
-    /* ============================================================
-       1. Design tokens
-       ============================================================ */
     :root {
       --red-900: #7f1010;
       --red-700: #b71c1c;
@@ -33,16 +30,12 @@
       --radius-lg: 16px;
 
       --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
-      --shadow-md: 0 8px 24px rgba(16, 24, 40, .10);
       --shadow-lg: 0 24px 48px rgba(16, 24, 40, .18);
 
       --focus-ring: 2px solid var(--red-600);
       --transition: 160ms ease;
     }
 
-    /* ============================================================
-       2. Base / reset
-       ============================================================ */
     *, *::before, *::after { box-sizing: border-box; }
     [hidden] { display: none !important; }
     html { -webkit-text-size-adjust: 100%; }
@@ -60,11 +53,7 @@
 
     h1, h2, h3, p { margin: 0; }
 
-    :focus-visible {
-      outline: var(--focus-ring);
-      outline-offset: 2px;
-      border-radius: 4px;
-    }
+    :focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
 
     .visually-hidden {
       position: absolute;
@@ -91,9 +80,6 @@
     }
     .skip-link:focus { top: 16px; }
 
-    /* ============================================================
-       3. Buttons
-       ============================================================ */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -125,17 +111,10 @@
       border-color: var(--border);
       color: var(--ink-muted);
     }
-    .btn--ghost:hover {
-      background: var(--surface);
-      border-color: #cfd6de;
-      color: var(--ink);
-    }
+    .btn--ghost:hover { background: var(--surface); border-color: #cfd6de; color: var(--ink); }
 
     .btn--block { width: 100%; }
 
-    /* ============================================================
-       4. Form controls
-       ============================================================ */
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field--grow { flex: 1 1 220px; }
 
@@ -148,6 +127,7 @@
     }
 
     input[type="text"],
+    input[type="email"],
     input[type="password"],
     input[type="search"],
     select {
@@ -192,24 +172,16 @@
       user-select: none;
       white-space: nowrap;
     }
-    .checkbox input {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--red-700);
-      cursor: pointer;
-    }
+    .checkbox input { width: 17px; height: 17px; accent-color: var(--red-700); cursor: pointer; }
 
-    /* ============================================================
-       5. Login screen
-       ============================================================ */
+    /* ---------- Login ---------- */
     .login-screen {
       display: grid;
       place-items: center;
       min-height: 100vh;
       min-height: 100dvh;
       padding: 24px;
-      background:
-        radial-gradient(1100px 520px at 50% -12%, #ffffff 0%, var(--bg) 62%);
+      background: radial-gradient(1100px 520px at 50% -12%, #ffffff 0%, var(--bg) 62%);
     }
 
     .login-card {
@@ -241,17 +213,8 @@
     }
     .brand-mark svg { display: block; }
 
-    .login-card h1 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -.01em;
-    }
-
-    .login-sub {
-      margin-top: 4px;
-      font-size: .9rem;
-      color: var(--ink-muted);
-    }
+    .login-card h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -.01em; }
+    .login-sub { margin-top: 4px; font-size: .9rem; color: var(--ink-muted); }
 
     .login-form {
       display: flex;
@@ -269,24 +232,7 @@
       color: var(--red-700);
     }
 
-    .login-hint {
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-      font-size: .82rem;
-      color: var(--ink-subtle);
-    }
-    .login-hint code {
-      padding: 2px 7px;
-      font-size: .82rem;
-      color: var(--red-700);
-      background: var(--red-50);
-      border-radius: 5px;
-    }
-
-    /* ============================================================
-       6. App shell
-       ============================================================ */
+    /* ---------- App ---------- */
     .app {
       max-width: 1200px;
       margin: 0 auto;
@@ -303,33 +249,13 @@
       margin-bottom: 26px;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-    }
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
 
-    .brand-mark--sm {
-      width: 42px;
-      height: 42px;
-      margin: 0;
-      flex-shrink: 0;
-    }
+    .brand-mark--sm { width: 42px; height: 42px; margin: 0; flex-shrink: 0; }
 
-    .brand__title {
-      font-size: 1.18rem;
-      font-weight: 700;
-      letter-spacing: -.01em;
-      line-height: 1.25;
-    }
+    .brand__title { font-size: 1.18rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+    .brand__sub { font-size: .84rem; color: var(--ink-muted); }
 
-    .brand__sub {
-      font-size: .84rem;
-      color: var(--ink-muted);
-    }
-
-    /* ---------- Stats ---------- */
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -362,7 +288,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* ---------- Panel ---------- */
     .panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -381,22 +306,39 @@
       background: #fbfcfd;
     }
 
+    .notice {
+      margin: 14px 20px 0;
+      padding: 11px 14px;
+      font-size: .85rem;
+      line-height: 1.5;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: #fbfcfd;
+      color: var(--ink-muted);
+    }
+    .notice--warn {
+      border-color: var(--red-border);
+      background: var(--red-50);
+      color: var(--red-900);
+      font-weight: 600;
+    }
+    .notice code {
+      padding: 1px 6px;
+      background: rgba(0,0,0,.05);
+      border-radius: 4px;
+      font-size: .85em;
+    }
+
     .results {
-      padding: 14px 20px 0;
+      padding: 12px 20px 0;
       font-size: .85rem;
       font-weight: 600;
       color: var(--ink-muted);
     }
 
-    /* ---------- Table ---------- */
     .table-wrap { padding: 12px 0 4px; overflow-x: auto; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      min-width: 900px;
-    }
+    table { width: 100%; border-collapse: collapse; text-align: left; min-width: 900px; }
 
     thead th {
       padding: 10px 20px;
@@ -435,6 +377,11 @@
       border-radius: 999px;
       white-space: nowrap;
     }
+    .badge--empty {
+      color: var(--ink-subtle);
+      background: #f2f4f6;
+      border-color: var(--border);
+    }
 
     .phone {
       font-variant-numeric: tabular-nums;
@@ -466,7 +413,6 @@
     .status--available   { color: var(--success); }
     .status--unavailable { color: var(--ink-subtle); }
 
-    /* ---------- Empty state ---------- */
     .empty {
       padding: 40px 20px 48px;
       text-align: center;
@@ -474,28 +420,40 @@
       color: var(--ink-muted);
     }
 
-    /* ============================================================
-       7. Responsive
-       ============================================================ */
+    /* ---------- Loading spinner ---------- */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 60px 20px;
+      color: var(--ink-muted);
+      font-size: .95rem;
+      font-weight: 600;
+    }
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--border);
+      border-top-color: var(--red-700);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     @media (max-width: 760px) {
       .app { padding: 22px 14px 56px; }
-
       .app-header { gap: 12px; }
-
       .toolbar { padding: 16px; gap: 14px; }
       .checkbox { align-self: flex-start; padding: 0; }
-
+      .notice { margin: 12px 16px 0; }
       .results { padding: 12px 16px 0; }
-
       .table-wrap { padding: 8px 0; }
 
       table, tbody, tr, td { display: block; width: 100%; min-width: 0; }
       thead { display: none; }
 
-      tbody tr {
-        padding: 6px 0 10px;
-        border-bottom: 1px solid var(--border);
-      }
+      tbody tr { padding: 6px 0 10px; border-bottom: 1px solid var(--border); }
       tbody tr:last-child { border-bottom: none; }
       tbody tr:hover { background: transparent; }
 
@@ -521,9 +479,6 @@
       .donor { align-items: flex-end; text-align: right; }
     }
 
-    /* ============================================================
-       8. Motion preferences
-       ============================================================ */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .01ms !important;
@@ -537,15 +492,12 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- ==========================================================
-       Login screen
-       ========================================================== -->
+  <!-- ================= LOGIN ================= -->
   <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
     <div class="login-card">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-          <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z"
-                fill="currentColor" />
+          <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z" fill="currentColor" />
           <path d="M12 9.2v6M9 12.2h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
         </svg>
       </span>
@@ -555,36 +507,31 @@
 
       <form class="login-form" id="loginForm" novalidate>
         <div class="field">
-          <label class="field__label" for="password">Access password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter password"
-            autocomplete="current-password"
-            required
-            aria-describedby="loginError" />
+          <label class="field__label" for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email"
+                 autocomplete="username" required aria-describedby="loginError" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password"
+                 autocomplete="current-password" required aria-describedby="loginError" />
         </div>
 
         <p class="form-error" id="loginError" role="alert" aria-live="polite"></p>
 
         <button class="btn btn--primary btn--block" type="submit">Unlock directory</button>
       </form>
-
-      <p class="login-hint">Demo password: <code>yrc2024</code></p>
     </div>
   </section>
 
-  <!-- ==========================================================
-       Application
-       ========================================================== -->
+  <!-- ================= APP ================= -->
   <div class="app" id="app" hidden>
     <header class="app-header">
       <div class="brand">
         <span class="brand-mark brand-mark--sm" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="21" height="21" fill="none">
-            <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z"
-                  fill="currentColor" />
+            <path d="M12 2.5s6.5 7.1 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 9.6 12 2.5 12 2.5Z" fill="currentColor" />
             <path d="M12 9.2v6M9 12.2h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
           </svg>
         </span>
@@ -598,7 +545,6 @@
     </header>
 
     <main id="main">
-      <!-- Summary -->
       <section class="stats" aria-label="Directory summary">
         <article class="stat">
           <p class="stat__label">Total donors</p>
@@ -618,40 +564,29 @@
         </article>
       </section>
 
-      <!-- Directory -->
       <section class="panel" aria-labelledby="directoryTitle">
         <h2 class="visually-hidden" id="directoryTitle">Donor list</h2>
 
         <div class="toolbar">
           <div class="field field--grow">
             <label class="field__label" for="search">Search</label>
-            <input
-              type="search"
-              id="search"
-              placeholder="Name or phone number"
-              autocomplete="off"
-              spellcheck="false" />
+            <input type="search" id="search" placeholder="Name or phone number"
+                   autocomplete="off" spellcheck="false" />
           </div>
 
           <div class="field">
             <label class="field__label" for="groupFilter">Blood group</label>
-            <select id="groupFilter">
-              <option value="all">All groups</option>
-            </select>
+            <select id="groupFilter"><option value="all">All groups</option></select>
           </div>
 
           <div class="field">
             <label class="field__label" for="branchFilter">Branch</label>
-            <select id="branchFilter">
-              <option value="all">All branches</option>
-            </select>
+            <select id="branchFilter"><option value="all">All branches</option></select>
           </div>
 
           <div class="field">
             <label class="field__label" for="yearFilter">Year</label>
-            <select id="yearFilter">
-              <option value="all">All years</option>
-            </select>
+            <select id="yearFilter"><option value="all">All years</option></select>
           </div>
 
           <label class="checkbox" for="availableOnly">
@@ -660,9 +595,18 @@
           </label>
         </div>
 
+        <!-- Loading -->
+        <div class="loading" id="loadingState">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Loading donor data from Google Sheets…</span>
+        </div>
+
+        <!-- Diagnostic notice -->
+        <p class="notice" id="loadNotice" hidden></p>
+
         <p class="results" id="resultsCount" aria-live="polite"></p>
 
-        <div class="table-wrap">
+        <div class="table-wrap" id="tableWrap" hidden>
           <table>
             <caption class="visually-hidden">Registered blood donors</caption>
             <thead>
@@ -692,32 +636,22 @@
       /* ==========================================================
          CONFIGURATION
          ==========================================================
-         1. Publish your Google Sheet to the web as CSV:
-            File → Share → Publish to web → CSV.
-         2. Paste the CSV link below.
-         3. Expected columns (case-insensitive, spaces ignored):
-            Name | Blood Group | Phone | Branch | Year | Last Donated | Available
+         Use the **Publish to web → CSV** link, which looks like:
+           https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv
+
+         Do NOT use:
+           /edit?usp=sharing          (not public)
+           /export?format=csv         (requires login)
+           gviz/tq?tqx=out:csv        (may be truncated)
          ========================================================== */
       const SHEET_CSV_URL = "PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE";
 
-      const DEMO_PASSWORD = "yrc2024";
+      const VALID_EMAIL = "mmbbec@gmail.com";
+      const VALID_PASSWORD = "mahadevmb";
+
       const SESSION_KEY = "yrc.authenticated";
 
       const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-      /* Fallback data if the Google Sheet cannot be reached */
-      const FALLBACK_DONORS = [
-        { name: "Aarav Sharma",   group: "O+",  phone: "+91 98765 43210", branch: "Computer Science", year: "3", lastDonated: "2025-01-12", available: true  },
-        { name: "Diya Nair",      group: "A+",  phone: "+91 98450 11223", branch: "Electronics",      year: "2", lastDonated: "2024-12-03", available: true  },
-        { name: "Rohan Verma",    group: "B+",  phone: "+91 99001 55678", branch: "Mechanical",       year: "4", lastDonated: "2024-08-21", available: false },
-        { name: "Ananya Iyer",    group: "AB+", phone: "+91 97400 33221", branch: "Civil",            year: "3", lastDonated: "2025-02-09", available: true  },
-        { name: "Kabir Menon",    group: "O-",  phone: "+91 96320 77445", branch: "Computer Science", year: "2", lastDonated: "2024-10-30", available: true  },
-        { name: "Meera Pillai",   group: "B-",  phone: "+91 98860 12098", branch: "Electrical",       year: "4", lastDonated: "2024-06-15", available: false },
-        { name: "Aditya Rao",     group: "A-",  phone: "+91 90080 65512", branch: "Information Tech", year: "3", lastDonated: "2025-03-02", available: true  },
-        { name: "Sneha Kulkarni", group: "AB-", phone: "+91 99160 48870", branch: "Electronics",      year: "2", lastDonated: "2024-09-27", available: true  },
-        { name: "Vikram Das",     group: "B+",  phone: "+91 97390 20114", branch: "Mechanical",       year: "1", lastDonated: null,         available: true  },
-        { name: "Ishita Bose",    group: "O+",  phone: "+91 98455 70931", branch: "Civil",            year: "4", lastDonated: "2024-11-11", available: false }
-      ];
 
       /* ==========================================================
          STATE
@@ -728,7 +662,10 @@
         group: "all",
         branch: "all",
         year: "all",
-        availableOnly: false
+        availableOnly: false,
+        rawRowCount: 0,
+        headerRowIndex: 0,
+        missingColumns: []
       };
 
       /* ==========================================================
@@ -737,6 +674,7 @@
       const el = {
         loginScreen:   document.getElementById("loginScreen"),
         loginForm:     document.getElementById("loginForm"),
+        email:         document.getElementById("email"),
         password:      document.getElementById("password"),
         loginError:    document.getElementById("loginError"),
         app:           document.getElementById("app"),
@@ -749,6 +687,9 @@
         donorRows:     document.getElementById("donorRows"),
         resultsCount:  document.getElementById("resultsCount"),
         emptyState:    document.getElementById("emptyState"),
+        loadingState:  document.getElementById("loadingState"),
+        loadNotice:    document.getElementById("loadNotice"),
+        tableWrap:     document.getElementById("tableWrap"),
         statTotal:     document.getElementById("statTotal"),
         statAvailable: document.getElementById("statAvailable"),
         statBranches:  document.getElementById("statBranches"),
@@ -759,13 +700,9 @@
          HELPERS
          ========================================================== */
       const escapeHtml = (value) =>
-        String(value ?? "").replace(/[&<>"']/g, (char) => ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
-        }[char]));
+        String(value ?? "").replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
 
       const debounce = (fn, wait = 160) => {
         let timer;
@@ -779,15 +716,22 @@
         if (!iso) return null;
         const date = new Date(`${iso}T00:00:00`);
         if (Number.isNaN(date.getTime())) return iso;
-        return date.toLocaleDateString("en-GB", {
-          day: "2-digit", month: "short", year: "numeric"
-        });
+        return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
       };
 
+      const normalizeHeader = (header) =>
+        String(header || "")
+          .replace(/^\uFEFF/, "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+
       /* ==========================================================
-         CSV PARSER
+         ROBUST CSV PARSER
          ========================================================== */
       function parseCSV(text) {
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
         const rows = [];
         let row = [];
         let field = "";
@@ -798,43 +742,54 @@
 
           if (inQuotes) {
             if (char === '"') {
-              if (text[i + 1] === '"') {
-                field += '"';
-                i++;
-              } else {
-                inQuotes = false;
-              }
+              if (text[i + 1] === '"') { field += '"'; i++; }
+              else inQuotes = false;
             } else {
               field += char;
             }
           } else if (char === '"') {
             inQuotes = true;
           } else if (char === ",") {
-            row.push(field);
-            field = "";
+            row.push(field); field = "";
           } else if (char === "\n") {
             row.push(field);
             rows.push(row);
-            row = [];
-            field = "";
-          } else if (char !== "\r") {
+            row = []; field = "";
+          } else if (char === "\r") {
+            /* ignore */
+          } else {
             field += char;
           }
         }
-
-        if (field !== "" || row.length > 0) {
-          row.push(field);
-          rows.push(row);
-        }
-
+        if (field !== "" || row.length) { row.push(field); rows.push(row); }
         return rows;
       }
 
-      function normalizeHeader(header) {
-        return String(header || "")
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "");
+      /* ==========================================================
+         HEADER DETECTION
+         Scans the first rows for one that actually looks like a header.
+         Fixes the "merged title row above headers" problem.
+         ========================================================== */
+      const NAME_ALIASES  = ["name", "donorname", "fullname", "studentname", "student", "donor"];
+      const GROUP_ALIASES = ["bloodgroup", "blood", "group", "bloodtype", "bg", "bloodgroupname"];
+      const PHONE_ALIASES = ["phone", "mobile", "contact", "phonenumber", "mobilenumber", "whatsapp", "number", "phoneno", "mobileno"];
+      const BRANCH_ALIASES = ["branch", "department", "dept", "course", "stream", "program", "programme"];
+      const YEAR_ALIASES  = ["year", "studyyear", "currentyear", "yearofstudy", "class", "semester", "sem"];
+      const DATE_ALIASES  = ["lastdonated", "lastdonation", "lastdonateddate", "lastdate", "donationdate", "lastdonatedon"];
+      const AVAIL_ALIASES = ["available", "status", "availability", "active", "isavailable"];
+
+      function detectHeaderRow(rows) {
+        const limit = Math.min(rows.length, 20);
+        for (let i = 0; i < limit; i++) {
+          const cells = rows[i].map(normalizeHeader);
+          const hasName = cells.some((c) => NAME_ALIASES.includes(c));
+          const hasOther = cells.some((c) =>
+            GROUP_ALIASES.includes(c) || PHONE_ALIASES.includes(c) ||
+            BRANCH_ALIASES.includes(c) || YEAR_ALIASES.includes(c)
+          );
+          if (hasName && hasOther) return i;
+        }
+        return 0;
       }
 
       /* ==========================================================
@@ -845,111 +800,141 @@
           throw new Error("Google Sheet CSV URL is not configured.");
         }
 
-        const response = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error(`Sheet request failed: ${response.status}`);
-        }
+        const response = await fetch(SHEET_CSV_URL, { cache: "no-store", redirect: "follow" });
+        if (!response.ok) throw new Error(`Sheet request failed: HTTP ${response.status}`);
 
         const csvText = await response.text();
-        const rows = parseCSV(csvText).filter((row) =>
-          row.some((cell) => String(cell).trim() !== "")
+        const rawRows = parseCSV(csvText);
+
+        const nonEmptyRows = rawRows.filter((r) =>
+          r.some((cell) => String(cell).trim() !== "")
         );
 
-        if (rows.length < 2) {
-          throw new Error("Sheet is empty or missing data rows.");
+        if (nonEmptyRows.length < 2) {
+          throw new Error("Sheet returned no usable rows. Is it published as CSV?");
         }
 
-        const headers = rows[0].map(normalizeHeader);
-        const findIndex = (aliases) =>
-          headers.findIndex((header) => aliases.includes(header));
+        /* --- Find real header row --- */
+        const headerIndex = detectHeaderRow(nonEmptyRows);
+        const headerCells = nonEmptyRows[headerIndex].map(normalizeHeader);
+
+        const idxOf = (aliases) => headerCells.findIndex((h) => aliases.includes(h));
 
         const idx = {
-          name:        findIndex(["name", "donorname", "fullname"]),
-          group:       findIndex(["bloodgroup", "group", "blood"]),
-          phone:       findIndex(["phone", "mobile", "contact", "phonenumber"]),
-          branch:      findIndex(["branch", "department", "dept"]),
-          year:        findIndex(["year", "studyyear", "currentyear"]),
-          lastDonated: findIndex(["lastdonated", "lastdonation", "lastdonateddate"]),
-          available:   findIndex(["available", "status", "availability"])
+          name:        idxOf(NAME_ALIASES),
+          group:       idxOf(GROUP_ALIASES),
+          phone:       idxOf(PHONE_ALIASES),
+          branch:      idxOf(BRANCH_ALIASES),
+          year:        idxOf(YEAR_ALIASES),
+          lastDonated: idxOf(DATE_ALIASES),
+          available:   idxOf(AVAIL_ALIASES)
         };
 
-        return rows.slice(1).map((row) => {
-          const get = (index) => (index >= 0 ? String(row[index] ?? "").trim() : "");
+        const missing = Object.entries(idx)
+          .filter(([, v]) => v === -1)
+          .map(([k]) => k);
 
-          const availableRaw = get(idx.available).toLowerCase();
+        /* --- Map every data row, never dropping silently --- */
+        const dataRows = nonEmptyRows.slice(headerIndex + 1);
 
-          return {
-            name:        get(idx.name) || "Unnamed donor",
-            group:       get(idx.group).toUpperCase(),
-            phone:       get(idx.phone),
-            branch:      get(idx.branch) || "—",
-            year:        get(idx.year) || "—",
-            lastDonated: get(idx.lastDonated) || null,
-            available:   ["yes", "true", "1", "available", "y"].includes(availableRaw)
-          };
-        }).filter((donor) => donor.name && donor.group);
+        const donors = dataRows
+          .map((row) => {
+            const get = (i) => (i >= 0 ? String(row[i] ?? "").trim() : "");
+
+            const name   = get(idx.name);
+            const group  = get(idx.group).toUpperCase().replace(/\s+/g, "");
+            const phone  = get(idx.phone);
+            const branch = get(idx.branch);
+            const year   = get(idx.year);
+            const last   = get(idx.lastDonated);
+            const availRaw = get(idx.available).toLowerCase();
+
+            // Availability: if column absent → assume available
+            const available =
+              idx.available === -1
+                ? true
+                : availRaw === ""
+                  ? true
+                  : ["yes", "y", "true", "1", "available", "active"].includes(availRaw);
+
+            return {
+              name:        name || "—",
+              group:       group || "",
+              phone:       phone || "",
+              branch:      branch || "—",
+              year:        year || "—",
+              lastDonated: last || null,
+              available
+            };
+          })
+          // Keep a row if it has at least a name OR phone OR blood group
+          .filter((d) => d.name !== "—" || d.phone !== "" || d.group !== "");
+
+        /* --- Diagnostics in console --- */
+        console.group("📋 Google Sheet import");
+        console.log("Total CSV rows (incl. header):", nonEmptyRows.length);
+        console.log("Detected header row index:", headerIndex);
+        console.log("Header cells:", nonEmptyRows[headerIndex]);
+        console.log("Column mapping:", idx);
+        console.log("Missing columns:", missing);
+        console.log("Donor rows kept:", donors.length);
+        console.groupEnd();
+
+        state.rawRowCount = nonEmptyRows.length;
+        state.headerRowIndex = headerIndex;
+        state.missingColumns = missing;
+
+        return donors;
       }
 
       /* ==========================================================
-         STATS + DROPDOWNS
+         STATS
          ========================================================== */
       function renderStats() {
-        const donors = state.allDonors;
-
-        el.statTotal.textContent = donors.length;
-        el.statAvailable.textContent = donors.filter((d) => d.available).length;
-        el.statBranches.textContent = new Set(donors.map((d) => d.branch)).size;
-        el.statYears.textContent = new Set(donors.map((d) => d.year)).size;
+        const d = state.allDonors;
+        el.statTotal.textContent = d.length;
+        el.statAvailable.textContent = d.filter((x) => x.available).length;
+        el.statBranches.textContent = new Set(d.map((x) => x.branch).filter((b) => b && b !== "—")).size;
+        el.statYears.textContent = new Set(d.map((x) => x.year).filter((y) => y && y !== "—")).size;
       }
 
-      function populateDropdown(select, values, allLabel, sortFn) {
-        // Keep the "All" option, remove the rest
-        while (select.options.length > 1) {
-          select.remove(1);
-        }
+      /* ==========================================================
+         DROPDOWNS
+         ========================================================== */
+      function populateDropdown(select, values, sortFn) {
+        while (select.options.length > 1) select.remove(1);
 
-        const unique = [...new Set(values.filter(Boolean))];
+        const unique = [...new Set(values.filter((v) => v && v !== "—"))];
 
-        if (sortFn) {
-          unique.sort(sortFn);
-        } else {
-          unique.sort((a, b) => a.localeCompare(b));
-        }
+        if (sortFn) unique.sort(sortFn);
+        else unique.sort((a, b) => String(a).localeCompare(String(b)));
 
-        const fragment = document.createDocumentFragment();
+        const frag = document.createDocumentFragment();
         unique.forEach((value) => {
-          const option = document.createElement("option");
-          option.value = value;
-          option.textContent = value;
-          fragment.appendChild(option);
+          const opt = document.createElement("option");
+          opt.value = value;
+          opt.textContent = value;
+          frag.appendChild(opt);
         });
-
-        select.appendChild(fragment);
+        select.appendChild(frag);
       }
 
       function populateFilters() {
-        const donors = state.allDonors;
+        const d = state.allDonors;
 
-        // Blood group: keep standard medical order
-        const groupsPresent = new Set(donors.map((d) => d.group));
+        const groupsPresent = new Set(d.map((x) => x.group).filter(Boolean));
         const groups = BLOOD_GROUPS.filter((g) => groupsPresent.has(g));
-        populateDropdown(el.groupFilter, groups, "All groups");
+        // also include any non-standard groups found in the sheet
+        groupsPresent.forEach((g) => { if (!groups.includes(g)) groups.push(g); });
+        populateDropdown(el.groupFilter, groups);
 
-        // Branch
-        populateDropdown(
-          el.branchFilter,
-          donors.map((d) => d.branch),
-          "All branches"
-        );
+        populateDropdown(el.branchFilter, d.map((x) => x.branch));
 
-        // Year – numeric sort when possible
         populateDropdown(
           el.yearFilter,
-          donors.map((d) => d.year),
-          "All years",
+          d.map((x) => x.year),
           (a, b) => {
-            const na = Number(a);
-            const nb = Number(b);
+            const na = Number(a), nb = Number(b);
             if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
             return String(a).localeCompare(String(b));
           }
@@ -957,44 +942,37 @@
       }
 
       /* ==========================================================
-         FILTER + RENDER TABLE
+         FILTER + RENDER
          ========================================================== */
       function getVisibleDonors() {
-        const query = state.query.trim().toLowerCase();
-        const digits = query.replace(/\D/g, "");
+        const q = state.query.trim().toLowerCase();
+        const digits = q.replace(/\D/g, "");
 
         return state.allDonors
           .filter((donor) => {
-            const matchesQuery =
-              !query ||
-              donor.name.toLowerCase().includes(query) ||
+            const matchQuery =
+              !q ||
+              donor.name.toLowerCase().includes(q) ||
               (digits && donor.phone.replace(/\D/g, "").includes(digits));
 
-            const matchesGroup =
-              state.group === "all" || donor.group === state.group;
+            const matchGroup = state.group === "all" || donor.group === state.group;
+            const matchBranch = state.branch === "all" || donor.branch === state.branch;
+            const matchYear = state.year === "all" || donor.year === state.year;
+            const matchAvail = !state.availableOnly || donor.available;
 
-            const matchesBranch =
-              state.branch === "all" || donor.branch === state.branch;
-
-            const matchesYear =
-              state.year === "all" || donor.year === state.year;
-
-            const matchesAvailability =
-              !state.availableOnly || donor.available;
-
-            return (
-              matchesQuery &&
-              matchesGroup &&
-              matchesBranch &&
-              matchesYear &&
-              matchesAvailability
-            );
+            return matchQuery && matchGroup && matchBranch && matchYear && matchAvail;
           })
           .sort((a, b) => a.name.localeCompare(b.name));
       }
 
       function donorRowTemplate(donor) {
-        const lastDonated = formatDate(donor.lastDonated);
+        const last = formatDate(donor.lastDonated);
+        const groupHtml = donor.group
+          ? `<span class="badge">${escapeHtml(donor.group)}</span>`
+          : `<span class="badge badge--empty">—</span>`;
+        const phoneHtml = donor.phone
+          ? `<a class="phone" href="tel:${escapeHtml(donor.phone.replace(/[^\d+]/g, ""))}">${escapeHtml(donor.phone)}</a>`
+          : `<span class="muted">—</span>`;
 
         return `
           <tr>
@@ -1004,20 +982,12 @@
                 <span class="donor__meta">${escapeHtml(donor.branch)} · Year ${escapeHtml(donor.year)}</span>
               </span>
             </td>
-            <td data-label="Blood group">
-              <span class="badge">${escapeHtml(donor.group)}</span>
-            </td>
-            <td data-label="Phone">
-              <a class="phone" href="tel:${escapeHtml(donor.phone.replace(/\s/g, ""))}">
-                ${escapeHtml(donor.phone)}
-              </a>
-            </td>
+            <td data-label="Blood group">${groupHtml}</td>
+            <td data-label="Phone">${phoneHtml}</td>
             <td data-label="Branch">${escapeHtml(donor.branch)}</td>
             <td data-label="Year">${escapeHtml(donor.year)}</td>
             <td data-label="Last donated">
-              ${lastDonated
-                ? `<span class="muted">${escapeHtml(lastDonated)}</span>`
-                : `<span class="muted">Not recorded</span>`}
+              ${last ? `<span class="muted">${escapeHtml(last)}</span>` : `<span class="muted">—</span>`}
             </td>
             <td data-label="Status">
               <span class="status status--${donor.available ? "available" : "unavailable"}">
@@ -1035,20 +1005,71 @@
         el.emptyState.hidden = donors.length > 0;
 
         el.resultsCount.textContent = donors.length === 1
-          ? "Showing 1 donor"
+          ? `Showing 1 of ${state.allDonors.length} donors`
           : `Showing ${donors.length} of ${state.allDonors.length} donors`;
+      }
+
+      /* ==========================================================
+         NOTICE BANNER
+         ========================================================== */
+      function showNotice(html, isWarn) {
+        el.loadNotice.innerHTML = html;
+        el.loadNotice.hidden = false;
+        el.loadNotice.classList.toggle("notice--warn", !!isWarn);
       }
 
       /* ==========================================================
          DATA LOADING
          ========================================================== */
       async function loadDonors() {
+        el.loadingState.hidden = false;
+        el.tableWrap.hidden = true;
+        el.loadNotice.hidden = true;
+
         try {
           state.allDonors = await fetchDonorsFromSheet();
+
+          const sheetRows = Math.max(0, state.rawRowCount - state.headerRowIndex - 1);
+          const skipped = sheetRows - state.allDonors.length;
+
+          if (state.allDonors.length === 0) {
+            showNotice(
+              `⚠️ The sheet was reached but <strong>0 donor rows</strong> could be read. ` +
+              `Check that the header row contains columns like <code>Name</code> and <code>Blood Group</code>, ` +
+              `and that the URL is a <strong>Publish to web → CSV</strong> link.`,
+              true
+            );
+          } else if (skipped > 0) {
+            showNotice(
+              `Loaded <strong>${state.allDonors.length}</strong> donors from ` +
+              `<strong>${sheetRows}</strong> sheet rows. ` +
+              `${skipped} row${skipped === 1 ? "" : "s"} were blank or had no name/phone/group.`
+            );
+          } else {
+            showNotice(`Loaded <strong>${state.allDonors.length}</strong> donors from Google Sheets.`);
+          }
+
+          if (state.missingColumns.length) {
+            showNotice(
+              (el.loadNotice.innerHTML || "") +
+              ` Missing columns: <code>${state.missingColumns.join(", ")}</code>. ` +
+              `Those fields will show as “—”.`,
+              false
+            );
+          }
         } catch (error) {
-          console.warn("Using fallback donor data:", error.message);
-          state.allDonors = FALLBACK_DONORS;
+          console.error("Sheet load failed:", error);
+          state.allDonors = [];
+          showNotice(
+            `⚠️ Could not load the Google Sheet: <strong>${escapeHtml(error.message)}</strong>. ` +
+            `Make sure the sheet is published with <em>File → Share → Publish to web → CSV</em>, ` +
+            `and paste that exact URL into <code>SHEET_CSV_URL</code>.`,
+            true
+          );
         }
+
+        el.loadingState.hidden = true;
+        el.tableWrap.hidden = false;
 
         renderStats();
         populateFilters();
@@ -1068,40 +1089,37 @@
       function showLogin() {
         el.app.hidden = true;
         el.loginScreen.hidden = false;
+        el.email.value = "";
         el.password.value = "";
         el.loginError.textContent = "";
-        el.password.focus();
+        el.email.focus();
       }
 
       function handleLogin(event) {
         event.preventDefault();
 
-        const value = el.password.value;
+        const email = el.email.value.trim();
+        const password = el.password.value;
 
-        if (!value.trim()) {
-          el.loginError.textContent = "Please enter the access password.";
-          el.password.focus();
+        if (!email || !password) {
+          el.loginError.textContent = "Please enter both email and password.";
+          (!email ? el.email : el.password).focus();
           return;
         }
 
-        if (value !== DEMO_PASSWORD) {
-          el.loginError.textContent = "Incorrect password. Please try again.";
+        if (email !== VALID_EMAIL || password !== VALID_PASSWORD) {
+          el.loginError.textContent = "Invalid email or password. Please try again.";
           el.password.select();
           return;
         }
 
         el.loginError.textContent = "";
-        try {
-          sessionStorage.setItem(SESSION_KEY, "1");
-        } catch (_) { /* ignore */ }
-
+        try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (_) {}
         showApp();
       }
 
       function handleLogout() {
-        try {
-          sessionStorage.removeItem(SESSION_KEY);
-        } catch (_) { /* ignore */ }
+        try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
         showLogin();
       }
 
@@ -1112,30 +1130,15 @@
         el.loginForm.addEventListener("submit", handleLogin);
         el.logoutBtn.addEventListener("click", handleLogout);
 
-        el.search.addEventListener("input", debounce((event) => {
-          state.query = event.target.value;
+        el.search.addEventListener("input", debounce((e) => {
+          state.query = e.target.value;
           render();
         }));
 
-        el.groupFilter.addEventListener("change", (event) => {
-          state.group = event.target.value;
-          render();
-        });
-
-        el.branchFilter.addEventListener("change", (event) => {
-          state.branch = event.target.value;
-          render();
-        });
-
-        el.yearFilter.addEventListener("change", (event) => {
-          state.year = event.target.value;
-          render();
-        });
-
-        el.availableOnly.addEventListener("change", (event) => {
-          state.availableOnly = event.target.checked;
-          render();
-        });
+        el.groupFilter.addEventListener("change", (e) => { state.group = e.target.value; render(); });
+        el.branchFilter.addEventListener("change", (e) => { state.branch = e.target.value; render(); });
+        el.yearFilter.addEventListener("change", (e) => { state.year = e.target.value; render(); });
+        el.availableOnly.addEventListener("change", (e) => { state.availableOnly = e.target.checked; render(); });
       }
 
       /* ==========================================================
@@ -1144,16 +1147,11 @@
       function init() {
         bindEvents();
 
-        let isAuthenticated = false;
-        try {
-          isAuthenticated = sessionStorage.getItem(SESSION_KEY) === "1";
-        } catch (_) { /* ignore */ }
+        let authed = false;
+        try { authed = sessionStorage.getItem(SESSION_KEY) === "1"; } catch (_) {}
 
-        if (isAuthenticated) {
-          showApp();
-        } else {
-          el.password.focus();
-        }
+        if (authed) showApp();
+        else el.email.focus();
       }
 
       document.addEventListener("DOMContentLoaded", init);
