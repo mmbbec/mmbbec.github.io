@@ -14,24 +14,18 @@
       --red-600: #d32f2f;
       --red-50:  #fdecea;
       --red-border: #f6d3d0;
-
       --ink:        #1f2933;
       --ink-muted:  #5c6b7a;
       --ink-subtle: #8a94a0;
-
       --surface: #ffffff;
       --bg:      #f4f6f8;
       --border:  #e3e8ee;
-
       --success: #127a4a;
-
       --radius-sm: 8px;
       --radius:    12px;
       --radius-lg: 16px;
-
       --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
       --shadow-lg: 0 24px 48px rgba(16, 24, 40, .18);
-
       --focus-ring: 2px solid var(--red-600);
       --transition: 160ms ease;
     }
@@ -52,7 +46,6 @@
     }
 
     h1, h2, h3, p { margin: 0; }
-
     :focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
 
     .visually-hidden {
@@ -250,9 +243,7 @@
     }
 
     .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
-
     .brand-mark--sm { width: 42px; height: 42px; margin: 0; flex-shrink: 0; }
-
     .brand__title { font-size: 1.18rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
     .brand__sub { font-size: .84rem; color: var(--ink-muted); }
 
@@ -420,7 +411,6 @@
       color: var(--ink-muted);
     }
 
-    /* ---------- Loading spinner ---------- */
     .loading {
       display: flex;
       align-items: center;
@@ -501,25 +491,20 @@
           <path d="M12 9.2v6M9 12.2h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
         </svg>
       </span>
-
       <h1 id="loginTitle">Blood Donor Directory</h1>
       <p class="login-sub">BEC Youth Red Cross Wing</p>
-
       <form class="login-form" id="loginForm" novalidate>
         <div class="field">
           <label class="field__label" for="email">Email</label>
           <input type="email" id="email" name="email" placeholder="Enter your email"
                  autocomplete="username" required aria-describedby="loginError" />
         </div>
-
         <div class="field">
           <label class="field__label" for="password">Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password"
                  autocomplete="current-password" required aria-describedby="loginError" />
         </div>
-
         <p class="form-error" id="loginError" role="alert" aria-live="polite"></p>
-
         <button class="btn btn--primary btn--block" type="submit">Unlock directory</button>
       </form>
     </div>
@@ -540,7 +525,6 @@
           <p class="brand__sub">BEC Youth Red Cross Wing</p>
         </div>
       </div>
-
       <button class="btn btn--ghost" id="logoutBtn" type="button">Sign out</button>
     </header>
 
@@ -573,37 +557,30 @@
             <input type="search" id="search" placeholder="Name or phone number"
                    autocomplete="off" spellcheck="false" />
           </div>
-
           <div class="field">
             <label class="field__label" for="groupFilter">Blood group</label>
             <select id="groupFilter"><option value="all">All groups</option></select>
           </div>
-
           <div class="field">
             <label class="field__label" for="branchFilter">Branch</label>
             <select id="branchFilter"><option value="all">All branches</option></select>
           </div>
-
           <div class="field">
             <label class="field__label" for="yearFilter">Year</label>
             <select id="yearFilter"><option value="all">All years</option></select>
           </div>
-
           <label class="checkbox" for="availableOnly">
             <input type="checkbox" id="availableOnly" />
             <span>Available only</span>
           </label>
         </div>
 
-        <!-- Loading -->
         <div class="loading" id="loadingState">
           <span class="spinner" aria-hidden="true"></span>
-          <span>Loading donor data from Google Sheets…</span>
+          <span>Loading donor data…</span>
         </div>
 
-        <!-- Diagnostic notice -->
         <p class="notice" id="loadNotice" hidden></p>
-
         <p class="results" id="resultsCount" aria-live="polite"></p>
 
         <div class="table-wrap" id="tableWrap" hidden>
@@ -622,7 +599,6 @@
             </thead>
             <tbody id="donorRows"></tbody>
           </table>
-
           <p class="empty" id="emptyState" hidden>No donors match your filters.</p>
         </div>
       </section>
@@ -636,21 +612,14 @@
       /* ==========================================================
          CONFIGURATION
          ==========================================================
-         Use the **Publish to web → CSV** link, which looks like:
-           https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv
-
-         Do NOT use:
-           /edit?usp=sharing          (not public)
-           /export?format=csv         (requires login)
-           gviz/tq?tqx=out:csv        (may be truncated)
+         Your Apps Script Web App URL — this is the public JSON endpoint
+         that serves donor data from your Google Sheet.
          ========================================================== */
-      const SHEET_CSV_URL = "PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+      const API_URL = "https://script.google.com/macros/s/AKfycbzG1cDxcHXjz4MZSECmJooDmanMkrz7UjgeBY2XN3PLNUgpIK5xVkU18pGiDiPJxBSVBw/exec";
 
       const VALID_EMAIL = "mmbbec@gmail.com";
       const VALID_PASSWORD = "mahadevmb";
-
       const SESSION_KEY = "yrc.authenticated";
-
       const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
       /* ==========================================================
@@ -662,10 +631,7 @@
         group: "all",
         branch: "all",
         year: "all",
-        availableOnly: false,
-        rawRowCount: 0,
-        headerRowIndex: 0,
-        missingColumns: []
+        availableOnly: false
       };
 
       /* ==========================================================
@@ -714,177 +680,71 @@
 
       const formatDate = (iso) => {
         if (!iso) return null;
-        const date = new Date(`${iso}T00:00:00`);
+        const date = new Date(iso);
         if (Number.isNaN(date.getTime())) return iso;
         return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
       };
 
-      const normalizeHeader = (header) =>
-        String(header || "")
-          .replace(/^\uFEFF/, "")
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "");
-
       /* ==========================================================
-         ROBUST CSV PARSER
+         PARSE APPS SCRIPT JSON → DONORS
+         ==========================================================
+         The Apps Script returns an array of objects with keys like:
+           "Timestamp", "E-mail", "Full Name ", "MOBILE NUMBER",
+           "Gender ", "Branch", "YEAR", "USN", "BLOOD GROUP",
+           "Blood donated", "“Would you be willing to donate ...”
          ========================================================== */
-      function parseCSV(text) {
-        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-
-        const rows = [];
-        let row = [];
-        let field = "";
-        let inQuotes = false;
-
-        for (let i = 0; i < text.length; i++) {
-          const char = text[i];
-
-          if (inQuotes) {
-            if (char === '"') {
-              if (text[i + 1] === '"') { field += '"'; i++; }
-              else inQuotes = false;
-            } else {
-              field += char;
-            }
-          } else if (char === '"') {
-            inQuotes = true;
-          } else if (char === ",") {
-            row.push(field); field = "";
-          } else if (char === "\n") {
-            row.push(field);
-            rows.push(row);
-            row = []; field = "";
-          } else if (char === "\r") {
-            /* ignore */
-          } else {
-            field += char;
-          }
-        }
-        if (field !== "" || row.length) { row.push(field); rows.push(row); }
-        return rows;
-      }
-
-      /* ==========================================================
-         HEADER DETECTION
-         Scans the first rows for one that actually looks like a header.
-         Fixes the "merged title row above headers" problem.
-         ========================================================== */
-      const NAME_ALIASES  = ["name", "donorname", "fullname", "studentname", "student", "donor"];
-      const GROUP_ALIASES = ["bloodgroup", "blood", "group", "bloodtype", "bg", "bloodgroupname"];
-      const PHONE_ALIASES = ["phone", "mobile", "contact", "phonenumber", "mobilenumber", "whatsapp", "number", "phoneno", "mobileno"];
-      const BRANCH_ALIASES = ["branch", "department", "dept", "course", "stream", "program", "programme"];
-      const YEAR_ALIASES  = ["year", "studyyear", "currentyear", "yearofstudy", "class", "semester", "sem"];
-      const DATE_ALIASES  = ["lastdonated", "lastdonation", "lastdonateddate", "lastdate", "donationdate", "lastdonatedon"];
-      const AVAIL_ALIASES = ["available", "status", "availability", "active", "isavailable"];
-
-      function detectHeaderRow(rows) {
-        const limit = Math.min(rows.length, 20);
-        for (let i = 0; i < limit; i++) {
-          const cells = rows[i].map(normalizeHeader);
-          const hasName = cells.some((c) => NAME_ALIASES.includes(c));
-          const hasOther = cells.some((c) =>
-            GROUP_ALIASES.includes(c) || PHONE_ALIASES.includes(c) ||
-            BRANCH_ALIASES.includes(c) || YEAR_ALIASES.includes(c)
-          );
-          if (hasName && hasOther) return i;
-        }
-        return 0;
-      }
-
-      /* ==========================================================
-         GOOGLE SHEET → DONORS
-         ========================================================== */
-      async function fetchDonorsFromSheet() {
-        if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR")) {
-          throw new Error("Google Sheet CSV URL is not configured.");
+      function transformAppsScriptData(raw) {
+        if (!Array.isArray(raw)) {
+          throw new Error("Apps Script did not return an array. Check the deployment URL.");
         }
 
-        const response = await fetch(SHEET_CSV_URL, { cache: "no-store", redirect: "follow" });
-        if (!response.ok) throw new Error(`Sheet request failed: HTTP ${response.status}`);
-
-        const csvText = await response.text();
-        const rawRows = parseCSV(csvText);
-
-        const nonEmptyRows = rawRows.filter((r) =>
-          r.some((cell) => String(cell).trim() !== "")
-        );
-
-        if (nonEmptyRows.length < 2) {
-          throw new Error("Sheet returned no usable rows. Is it published as CSV?");
-        }
-
-        /* --- Find real header row --- */
-        const headerIndex = detectHeaderRow(nonEmptyRows);
-        const headerCells = nonEmptyRows[headerIndex].map(normalizeHeader);
-
-        const idxOf = (aliases) => headerCells.findIndex((h) => aliases.includes(h));
-
-        const idx = {
-          name:        idxOf(NAME_ALIASES),
-          group:       idxOf(GROUP_ALIASES),
-          phone:       idxOf(PHONE_ALIASES),
-          branch:      idxOf(BRANCH_ALIASES),
-          year:        idxOf(YEAR_ALIASES),
-          lastDonated: idxOf(DATE_ALIASES),
-          available:   idxOf(AVAIL_ALIASES)
-        };
-
-        const missing = Object.entries(idx)
-          .filter(([, v]) => v === -1)
-          .map(([k]) => k);
-
-        /* --- Map every data row, never dropping silently --- */
-        const dataRows = nonEmptyRows.slice(headerIndex + 1);
-
-        const donors = dataRows
+        return raw
           .map((row) => {
-            const get = (i) => (i >= 0 ? String(row[i] ?? "").trim() : "");
+            // Helper to find a key case-insensitively and ignoring extra spaces
+            const findKey = (...aliases) => {
+              const keys = Object.keys(row);
+              for (const alias of aliases) {
+                const match = keys.find(
+                  (k) => k.trim().toLowerCase().replace(/[^a-z0-9]/g, "") ===
+                         alias.toLowerCase().replace(/[^a-z0-9]/g, "")
+                );
+                if (match) return row[match];
+              }
+              return "";
+            };
 
-            const name   = get(idx.name);
-            const group  = get(idx.group).toUpperCase().replace(/\s+/g, "");
-            const phone  = get(idx.phone);
-            const branch = get(idx.branch);
-            const year   = get(idx.year);
-            const last   = get(idx.lastDonated);
-            const availRaw = get(idx.available).toLowerCase();
+            const name = String(findKey("Full Name", "FullName", "Name", "Donor Name") || "").trim();
+            const phone = String(findKey("MOBILE NUMBER", "Mobile", "Phone", "Contact", "Mobile Number") || "").trim();
+            const groupRaw = String(findKey("BLOOD GROUP", "Blood Group", "BloodGroup", "BG") || "").trim().toUpperCase().replace(/\s+/g, "");
+            const branch = String(findKey("Branch", "Department", "Dept", "Course", "Stream") || "").trim();
+            const year = String(findKey("YEAR", "Year", "Study Year", "Current Year") || "").trim();
+            const lastDonated = String(findKey("Timestamp", "Last Donated", "Last Donation") || "").trim();
 
-            // Availability: if column absent → assume available
-            const available =
-              idx.available === -1
-                ? true
-                : availRaw === ""
-                  ? true
-                  : ["yes", "y", "true", "1", "available", "active"].includes(availRaw);
+            // Availability: based on "Blood donated" and "willing to donate" columns
+            const bloodDonated = String(findKey("Blood donated", "Blood Donated") || "").trim().toLowerCase();
+            const willingRaw = String(findKey(
+              "Would you be willing to donate blood in case of an emergency in the future?",
+              "Would you be willing to donate"
+            ) || "").trim().toLowerCase();
+
+            let available = true;
+            if (willingRaw.includes("no")) available = false;
+            if (bloodDonated === "yes") available = false; // recently donated
+
+            // Normalise blood group: "Don't know" → empty
+            const group = groupRaw.includes("DON") ? "" : groupRaw;
 
             return {
-              name:        name || "—",
-              group:       group || "",
-              phone:       phone || "",
-              branch:      branch || "—",
-              year:        year || "—",
-              lastDonated: last || null,
+              name: name || "—",
+              group: group || "",
+              phone: phone || "",
+              branch: branch || "—",
+              year: year || "—",
+              lastDonated: lastDonated || null,
               available
             };
           })
-          // Keep a row if it has at least a name OR phone OR blood group
           .filter((d) => d.name !== "—" || d.phone !== "" || d.group !== "");
-
-        /* --- Diagnostics in console --- */
-        console.group("📋 Google Sheet import");
-        console.log("Total CSV rows (incl. header):", nonEmptyRows.length);
-        console.log("Detected header row index:", headerIndex);
-        console.log("Header cells:", nonEmptyRows[headerIndex]);
-        console.log("Column mapping:", idx);
-        console.log("Missing columns:", missing);
-        console.log("Donor rows kept:", donors.length);
-        console.groupEnd();
-
-        state.rawRowCount = nonEmptyRows.length;
-        state.headerRowIndex = headerIndex;
-        state.missingColumns = missing;
-
-        return donors;
       }
 
       /* ==========================================================
@@ -924,7 +784,6 @@
 
         const groupsPresent = new Set(d.map((x) => x.group).filter(Boolean));
         const groups = BLOOD_GROUPS.filter((g) => groupsPresent.has(g));
-        // also include any non-standard groups found in the sheet
         groupsPresent.forEach((g) => { if (!groups.includes(g)) groups.push(g); });
         populateDropdown(el.groupFilter, groups);
 
@@ -1009,9 +868,6 @@
           : `Showing ${donors.length} of ${state.allDonors.length} donors`;
       }
 
-      /* ==========================================================
-         NOTICE BANNER
-         ========================================================== */
       function showNotice(html, isWarn) {
         el.loadNotice.innerHTML = html;
         el.loadNotice.hidden = false;
@@ -1027,43 +883,39 @@
         el.loadNotice.hidden = true;
 
         try {
-          state.allDonors = await fetchDonorsFromSheet();
+          const response = await fetch(API_URL, {
+            method: "GET",
+            redirect: "follow",
+            cache: "no-store"
+          });
 
-          const sheetRows = Math.max(0, state.rawRowCount - state.headerRowIndex - 1);
-          const skipped = sheetRows - state.allDonors.length;
-
-          if (state.allDonors.length === 0) {
-            showNotice(
-              `⚠️ The sheet was reached but <strong>0 donor rows</strong> could be read. ` +
-              `Check that the header row contains columns like <code>Name</code> and <code>Blood Group</code>, ` +
-              `and that the URL is a <strong>Publish to web → CSV</strong> link.`,
-              true
-            );
-          } else if (skipped > 0) {
-            showNotice(
-              `Loaded <strong>${state.allDonors.length}</strong> donors from ` +
-              `<strong>${sheetRows}</strong> sheet rows. ` +
-              `${skipped} row${skipped === 1 ? "" : "s"} were blank or had no name/phone/group.`
-            );
-          } else {
-            showNotice(`Loaded <strong>${state.allDonors.length}</strong> donors from Google Sheets.`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status} — ${response.statusText}`);
           }
 
-          if (state.missingColumns.length) {
-            showNotice(
-              (el.loadNotice.innerHTML || "") +
-              ` Missing columns: <code>${state.missingColumns.join(", ")}</code>. ` +
-              `Those fields will show as “—”.`,
-              false
-            );
+          const text = await response.text();
+
+          // Apps Script may return JSONP-wrapped content; strip if needed
+          let jsonText = text.trim();
+          if (jsonText.startsWith("/*O_o*/")) {
+            jsonText = jsonText.replace(/^\/\*O_o\*\/\s*/, "");
           }
+          if (jsonText.startsWith("(")) {
+            jsonText = jsonText.slice(1, -1);
+          }
+
+          const raw = JSON.parse(jsonText);
+          state.allDonors = transformAppsScriptData(raw);
+
+          console.log(`📋 Apps Script returned ${raw.length} records → ${state.allDonors.length} donors`);
+
+          showNotice(`Loaded <strong>${state.allDonors.length}</strong> donors from Google Sheets.`);
         } catch (error) {
-          console.error("Sheet load failed:", error);
+          console.error("Data load failed:", error);
           state.allDonors = [];
           showNotice(
-            `⚠️ Could not load the Google Sheet: <strong>${escapeHtml(error.message)}</strong>. ` +
-            `Make sure the sheet is published with <em>File → Share → Publish to web → CSV</em>, ` +
-            `and paste that exact URL into <code>SHEET_CSV_URL</code>.`,
+            `⚠️ Could not load donor data: <strong>${escapeHtml(error.message)}</strong>. ` +
+            `Make sure the Apps Script Web App is deployed with access set to <em>"Anyone"</em>.`,
             true
           );
         }
