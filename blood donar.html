@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donor List - BEC Youth Red Cross Wing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        /* Login Container Styles */
+        #loginOverlay {
+            max-width: 400px;
+            margin: 60px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        #loginOverlay h2 {
+            color: #b71c1c;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #b71c1c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .login-btn:hover {
+            background-color: #8e0000;
+        }
+        #loginError {
+            color: red;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Portal Content Styles (Hidden until logged in) */
+        #portalContent {
+            display: none;
+        }
+        .header {
+            text-align: center;
+            background-color: #b71c1c;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .header h2 {
+            margin: 5px 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        .header h3 {
+            margin: 5px 0;
+            font-size: 16px;
+            font-weight: normal;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ffffff;
+            color: #b71c1c;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #eee;
+        }
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .filter-group label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #b71c1c;
+        }
+        .filter-group select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN FORM SECTION -->
+    <div id="loginOverlay">
+        <h2>Youth Red Cross Portal</h2>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username / Email</label>
+                <input type="email" id="username" placeholder="mmbbec@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+            <div id="loginError">Invalid username or password!</div>
+        </form>
+    </div>
+
+    <!-- PROTECTED DONOR LIST PORTAL -->
+    <div id="portalContent">
+        <div class="header">
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            <h1>Basaveshwar Engineering College, Bagalkote</h1>
+            <h2>Youth Red Cross Wing</h2>
+            <h3>Academic Year 2026-27</h3>
+            <h3>Programme Officer: Dr. Mahadev Biradar</h3>
+            <h2 style="margin-top: 15px; text-decoration: underline;">Blood Donor List</h2>
+        </div>
+
+        <!-- Dropdown Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="filterBranch">Branch:</label>
+                <select id="filterBranch">
+                    <option value="ALL">All Branches</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterBlood">Blood Group:</label>
+                <select id="filterBlood">
+                    <option value="ALL">All Blood Groups</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterYear">Year:</label>
+                <select id="filterYear">
+                    <option value="ALL">All Years</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterWilling">Willing to Donate?</label>
+                <select id="filterWilling">
+                    <option value="ALL">All Responses</option>
+                    <option value="YES" selected>YES</option>
+                    <option value="Only in case of emergency">Only in case of emergency</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+
+        <table id="donorTable">
+            <thead>
+                <tr>
+                    <th>Branch</th>
+                    <th>Blood Group</th>
+                    <th>Year</th>
+                    <th>Full Name</th>
+                    <th>USN</th>
+                    <th>Mobile Number</th>
+                    <th>Willing to Donate?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="7" class="loading">Loading data from Google Sheet...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbzG1cDxcHXjz4MZSECmJooDmanMkrz7UjgeBY2XN3PLNUgpIK5xVkU18pGiDiPJxBSVBw/exec";
+        let rawData = [];
+
+        // Check login state on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            if (sessionStorage.getItem("isLoggedIn") === "true") {
+                showPortal();
+            }
+        });
+
+        // Authentication Handler
+        function handleLogin(event) {
+            event.preventDefault();
+            const userVal = document.getElementById("username").value.trim();
+            const passVal = document.getElementById("password").value.trim();
+
+            if (userVal === "mmbbec@gmail.com" && passVal === "mahadevmb") {
+                sessionStorage.setItem("isLoggedIn", "true");
+                showPortal();
+            } else {
+                document.getElementById("loginError").style.display = "block";
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem("isLoggedIn");
+            document.getElementById("portalContent").style.display = "none";
+            document.getElementById("loginOverlay").style.display = "block";
+            document.getElementById("loginForm").reset();
+            document.getElementById("loginError").style.display = "none";
+        }
+
+        function showPortal() {
+            document.getElementById("loginOverlay").style.display = "none";
+            document.getElementById("portalContent").style.display = "block";
+            if (rawData.length === 0) {
+                fetchSheetData();
+            }
+        }
+
+        function getFieldValue(obj, targetKeys) {
+            const foundKey = Object.keys(obj).find(k => 
+                targetKeys.some(tk => k.trim().toLowerCase().includes(tk.toLowerCase()))
+            );
+            return foundKey ? String(obj[foundKey]).trim() : "";
+        }
+
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(scriptUrl);
+                const json = await response.json();
+
+                rawData = json.map(item => ({
+                    name: getFieldValue(item, ["name", "full name"]),
+                    usn: getFieldValue(item, ["usn", "csn"]),
+                    mobile: getFieldValue(item, ["mobile", "phone", "contact"]),
+                    year: getFieldValue(item, ["year"]),
+                    branch: getFieldValue(item, ["branch"]),
+                    bloodGroup: getFieldValue(item, ["blood group", "blood"]),
+                    willing: getFieldValue(item, ["willing", "would you be willing", "donate"])
+                }));
+
+                populateDropdowns();
+                updateTable();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.querySelector("#donorTable tbody").innerHTML = 
+                    `<tr><td colspan="7" style="color: red; text-align: center;">Failed to load data from Google Sheets API.</td></tr>`;
+            }
+        }
+
+        function populateDropdowns() {
+            const branches = [...new Set(rawData.map(d => d.branch).filter(Boolean))].sort();
+            const bloodGroups = [...new Set(rawData.map(d => d.bloodGroup).filter(Boolean))].sort();
+            const years = [...new Set(rawData.map(d => d.year).filter(Boolean))].sort();
+
+            const selectBranch = document.getElementById("filterBranch");
+            const selectBlood = document.getElementById("filterBlood");
+            const selectYear = document.getElementById("filterYear");
+
+            // Reset existing options except "ALL"
+            selectBranch.innerHTML = '<option value="ALL">All Branches</option>';
+            selectBlood.innerHTML = '<option value="ALL">All Blood Groups</option>';
+            selectYear.innerHTML = '<option value="ALL">All Years</option>';
+
+            branches.forEach(b => selectBranch.add(new Option(b, b)));
+            bloodGroups.forEach(bg => selectBlood.add(new Option(bg, bg)));
+            years.forEach(y => selectYear.add(new Option(y, y)));
+        }
+
+        function updateTable() {
+            const selectedBranch = document.getElementById("filterBranch").value;
+            const selectedBlood = document.getElementById("filterBlood").value;
+            const selectedYear = document.getElementById("filterYear").value;
+            const selectedWilling = document.getElementById("filterWilling").value;
+
+            let filtered = rawData.filter(item => {
+                const matchBranch = selectedBranch === "ALL" || item.branch === selectedBranch;
+                const matchBlood = selectedBlood === "ALL" || item.bloodGroup === selectedBlood;
+                const matchYear = selectedYear === "ALL" || item.year === selectedYear;
+                const matchWilling = selectedWilling === "ALL" || item.willing.trim().toUpperCase() === selectedWilling.toUpperCase();
+
+                return matchBranch && matchBlood && matchYear && matchWilling;
+            });
+
+            filtered.sort((a, b) => {
+                if (a.branch !== b.branch) return a.branch.localeCompare(b.branch);
+                if (a.bloodGroup !== b.bloodGroup) return a.bloodGroup.localeCompare(b.bloodGroup);
+                if (a.year !== b.year) return a.year.localeCompare(b.year);
+                if (a.name !== b.name) return a.name.localeCompare(b.name);
+                return a.usn.localeCompare(b.usn);
+            });
+
+            const tbody = document.querySelector("#donorTable tbody");
+            tbody.innerHTML = "";
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888;">No matching donor records found.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.branch}</td>
+                    <td><strong>${row.bloodGroup}</strong></td>
+                    <td>${row.year}</td>
+                    <td>${row.name}</td>
+                    <td>${row.usn}</td>
+                    <td>${row.mobile}</td>
+                    <td>${row.willing}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById("filterBranch").addEventListener("change", updateTable);
+        document.getElementById("filterBlood").addEventListener("change", updateTable);
+        document.getElementById("filterYear").addEventListener("change", updateTable);
+        document.getElementById("filterWilling").addEventListener("change", updateTable);
+    </script>
+</body>
+</html>
