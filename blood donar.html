@@ -44,9 +44,7 @@
        2. Base / reset
        ============================================================ */
     *, *::before, *::after { box-sizing: border-box; }
-
     [hidden] { display: none !important; }
-
     html { -webkit-text-size-adjust: 100%; }
 
     body {
@@ -139,7 +137,7 @@
        4. Form controls
        ============================================================ */
     .field { display: flex; flex-direction: column; gap: 6px; }
-    .field--grow { flex: 1 1 260px; }
+    .field--grow { flex: 1 1 220px; }
 
     .field__label {
       font-size: .78rem;
@@ -164,7 +162,6 @@
     }
 
     input::placeholder { color: var(--ink-subtle); }
-
     input:hover, select:hover { border-color: #cfd6de; }
 
     input:focus, select:focus {
@@ -291,7 +288,7 @@
        6. App shell
        ============================================================ */
     .app {
-      max-width: 1080px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 28px 20px 72px;
       animation: rise 320ms ease both;
@@ -392,12 +389,13 @@
     }
 
     /* ---------- Table ---------- */
-    .table-wrap { padding: 12px 0 4px; }
+    .table-wrap { padding: 12px 0 4px; overflow-x: auto; }
 
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
+      min-width: 900px;
     }
 
     thead th {
@@ -477,7 +475,7 @@
     }
 
     /* ============================================================
-       7. Responsive — table becomes stacked cards
+       7. Responsive
        ============================================================ */
     @media (max-width: 760px) {
       .app { padding: 22px 14px 56px; }
@@ -491,7 +489,7 @@
 
       .table-wrap { padding: 8px 0; }
 
-      table, tbody, tr, td { display: block; width: 100%; }
+      table, tbody, tr, td { display: block; width: 100%; min-width: 0; }
       thead { display: none; }
 
       tbody tr {
@@ -611,8 +609,12 @@
           <p class="stat__value" id="statAvailable">0</p>
         </article>
         <article class="stat">
-          <p class="stat__label">Blood groups</p>
-          <p class="stat__value" id="statGroups">0</p>
+          <p class="stat__label">Branches</p>
+          <p class="stat__value" id="statBranches">0</p>
+        </article>
+        <article class="stat">
+          <p class="stat__label">Years</p>
+          <p class="stat__value" id="statYears">0</p>
         </article>
       </section>
 
@@ -638,6 +640,20 @@
             </select>
           </div>
 
+          <div class="field">
+            <label class="field__label" for="branchFilter">Branch</label>
+            <select id="branchFilter">
+              <option value="all">All branches</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="yearFilter">Year</label>
+            <select id="yearFilter">
+              <option value="all">All years</option>
+            </select>
+          </div>
+
           <label class="checkbox" for="availableOnly">
             <input type="checkbox" id="availableOnly" />
             <span>Available only</span>
@@ -654,6 +670,8 @@
                 <th scope="col">Donor</th>
                 <th scope="col">Blood group</th>
                 <th scope="col">Phone</th>
+                <th scope="col">Branch</th>
+                <th scope="col">Year</th>
                 <th scope="col">Last donated</th>
                 <th scope="col">Status</th>
               </tr>
@@ -672,39 +690,49 @@
       "use strict";
 
       /* ==========================================================
-         Configuration
+         CONFIGURATION
+         ==========================================================
+         1. Publish your Google Sheet to the web as CSV:
+            File → Share → Publish to web → CSV.
+         2. Paste the CSV link below.
+         3. Expected columns (case-insensitive, spaces ignored):
+            Name | Blood Group | Phone | Branch | Year | Last Donated | Available
          ========================================================== */
-      const DEMO_PASSWORD = "yrc2024";          // Demo only — see notes below.
+      const SHEET_CSV_URL = "PASTE_YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+
+      const DEMO_PASSWORD = "yrc2024";
       const SESSION_KEY = "yrc.authenticated";
+
       const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-      /* ==========================================================
-         Data
-         ========================================================== */
-      const DONORS = [
-        { id: 1,  name: "Aarav Sharma",   group: "O+",  phone: "+91 98765 43210", department: "Computer Science", year: 3, lastDonated: "2025-01-12", available: true  },
-        { id: 2,  name: "Diya Nair",      group: "A+",  phone: "+91 98450 11223", department: "Electronics",      year: 2, lastDonated: "2024-12-03", available: true  },
-        { id: 3,  name: "Rohan Verma",    group: "B+",  phone: "+91 99001 55678", department: "Mechanical",       year: 4, lastDonated: "2024-08-21", available: false },
-        { id: 4,  name: "Ananya Iyer",    group: "AB+", phone: "+91 97400 33221", department: "Civil",            year: 3, lastDonated: "2025-02-09", available: true  },
-        { id: 5,  name: "Kabir Menon",    group: "O-",  phone: "+91 96320 77445", department: "Computer Science", year: 2, lastDonated: "2024-10-30", available: true  },
-        { id: 6,  name: "Meera Pillai",   group: "B-",  phone: "+91 98860 12098", department: "Electrical",       year: 4, lastDonated: "2024-06-15", available: false },
-        { id: 7,  name: "Aditya Rao",     group: "A-",  phone: "+91 90080 65512", department: "Information Tech",  year: 3, lastDonated: "2025-03-02", available: true  },
-        { id: 8,  name: "Sneha Kulkarni", group: "AB-", phone: "+91 99160 48870", department: "Electronics",      year: 2, lastDonated: "2024-09-27", available: true  },
-        { id: 9,  name: "Vikram Das",     group: "B+",  phone: "+91 97390 20114", department: "Mechanical",       year: 1, lastDonated: null,         available: true  },
-        { id: 10, name: "Ishita Bose",    group: "O+",  phone: "+91 98455 70931", department: "Civil",            year: 4, lastDonated: "2024-11-11", available: false }
+      /* Fallback data if the Google Sheet cannot be reached */
+      const FALLBACK_DONORS = [
+        { name: "Aarav Sharma",   group: "O+",  phone: "+91 98765 43210", branch: "Computer Science", year: "3", lastDonated: "2025-01-12", available: true  },
+        { name: "Diya Nair",      group: "A+",  phone: "+91 98450 11223", branch: "Electronics",      year: "2", lastDonated: "2024-12-03", available: true  },
+        { name: "Rohan Verma",    group: "B+",  phone: "+91 99001 55678", branch: "Mechanical",       year: "4", lastDonated: "2024-08-21", available: false },
+        { name: "Ananya Iyer",    group: "AB+", phone: "+91 97400 33221", branch: "Civil",            year: "3", lastDonated: "2025-02-09", available: true  },
+        { name: "Kabir Menon",    group: "O-",  phone: "+91 96320 77445", branch: "Computer Science", year: "2", lastDonated: "2024-10-30", available: true  },
+        { name: "Meera Pillai",   group: "B-",  phone: "+91 98860 12098", branch: "Electrical",       year: "4", lastDonated: "2024-06-15", available: false },
+        { name: "Aditya Rao",     group: "A-",  phone: "+91 90080 65512", branch: "Information Tech", year: "3", lastDonated: "2025-03-02", available: true  },
+        { name: "Sneha Kulkarni", group: "AB-", phone: "+91 99160 48870", branch: "Electronics",      year: "2", lastDonated: "2024-09-27", available: true  },
+        { name: "Vikram Das",     group: "B+",  phone: "+91 97390 20114", branch: "Mechanical",       year: "1", lastDonated: null,         available: true  },
+        { name: "Ishita Bose",    group: "O+",  phone: "+91 98455 70931", branch: "Civil",            year: "4", lastDonated: "2024-11-11", available: false }
       ];
 
       /* ==========================================================
-         State
+         STATE
          ========================================================== */
       const state = {
+        allDonors: [],
         query: "",
         group: "all",
+        branch: "all",
+        year: "all",
         availableOnly: false
       };
 
       /* ==========================================================
-         DOM references
+         DOM
          ========================================================== */
       const el = {
         loginScreen:   document.getElementById("loginScreen"),
@@ -715,20 +743,23 @@
         logoutBtn:     document.getElementById("logoutBtn"),
         search:        document.getElementById("search"),
         groupFilter:   document.getElementById("groupFilter"),
+        branchFilter:  document.getElementById("branchFilter"),
+        yearFilter:    document.getElementById("yearFilter"),
         availableOnly: document.getElementById("availableOnly"),
         donorRows:     document.getElementById("donorRows"),
         resultsCount:  document.getElementById("resultsCount"),
         emptyState:    document.getElementById("emptyState"),
         statTotal:     document.getElementById("statTotal"),
         statAvailable: document.getElementById("statAvailable"),
-        statGroups:    document.getElementById("statGroups")
+        statBranches:  document.getElementById("statBranches"),
+        statYears:     document.getElementById("statYears")
       };
 
       /* ==========================================================
-         Utilities
+         HELPERS
          ========================================================== */
       const escapeHtml = (value) =>
-        String(value).replace(/[&<>"']/g, (char) => ({
+        String(value ?? "").replace(/[&<>"']/g, (char) => ({
           "&": "&amp;",
           "<": "&lt;",
           ">": "&gt;",
@@ -747,20 +778,192 @@
       const formatDate = (iso) => {
         if (!iso) return null;
         const date = new Date(`${iso}T00:00:00`);
-        if (Number.isNaN(date.getTime())) return null;
+        if (Number.isNaN(date.getTime())) return iso;
         return date.toLocaleDateString("en-GB", {
           day: "2-digit", month: "short", year: "numeric"
         });
       };
 
       /* ==========================================================
-         Rendering
+         CSV PARSER
+         ========================================================== */
+      function parseCSV(text) {
+        const rows = [];
+        let row = [];
+        let field = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+
+          if (inQuotes) {
+            if (char === '"') {
+              if (text[i + 1] === '"') {
+                field += '"';
+                i++;
+              } else {
+                inQuotes = false;
+              }
+            } else {
+              field += char;
+            }
+          } else if (char === '"') {
+            inQuotes = true;
+          } else if (char === ",") {
+            row.push(field);
+            field = "";
+          } else if (char === "\n") {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = "";
+          } else if (char !== "\r") {
+            field += char;
+          }
+        }
+
+        if (field !== "" || row.length > 0) {
+          row.push(field);
+          rows.push(row);
+        }
+
+        return rows;
+      }
+
+      function normalizeHeader(header) {
+        return String(header || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+      }
+
+      /* ==========================================================
+         GOOGLE SHEET → DONORS
+         ========================================================== */
+      async function fetchDonorsFromSheet() {
+        if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR")) {
+          throw new Error("Google Sheet CSV URL is not configured.");
+        }
+
+        const response = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Sheet request failed: ${response.status}`);
+        }
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText).filter((row) =>
+          row.some((cell) => String(cell).trim() !== "")
+        );
+
+        if (rows.length < 2) {
+          throw new Error("Sheet is empty or missing data rows.");
+        }
+
+        const headers = rows[0].map(normalizeHeader);
+        const findIndex = (aliases) =>
+          headers.findIndex((header) => aliases.includes(header));
+
+        const idx = {
+          name:        findIndex(["name", "donorname", "fullname"]),
+          group:       findIndex(["bloodgroup", "group", "blood"]),
+          phone:       findIndex(["phone", "mobile", "contact", "phonenumber"]),
+          branch:      findIndex(["branch", "department", "dept"]),
+          year:        findIndex(["year", "studyyear", "currentyear"]),
+          lastDonated: findIndex(["lastdonated", "lastdonation", "lastdonateddate"]),
+          available:   findIndex(["available", "status", "availability"])
+        };
+
+        return rows.slice(1).map((row) => {
+          const get = (index) => (index >= 0 ? String(row[index] ?? "").trim() : "");
+
+          const availableRaw = get(idx.available).toLowerCase();
+
+          return {
+            name:        get(idx.name) || "Unnamed donor",
+            group:       get(idx.group).toUpperCase(),
+            phone:       get(idx.phone),
+            branch:      get(idx.branch) || "—",
+            year:        get(idx.year) || "—",
+            lastDonated: get(idx.lastDonated) || null,
+            available:   ["yes", "true", "1", "available", "y"].includes(availableRaw)
+          };
+        }).filter((donor) => donor.name && donor.group);
+      }
+
+      /* ==========================================================
+         STATS + DROPDOWNS
+         ========================================================== */
+      function renderStats() {
+        const donors = state.allDonors;
+
+        el.statTotal.textContent = donors.length;
+        el.statAvailable.textContent = donors.filter((d) => d.available).length;
+        el.statBranches.textContent = new Set(donors.map((d) => d.branch)).size;
+        el.statYears.textContent = new Set(donors.map((d) => d.year)).size;
+      }
+
+      function populateDropdown(select, values, allLabel, sortFn) {
+        // Keep the "All" option, remove the rest
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+
+        const unique = [...new Set(values.filter(Boolean))];
+
+        if (sortFn) {
+          unique.sort(sortFn);
+        } else {
+          unique.sort((a, b) => a.localeCompare(b));
+        }
+
+        const fragment = document.createDocumentFragment();
+        unique.forEach((value) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          fragment.appendChild(option);
+        });
+
+        select.appendChild(fragment);
+      }
+
+      function populateFilters() {
+        const donors = state.allDonors;
+
+        // Blood group: keep standard medical order
+        const groupsPresent = new Set(donors.map((d) => d.group));
+        const groups = BLOOD_GROUPS.filter((g) => groupsPresent.has(g));
+        populateDropdown(el.groupFilter, groups, "All groups");
+
+        // Branch
+        populateDropdown(
+          el.branchFilter,
+          donors.map((d) => d.branch),
+          "All branches"
+        );
+
+        // Year – numeric sort when possible
+        populateDropdown(
+          el.yearFilter,
+          donors.map((d) => d.year),
+          "All years",
+          (a, b) => {
+            const na = Number(a);
+            const nb = Number(b);
+            if (!Number.isNaN(na) && !Number.isNaN(nb)) return na - nb;
+            return String(a).localeCompare(String(b));
+          }
+        );
+      }
+
+      /* ==========================================================
+         FILTER + RENDER TABLE
          ========================================================== */
       function getVisibleDonors() {
         const query = state.query.trim().toLowerCase();
         const digits = query.replace(/\D/g, "");
 
-        return DONORS
+        return state.allDonors
           .filter((donor) => {
             const matchesQuery =
               !query ||
@@ -770,10 +973,22 @@
             const matchesGroup =
               state.group === "all" || donor.group === state.group;
 
+            const matchesBranch =
+              state.branch === "all" || donor.branch === state.branch;
+
+            const matchesYear =
+              state.year === "all" || donor.year === state.year;
+
             const matchesAvailability =
               !state.availableOnly || donor.available;
 
-            return matchesQuery && matchesGroup && matchesAvailability;
+            return (
+              matchesQuery &&
+              matchesGroup &&
+              matchesBranch &&
+              matchesYear &&
+              matchesAvailability
+            );
           })
           .sort((a, b) => a.name.localeCompare(b.name));
       }
@@ -786,7 +1001,7 @@
             <td data-label="Donor">
               <span class="donor">
                 <span class="donor__name">${escapeHtml(donor.name)}</span>
-                <span class="donor__meta">${escapeHtml(donor.department)} · Year ${escapeHtml(donor.year)}</span>
+                <span class="donor__meta">${escapeHtml(donor.branch)} · Year ${escapeHtml(donor.year)}</span>
               </span>
             </td>
             <td data-label="Blood group">
@@ -797,6 +1012,8 @@
                 ${escapeHtml(donor.phone)}
               </a>
             </td>
+            <td data-label="Branch">${escapeHtml(donor.branch)}</td>
+            <td data-label="Year">${escapeHtml(donor.year)}</td>
             <td data-label="Last donated">
               ${lastDonated
                 ? `<span class="muted">${escapeHtml(lastDonated)}</span>`
@@ -819,37 +1036,33 @@
 
         el.resultsCount.textContent = donors.length === 1
           ? "Showing 1 donor"
-          : `Showing ${donors.length} of ${DONORS.length} donors`;
-      }
-
-      function renderStats() {
-        el.statTotal.textContent = DONORS.length;
-        el.statAvailable.textContent = DONORS.filter((d) => d.available).length;
-        el.statGroups.textContent = new Set(DONORS.map((d) => d.group)).size;
-      }
-
-      function populateGroupFilter() {
-        const present = new Set(DONORS.map((d) => d.group));
-        const groups = BLOOD_GROUPS.filter((g) => present.has(g));
-
-        const fragment = document.createDocumentFragment();
-        groups.forEach((group) => {
-          const option = document.createElement("option");
-          option.value = group;
-          option.textContent = group;
-          fragment.appendChild(option);
-        });
-
-        el.groupFilter.appendChild(fragment);
+          : `Showing ${donors.length} of ${state.allDonors.length} donors`;
       }
 
       /* ==========================================================
-         Authentication (demo gate — see notes)
+         DATA LOADING
+         ========================================================== */
+      async function loadDonors() {
+        try {
+          state.allDonors = await fetchDonorsFromSheet();
+        } catch (error) {
+          console.warn("Using fallback donor data:", error.message);
+          state.allDonors = FALLBACK_DONORS;
+        }
+
+        renderStats();
+        populateFilters();
+        render();
+      }
+
+      /* ==========================================================
+         AUTH
          ========================================================== */
       function showApp() {
         el.loginScreen.hidden = true;
         el.app.hidden = false;
         el.search.focus();
+        loadDonors();
       }
 
       function showLogin() {
@@ -880,7 +1093,7 @@
         el.loginError.textContent = "";
         try {
           sessionStorage.setItem(SESSION_KEY, "1");
-        } catch (_) { /* storage unavailable — ignore */ }
+        } catch (_) { /* ignore */ }
 
         showApp();
       }
@@ -893,7 +1106,7 @@
       }
 
       /* ==========================================================
-         Events
+         EVENTS
          ========================================================== */
       function bindEvents() {
         el.loginForm.addEventListener("submit", handleLogin);
@@ -909,6 +1122,16 @@
           render();
         });
 
+        el.branchFilter.addEventListener("change", (event) => {
+          state.branch = event.target.value;
+          render();
+        });
+
+        el.yearFilter.addEventListener("change", (event) => {
+          state.year = event.target.value;
+          render();
+        });
+
         el.availableOnly.addEventListener("change", (event) => {
           state.availableOnly = event.target.checked;
           render();
@@ -916,12 +1139,9 @@
       }
 
       /* ==========================================================
-         Init
+         INIT
          ========================================================== */
       function init() {
-        populateGroupFilter();
-        renderStats();
-        render();
         bindEvents();
 
         let isAuthenticated = false;
