@@ -109,7 +109,7 @@
       box-shadow: 0 20px 45px -26px rgba(0, 0, 0, .9);
     }
 
-    /* ============ BRAND ICON (AUTH) ============ */
+    /* ============ AUTH ICON ============ */
     .auth-icon {
       width: 66px; height: 66px;
       display: grid; place-items: center;
@@ -277,6 +277,7 @@
     .i-cyan    { background: linear-gradient(135deg, #06b6d4, #0ea5e9); }
     .i-emerald { background: linear-gradient(135deg, #10b981, #22c55e); }
     .i-amber   { background: linear-gradient(135deg, #f59e0b, #eab308); }
+    .i-rose    { background: linear-gradient(135deg, #f43f5e, #fb7185); }
     .stat-value {
       font-size: 1.55rem; font-weight: 800;
       letter-spacing: -.03em; line-height: 1.15;
@@ -325,7 +326,7 @@
       display: inline-flex; align-items: center; gap: .35rem;
     }
 
-    /* ============ SELECTED CLASS PANEL ============ */
+    /* ============ SELECTED PANEL ============ */
     .selected-panel {
       border-radius: 1.25rem;
       overflow: hidden;
@@ -357,6 +358,80 @@
       color: #c7d2fe;
     }
 
+    /* ============ MANAGE LISTS ============ */
+    .list-item {
+      display: flex; align-items: flex-start; gap: .9rem;
+      padding: .85rem 1rem;
+      border-radius: .9rem;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .55);
+      margin-bottom: .6rem;
+      transition: .2s;
+    }
+    .list-item:last-child { margin-bottom: 0; }
+    .list-item:hover {
+      border-color: rgba(99, 102, 241, .4);
+      background: rgba(99, 102, 241, .05);
+    }
+    [data-bs-theme="dark"] .list-item { background: rgba(255, 255, 255, .03); }
+    [data-bs-theme="dark"] .list-item:hover { background: rgba(99, 102, 241, .09); }
+
+    .list-item-icon {
+      width: 38px; height: 38px; flex: 0 0 38px;
+      display: grid; place-items: center;
+      border-radius: .7rem;
+      color: #fff; font-size: .95rem;
+    }
+    .list-item-body { flex: 1; min-width: 0; }
+    .list-item-title {
+      font-weight: 700; font-size: .92rem;
+      margin-bottom: .15rem;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+    .list-item-sub {
+      font-size: .78rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: .35rem .6rem;
+      align-items: center;
+    }
+    .list-item-actions {
+      display: flex; gap: .35rem; flex-shrink: 0;
+    }
+
+    .btn-edit {
+      width: 32px; height: 32px;
+      display: grid; place-items: center;
+      border-radius: .55rem;
+      border: 1px solid rgba(99, 102, 241, .3);
+      background: rgba(99, 102, 241, .1);
+      color: #4f46e5;
+      font-size: .85rem;
+      transition: .2s;
+    }
+    .btn-edit:hover {
+      background: rgba(99, 102, 241, .22);
+      color: #4338ca;
+      transform: translateY(-1px);
+    }
+    [data-bs-theme="dark"] .btn-edit {
+      background: rgba(129, 140, 248, .15);
+      color: #a5b4fc;
+      border-color: rgba(129, 140, 248, .3);
+    }
+    [data-bs-theme="dark"] .btn-edit:hover {
+      background: rgba(129, 140, 248, .3);
+      color: #c7d2fe;
+    }
+
+    .link-mini {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex; align-items: center; gap: .2rem;
+    }
+    .link-mini:hover { text-decoration: underline; }
+    [data-bs-theme="dark"] .link-mini { color: #a5b4fc; }
+
     /* ============ MODALS ============ */
     .modal-content {
       border-radius: 1.25rem;
@@ -372,10 +447,7 @@
       border-bottom: 1px solid var(--line);
       padding: 1rem 1.25rem;
     }
-    .modal-header .modal-title {
-      font-weight: 700;
-      font-size: 1.02rem;
-    }
+    .modal-header .modal-title { font-weight: 700; font-size: 1.02rem; }
     [data-bs-theme="dark"] .modal-header { border-bottom-color: rgba(255, 255, 255, .08); }
     .modal-footer {
       border-top: 1px solid var(--line);
@@ -522,6 +594,14 @@
     }
     .roll-grid::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, .55); }
 
+    .mini-loader {
+      display: flex; align-items: center; justify-content: center;
+      gap: .55rem;
+      padding: 1.2rem 0;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
     @media (max-width: 575.98px) {
       .roll-grid { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); }
       .roll-box { height: 42px; font-size: .85rem; }
@@ -561,7 +641,6 @@
           <p class="text-secondary small mb-0">Manage classes, share resources and track attendance.</p>
         </div>
 
-        <!-- Segmented Auth Tabs -->
         <ul class="nav segmented mb-4" role="tablist">
           <li class="nav-item">
             <button class="nav-link active" type="button" id="tabLogin" onclick="switchAuth('login')">Sign In</button>
@@ -573,7 +652,6 @@
 
         <div id="authAlert" class="alert d-none small py-2 mb-3" role="alert"></div>
 
-        <!-- Login Form -->
         <form id="formLogin" onsubmit="handleLogin(event)" novalidate>
           <div class="mb-3">
             <label class="form-label" for="logEmail">Email Address</label>
@@ -589,7 +667,6 @@
           </button>
         </form>
 
-        <!-- Register Form -->
         <form id="formReg" class="d-none" onsubmit="handleRegister(event)" novalidate>
           <div class="mb-3">
             <label class="form-label" for="regName">Full Name</label>
@@ -677,12 +754,10 @@
             <h3 class="h5 fw-bold mb-0" id="activeSubjectName">Subject</h3>
           </div>
           <div class="d-flex flex-wrap gap-2">
-            <button class="btn btn-success-grad btn-sm" data-bs-toggle="modal" data-bs-target="#postModal">
+            <button class="btn btn-success-grad btn-sm" id="btnOpenNewPost" data-bs-toggle="modal" data-bs-target="#postModal">
               <i class="bi bi-cloud-arrow-up me-1"></i>Post Material
             </button>
-            <button class="btn btn-danger-grad btn-sm"
-                    data-bs-toggle="modal" data-bs-target="#attendanceModal"
-                    onclick="openAttendanceModal()">
+            <button class="btn btn-danger-grad btn-sm" id="btnOpenNewAtt" onclick="openAttendanceModal()">
               <i class="bi bi-grid-3x3-gap me-1"></i>Mark Attendance
             </button>
           </div>
@@ -693,6 +768,32 @@
             <div>
               <strong>Share code</strong> with your students so they can access notes, resources and attendance records for this class.
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manage: Posts + Attendance -->
+      <div id="classManageRow" class="row g-3 mt-1 d-none">
+        <div class="col-lg-6">
+          <div class="glass-card p-3 p-md-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="h6 fw-bold mb-0 text-uppercase text-secondary" style="letter-spacing:.09em;">
+                <i class="bi bi-journal-text me-2"></i>Posted Materials
+              </h3>
+              <span class="badge rounded-pill text-bg-light border" id="postsCountPill">0</span>
+            </div>
+            <div id="facultyPostsList"></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="glass-card p-3 p-md-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="h6 fw-bold mb-0 text-uppercase text-secondary" style="letter-spacing:.09em;">
+                <i class="bi bi-calendar-check me-2"></i>Attendance Records
+              </h3>
+              <span class="badge rounded-pill text-bg-light border" id="attCountPill">0</span>
+            </div>
+            <div id="facultyAttList"></div>
           </div>
         </div>
       </div>
@@ -748,13 +849,15 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: Post Material ================= -->
+  <!-- ================= MODAL: Post / Edit Material ================= -->
   <div class="modal fade" id="postModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form onsubmit="handleCreatePost(event)" novalidate>
+        <form id="formPost" onsubmit="handleCreatePost(event)" novalidate>
           <div class="modal-header">
-            <h5 class="modal-title"><i class="bi bi-cloud-arrow-up text-success me-2"></i>Post Material</h5>
+            <h5 class="modal-title" id="postModalTitle">
+              <i class="bi bi-cloud-arrow-up text-success me-2"></i>Post Material
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -790,13 +893,15 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: Attendance Grid ================= -->
+  <!-- ================= MODAL: Attendance (new / edit) ================= -->
   <div class="modal fade" id="attendanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <form onsubmit="handleCreateAttendance(event)" novalidate>
+        <form id="formAtt" onsubmit="handleCreateAttendance(event)" novalidate>
           <div class="modal-header">
-            <h5 class="modal-title"><i class="bi bi-person-check text-danger me-2"></i>Mark Class Attendance</h5>
+            <h5 class="modal-title" id="attModalTitle">
+              <i class="bi bi-person-check text-danger me-2"></i>Mark Class Attendance
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -818,7 +923,6 @@
               </div>
             </div>
 
-            <!-- Stats Bar -->
             <div class="stats-bar mb-3">
               <div class="d-flex flex-wrap gap-2">
                 <span class="stat-pill pill-total">
@@ -841,7 +945,6 @@
               </div>
             </div>
 
-            <!-- Hint -->
             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
               <small class="text-secondary">
                 <i class="bi bi-info-circle me-1"></i>Tap any roll number to toggle <strong class="text-danger">Absent</strong>.
@@ -849,7 +952,6 @@
               <small class="text-danger fw-bold" id="absentSummaryText"></small>
             </div>
 
-            <!-- Interactive Grid -->
             <div id="rollGridContainer" class="roll-grid mb-3"></div>
 
             <div class="mb-0">
@@ -880,10 +982,42 @@
     let teacherClasses = [];
     let selectedClass = null;
 
+    /* Posts / attendance for the currently selected class */
+    let classPosts = [];
+    let classAttendance = [];
+
+    /* Edit-mode identifiers (null = "create new" mode) */
+    let editingPostId = null;
+    let editingAttId = null;
+
     let rollStatus = {};
     let totalRolls = 60;
 
     const $ = (id) => document.getElementById(id);
+
+    /* ==================== HELPERS ==================== */
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function safeUrl(value) {
+      if (!value) return '';
+      try {
+        const url = new URL(String(value), window.location.href);
+        return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
+      } catch (e) { return ''; }
+    }
+
+    function categoryMeta(cat) {
+      const c = String(cat || '').toLowerCase();
+      if (c.includes('note'))      return { icon: 'bi-file-earmark-text', cls: 'i-indigo' };
+      if (c.includes('resource'))  return { icon: 'bi-link-45deg',       cls: 'i-cyan' };
+      if (c.includes('timetable')) return { icon: 'bi-calendar-week',    cls: 'i-amber' };
+      if (c.includes('notice'))    return { icon: 'bi-megaphone',        cls: 'i-rose' };
+      return { icon: 'bi-journal-text', cls: 'i-indigo' };
+    }
 
     /* ==================== API ==================== */
     async function callBackend(action, data = {}) {
@@ -1004,9 +1138,14 @@
       currentPassword = '';
       selectedClass = null;
       teacherClasses = [];
+      classPosts = [];
+      classAttendance = [];
+      editingPostId = null;
+      editingAttId = null;
 
       $('dashBox').classList.add('d-none');
       $('classDetailsCard').classList.add('d-none');
+      $('classManageRow').classList.add('d-none');
       $('authBox').classList.remove('d-none');
       $('formLogin').reset();
       showToast('Signed out successfully.', 'info');
@@ -1045,14 +1184,16 @@
 
         container.innerHTML = teacherClasses.map((c) => `
           <div class="col-md-6 col-lg-4">
-            <div class="card-class h-100 p-3 p-md-4" onclick="selectClass('${String(c.code).replace(/'/g, "\\'")}')">
+            <div class="card-class h-100 p-3 p-md-4"
+                 data-code="${escapeHtml(c.code)}"
+                 role="button" tabindex="0">
               <div class="d-flex justify-content-between align-items-start mb-3">
-                <span class="badge-code">${c.code}</span>
+                <span class="badge-code">${escapeHtml(c.code)}</span>
                 <i class="bi bi-chevron-right text-secondary"></i>
               </div>
-              <h3 class="h6 fw-bold mb-2 text-truncate" title="${c.subject}">${c.subject}</h3>
+              <h3 class="h6 fw-bold mb-2 text-truncate" title="${escapeHtml(c.subject)}">${escapeHtml(c.subject)}</h3>
               <p class="text-secondary small mb-3">
-                ${c.branch} &middot; Sem ${c.semester} &middot; Div ${c.division}
+                ${escapeHtml(c.branch)} &middot; Sem ${escapeHtml(c.semester)} &middot; Div ${escapeHtml(c.division)}
               </p>
               <span class="class-arrow">
                 Manage Class <i class="bi bi-arrow-right-short" style="font-size:1rem;"></i>
@@ -1060,12 +1201,20 @@
             </div>
           </div>
         `).join('');
+
+        /* Event delegation for class cards */
+        container.querySelectorAll('.card-class').forEach((card) => {
+          card.addEventListener('click', () => selectClass(card.dataset.code));
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectClass(card.dataset.code); }
+          });
+        });
       } catch (err) {
         showToast(err.message, 'error');
       }
     }
 
-    function selectClass(code) {
+    async function selectClass(code) {
       selectedClass = teacherClasses.find((c) => c.code === code);
       if (!selectedClass) return;
 
@@ -1079,8 +1228,139 @@
       panel.classList.remove('animate-in');
       void panel.offsetWidth;
       panel.classList.add('animate-in');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      /* Show manage row and load its data */
+      $('classManageRow').classList.remove('d-none');
+      await loadClassData(selectedClass.code);
+
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    /* ==================== LOAD POSTS + ATTENDANCE ==================== */
+    async function loadClassData(code) {
+      const postsWrap = $('facultyPostsList');
+      const attWrap   = $('facultyAttList');
+
+      postsWrap.innerHTML = `<div class="mini-loader"><span class="spinner-border spinner-border-sm"></span>Loading materials…</div>`;
+      attWrap.innerHTML   = `<div class="mini-loader"><span class="spinner-border spinner-border-sm"></span>Loading attendance…</div>`;
+
+      try {
+        /* Reuses the same endpoint the student portal uses. */
+        const data = await callBackend('getStudentClassData', { classCode: code });
+
+        classPosts = (Array.isArray(data.posts) ? data.posts : []).map((p, i) => ({
+          ...p,
+          _id: (p.id !== undefined && p.id !== null) ? p.id : (p.postId ?? `p_${i}`)
+        }));
+
+        classAttendance = (Array.isArray(data.attendance) ? data.attendance : []).map((a, i) => ({
+          ...a,
+          _id: (a.id !== undefined && a.id !== null) ? a.id : (a.attId ?? `a_${i}`)
+        }));
+
+        renderFacultyPosts();
+        renderFacultyAttendance();
+      } catch (err) {
+        postsWrap.innerHTML = `<div class="text-danger small text-center py-3">${escapeHtml(err.message)}</div>`;
+        attWrap.innerHTML   = `<div class="text-danger small text-center py-3">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function renderFacultyPosts() {
+      const wrap = $('facultyPostsList');
+      $('postsCountPill').textContent = classPosts.length;
+
+      if (!classPosts.length) {
+        wrap.innerHTML = `
+          <div class="text-center py-4 text-secondary small">
+            <i class="bi bi-inbox d-block mb-2" style="font-size:1.6rem;opacity:.6;"></i>
+            No materials posted yet.
+          </div>`;
+        return;
+      }
+
+      wrap.innerHTML = classPosts.map((p) => {
+        const meta = categoryMeta(p.category);
+        const url = safeUrl(p.link);
+        return `
+          <div class="list-item">
+            <div class="list-item-icon ${meta.cls}"><i class="bi ${meta.icon}"></i></div>
+            <div class="list-item-body">
+              <div class="list-item-title">${escapeHtml(p.title || 'Untitled')}</div>
+              <div class="list-item-sub">
+                <span class="badge text-bg-light border">${escapeHtml(p.category || 'General')}</span>
+                <span>${escapeHtml(p.date || '')}</span>
+                ${url ? `<a class="link-mini" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+                          <i class="bi bi-box-arrow-up-right"></i>Link
+                        </a>` : ''}
+              </div>
+            </div>
+            <div class="list-item-actions">
+              <button class="btn-edit" type="button"
+                      data-action="edit-post" data-id="${escapeHtml(String(p._id))}"
+                      title="Edit this material">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderFacultyAttendance() {
+      const wrap = $('facultyAttList');
+      $('attCountPill').textContent = classAttendance.length;
+
+      if (!classAttendance.length) {
+        wrap.innerHTML = `
+          <div class="text-center py-4 text-secondary small">
+            <i class="bi bi-calendar-x d-block mb-2" style="font-size:1.6rem;opacity:.6;"></i>
+            No attendance recorded yet.
+          </div>`;
+        return;
+      }
+
+      wrap.innerHTML = classAttendance.map((a) => {
+        const total   = Number(a.total ?? a.totalCount) || 0;
+        const present = Number(a.present ?? a.presentCount) || 0;
+        const absent  = Number(a.absent ?? a.absentCount) || 0;
+        const pct = total ? Math.round((present / total) * 100) : 0;
+        const toneCls = pct >= 75 ? 'text-success' : pct >= 50 ? 'text-warning' : 'text-danger';
+
+        return `
+          <div class="list-item">
+            <div class="list-item-icon i-emerald"><i class="bi bi-calendar-check"></i></div>
+            <div class="list-item-body">
+              <div class="list-item-title">${escapeHtml(a.topic || 'Session')}</div>
+              <div class="list-item-sub">
+                <span><i class="bi bi-calendar3 me-1"></i>${escapeHtml(a.date || '')}</span>
+                <span class="${toneCls} fw-semibold">${present}/${total} present (${pct}%)</span>
+                ${absent > 0 ? `<span class="text-danger">${absent} absent</span>` : ''}
+              </div>
+            </div>
+            <div class="list-item-actions">
+              <button class="btn-edit" type="button"
+                      data-action="edit-att" data-id="${escapeHtml(String(a._id))}"
+                      title="Edit this record">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ---- Event delegation: posts list ---- */
+    $('facultyPostsList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action="edit-post"]');
+      if (!btn) return;
+      openEditPost(btn.dataset.id);
+    });
+
+    /* ---- Event delegation: attendance list ---- */
+    $('facultyAttList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action="edit-att"]');
+      if (!btn) return;
+      openEditAttendance(btn.dataset.id);
+    });
 
     /* ==================== CREATE CLASS ==================== */
     async function handleCreateClass(e) {
@@ -1104,7 +1384,7 @@
         });
         bootstrap.Modal.getInstance($('newClassModal')).hide();
         e.target.reset();
-        showToast(`Class created! Unique code: <strong>${res.classCode}</strong>`, 'success', 6500);
+        showToast(`Class created! Unique code: <strong>${escapeHtml(res.classCode)}</strong>`, 'success', 6500);
         loadClasses();
       } catch (err) {
         showToast(err.message, 'error');
@@ -1113,33 +1393,72 @@
       }
     }
 
-    /* ==================== CREATE POST ==================== */
+    /* ==================== POST: CREATE / UPDATE ==================== */
+    function resetPostModal() {
+      editingPostId = null;
+      $('postModalTitle').innerHTML = '<i class="bi bi-cloud-arrow-up text-success me-2"></i>Post Material';
+      $('btnSavePost').innerHTML = '<i class="bi bi-send me-1"></i>Publish to Classroom';
+      $('formPost').reset();
+    }
+
+    function openEditPost(id) {
+      const post = classPosts.find((p) => String(p._id) === String(id));
+      if (!post) { showToast('Material not found.', 'error'); return; }
+
+      editingPostId = post._id;
+
+      $('postModalTitle').innerHTML = '<i class="bi bi-pencil-square text-primary me-2"></i>Edit Material';
+      $('btnSavePost').innerHTML   = '<i class="bi bi-check2 me-1"></i>Update Material';
+
+      $('postCat').value   = post.category || 'Notes';
+      $('postTitle').value = post.title || '';
+      $('postLink').value  = post.link || '';
+      $('postDesc').value  = post.description || '';
+
+      bootstrap.Modal.getOrCreateInstance($('postModal')).show();
+    }
+
+    /* Reset when "Post Material" button opens the modal fresh */
+    $('btnOpenNewPost').addEventListener('click', resetPostModal);
+    /* Reset on modal hide (covers X, ESC, backdrop) */
+    $('postModal').addEventListener('hidden.bs.modal', resetPostModal);
+
     async function handleCreatePost(e) {
       e.preventDefault();
-      if (!selectedClass) {
-        showToast('Please select a class first.', 'error');
-        return;
-      }
+      if (!selectedClass) { showToast('Please select a class first.', 'error'); return; }
+
+      const isEdit = editingPostId !== null;
       const btn = $('btnSavePost');
       btn.disabled = true;
 
       const payload = {
         classCode: selectedClass.code,
-        category: $('postCat').value,
-        title: $('postTitle').value,
-        link: $('postLink').value,
+        category:  $('postCat').value,
+        title:     $('postTitle').value,
+        link:      $('postLink').value,
         description: $('postDesc').value
       };
 
       try {
-        await callBackend('addClassPost', {
-          email: currentTeacher.email,
-          password: currentPassword,
-          postData: payload
-        });
+        if (isEdit) {
+          payload.id = editingPostId;
+          await callBackend('updateClassPost', {
+            email: currentTeacher.email,
+            password: currentPassword,
+            postData: payload
+          });
+          showToast(`Material updated on <strong>${escapeHtml(selectedClass.code)}</strong>.`, 'success');
+        } else {
+          await callBackend('addClassPost', {
+            email: currentTeacher.email,
+            password: currentPassword,
+            postData: payload
+          });
+          showToast(`Material published to <strong>${escapeHtml(selectedClass.code)}</strong>.`, 'success');
+        }
+
         bootstrap.Modal.getInstance($('postModal')).hide();
-        e.target.reset();
-        showToast(`Material published to <strong>${selectedClass.code}</strong>.`, 'success');
+        await loadClassData(selectedClass.code);
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
@@ -1147,17 +1466,7 @@
       }
     }
 
-    /* ==================== ATTENDANCE GRID ==================== */
-    function openAttendanceModal() {
-      if (!selectedClass) {
-        showToast('Please select a class first.', 'error');
-        return;
-      }
-      const today = new Date().toISOString().split('T')[0];
-      $('attDate').value = today;
-      generateRollGrid();
-    }
-
+    /* ==================== ATTENDANCE: GRID ==================== */
     function generateRollGrid() {
       const strengthInput = parseInt($('attStrength').value, 10);
       totalRolls = strengthInput > 0 ? strengthInput : 60;
@@ -1168,8 +1477,7 @@
 
       const fragment = document.createDocumentFragment();
       for (let i = 1; i <= totalRolls; i++) {
-        rollStatus[i] = true; /* Default: Present */
-
+        rollStatus[i] = true; /* default: present */
         const box = document.createElement('div');
         box.id = 'rollBox_' + i;
         box.className = 'roll-box roll-present';
@@ -1179,14 +1487,13 @@
         fragment.appendChild(box);
       }
       container.appendChild(fragment);
-
       updateGridStats();
     }
 
     function toggleRoll(rollNo) {
       rollStatus[rollNo] = !rollStatus[rollNo];
       const box = $('rollBox_' + rollNo);
-
+      if (!box) return;
       if (rollStatus[rollNo]) {
         box.className = 'roll-box roll-present';
         box.title = 'Roll ' + rollNo + ': Present';
@@ -1216,31 +1523,119 @@
     function updateGridStats() {
       let presentCount = 0;
       const absentees = [];
-
       for (let i = 1; i <= totalRolls; i++) {
         if (rollStatus[i]) presentCount++;
         else absentees.push(i);
       }
-
       const absentCount = totalRolls - presentCount;
-      $('statTotal').textContent = totalRolls;
+      $('statTotal').textContent   = totalRolls;
       $('statPresent').textContent = presentCount;
-      $('statAbsent').textContent = absentCount;
+      $('statAbsent').textContent  = absentCount;
 
       const summary = $('absentSummaryText');
-      if (absentees.length > 0) {
-        summary.textContent = 'Absent (' + absentees.length + '): ' + absentees.join(', ');
-      } else {
-        summary.textContent = 'All Students Present';
-      }
+      summary.textContent = absentees.length
+        ? 'Absent (' + absentees.length + '): ' + absentees.join(', ')
+        : 'All Students Present';
     }
 
+    /* ==================== ATTENDANCE: NEW MODE ==================== */
+    function openAttendanceModal() {
+      if (!selectedClass) { showToast('Please select a class first.', 'error'); return; }
+
+      editingAttId = null;
+      $('attModalTitle').innerHTML = '<i class="bi bi-person-check text-danger me-2"></i>Mark Class Attendance';
+      $('btnSaveAtt').innerHTML    = '<i class="bi bi-save me-1"></i>Save Attendance Record';
+
+      $('formAtt').reset();
+      $('attDate').value = new Date().toISOString().split('T')[0];
+      $('attStrength').value = 60;
+      generateRollGrid();
+
+      bootstrap.Modal.getOrCreateInstance($('attendanceModal')).show();
+    }
+
+    /* ==================== ATTENDANCE: EDIT MODE ==================== */
+    function parseAbsentRolls(raw) {
+      const set = new Set();
+      const str = String(raw ?? '').trim();
+      if (!str || str.toLowerCase() === 'none') return set;
+      str.split(/[,;\s]+/).forEach((tok) => {
+        const n = parseInt(tok, 10);
+        if (!isNaN(n) && n > 0) set.add(n);
+      });
+      return set;
+    }
+
+    function openEditAttendance(id) {
+      const att = classAttendance.find((a) => String(a._id) === String(id));
+      if (!att) { showToast('Attendance record not found.', 'error'); return; }
+
+      editingAttId = att._id;
+
+      $('attModalTitle').innerHTML = '<i class="bi bi-pencil-square text-danger me-2"></i>Edit Attendance';
+      $('btnSaveAtt').innerHTML    = '<i class="bi bi-check2 me-1"></i>Update Attendance';
+
+      const total = parseInt(att.total ?? att.totalCount, 10) || 60;
+      totalRolls = total;
+
+      $('attDate').value      = att.date || '';
+      $('attTopic').value     = att.topic || '';
+      $('attStrength').value  = total;
+      $('attRem').value       = att.remarks || '';
+
+      /* Rebuild the roll grid from absentRolls */
+      const absentSet = parseAbsentRolls(att.absentRolls);
+
+      /* If absentRolls wasn't usable but an absent count was given,
+         fall back to marking the first N rolls absent — so the grid
+         still reflects the record rather than showing everyone present. */
+      if (absentSet.size === 0) {
+        const declaredAbsent = Number(att.absent ?? att.absentCount) || 0;
+        if (declaredAbsent > 0 && declaredAbsent < total) {
+          for (let i = 1; i <= declaredAbsent; i++) absentSet.add(i);
+        }
+      }
+
+      rollStatus = {};
+      const container = $('rollGridContainer');
+      container.innerHTML = '';
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 1; i <= total; i++) {
+        const isPresent = !absentSet.has(i);
+        rollStatus[i] = isPresent;
+
+        const box = document.createElement('div');
+        box.id = 'rollBox_' + i;
+        box.className = 'roll-box ' + (isPresent ? 'roll-present' : 'roll-absent');
+        box.textContent = i;
+        box.title = 'Roll ' + i + ': ' + (isPresent ? 'Present' : 'Absent');
+        box.onclick = () => toggleRoll(i);
+        fragment.appendChild(box);
+      }
+      container.appendChild(fragment);
+      updateGridStats();
+
+      bootstrap.Modal.getOrCreateInstance($('attendanceModal')).show();
+    }
+
+    /* Reset state when attendance modal is closed */
+    $('attendanceModal').addEventListener('hidden.bs.modal', () => {
+      editingAttId = null;
+      $('attModalTitle').innerHTML = '<i class="bi bi-person-check text-danger me-2"></i>Mark Class Attendance';
+      $('btnSaveAtt').innerHTML    = '<i class="bi bi-save me-1"></i>Save Attendance Record';
+      $('formAtt').reset();
+      rollStatus = {};
+      totalRolls = 60;
+      $('rollGridContainer').innerHTML = '';
+    });
+
+    /* ==================== ATTENDANCE: SUBMIT ==================== */
     async function handleCreateAttendance(e) {
       e.preventDefault();
-      if (!selectedClass) {
-        showToast('Please select a class first.', 'error');
-        return;
-      }
+      if (!selectedClass) { showToast('Please select a class first.', 'error'); return; }
+
+      const isEdit = editingAttId !== null;
 
       let presentCount = 0;
       const absentees = [];
@@ -1264,18 +1659,31 @@
       btn.disabled = true;
 
       try {
-        await callBackend('addClassAttendance', {
-          email: currentTeacher.email,
-          password: currentPassword,
-          attData: payload
-        });
+        if (isEdit) {
+          payload.id = editingAttId;
+          await callBackend('updateClassAttendance', {
+            email: currentTeacher.email,
+            password: currentPassword,
+            attData: payload
+          });
+          showToast(
+            `Attendance updated for <strong>${escapeHtml(selectedClass.code)}</strong> — ${payload.presentCount}/${payload.totalCount} present.`,
+            'success', 5000
+          );
+        } else {
+          await callBackend('addClassAttendance', {
+            email: currentTeacher.email,
+            password: currentPassword,
+            attData: payload
+          });
+          showToast(
+            `Attendance saved for <strong>${escapeHtml(selectedClass.code)}</strong> — ${payload.presentCount}/${payload.totalCount} present.`,
+            'success', 5000
+          );
+        }
+
         bootstrap.Modal.getInstance($('attendanceModal')).hide();
-        e.target.reset();
-        showToast(
-          `Attendance saved for <strong>${selectedClass.code}</strong> — ${payload.presentCount}/${payload.totalCount} present.`,
-          'success',
-          5000
-        );
+        await loadClassData(selectedClass.code);
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
@@ -1299,7 +1707,6 @@
         applyTheme(current === 'dark' ? 'light' : 'dark');
       });
 
-      /* Focus first field on load */
       $('logEmail').focus();
     });
   </script>
