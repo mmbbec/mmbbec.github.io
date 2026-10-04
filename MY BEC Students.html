@@ -80,6 +80,15 @@
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .fade-up { animation: fadeUp .35s cubic-bezier(.22, 1, .36, 1) both; }
+
+  .saved-class-item { transition: border-color .15s, background-color .15s, transform .15s; }
+  .saved-class-item:hover { transform: translateY(-1px); }
+  .saved-class-item .remove-saved { opacity: 0; transition: opacity .15s; }
+  .saved-class-item:hover .remove-saved,
+  .saved-class-item:focus-within .remove-saved { opacity: 1; }
+  @media (hover: none) {
+    .saved-class-item .remove-saved { opacity: 1; }
+  }
 </style>
 </head>
 
@@ -116,8 +125,8 @@
 </nav>
 
 <!-- ================= CODE LOOKUP ================= -->
-<div id="lookupView" class="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
-  <div class="w-full max-w-[460px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up">
+<div id="lookupView" class="min-h-[calc(100vh-64px)] flex items-start md:items-center justify-center p-4">
+  <div class="w-full max-w-[500px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up my-4 md:my-0">
     <div class="p-8 pb-6 text-center">
       <div class="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white text-[22px]"
            style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #06b6d4 100%); box-shadow: 0 18px 32px -18px rgba(79,70,229,0.95);">
@@ -142,14 +151,28 @@
       </form>
 
       <div id="lookupAlert" class="hidden mt-3 text-[12px] py-2 px-3 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300"></div>
+    </div>
 
-      <p class="text-[11px] text-slate-500 mt-5 flex items-center justify-center gap-1.5">
-        <i class="bi bi-info-circle"></i> Class codes are not case-sensitive.
-      </p>
+    <!-- ============ SAVED CLASSES PANEL ============ -->
+    <div id="savedClassesWrap" class="hidden px-8 pb-6 text-left">
+      <div class="pt-5 border-t border-slate-200 dark:border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i class="bi bi-bookmark-star-fill text-indigo-500 text-[13px]"></i>
+            <span class="text-[11px] font-semibold tracking-widest uppercase text-slate-500">Saved Classes</span>
+            <span id="savedCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[10px]">0</span>
+          </div>
+          <button id="clearSavedBtn" type="button"
+                  class="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition">
+            <i class="bi bi-trash3"></i> Clear all
+          </button>
+        </div>
+        <div id="savedClassesList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[240px] overflow-auto scrollbar-thin pr-0.5"></div>
+      </div>
     </div>
 
     <div class="px-8 py-4 rounded-b-[20px] border-t text-[11px] text-slate-500 flex items-center gap-2 bg-slate-50 border-slate-200 dark:bg-[#0f172a] dark:border-slate-800">
-      <i class="bi bi-lock"></i> Created by Dr Mahadev Biradar
+      <i class="bi bi-lock"></i> Saved classes are stored locally on this device only.
     </div>
   </div>
 </div>
@@ -162,9 +185,14 @@
     <div class="hero rounded-[20px] p-6 md:p-8 text-white mb-6 shadow-[0_26px_55px_-30px_rgba(79,70,229,1)]">
       <div class="relative flex flex-col md:flex-row md:items-start justify-between gap-4" style="z-index:1;">
         <div class="min-w-0">
-          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-white/20 border border-white/40 backdrop-blur-sm">
-            <i class="bi bi-key-fill"></i> <span id="heroCode">CLASS CODE</span>
-          </span>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-white/20 border border-white/40 backdrop-blur-sm">
+              <i class="bi bi-key-fill"></i> <span id="heroCode">CLASS CODE</span>
+            </span>
+            <span id="savedBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/15 border border-white/30 backdrop-blur-sm">
+              <i class="bi bi-bookmark-star-fill"></i> Saved
+            </span>
+          </div>
           <h1 id="heroSubject" class="text-[24px] md:text-[28px] font-semibold tracking-tight mt-3 mb-2">Classroom</h1>
           <div id="heroMeta" class="flex flex-wrap gap-x-4 gap-y-1 text-[13px] opacity-95"></div>
         </div>
@@ -261,6 +289,52 @@
    ============================================================ */
 const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbygC3AcBGG2K3ENYfJO34BYZNRfwQZM0-BiDaIeW5momKY9Jyp4w9eSIsQVXtFqVHEADA/exec";
 
+/* ==================== LOCAL STORAGE: SAVED CLASSES ==================== */
+const SAVED_KEY = 'student-saved-classes';
+
+function getSavedClasses() {
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((c) => c && c.code) : [];
+  } catch (e) { return []; }
+}
+
+function setSavedClasses(list) {
+  try { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); } catch (e) {}
+}
+
+function saveClassEntry(info) {
+  if (!info || !info.code) return;
+  const code = String(info.code).toUpperCase();
+  const list = getSavedClasses().filter((c) => String(c.code).toUpperCase() !== code);
+  list.unshift({
+    code,
+    subject: info.subject || 'Untitled Class',
+    faculty: info.faculty || '',
+    branch: info.branch || '',
+    semester: info.semester || '',
+    division: info.division || '',
+    savedAt: Date.now()
+  });
+  /* Keep list bounded */
+  setSavedClasses(list.slice(0, 30));
+}
+
+function removeSavedClass(code) {
+  const upper = String(code).toUpperCase();
+  setSavedClasses(getSavedClasses().filter((c) => String(c.code).toUpperCase() !== upper));
+}
+
+function clearSavedClasses() {
+  try { localStorage.removeItem(SAVED_KEY); } catch (e) {}
+}
+
+function isClassSaved(code) {
+  const upper = String(code).toUpperCase();
+  return getSavedClasses().some((c) => String(c.code).toUpperCase() === upper);
+}
+
 /* ==================== STATE ==================== */
 const state = {
   theme: 'light',
@@ -268,8 +342,7 @@ const state = {
   classInfo: null,
   posts: [],
   attendance: [],
-  postFilter: '',
-  loading: false
+  postFilter: ''
 };
 
 const $ = (id) => document.getElementById(id);
@@ -352,6 +425,82 @@ function applyTheme(theme) {
   try { localStorage.setItem('student-theme', theme); } catch (e) {}
 }
 
+/* ==================== SAVED CLASSES UI ==================== */
+function renderSavedClasses() {
+  const list = getSavedClasses();
+  const wrap = $('savedClassesWrap');
+  const grid = $('savedClassesList');
+  const countPill = $('savedCountPill');
+
+  if (!list.length) {
+    wrap.classList.add('hidden');
+    return;
+  }
+  wrap.classList.remove('hidden');
+  countPill.textContent = list.length;
+
+  grid.innerHTML = list.map((c) => {
+    const code = escapeHtml(c.code);
+    const subject = escapeHtml(c.subject || 'Untitled Class');
+    const meta = [c.branch, c.semester ? `Sem ${c.semester}` : '', c.division ? `Div ${c.division}` : '']
+      .filter(Boolean).join(' · ');
+    return `
+      <div class="saved-class-item relative group rounded-xl border p-3 border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-indigo-700 dark:hover:bg-indigo-950/40 cursor-pointer"
+           data-code="${code}" role="button" tabindex="0" aria-label="Open ${subject} (${code})">
+        <div class="pr-6">
+          <div class="text-[12px] font-semibold truncate">${subject}</div>
+          <div class="mono text-[11px] text-slate-500 mt-0.5 tracking-wider">${code}</div>
+          ${meta ? `<div class="text-[10px] text-slate-400 mt-1 truncate">${escapeHtml(meta)}</div>` : ''}
+        </div>
+        <button type="button"
+                class="remove-saved absolute top-2 right-2 w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/60 transition"
+                data-remove-code="${code}" title="Remove from saved" aria-label="Remove ${subject}">
+          <i class="bi bi-x-lg text-[10px]"></i>
+        </button>
+      </div>`;
+  }).join('');
+}
+
+/* Event delegation on the saved classes grid */
+$('savedClassesList').addEventListener('click', (e) => {
+  const removeBtn = e.target.closest('[data-remove-code]');
+  if (removeBtn) {
+    e.stopPropagation();
+    const code = removeBtn.dataset.removeCode;
+    removeSavedClass(code);
+    renderSavedClasses();
+    if (state.classInfo && String(state.classInfo.code).toUpperCase() === String(code).toUpperCase()) {
+      $('savedBadge').classList.add('hidden');
+    }
+    showToast('Removed from saved classes', 'info');
+    return;
+  }
+  const item = e.target.closest('.saved-class-item');
+  if (item) openSavedClass(item.dataset.code);
+});
+
+$('savedClassesList').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const item = e.target.closest('.saved-class-item');
+  if (!item) return;
+  e.preventDefault();
+  openSavedClass(item.dataset.code);
+});
+
+function openSavedClass(code) {
+  $('codeField').value = String(code).toUpperCase();
+  handleLookup();
+}
+
+$('clearSavedBtn').addEventListener('click', () => {
+  if (!getSavedClasses().length) return;
+  if (!confirm('Remove all saved classes from this device?')) return;
+  clearSavedClasses();
+  renderSavedClasses();
+  $('savedBadge').classList.add('hidden');
+  showToast('All saved classes cleared', 'info');
+});
+
 /* ==================== BACKEND ==================== */
 async function callBackend(action, data = {}) {
   let result;
@@ -371,7 +520,6 @@ async function callBackend(action, data = {}) {
   return result.data !== undefined ? result.data : result;
 }
 
-/* Mock mirrors the real Apps Script response shape */
 function mockBackend(action, data = {}) {
   if (action !== 'getStudentClassData') throw new Error('Unknown action: ' + action);
   const code = (data.classCode || 'DEMO1').toUpperCase();
@@ -415,7 +563,19 @@ async function handleLookup(e) {
   try {
     const data = await callBackend('getStudentClassData', { classCode: code });
     renderClassroom(data);
-    try { localStorage.setItem('lastClassCode', code); } catch (err) {}
+
+    /* Save (or refresh) the class subject-wise in localStorage */
+    const info = (data && data.classInfo) || { code };
+    const wasSaved = isClassSaved(info.code || code);
+    saveClassEntry({ ...info, code: info.code || code });
+    renderSavedClasses();
+
+    showToast(
+      wasSaved
+        ? `<strong>${escapeHtml(info.subject || code)}</strong> refreshed`
+        : `<strong>${escapeHtml(info.subject || code)}</strong> saved to your classes`,
+      'success'
+    );
   } catch (err) {
     showLookupError(err.message || 'Classroom not found.');
     showToast(err.message || 'Classroom not found', 'error');
@@ -444,6 +604,8 @@ function renderClassroom(data) {
   /* Hero */
   $('heroCode').textContent = `CLASS CODE · ${info.code || '—'}`;
   $('heroSubject').textContent = info.subject || 'Classroom';
+  $('savedBadge').classList.toggle('hidden', !isClassSaved(info.code || ''));
+
   const meta = [
     info.faculty  ? `<span><i class="bi bi-person-badge mr-1"></i>${escapeHtml(info.faculty)}</span>` : '',
     info.branch   ? `<span><i class="bi bi-diagram-3 mr-1"></i>${escapeHtml(info.branch)}</span>` : '',
@@ -622,6 +784,7 @@ function exitClass() {
   state.classInfo = null;
   state.postFilter = '';
   $('postSearch').value = '';
+  renderSavedClasses();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => $('codeField').focus(), 250);
 }
@@ -629,26 +792,21 @@ function exitClass() {
 /* ==================== EVENT WIRING ==================== */
 $('lookupForm').addEventListener('submit', handleLookup);
 
-/* Force uppercase alphanumeric class codes */
 $('codeField').addEventListener('input', (e) => {
   e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
 });
 
-/* Live search */
 $('postSearch').addEventListener('input', (e) => {
   state.postFilter = e.target.value;
   renderPosts();
 });
 
-/* Tabs */
 document.querySelectorAll('.tab-btn').forEach((btn) => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
-/* Change code */
 $('changeCodeBtn').addEventListener('click', exitClass);
 
-/* Theme toggle */
 $('themeToggle').addEventListener('click', () => {
   applyTheme(state.theme === 'dark' ? 'light' : 'dark');
 });
@@ -659,6 +817,9 @@ $('themeToggle').addEventListener('click', () => {
   try { theme = localStorage.getItem('student-theme') || 'light'; } catch (e) {}
   applyTheme(theme);
 
+  /* Always render saved classes first */
+  renderSavedClasses();
+
   /* Auto-open if ?code=ABC123 is present in the URL */
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
@@ -666,11 +827,6 @@ $('themeToggle').addEventListener('click', () => {
     $('codeField').value = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
     handleLookup();
   } else {
-    /* Pre-fill last used code (if any) for convenience — user still presses Open */
-    try {
-      const last = localStorage.getItem('lastClassCode');
-      if (last) $('codeField').value = last;
-    } catch (e) {}
     $('codeField').focus();
   }
 })();
