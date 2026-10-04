@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Classroom Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    .badge-code { font-family: monospace; font-size: 1.15rem; letter-spacing: 2px; }
+    .card-class { cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+    .card-class:hover { transform: translateY(-3px); border-color: #0d6efd; }
+    
+    /* Interactive Roll Grid */
+    .roll-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+      gap: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 12px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+    }
+    .roll-box {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s, transform 0.1s;
+    }
+    .roll-box:active { transform: scale(0.92); }
+    .roll-present {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border: 1.5px solid #198754;
+    }
+    .roll-absent {
+      background-color: #dc3545 !important;
+      color: #ffffff !important;
+      border: 1.5px solid #b02a37 !important;
+    }
+  </style>
+</head>
+<body class="bg-light p-3 p-md-4">
+
+  <!-- AUTH SECTION (Login / Register) -->
+  <div id="authBox" class="container mt-4" style="max-width: 440px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h4 class="text-center text-primary mb-3">Faculty Portal</h4>
+        <ul class="nav nav-pills nav-fill mb-3">
+          <li class="nav-item">
+            <button class="nav-link active" id="tabLogin" onclick="switchAuth('login')">Sign In</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="tabReg" onclick="switchAuth('reg')">Register</button>
+          </li>
+        </ul>
+
+        <div id="authAlert" class="alert d-none small py-2"></div>
+
+        <!-- Login Form -->
+        <form id="formLogin" onsubmit="handleLogin(event)">
+          <div class="mb-3">
+            <label class="form-label small text-muted">Email Address</label>
+            <input type="email" id="logEmail" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted">Password</label>
+            <input type="password" id="logPass" class="form-control" required>
+          </div>
+          <button type="submit" id="btnLog" class="btn btn-primary w-100">Log In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="formReg" class="d-none" onsubmit="handleRegister(event)">
+          <div class="mb-2">
+            <label class="form-label small text-muted">Full Name</label>
+            <input type="text" id="regName" class="form-control" placeholder="Dr. / Prof." required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small text-muted">Email Address</label>
+            <input type="email" id="regEmail" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted">Password</label>
+            <input type="password" id="regPass" class="form-control" minlength="6" required>
+          </div>
+          <button type="submit" id="btnReg" class="btn btn-success w-100">Create Faculty Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER DASHBOARD (Hidden until logged in) -->
+  <div id="dashBox" class="container-fluid d-none" style="max-width: 1100px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+      <div>
+        <h3 class="mb-0">Classroom Management</h3>
+        <small class="text-muted" id="lblTeacher"></small>
+      </div>
+      <div>
+        <button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#newClassModal">
+          <i class="bi bi-plus-circle"></i> Create New Class
+        </button>
+        <button class="btn btn-outline-danger btn-sm" onclick="logout()">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Active Classes List -->
+    <h5 class="text-secondary mb-3">Your Classes</h5>
+    <div id="classList" class="row g-3 mb-4"></div>
+
+    <!-- Class Manage Panel (Selected Class) -->
+    <div id="classDetailsCard" class="card shadow-sm border-0 d-none">
+      <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <span class="badge bg-primary badge-code" id="activeCodeBadge"></span>
+          <h5 class="d-inline ms-2" id="activeSubjectName"></h5>
+          <span class="text-muted ms-2" id="activeBranchDetails"></span>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#postModal">
+            <i class="bi bi-upload"></i> Post Note / Link / Timetable
+          </button>
+          <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#attendanceModal" onclick="openAttendanceModal()">
+            <i class="bi bi-grid-3x3-gap"></i> Mark Attendance Grid
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info py-2 small mb-0">
+          <i class="bi bi-info-circle"></i> Share the 6-character Code above with your students to give them access to this classroom.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Create New Class -->
+  <div class="modal fade" id="newClassModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form onsubmit="handleCreateClass(event)">
+          <div class="modal-header">
+            <h5 class="modal-title">Create Class with Unique Code</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label small">Course / Subject Name</label>
+              <input type="text" id="clsSubject" class="form-control" placeholder="e.g. Operating Systems" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Branch</label>
+              <select id="clsBranch" class="form-select" required>
+                <option value="">Select Branch</option>
+                <option>CSE</option><option>ISE</option><option>ECE</option>
+                <option>Civil</option><option>Mechanical</option><option>EEE</option>
+              </select>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small">Semester</label>
+                <select id="clsSem" class="form-select" required>
+                  <option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Division</label>
+                <select id="clsDiv" class="form-select" required>
+                  <option>A</option><option>B</option><option>C</option><option>D</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="btnCreateCls" class="btn btn-primary w-100">Generate Class & Code</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Post Material -->
+  <div class="modal fade" id="postModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form onsubmit="handleCreatePost(event)">
+          <div class="modal-header">
+            <h5 class="modal-title">Post Material to Class</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label small">Category</label>
+              <select id="postCat" class="form-select" required>
+                <option value="Notes">Lecture Notes / PDF</option>
+                <option value="Resource">Google Drive Link / Study Material</option>
+                <option value="Timetable">Class Timetable / Schedule</option>
+                <option value="Notice">General Announcement</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Title</label>
+              <input type="text" id="postTitle" class="form-control" placeholder="e.g. Unit 2 Study Guide" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Google Drive / Resource Link (Optional)</label>
+              <input type="url" id="postLink" class="form-control" placeholder="https://drive.google.com/...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Description / Instructions</label>
+              <textarea id="postDesc" class="form-control" rows="3" placeholder="Enter instructions or topic summaries..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="btnSavePost" class="btn btn-success w-100">Publish to Classroom</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Interactive Attendance Grid -->
+  <div class="modal fade" id="attendanceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form onsubmit="handleCreateAttendance(event)">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="bi bi-person-check text-danger"></i> Mark Class Attendance</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-2 mb-3">
+              <div class="col-md-4">
+                <label class="form-label small">Session Date</label>
+                <input type="date" id="attDate" class="form-control" required>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label small">Topic Covered / Hour</label>
+                <input type="text" id="attTopic" class="form-control" placeholder="e.g. Memory Management (Hour 2)" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label small">Class Strength</label>
+                <div class="input-group">
+                  <input type="number" id="attStrength" class="form-control" value="60" min="1" max="150" required>
+                  <button type="button" class="btn btn-outline-secondary" onclick="generateRollGrid()">Set</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center p-2 mb-2 bg-light border rounded">
+              <div class="small">
+                <strong>Total:</strong> <span id="statTotal" class="badge bg-secondary">60</span>
+                <strong class="ms-2">Present:</strong> <span id="statPresent" class="badge bg-success">60</span>
+                <strong class="ms-2">Absent:</strong> <span id="statAbsent" class="badge bg-danger">0</span>
+              </div>
+              <div>
+                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="setAllAttendance(true)">All Present</button>
+                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="setAllAttendance(false)">All Absent</button>
+              </div>
+            </div>
+
+            <!-- Hint -->
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <small class="text-muted"><i class="bi bi-info-circle"></i> Click any roll number to turn it <strong>RED (Absent)</strong>:</small>
+              <small class="text-danger fw-bold" id="absentSummaryText"></small>
+            </div>
+
+            <!-- Clickable Grid -->
+            <div id="rollGridContainer" class="roll-grid mb-3"></div>
+
+            <div class="mb-2">
+              <label class="form-label small">Remarks (Optional)</label>
+              <input type="text" id="attRem" class="form-control" placeholder="e.g. Conducted surprise test / lab evaluation">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="btnSaveAtt" class="btn btn-danger w-100 py-2">Save Attendance Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==================== CONFIGURATION ====================
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbygC3AcBGG2K3ENYfJO34BYZNRfwQZM0-BiDaIeW5momKY9Jyp4w9eSIsQVXtFqVHEADA/exec";
+
+    let currentTeacher = null;
+    let currentPassword = '';
+    let teacherClasses = [];
+    let selectedClass = null;
+
+    let rollStatus = {};
+    let totalRolls = 60;
+
+    // Universal API Request Function (Bypasses CORS preflight issues)
+    async function callBackend(action, data = {}) {
+      try {
+        const response = await fetch(SCRIPT_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: action, data: data })
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+        return result.data;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    function switchAuth(tab) {
+      document.getElementById('authAlert').classList.add('d-none');
+      if (tab === 'login') {
+        document.getElementById('tabLogin').classList.add('active');
+        document.getElementById('tabReg').classList.remove('active');
+        document.getElementById('formLogin').classList.remove('d-none');
+        document.getElementById('formReg').classList.add('d-none');
+      } else {
+        document.getElementById('tabReg').classList.add('active');
+        document.getElementById('tabLogin').classList.remove('active');
+        document.getElementById('formReg').classList.remove('d-none');
+        document.getElementById('formLogin').classList.add('d-none');
+      }
+    }
+
+    function showAuthAlert(msg, success) {
+      const el = document.getElementById('authAlert');
+      el.className = `alert py-2 small ${success ? 'alert-success' : 'alert-danger'}`;
+      el.textContent = msg;
+      el.classList.remove('d-none');
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnReg');
+      btn.disabled = true;
+
+      try {
+        const res = await callBackend('registerTeacher', {
+          name: document.getElementById('regName').value,
+          email: document.getElementById('regEmail').value,
+          password: document.getElementById('regPass').value
+        });
+        btn.disabled = false;
+        showAuthAlert(res.message, true);
+        document.getElementById('formReg').reset();
+        setTimeout(() => switchAuth('login'), 1200);
+      } catch (err) {
+        btn.disabled = false;
+        showAuthAlert(err.message, false);
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('logEmail').value;
+      const pass = document.getElementById('logPass').value;
+      const btn = document.getElementById('btnLog');
+      btn.disabled = true;
+
+      try {
+        const res = await callBackend('loginTeacher', { email: email, password: pass });
+        btn.disabled = false;
+        currentTeacher = res.teacher;
+        currentPassword = pass;
+        document.getElementById('lblTeacher').textContent = `${currentTeacher.name} (${currentTeacher.email})`;
+        document.getElementById('authBox').classList.add('d-none');
+        document.getElementById('dashBox').classList.remove('d-none');
+        loadClasses();
+      } catch (err) {
+        btn.disabled = false;
+        showAuthAlert(err.message, false);
+      }
+    }
+
+    async function loadClasses() {
+      try {
+        const classes = await callBackend('getTeacherClasses', {
+          email: currentTeacher.email,
+          password: currentPassword
+        });
+        teacherClasses = classes;
+        const container = document.getElementById('classList');
+        if (classes.length === 0) {
+          container.innerHTML = '<div class="col-12 text-muted">No classes created yet. Click "+ Create New Class" above.</div>';
+          return;
+        }
+        container.innerHTML = classes.map(c => `
+          <div class="col-md-4">
+            <div class="card card-class shadow-sm p-3 border" onclick="selectClass('${c.code}')">
+              <div class="d-flex justify-content-between align-items-start">
+                <h6 class="text-primary mb-1">${c.subject}</h6>
+                <span class="badge bg-dark badge-code">${c.code}</span>
+              </div>
+              <small class="text-muted">${c.branch} | Sem ${c.semester} | Div ${c.division}</small>
+              <div class="mt-2 text-primary small"><i class="bi bi-box-arrow-in-right"></i> Click to Manage</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function selectClass(code) {
+      selectedClass = teacherClasses.find(c => c.code === code);
+      if (!selectedClass) return;
+
+      document.getElementById('activeCodeBadge').textContent = selectedClass.code;
+      document.getElementById('activeSubjectName').textContent = selectedClass.subject;
+      document.getElementById('activeBranchDetails').textContent = `(${selectedClass.branch} - Sem ${selectedClass.semester} - Div ${selectedClass.division})`;
+      document.getElementById('classDetailsCard').classList.remove('d-none');
+      document.getElementById('classDetailsCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function handleCreateClass(e) {
+      e.preventDefault();
+      const payload = {
+        teacherName: currentTeacher.name,
+        subject: document.getElementById('clsSubject').value,
+        branch: document.getElementById('clsBranch').value,
+        semester: document.getElementById('clsSem').value,
+        division: document.getElementById('clsDiv').value
+      };
+      const btn = document.getElementById('btnCreateCls');
+      btn.disabled = true;
+
+      try {
+        const res = await callBackend('createNewClass', {
+          email: currentTeacher.email,
+          password: currentPassword,
+          classData: payload
+        });
+        btn.disabled = false;
+        bootstrap.Modal.getInstance(document.getElementById('newClassModal')).hide();
+        e.target.reset();
+        loadClasses();
+        alert('New Class Created! Unique Code: ' + res.classCode);
+      } catch (err) {
+        btn.disabled = false;
+        alert(err.message);
+      }
+    }
+
+    async function handleCreatePost(e) {
+      e.preventDefault();
+      if (!selectedClass) return;
+      const payload = {
+        classCode: selectedClass.code,
+        category: document.getElementById('postCat').value,
+        title: document.getElementById('postTitle').value,
+        link: document.getElementById('postLink').value,
+        description: document.getElementById('postDesc').value
+      };
+      const btn = document.getElementById('btnSavePost');
+      btn.disabled = true;
+
+      try {
+        await callBackend('addClassPost', {
+          email: currentTeacher.email,
+          password: currentPassword,
+          postData: payload
+        });
+        btn.disabled = false;
+        bootstrap.Modal.getInstance(document.getElementById('postModal')).hide();
+        e.target.reset();
+        alert('Material published successfully to classroom ' + selectedClass.code);
+      } catch (err) {
+        btn.disabled = false;
+        alert(err.message);
+      }
+    }
+
+    // ==================== ATTENDANCE GRID LOGIC ====================
+
+    function openAttendanceModal() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('attDate').value = today;
+      generateRollGrid();
+    }
+
+    function generateRollGrid() {
+      const strengthInput = parseInt(document.getElementById('attStrength').value, 10);
+      totalRolls = strengthInput > 0 ? strengthInput : 60;
+      rollStatus = {};
+
+      const container = document.getElementById('rollGridContainer');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= totalRolls; i++) {
+        rollStatus[i] = true; // Default: Present
+
+        const box = document.createElement('div');
+        box.id = 'rollBox_' + i;
+        box.className = 'roll-box roll-present';
+        box.textContent = i;
+        box.title = 'Roll ' + i + ': Present';
+        box.onclick = () => toggleRoll(i);
+        container.appendChild(box);
+      }
+
+      updateGridStats();
+    }
+
+    function toggleRoll(rollNo) {
+      rollStatus[rollNo] = !rollStatus[rollNo];
+      const box = document.getElementById('rollBox_' + rollNo);
+
+      if (rollStatus[rollNo]) {
+        box.className = 'roll-box roll-present';
+        box.title = 'Roll ' + rollNo + ': Present';
+      } else {
+        box.className = 'roll-box roll-absent';
+        box.title = 'Roll ' + rollNo + ': Absent';
+      }
+
+      updateGridStats();
+    }
+
+    function setAllAttendance(isPresent) {
+      for (let i = 1; i <= totalRolls; i++) {
+        rollStatus[i] = isPresent;
+        const box = document.getElementById('rollBox_' + i);
+        if (isPresent) {
+          box.className = 'roll-box roll-present';
+          box.title = 'Roll ' + i + ': Present';
+        } else {
+          box.className = 'roll-box roll-absent';
+          box.title = 'Roll ' + i + ': Absent';
+        }
+      }
+      updateGridStats();
+    }
+
+    function updateGridStats() {
+      let presentCount = 0;
+      const absentees = [];
+
+      for (let i = 1; i <= totalRolls; i++) {
+        if (rollStatus[i]) {
+          presentCount++;
+        } else {
+          absentees.push(i);
+        }
+      }
+
+      const absentCount = totalRolls - presentCount;
+      document.getElementById('statTotal').textContent = totalRolls;
+      document.getElementById('statPresent').textContent = presentCount;
+      document.getElementById('statAbsent').textContent = absentCount;
+
+      const summary = document.getElementById('absentSummaryText');
+      if (absentees.length > 0) {
+        summary.textContent = 'Absent (' + absentees.length + '): ' + absentees.join(', ');
+      } else {
+        summary.textContent = 'All Students Present';
+      }
+    }
+
+    async function handleCreateAttendance(e) {
+      e.preventDefault();
+      if (!selectedClass) return;
+
+      let presentCount = 0;
+      const absentees = [];
+      for (let i = 1; i <= totalRolls; i++) {
+        if (rollStatus[i]) {
+          presentCount++;
+        } else {
+          absentees.push(i);
+        }
+      }
+
+      const payload = {
+        classCode: selectedClass.code,
+        date: document.getElementById('attDate').value,
+        topic: document.getElementById('attTopic').value,
+        totalCount: totalRolls,
+        presentCount: presentCount,
+        absentCount: absentees.length,
+        absentRolls: absentees.length > 0 ? absentees.join(', ') : 'None',
+        remarks: document.getElementById('attRem').value
+      };
+
+      const btn = document.getElementById('btnSaveAtt');
+      btn.disabled = true;
+
+      try {
+        await callBackend('addClassAttendance', {
+          email: currentTeacher.email,
+          password: currentPassword,
+          attData: payload
+        });
+        btn.disabled = false;
+        bootstrap.Modal.getInstance(document.getElementById('attendanceModal')).hide();
+        e.target.reset();
+        alert(`Attendance saved for ${selectedClass.code}! Present: ${payload.presentCount}/${payload.totalCount}`);
+      } catch (err) {
+        btn.disabled = false;
+        alert(err.message);
+      }
+    }
+
+    function logout() {
+      currentTeacher = null;
+      currentPassword = '';
+      selectedClass = null;
+      document.getElementById('dashBox').classList.add('d-none');
+      document.getElementById('classDetailsCard').classList.add('d-none');
+      document.getElementById('authBox').classList.remove('d-none');
+      document.getElementById('formLogin').reset();
+    }
+  </script>
+</body>
+</html>
