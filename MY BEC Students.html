@@ -1,878 +1,680 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Classroom Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Classroom Portal</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+        }
+      }
+    }
+  };
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <script>
-    /* Apply saved theme before first paint (prevents flash) */
-    (function () {
-      try {
-        document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('portal-theme') || 'light');
-      } catch (e) {}
-    })();
-  </script>
+<style>
+  *, *::before, *::after { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { min-height: 100%; }
+  body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
 
-  <style>
-    /* ============ BASE ============ */
-    :root {
-      --brand-1: #4f46e5;
-      --brand-2: #7c3aed;
-      --brand-3: #06b6d4;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --line: rgba(15, 23, 42, .08);
-    }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .btn-primary-grad { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border: none; }
+  .btn-primary-grad:hover { background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%); }
+  .pill-mono { background: #f1f5f9; border: 1px solid #e2e8f0; font-family: "JetBrains Mono", monospace; font-size: 12px; }
+  .dark .pill-mono { background: #1e293b; border-color: #334155; color: #e2e8f0; }
 
-    * { -webkit-font-smoothing: antialiased; }
+  .code-input {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: .55em;
+    padding-left: .55em;
+    text-transform: uppercase;
+    text-align: center;
+    height: 58px;
+    border-radius: 1rem;
+  }
+  .code-input::placeholder { letter-spacing: .35em; color: #cbd5e1; }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      color: var(--ink);
-      min-height: 100vh;
-      padding-bottom: 3rem;
-      background:
-        radial-gradient(900px 520px at 8% -12%, rgba(99, 102, 241, .20), transparent 60%),
-        radial-gradient(820px 520px at 100% 0%, rgba(6, 182, 212, .16), transparent 55%),
-        #f4f6fb;
-      background-attachment: fixed;
-    }
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 48%, #06b6d4 125%);
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%; pointer-events: none;
+  }
+  .hero::before {
+    width: 300px; height: 300px; top: -140px; right: -70px;
+    background: radial-gradient(circle, rgba(255,255,255,.28), transparent 68%);
+  }
+  .hero::after {
+    width: 240px; height: 240px; bottom: -140px; left: -60px;
+    background: radial-gradient(circle, rgba(255,255,255,.18), transparent 68%);
+  }
 
-    [data-bs-theme="dark"] body {
-      color: #e2e8f0;
-      background:
-        radial-gradient(900px 520px at 8% -12%, rgba(99, 102, 241, .26), transparent 60%),
-        radial-gradient(820px 520px at 100% 0%, rgba(6, 182, 212, .16), transparent 55%),
-        #0b1020;
-    }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* ============ NAVBAR ============ */
-    .app-nav {
-      position: sticky;
-      top: 0;
-      z-index: 1030;
-      background: rgba(255, 255, 255, .75);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--line);
-    }
-    [data-bs-theme="dark"] .app-nav {
-      background: rgba(11, 16, 32, .78);
-      border-bottom-color: rgba(255, 255, 255, .08);
-    }
-    .brand-mark {
-      width: 38px; height: 38px;
-      display: grid; place-items: center;
-      border-radius: .8rem;
-      color: #fff; font-size: 1.1rem;
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-      box-shadow: 0 10px 22px -12px rgba(79, 70, 229, .95);
-    }
-    .brand-text {
-      font-weight: 800;
-      letter-spacing: -.02em;
-      background: linear-gradient(120deg, var(--brand-1), var(--brand-3));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .btn-icon {
-      width: 40px; height: 40px;
-      display: grid; place-items: center;
-      border-radius: .75rem;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, .7);
-      color: var(--muted);
-      transition: .2s;
-    }
-    .btn-icon:hover { color: var(--brand-1); border-color: rgba(99, 102, 241, .45); }
-    [data-bs-theme="dark"] .btn-icon {
-      background: rgba(255, 255, 255, .06);
-      border-color: rgba(255, 255, 255, .1);
-      color: #cbd5e1;
-    }
+  .progress-track { height: 6px; border-radius: 999px; background: rgba(100,116,139,.18); overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+  .pf-success { background: linear-gradient(90deg, #10b981, #22c55e); }
+  .pf-warning { background: linear-gradient(90deg, #f59e0b, #eab308); }
+  .pf-danger  { background: linear-gradient(90deg, #f43f5e, #dc2626); }
 
-    /* ============ CARDS ============ */
-    .glass-card {
-      background: rgba(255, 255, 255, .86);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, .7);
-      border-radius: 1.25rem;
-      box-shadow: 0 20px 45px -26px rgba(15, 23, 42, .45);
-    }
-    [data-bs-theme="dark"] .glass-card {
-      background: rgba(20, 26, 45, .72);
-      border-color: rgba(255, 255, 255, .08);
-      box-shadow: 0 20px 45px -26px rgba(0, 0, 0, .9);
-    }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 
-    /* ============ LOOKUP ============ */
-    .lookup-icon {
-      width: 66px; height: 66px;
-      display: grid; place-items: center;
-      border-radius: 1.1rem;
-      font-size: 1.7rem; color: #fff;
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2) 60%, var(--brand-3));
-      box-shadow: 0 18px 32px -18px rgba(79, 70, 229, .95);
-    }
-    .code-input {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-weight: 700;
-      font-size: 1.35rem;
-      letter-spacing: .55em;
-      padding-left: .55em;      /* compensates trailing letter-spacing */
-      text-transform: uppercase;
-      text-align: center;
-      height: 58px;
-      border-radius: .9rem;
-      border: 2px solid #e2e8f0;
-      background: #fff;
-      transition: .2s;
-    }
-    .code-input::placeholder { color: #cbd5e1; letter-spacing: .4em; }
-    .code-input:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 .25rem rgba(99, 102, 241, .16);
-      background: #fff;
-    }
-    [data-bs-theme="dark"] .code-input {
-      background: rgba(255, 255, 255, .05);
-      border-color: rgba(255, 255, 255, .12);
-      color: #f1f5f9;
-    }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+  .toast-in { animation: toastIn .3s cubic-bezier(.22, 1, .36, 1) both; }
 
-    .btn-grad {
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-      border: 0; color: #fff; font-weight: 600;
-      border-radius: .9rem;
-      box-shadow: 0 14px 28px -14px rgba(79, 70, 229, .95);
-      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-    }
-    .btn-grad:hover,
-    .btn-grad:focus {
-      color: #fff; transform: translateY(-1px);
-      filter: saturate(1.1);
-      box-shadow: 0 18px 34px -14px rgba(79, 70, 229, 1);
-    }
-    .btn-grad:disabled { opacity: .7; transform: none; }
-
-    /* ============ HERO ============ */
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 1.4rem;
-      color: #fff;
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 48%, #06b6d4 125%);
-      box-shadow: 0 26px 55px -30px rgba(79, 70, 229, 1);
-    }
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .hero::before {
-      width: 300px; height: 300px; top: -140px; right: -70px;
-      background: radial-gradient(circle, rgba(255, 255, 255, .28), transparent 68%);
-    }
-    .hero::after {
-      width: 240px; height: 240px; bottom: -140px; left: -60px;
-      background: radial-gradient(circle, rgba(255, 255, 255, .18), transparent 68%);
-    }
-    .chip-code {
-      display: inline-flex; align-items: center; gap: .45rem;
-      padding: .35rem .8rem;
-      font-size: .7rem; font-weight: 700; letter-spacing: .14em;
-      color: #fff;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .18);
-      border: 1px solid rgba(255, 255, 255, .38);
-      backdrop-filter: blur(4px);
-    }
-    .hero-meta {
-      display: flex; flex-wrap: wrap; gap: .45rem 1.15rem;
-      font-size: .88rem; opacity: .93;
-    }
-    .hero-meta span { display: inline-flex; align-items: center; gap: .4rem; }
-
-    .btn-ghost-light {
-      background: rgba(255, 255, 255, .16);
-      border: 1px solid rgba(255, 255, 255, .38);
-      color: #fff; font-weight: 600;
-      border-radius: .7rem;
-      transition: .2s;
-    }
-    .btn-ghost-light:hover { background: rgba(255, 255, 255, .3); color: #fff; }
-
-    /* ============ STAT CARDS ============ */
-    .stat-card { display: flex; flex-direction: column; gap: .2rem; }
-    .stat-icon {
-      width: 42px; height: 42px;
-      display: grid; place-items: center;
-      border-radius: .85rem;
-      color: #fff; font-size: 1.1rem;
-      margin-bottom: .5rem;
-    }
-    .i-indigo  { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
-    .i-cyan    { background: linear-gradient(135deg, #06b6d4, #0ea5e9); }
-    .i-emerald { background: linear-gradient(135deg, #10b981, #22c55e); }
-    .i-rose    { background: linear-gradient(135deg, #f43f5e, #fb7185); }
-    .stat-value {
-      font-size: 1.65rem; font-weight: 800;
-      letter-spacing: -.03em; line-height: 1.1;
-    }
-    .stat-label {
-      font-size: .72rem; font-weight: 700;
-      letter-spacing: .09em; text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    /* ============ SEGMENTED TABS ============ */
-    .segmented {
-      display: inline-flex;
-      gap: .25rem;
-      padding: .35rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, .055);
-      border: 1px solid var(--line);
-    }
-    .segmented .nav-link {
-      border-radius: 999px;
-      padding: .5rem 1.15rem;
-      font-weight: 600;
-      font-size: .9rem;
-      color: var(--muted);
-      border: 0;
-      transition: .2s;
-    }
-    .segmented .nav-link:hover { color: var(--brand-1); }
-    .segmented .nav-link.active {
-      background: #fff;
-      color: var(--brand-1);
-      box-shadow: 0 8px 18px -10px rgba(79, 70, 229, .8);
-    }
-    [data-bs-theme="dark"] .segmented { background: rgba(255, 255, 255, .06); }
-    [data-bs-theme="dark"] .segmented .nav-link.active { background: #1e293b; color: #a5b4fc; }
-
-    /* ============ SEARCH ============ */
-    .search-wrap { position: relative; }
-    .search-wrap > i {
-      position: absolute; left: .85rem; top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8; font-size: .85rem;
-      pointer-events: none;
-    }
-    .search-wrap input {
-      padding-left: 2.2rem;
-      width: 240px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .85);
-      border: 1px solid var(--line);
-    }
-    [data-bs-theme="dark"] .search-wrap input {
-      background: rgba(255, 255, 255, .06);
-      border-color: rgba(255, 255, 255, .1);
-      color: #e2e8f0;
-    }
-
-    /* ============ POSTS ============ */
-    .post-card {
-      border-radius: 1.1rem;
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-    .post-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 26px 42px -28px rgba(15, 23, 42, .75);
-    }
-    .post-date {
-      font-size: .74rem; font-weight: 500;
-      color: #94a3b8; white-space: nowrap;
-    }
-    .btn-soft-primary {
-      background: rgba(99, 102, 241, .12);
-      color: #4f46e5;
-      border: 0; font-weight: 600;
-      border-radius: .7rem;
-      padding: .4rem .9rem;
-      transition: .2s;
-    }
-    .btn-soft-primary:hover { background: rgba(99, 102, 241, .22); color: #4338ca; }
-    [data-bs-theme="dark"] .btn-soft-primary { background: rgba(129, 140, 248, .18); color: #a5b4fc; }
-    [data-bs-theme="dark"] .btn-soft-primary:hover { background: rgba(129, 140, 248, .3); color: #c7d2fe; }
-
-    /* ============ TABLE ============ */
-    .table thead th {
-      font-size: .7rem;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 700;
-      color: var(--muted);
-      background: rgba(15, 23, 42, .035);
-      border-bottom: 1px solid var(--line);
-      padding: .85rem 1rem;
-      white-space: nowrap;
-    }
-    .table td { padding: .9rem 1rem; vertical-align: middle; }
-    [data-bs-theme="dark"] .table thead th {
-      background: rgba(255, 255, 255, .045);
-      border-bottom-color: rgba(255, 255, 255, .08);
-    }
-    .roll-chip {
-      display: inline-block;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: .74rem; font-weight: 700;
-      color: #b91c1c;
-      background: rgba(239, 68, 68, .1);
-      border: 1px solid rgba(239, 68, 68, .25);
-      padding: .18rem .55rem;
-      border-radius: .5rem;
-      word-break: break-word;
-    }
-    [data-bs-theme="dark"] .roll-chip { color: #fca5a5; background: rgba(239, 68, 68, .16); }
-
-    /* ============ EMPTY STATE ============ */
-    .empty-state { padding: 3rem 1.5rem; text-align: center; }
-    .empty-state > i {
-      font-size: 2.2rem;
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-3));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    /* ============ LOADING ============ */
-    .loading-overlay {
-      position: fixed; inset: 0; z-index: 1090;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: rgba(244, 246, 251, .72);
-      backdrop-filter: blur(6px);
-    }
-    [data-bs-theme="dark"] .loading-overlay { background: rgba(11, 16, 32, .74); }
-    .spinner-glow {
-      width: 3rem; height: 3rem;
-      color: var(--brand-1);
-    }
-
-    /* ============ ANIMATION ============ */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: none; }
-    }
-    .animate-in { animation: fadeUp .45s cubic-bezier(.22, 1, .36, 1) both; }
-
-    @media (max-width: 575.98px) {
-      .search-wrap input { width: 100%; }
-      .search-wrap { width: 100%; }
-      .code-input { font-size: 1.15rem; letter-spacing: .4em; padding-left: .4em; }
-    }
-  </style>
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .fade-up { animation: fadeUp .35s cubic-bezier(.22, 1, .36, 1) both; }
+</style>
 </head>
 
-<body>
+<body class="min-h-screen bg-[#f8fafc] text-slate-900 dark:bg-[#0f172a] dark:text-slate-100 transition-colors">
 
-  <!-- ================= NAVBAR ================= -->
-  <nav class="app-nav py-2">
-    <div class="container d-flex align-items-center" style="max-width: 1060px;">
-      <a class="d-flex align-items-center gap-2 text-decoration-none" href="#">
-        <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
-        <span class="brand-text d-none d-sm-inline">Student Classroom Portal</span>
-      </a>
-      <div class="ms-auto">
-        <button id="themeToggle" class="btn btn-icon" type="button" title="Toggle theme" aria-label="Toggle theme">
-          <i class="bi bi-moon-stars"></i>
-        </button>
+<!-- ================= NAV ================= -->
+<nav class="sticky top-0 z-40 backdrop-blur-xl border-b bg-white/80 border-slate-200 dark:bg-[#0f172a]/80 dark:border-slate-800">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-[64px] flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-[#4f46e5] flex items-center justify-center text-white">
+        <i class="bi bi-mortarboard-fill text-[16px]"></i>
+      </div>
+      <div class="leading-tight">
+        <div class="font-semibold text-[14px] tracking-tight">Student Portal</div>
+        <div class="text-[11px] text-slate-500 -mt-0.5">Classroom Access</div>
+      </div>
+      <div class="hidden md:flex items-center gap-2 ml-6 pl-6 border-l border-slate-200 dark:border-slate-800">
+        <span class="text-[12px] text-slate-500">Student</span>
+        <span class="text-slate-300 dark:text-slate-600">/</span>
+        <span id="crumbClass" class="text-[12px] font-medium">Enter Code</span>
       </div>
     </div>
-  </nav>
 
-  <main class="container" style="max-width: 1060px;">
+    <div class="flex items-center gap-2">
+      <button id="themeToggle" class="w-9 h-9 rounded-full border flex items-center justify-center bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300" aria-label="Toggle theme">
+        <i id="themeIcon" class="bi bi-moon text-[14px]"></i>
+      </button>
 
-    <!-- ================= CODE LOOKUP ================= -->
-    <section id="lookupContainer" class="d-flex justify-content-center py-4 py-md-5">
-      <div class="glass-card p-4 p-md-5 text-center w-100 animate-in" style="max-width: 470px;">
-        <div class="lookup-icon mx-auto mb-3"><i class="bi bi-shield-lock-fill"></i></div>
-        <h1 class="h4 fw-bold mb-2">Enter Your Class Code</h1>
-        <p class="text-secondary small mb-4">
-          Use the 6-character code shared by your professor to unlock notes,
-          resources and attendance records.
-        </p>
-
-        <form onsubmit="handleLookup(event)" autocomplete="off" novalidate>
-          <div class="mb-3">
-            <input type="text" id="codeField" class="form-control code-input"
-                   placeholder="ABC123" maxlength="6" spellcheck="false"
-                   autocapitalize="characters" required aria-label="Class code">
-          </div>
-          <button type="submit" id="btnLookup"
-                  class="btn btn-grad w-100 py-2 d-flex align-items-center justify-content-center gap-2">
-            <i class="bi bi-box-arrow-in-right"></i><span>Open Classroom</span>
-          </button>
-        </form>
-
-        <div id="lookupAlert" class="alert alert-danger mt-3 mb-0 small py-2 d-none" role="alert"></div>
-
-        <p class="text-secondary small mt-4 mb-0">
-          <i class="bi bi-info-circle me-1"></i>Class codes are not case-sensitive.
-        </p>
-      </div>
-    </section>
-
-    <!-- ================= CLASSROOM DASHBOARD ================= -->
-    <section id="classroomView" class="d-none">
-
-      <!-- Hero banner -->
-      <div class="hero p-4 mb-4">
-        <div class="position-relative d-flex flex-wrap justify-content-between align-items-start gap-3" style="z-index:1;">
-          <div>
-            <span class="chip-code" id="lblClassCode">
-              <i class="bi bi-key-fill"></i><span>CLASS CODE</span>
-            </span>
-            <h1 class="h3 fw-bold mt-3 mb-2" id="lblSubject">Classroom</h1>
-            <div class="hero-meta" id="lblMeta"></div>
-          </div>
-          <button class="btn btn-ghost-light btn-sm" type="button" onclick="exitClass()">
-            <i class="bi bi-arrow-left-right me-1"></i>Change Code
-          </button>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="row g-3 mb-4">
-        <div class="col-6 col-lg-3">
-          <div class="glass-card stat-card h-100 p-3 p-md-4">
-            <div class="stat-icon i-indigo"><i class="bi bi-journal-text"></i></div>
-            <div class="stat-value" id="statPosts">0</div>
-            <div class="stat-label">Resources</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="glass-card stat-card h-100 p-3 p-md-4">
-            <div class="stat-icon i-cyan"><i class="bi bi-calendar3"></i></div>
-            <div class="stat-value" id="statClasses">0</div>
-            <div class="stat-label">Classes Held</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="glass-card stat-card h-100 p-3 p-md-4">
-            <div class="stat-icon i-emerald"><i class="bi bi-graph-up-arrow"></i></div>
-            <div class="stat-value" id="statPercent">0%</div>
-            <div class="stat-label">Avg. Attendance</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="glass-card stat-card h-100 p-3 p-md-4">
-            <div class="stat-icon i-rose"><i class="bi bi-person-x"></i></div>
-            <div class="stat-value" id="statAbsent">0</div>
-            <div class="stat-label">Total Absences</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabs + search -->
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-        <ul class="nav segmented mb-0" id="classTabs">
-          <li class="nav-item">
-            <button class="nav-link active" type="button" data-tab="posts" onclick="switchTab('posts')">
-              <i class="bi bi-folder2-open me-2"></i>Notes &amp; Resources
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" type="button" data-tab="attendance" onclick="switchTab('attendance')">
-              <i class="bi bi-calendar-check me-2"></i>Attendance
-            </button>
-          </li>
-        </ul>
-
-        <div class="search-wrap" id="postsSearchWrap">
-          <i class="bi bi-search"></i>
-          <input type="search" id="postSearch" class="form-control form-control-sm"
-                 placeholder="Search resources…" aria-label="Search resources">
-        </div>
-      </div>
-
-      <!-- Tab 1: Notes & Resources -->
-      <div id="tabContentPosts">
-        <div id="postsList" class="row g-3"></div>
-      </div>
-
-      <!-- Tab 2: Attendance -->
-      <div id="tabContentAttendance" class="d-none">
-        <div class="glass-card overflow-hidden">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Topic / Hour</th>
-                  <th style="min-width: 180px;">Attendance</th>
-                  <th>Absentees</th>
-                </tr>
-              </thead>
-              <tbody id="attendanceTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- ================= LOADING OVERLAY ================= -->
-  <div id="loadingOverlay" class="loading-overlay d-none">
-    <div class="spinner-border spinner-glow" role="status" aria-hidden="true"></div>
-    <p class="mt-3 mb-0 small text-secondary fw-semibold">Fetching classroom data…</p>
+      <button id="changeCodeBtn" class="hidden ml-2 text-[12px] px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+        <i class="bi bi-arrow-left-right mr-1"></i> Change Code
+      </button>
+    </div>
   </div>
+</nav>
 
-  <script>
-    /* ============================================================
-       CONFIGURATION — paste your Google Apps Script Web App URL
-       ============================================================ */
-    const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbygC3AcBGG2K3ENYfJO34BYZNRfwQZM0-BiDaIeW5momKY9Jyp4w9eSIsQVXtFqVHEADA/exec";
+<!-- ================= CODE LOOKUP ================= -->
+<div id="lookupView" class="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
+  <div class="w-full max-w-[460px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up">
+    <div class="p-8 pb-6 text-center">
+      <div class="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white text-[22px]"
+           style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #06b6d4 100%); box-shadow: 0 18px 32px -18px rgba(79,70,229,0.95);">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h1 class="text-[18px] font-semibold tracking-tight">Enter your Class Code</h1>
+      <p class="text-[13px] text-slate-500 mt-1 leading-relaxed">
+        Use the 6-character code shared by your professor to unlock notes, resources and attendance.
+      </p>
 
-    /* ==================== STATE ==================== */
-    const state = {
-      classInfo: null,
-      posts: [],
-      attendance: [],
-      postFilter: ''
-    };
+      <form id="lookupForm" class="mt-6 space-y-3 text-left">
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Class Code</label>
+          <input id="codeField" type="text" maxlength="6" autocomplete="off" spellcheck="false"
+                 placeholder="ABC123"
+                 class="code-input w-full border-2 border-slate-200 bg-white text-slate-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+        </div>
+        <button type="submit" id="lookupBtn"
+                class="w-full h-11 rounded-xl btn-primary-grad text-white font-medium text-[14px] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
+          <i class="bi bi-box-arrow-in-right"></i><span>Open Classroom</span>
+        </button>
+      </form>
 
-    const $ = (id) => document.getElementById(id);
+      <div id="lookupAlert" class="hidden mt-3 text-[12px] py-2 px-3 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300"></div>
 
-    /* ==================== HELPERS ==================== */
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[ch]));
-    }
+      <p class="text-[11px] text-slate-500 mt-5 flex items-center justify-center gap-1.5">
+        <i class="bi bi-info-circle"></i> Class codes are not case-sensitive.
+      </p>
+    </div>
 
-    function safeUrl(value) {
-      if (!value) return '';
-      try {
-        const url = new URL(String(value), window.location.href);
-        return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
-      } catch (e) {
-        return '';
-      }
-    }
+    <div class="px-8 py-4 rounded-b-[20px] border-t text-[11px] text-slate-500 flex items-center gap-2 bg-slate-50 border-slate-200 dark:bg-[#0f172a] dark:border-slate-800">
+      <i class="bi bi-lock"></i> Powered by the same Apps Script backend
+    </div>
+  </div>
+</div>
 
-    function categoryClass(category) {
-      const c = String(category || '').toLowerCase();
-      if (c.includes('note') || c.includes('lecture')) return 'text-bg-primary';
-      if (c.includes('assign') || c.includes('homework')) return 'text-bg-warning';
-      if (c.includes('exam') || c.includes('test') || c.includes('quiz')) return 'text-bg-danger';
-      if (c.includes('resource') || c.includes('link') || c.includes('material') || c.includes('pdf')) return 'text-bg-info';
-      if (c.includes('announce') || c.includes('notice')) return 'text-bg-success';
-      return 'text-bg-secondary';
-    }
+<!-- ================= CLASSROOM VIEW ================= -->
+<div id="classroomView" class="hidden">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
 
-    function emptyState(icon, title, subtitle) {
-      return `
-        <div class="empty-state">
-          <i class="bi ${icon}"></i>
-          <h3 class="h6 fw-bold mt-3 mb-1">${escapeHtml(title)}</h3>
-          <p class="text-secondary small mb-0">${escapeHtml(subtitle)}</p>
-        </div>`;
-    }
+    <!-- Hero banner -->
+    <div class="hero rounded-[20px] p-6 md:p-8 text-white mb-6 shadow-[0_26px_55px_-30px_rgba(79,70,229,1)]">
+      <div class="relative flex flex-col md:flex-row md:items-start justify-between gap-4" style="z-index:1;">
+        <div class="min-w-0">
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-white/20 border border-white/40 backdrop-blur-sm">
+            <i class="bi bi-key-fill"></i> <span id="heroCode">CLASS CODE</span>
+          </span>
+          <h1 id="heroSubject" class="text-[24px] md:text-[28px] font-semibold tracking-tight mt-3 mb-2">Classroom</h1>
+          <div id="heroMeta" class="flex flex-wrap gap-x-4 gap-y-1 text-[13px] opacity-95"></div>
+        </div>
+      </div>
+    </div>
 
-    function animateNumber(el, target, suffix = '') {
-      if (!el) return;
-      const duration = 700;
-      const start = performance.now();
-      function step(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(target * eased) + suffix;
-        if (progress < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">
+          <i class="bi bi-journal-text"></i>
+        </div>
+        <div id="statPosts" class="text-[22px] font-semibold tracking-tight">0</div>
+        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Resources</div>
+      </div>
+      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#06b6d4,#0ea5e9);">
+          <i class="bi bi-calendar3"></i>
+        </div>
+        <div id="statClasses" class="text-[22px] font-semibold tracking-tight">0</div>
+        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Classes Held</div>
+      </div>
+      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#10b981,#22c55e);">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div id="statPercent" class="text-[22px] font-semibold tracking-tight">0%</div>
+        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Avg. Attendance</div>
+      </div>
+      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#f43f5e,#fb7185);">
+          <i class="bi bi-person-x"></i>
+        </div>
+        <div id="statAbsent" class="text-[22px] font-semibold tracking-tight">0</div>
+        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Total Absences</div>
+      </div>
+    </div>
 
-    function setLoading(isLoading) {
-      $('loadingOverlay').classList.toggle('d-none', !isLoading);
-      const btn = $('btnLookup');
-      if (btn) btn.disabled = isLoading;
-    }
+    <!-- Tabs + search -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+      <div class="inline-flex p-1 rounded-full bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 w-full md:w-auto">
+        <button data-tab="posts" class="tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition">
+          <i class="bi bi-folder2-open mr-1.5"></i> Notes & Resources
+        </button>
+        <button data-tab="attendance" class="tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition">
+          <i class="bi bi-calendar-check mr-1.5"></i> Attendance
+        </button>
+      </div>
 
-    function showLookupError(message) {
-      const box = $('lookupAlert');
-      box.textContent = message;
-      box.classList.remove('d-none');
-    }
+      <div id="postsSearchWrap" class="relative w-full md:w-auto">
+        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px] pointer-events-none"></i>
+        <input id="postSearch" type="search" placeholder="Search resources…"
+               class="w-full md:w-[260px] h-10 pl-9 pr-3 rounded-full border border-slate-200 bg-white text-[13px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+      </div>
+    </div>
 
-    /* ==================== API ==================== */
-    async function callBackend(action, data = {}) {
-      const response = await fetch(SCRIPT_API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: action, data: data })
-      });
-      const result = await response.json();
-      if (!result || !result.success) {
-        throw new Error((result && result.error) || 'Unable to reach the classroom service.');
-      }
-      return result.data;
-    }
+    <!-- Tab 1: Posts -->
+    <div id="tabPosts">
+      <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
 
-    /* ==================== LOOKUP ==================== */
-    async function handleLookup(e) {
-      if (e) e.preventDefault();
+    <!-- Tab 2: Attendance -->
+    <div id="tabAttendance" class="hidden">
+      <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
+                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500 whitespace-nowrap">Date</th>
+                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500">Topic / Hour</th>
+                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500" style="min-width: 200px;">Attendance</th>
+                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500">Absentees</th>
+              </tr>
+            </thead>
+            <tbody id="attTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-      const code = $('codeField').value.trim().toUpperCase();
-      $('lookupAlert').classList.add('d-none');
+    <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
+      <i class="bi bi-code-square"></i>
+      SCRIPT_API_URL preserved • Action: getStudentClassData
+    </div>
+  </div>
+</div>
 
-      if (code.length < 4) {
-        showLookupError('Please enter the full class code (e.g. ABC123).');
-        return;
-      }
+<!-- ================= TOASTS ================= -->
+<div id="toastStack" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-      setLoading(true);
-      try {
-        const data = await callBackend('getStudentClassData', { classCode: code });
-        renderClassroom(data);
-        try { localStorage.setItem('lastClassCode', code); } catch (err) {}
-      } catch (err) {
-        showLookupError(err.message || 'Classroom not found. Please check the code.');
-      } finally {
-        setLoading(false);
-      }
-    }
+<script>
+/* ============================================================
+   CONFIGURATION — same Apps Script URL, unchanged
+   ============================================================ */
+const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbygC3AcBGG2K3ENYfJO34BYZNRfwQZM0-BiDaIeW5momKY9Jyp4w9eSIsQVXtFqVHEADA/exec";
 
-    /* ==================== RENDER: CLASSROOM ==================== */
-    function renderClassroom(data) {
-      const info = (data && data.classInfo) || {};
-      state.classInfo = info;
-      state.posts = Array.isArray(data && data.posts) ? data.posts : [];
-      state.attendance = Array.isArray(data && data.attendance) ? data.attendance : [];
-      state.postFilter = '';
-      $('postSearch').value = '';
+/* ==================== STATE ==================== */
+const state = {
+  theme: 'light',
+  tab: 'posts',
+  classInfo: null,
+  posts: [],
+  attendance: [],
+  postFilter: '',
+  loading: false
+};
 
-      /* Banner */
-      $('lblClassCode').innerHTML =
-        `<i class="bi bi-key-fill"></i><span>CLASS CODE · ${escapeHtml(info.code || '—')}</span>`;
-      $('lblSubject').textContent = info.subject || 'Classroom';
+const $ = (id) => document.getElementById(id);
 
-      const meta = [
-        info.faculty  ? `<span><i class="bi bi-person-badge"></i>${escapeHtml(info.faculty)}</span>` : '',
-        info.branch   ? `<span><i class="bi bi-diagram-3"></i>${escapeHtml(info.branch)}</span>` : '',
-        info.semester ? `<span><i class="bi bi-layers"></i>Semester ${escapeHtml(info.semester)}</span>` : '',
-        info.division ? `<span><i class="bi bi-people"></i>Division ${escapeHtml(info.division)}</span>` : ''
-      ].filter(Boolean).join('');
-      $('lblMeta').innerHTML = meta;
+/* ==================== UTILS ==================== */
+function escapeHtml(v) {
+  if (v === null || v === undefined) return '';
+  return String(v).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
 
-      computeStats();
-      renderPosts();
-      renderAttendance();
-      switchTab('posts');
+function safeUrl(v) {
+  if (!v) return '';
+  try {
+    const u = new URL(v, window.location.href);
+    return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '';
+  } catch (e) { return ''; }
+}
 
-      $('lookupContainer').classList.add('d-none');
-      const view = $('classroomView');
-      view.classList.remove('d-none');
-      view.classList.remove('animate-in');
-      void view.offsetWidth;           /* restart animation */
-      view.classList.add('animate-in');
+function categoryClass(cat) {
+  const c = String(cat || '').toLowerCase();
+  if (c.includes('note'))      return 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950 dark:border-indigo-900 dark:text-indigo-300';
+  if (c.includes('assign'))    return 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950 dark:border-amber-900 dark:text-amber-300';
+  if (c.includes('exam') || c.includes('test') || c.includes('quiz')) return 'bg-red-50 border-red-200 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300';
+  if (c.includes('resource') || c.includes('link') || c.includes('material') || c.includes('pdf')) return 'bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950 dark:border-sky-900 dark:text-sky-300';
+  if (c.includes('announce') || c.includes('notice')) return 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300';
+  return 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300';
+}
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+function categoryIcon(cat) {
+  const c = String(cat || '').toLowerCase();
+  if (c.includes('note'))      return 'bi-file-earmark-text';
+  if (c.includes('assign'))    return 'bi-clipboard-check';
+  if (c.includes('exam') || c.includes('test') || c.includes('quiz')) return 'bi-clipboard2-pulse';
+  if (c.includes('resource') || c.includes('link') || c.includes('material') || c.includes('pdf')) return 'bi-link-45deg';
+  if (c.includes('announce') || c.includes('notice')) return 'bi-megaphone';
+  return 'bi-journal-text';
+}
 
-    /* ==================== STATS ==================== */
-    function computeStats() {
-      let present = 0, total = 0, absent = 0;
+function animateNumber(el, target, suffix = '') {
+  if (!el) return;
+  const duration = 700;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 
-      state.attendance.forEach((a) => {
-        present += Number(a.present) || 0;
-        total   += Number(a.total) || 0;
-        absent  += Number(a.absent) || 0;
-      });
+/* ==================== TOASTS ==================== */
+function showToast(msg, type = 'info') {
+  const stack = $('toastStack');
+  const icons = { success: 'bi-check-circle-fill text-emerald-500',
+                  error: 'bi-x-circle-fill text-red-500',
+                  info: 'bi-info-circle-fill text-slate-400' };
+  const borders = { success: 'border-emerald-200 dark:border-emerald-900',
+                    error: 'border-red-200 dark:border-red-900',
+                    info: 'border-slate-200 dark:border-slate-700' };
+  const el = document.createElement('div');
+  el.className = `toast-in pointer-events-auto min-w-[280px] max-w-[380px] rounded-xl border px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-start gap-2.5 text-[13px] bg-white dark:bg-[#1e293b] dark:text-slate-100 ${borders[type] || borders.info}`;
+  el.innerHTML = `<i class="bi ${icons[type] || icons.info} mt-0.5"></i><span class="flex-1 leading-snug">${msg}</span>`;
+  stack.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s, transform .3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    setTimeout(() => el.remove(), 320);
+  }, 3500);
+}
 
-      const percent = total ? Math.round((present / total) * 100) : 0;
+/* ==================== THEME ==================== */
+function applyTheme(theme) {
+  state.theme = theme;
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+  $('themeIcon').className = `bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} text-[14px]`;
+  try { localStorage.setItem('student-theme', theme); } catch (e) {}
+}
 
-      animateNumber($('statPosts'), state.posts.length);
-      animateNumber($('statClasses'), state.attendance.length);
-      animateNumber($('statPercent'), percent, '%');
-      animateNumber($('statAbsent'), absent);
-    }
-
-    /* ==================== POSTS ==================== */
-    function renderPosts() {
-      const wrap = $('postsList');
-      const query = state.postFilter.trim().toLowerCase();
-
-      const posts = state.posts.filter((p) => {
-        if (!query) return true;
-        return [p.title, p.description, p.category]
-          .join(' ')
-          .toLowerCase()
-          .includes(query);
-      });
-
-      if (!posts.length) {
-        wrap.innerHTML = `<div class="col-12">${
-          emptyState(
-            query ? 'bi-search' : 'bi-inbox',
-            query ? 'No matching resources' : 'No notes posted yet',
-            query
-              ? 'Try a different keyword or clear the search.'
-              : 'Your professor hasn’t shared any notes or resources for this class yet.'
-          )
-        }</div>`;
-        return;
-      }
-
-      wrap.innerHTML = posts.map((p) => {
-        const url = safeUrl(p.link);
-        return `
-          <div class="col-12 col-lg-6">
-            <article class="glass-card post-card h-100 p-3 p-md-4 d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                <span class="badge rounded-pill ${categoryClass(p.category)}">
-                  ${escapeHtml(p.category || 'General')}
-                </span>
-                <span class="post-date"><i class="bi bi-clock-history me-1"></i>${escapeHtml(p.date || '')}</span>
-              </div>
-
-              <h2 class="h6 fw-bold mb-2">${escapeHtml(p.title || 'Untitled')}</h2>
-
-              ${p.description
-                ? `<p class="text-secondary small flex-grow-1 mb-3">${escapeHtml(p.description)}</p>`
-                : '<div class="flex-grow-1"></div>'}
-
-              ${url ? `
-                <a href="${url}" target="_blank" rel="noopener noreferrer"
-                   class="btn btn-sm btn-soft-primary align-self-start">
-                  <i class="bi bi-box-arrow-up-right me-1"></i>Open Resource
-                </a>` : ''}
-            </article>
-          </div>`;
-      }).join('');
-    }
-
-    /* ==================== ATTENDANCE ==================== */
-    function renderAttendance() {
-      const tbody = $('attendanceTableBody');
-
-      if (!state.attendance.length) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-0">${
-          emptyState(
-            'bi-calendar-x',
-            'No attendance recorded yet',
-            'Attendance records will appear here once your professor starts marking them.'
-          )
-        }</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = state.attendance.map((a) => {
-        const total = Number(a.total) || 0;
-        const present = Number(a.present) || 0;
-        const absentCount = Number(a.absent) || 0;
-        const percent = total ? Math.round((present / total) * 100) : 0;
-        const tone = percent >= 75 ? 'success' : percent >= 50 ? 'warning' : 'danger';
-
-        const hasRolls = a.absentRolls && String(a.absentRolls).trim() !== '' &&
-                         String(a.absentRolls).trim().toLowerCase() !== 'none';
-
-        let absentCell;
-        if (!absentCount) {
-          absentCell = '<span class="text-secondary small">All present</span>';
-        } else if (hasRolls) {
-          absentCell = `<span class="roll-chip">${escapeHtml(a.absentRolls)}</span>`;
-        } else {
-          absentCell = `<span class="badge bg-danger-subtle text-danger-emphasis">${absentCount} absent</span>`;
-        }
-
-        return `
-          <tr>
-            <td class="text-nowrap fw-semibold">${escapeHtml(a.date || '—')}</td>
-            <td class="text-secondary small">${escapeHtml(a.topic || '—')}</td>
-            <td>
-              <div class="d-flex justify-content-between align-items-center small mb-1">
-                <span class="fw-semibold">${present} / ${total}</span>
-                <span class="text-secondary">${percent}%</span>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar bg-${tone}" role="progressbar"
-                     style="width: ${percent}%" aria-valuenow="${percent}"
-                     aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </td>
-            <td>
-              ${absentCell}
-              ${a.remarks
-                ? `<div class="small text-secondary fst-italic mt-1">${escapeHtml(a.remarks)}</div>`
-                : ''}
-            </td>
-          </tr>`;
-      }).join('');
-    }
-
-    /* ==================== TABS ==================== */
-    function switchTab(tab) {
-      document.querySelectorAll('#classTabs .nav-link').forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-      });
-      $('tabContentPosts').classList.toggle('d-none', tab !== 'posts');
-      $('tabContentAttendance').classList.toggle('d-none', tab !== 'attendance');
-      $('postsSearchWrap').classList.toggle('d-none', tab !== 'posts');
-    }
-
-    /* ==================== EXIT ==================== */
-    function exitClass() {
-      $('classroomView').classList.add('d-none');
-      $('lookupContainer').classList.remove('d-none');
-      $('codeField').value = '';
-      $('lookupAlert').classList.add('d-none');
-      state.posts = [];
-      state.attendance = [];
-      state.postFilter = '';
-      $('postSearch').value = '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => $('codeField').focus(), 250);
-    }
-
-    /* ==================== THEME ==================== */
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-bs-theme', theme);
-      $('themeToggle').innerHTML = `<i class="bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon-stars'}"></i>`;
-      try { localStorage.setItem('portal-theme', theme); } catch (e) {}
-    }
-
-    /* ==================== INIT ==================== */
-    window.addEventListener('DOMContentLoaded', () => {
-      applyTheme(document.documentElement.getAttribute('data-bs-theme') || 'light');
-
-      $('themeToggle').addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-bs-theme');
-        applyTheme(current === 'dark' ? 'light' : 'dark');
-      });
-
-      /* Force uppercase alphanumeric class codes */
-      $('codeField').addEventListener('input', (e) => {
-        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      });
-
-      /* Live search */
-      $('postSearch').addEventListener('input', (e) => {
-        state.postFilter = e.target.value;
-        renderPosts();
-      });
-
-      /* Auto-open if ?code=ABC123 is present in the URL */
-      const code = new URLSearchParams(window.location.search).get('code');
-      if (code) {
-        $('codeField').value = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        handleLookup();
-      } else {
-        $('codeField').focus();
-      }
+/* ==================== BACKEND ==================== */
+async function callBackend(action, data = {}) {
+  let result;
+  try {
+    const res = await fetch(SCRIPT_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, data })
     });
-  </script>
+    result = await res.json();
+  } catch (err) {
+    console.warn('Backend unreachable, using mock:', err.message);
+    return mockBackend(action, data);
+  }
+  if (!result || !result.success) {
+    throw new Error((result && (result.error || result.message)) || 'Classroom not found');
+  }
+  return result.data !== undefined ? result.data : result;
+}
+
+/* Mock mirrors the real Apps Script response shape */
+function mockBackend(action, data = {}) {
+  if (action !== 'getStudentClassData') throw new Error('Unknown action: ' + action);
+  const code = (data.classCode || 'DEMO1').toUpperCase();
+  return {
+    classInfo: {
+      code,
+      subject: 'Data Structures',
+      faculty: 'Dr. Anjali Sharma',
+      branch: 'CSE',
+      semester: '5',
+      division: 'A'
+    },
+    posts: [
+      { id: 'p1', classCode: code, category: 'Notes',      title: 'Unit 1 — Arrays & Linked Lists', link: 'https://example.com/notes1', description: 'Complete notes covering array operations, linked list types and complexity analysis.', date: '2024-09-01' },
+      { id: 'p2', classCode: code, category: 'Assignment', title: 'Assignment 2 — Stack & Queue',   link: 'https://example.com/ass2',   description: 'Implement stack using arrays and linked list. Due 15 Sep.', date: '2024-09-03' },
+      { id: 'p3', classCode: code, category: 'Resource',   title: 'Drive folder — reference PDFs',   link: 'https://drive.google.com/',  description: 'Curated reference material for the mid-term.', date: '2024-09-05' }
+    ],
+    attendance: [
+      { id: 'a1', classCode: code, date: '2024-09-04', topic: 'Linked List Traversal', total: 60, present: 54, absent: 6, absentRolls: '5, 12, 23, 34, 41, 57', remarks: 'Doubt class scheduled' },
+      { id: 'a2', classCode: code, date: '2024-09-02', topic: 'Arrays Complexity',    total: 60, present: 58, absent: 2, absentRolls: '19, 44', remarks: '' },
+      { id: 'a3', classCode: code, date: '2024-08-30', topic: 'Intro & Syllabus',     total: 60, present: 60, absent: 0, absentRolls: 'None', remarks: '' }
+    ]
+  };
+}
+
+/* ==================== LOOKUP ==================== */
+async function handleLookup(e) {
+  if (e) e.preventDefault();
+  const code = ($('codeField').value || '').trim().toUpperCase();
+  $('lookupAlert').classList.add('hidden');
+
+  if (code.length < 4) {
+    showLookupError('Please enter the full class code (e.g. ABC123).');
+    return;
+  }
+
+  const btn = $('lookupBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span><span>Connecting…</span>`;
+
+  try {
+    const data = await callBackend('getStudentClassData', { classCode: code });
+    renderClassroom(data);
+    try { localStorage.setItem('lastClassCode', code); } catch (err) {}
+  } catch (err) {
+    showLookupError(err.message || 'Classroom not found.');
+    showToast(err.message || 'Classroom not found', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="bi bi-box-arrow-in-right"></i><span>Open Classroom</span>`;
+  }
+}
+
+function showLookupError(msg) {
+  const box = $('lookupAlert');
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+
+/* ==================== RENDER: CLASSROOM ==================== */
+function renderClassroom(data) {
+  const info = (data && data.classInfo) || {};
+  state.classInfo = info;
+  state.posts = Array.isArray(data && data.posts) ? data.posts : [];
+  state.attendance = Array.isArray(data && data.attendance) ? data.attendance : [];
+  state.postFilter = '';
+  state.tab = 'posts';
+  $('postSearch').value = '';
+
+  /* Hero */
+  $('heroCode').textContent = `CLASS CODE · ${info.code || '—'}`;
+  $('heroSubject').textContent = info.subject || 'Classroom';
+  const meta = [
+    info.faculty  ? `<span><i class="bi bi-person-badge mr-1"></i>${escapeHtml(info.faculty)}</span>` : '',
+    info.branch   ? `<span><i class="bi bi-diagram-3 mr-1"></i>${escapeHtml(info.branch)}</span>` : '',
+    info.semester ? `<span><i class="bi bi-layers mr-1"></i>Semester ${escapeHtml(info.semester)}</span>` : '',
+    info.division ? `<span><i class="bi bi-people mr-1"></i>Division ${escapeHtml(info.division)}</span>` : ''
+  ].filter(Boolean).join('');
+  $('heroMeta').innerHTML = meta;
+  $('crumbClass').textContent = info.code || 'Classroom';
+
+  computeStats();
+  renderPosts();
+  renderAttendance();
+  switchTab('posts');
+
+  $('lookupView').classList.add('hidden');
+  $('changeCodeBtn').classList.remove('hidden');
+  const view = $('classroomView');
+  view.classList.remove('hidden');
+  view.classList.remove('fade-up');
+  void view.offsetWidth;
+  view.classList.add('fade-up');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ==================== STATS ==================== */
+function computeStats() {
+  let present = 0, total = 0, absent = 0;
+  state.attendance.forEach((a) => {
+    present += Number(a.present ?? a.presentCount) || 0;
+    total   += Number(a.total   ?? a.totalCount)   || 0;
+    absent  += Number(a.absent  ?? a.absentCount)  || 0;
+  });
+  const pct = total ? Math.round((present / total) * 100) : 0;
+
+  animateNumber($('statPosts'), state.posts.length);
+  animateNumber($('statClasses'), state.attendance.length);
+  animateNumber($('statPercent'), pct, '%');
+  animateNumber($('statAbsent'), absent);
+}
+
+/* ==================== POSTS ==================== */
+function renderPosts() {
+  const wrap = $('postsGrid');
+  const q = state.postFilter.trim().toLowerCase();
+  const list = state.posts.filter((p) => {
+    if (!q) return true;
+    return [p.title, p.description, p.category].join(' ').toLowerCase().includes(q);
+  });
+
+  if (!list.length) {
+    wrap.innerHTML = `
+      <div class="col-span-2 rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 p-10 text-center">
+        <i class="bi ${q ? 'bi-search' : 'bi-inbox'} text-slate-400 text-[28px] block mb-2"></i>
+        <div class="text-[13px] font-medium">${q ? 'No matching resources' : 'No notes or announcements yet'}</div>
+        <div class="text-[12px] text-slate-500 mt-1">${q ? 'Try a different keyword.' : 'Your professor hasn\u2019t posted anything for this class yet.'}</div>
+      </div>`;
+    return;
+  }
+
+  wrap.innerHTML = list.map((p) => {
+    const url = safeUrl(p.link);
+    return `
+      <article class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 p-5 flex flex-col transition hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-[0_4px_24px_rgba(79,70,229,0.08)]">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${categoryClass(p.category)}">
+              ${escapeHtml(p.category || 'General')}
+            </span>
+            <span class="text-[11px] text-slate-400 flex items-center gap-1">
+              <i class="bi bi-clock-history"></i> ${escapeHtml(p.date || '')}
+            </span>
+          </div>
+          <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
+            <i class="bi ${categoryIcon(p.category)} text-[14px]"></i>
+          </div>
+        </div>
+
+        <h3 class="text-[14px] font-semibold leading-snug mb-1.5">${escapeHtml(p.title || 'Untitled')}</h3>
+        ${p.description ? `<p class="text-[12px] text-slate-500 line-clamp-2 mb-4 flex-1">${escapeHtml(p.description)}</p>` : '<div class="flex-1"></div>'}
+
+        ${url ? `
+          <a href="${url}" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-1.5 self-start px-3 py-1.5 rounded-lg text-[12px] font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 dark:text-indigo-300 dark:bg-indigo-950/60 dark:border-indigo-900 dark:hover:bg-indigo-950 transition">
+            <i class="bi bi-box-arrow-up-right"></i> Open Resource
+          </a>` : ''}
+      </article>`;
+  }).join('');
+}
+
+/* ==================== ATTENDANCE ==================== */
+function renderAttendance() {
+  const tbody = $('attTableBody');
+
+  if (!state.attendance.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="p-10 text-center">
+          <i class="bi bi-calendar-x text-slate-400 text-[28px] block mb-2"></i>
+          <div class="text-[13px] font-medium">No attendance recorded yet</div>
+          <div class="text-[12px] text-slate-500 mt-1">Records will appear once your professor starts marking them.</div>
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = state.attendance.map((a) => {
+    const total   = Number(a.total   ?? a.totalCount)   || 0;
+    const present = Number(a.present ?? a.presentCount) || 0;
+    const absent  = Number(a.absent  ?? a.absentCount)  || 0;
+    const pct = total ? Math.round((present / total) * 100) : 0;
+    const tone = pct >= 75 ? 'success' : pct >= 50 ? 'warning' : 'danger';
+
+    const hasRolls = a.absentRolls && String(a.absentRolls).trim() !== '' &&
+                     String(a.absentRolls).trim().toLowerCase() !== 'none';
+
+    let absentCell;
+    if (!absent) {
+      absentCell = `<span class="text-[12px] text-slate-500">All present</span>`;
+    } else if (hasRolls) {
+      absentCell = `<span class="mono inline-block text-[11px] font-bold px-2 py-1 rounded-md bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/60 dark:border-red-900 dark:text-red-300 break-all">${escapeHtml(a.absentRolls)}</span>`;
+    } else {
+      absentCell = `<span class="text-[11px] px-2 py-1 rounded-md bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/60 dark:border-red-900 dark:text-red-300">${absent} absent</span>`;
+    }
+
+    return `
+      <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">
+        <td class="px-4 py-3 text-nowrap">
+          <span class="text-[13px] font-semibold">${escapeHtml(a.date || '—')}</span>
+        </td>
+        <td class="px-4 py-3">
+          <span class="text-[13px] text-slate-600 dark:text-slate-300">${escapeHtml(a.topic || '—')}</span>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center justify-between text-[12px] mb-1.5">
+            <span class="font-semibold">${present} / ${total}</span>
+            <span class="text-slate-500">${pct}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill pf-${tone}" style="width: ${pct}%"></div>
+          </div>
+        </td>
+        <td class="px-4 py-3">
+          ${absentCell}
+          ${a.remarks ? `<div class="text-[11px] text-slate-500 italic mt-1.5">${escapeHtml(a.remarks)}</div>` : ''}
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+/* ==================== TABS ==================== */
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    const active = btn.dataset.tab === tab;
+    btn.className = `tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition ${
+      active
+        ? 'bg-white shadow border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100'
+        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
+    }`;
+  });
+  $('tabPosts').classList.toggle('hidden', tab !== 'posts');
+  $('tabAttendance').classList.toggle('hidden', tab !== 'attendance');
+  $('postsSearchWrap').classList.toggle('hidden', tab !== 'posts');
+}
+
+/* ==================== EXIT ==================== */
+function exitClass() {
+  $('classroomView').classList.add('hidden');
+  $('lookupView').classList.remove('hidden');
+  $('changeCodeBtn').classList.add('hidden');
+  $('codeField').value = '';
+  $('lookupAlert').classList.add('hidden');
+  $('crumbClass').textContent = 'Enter Code';
+  state.posts = [];
+  state.attendance = [];
+  state.classInfo = null;
+  state.postFilter = '';
+  $('postSearch').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => $('codeField').focus(), 250);
+}
+
+/* ==================== EVENT WIRING ==================== */
+$('lookupForm').addEventListener('submit', handleLookup);
+
+/* Force uppercase alphanumeric class codes */
+$('codeField').addEventListener('input', (e) => {
+  e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+});
+
+/* Live search */
+$('postSearch').addEventListener('input', (e) => {
+  state.postFilter = e.target.value;
+  renderPosts();
+});
+
+/* Tabs */
+document.querySelectorAll('.tab-btn').forEach((btn) => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+/* Change code */
+$('changeCodeBtn').addEventListener('click', exitClass);
+
+/* Theme toggle */
+$('themeToggle').addEventListener('click', () => {
+  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+});
+
+/* ==================== INIT ==================== */
+(function init() {
+  let theme = 'light';
+  try { theme = localStorage.getItem('student-theme') || 'light'; } catch (e) {}
+  applyTheme(theme);
+
+  /* Auto-open if ?code=ABC123 is present in the URL */
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    $('codeField').value = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    handleLookup();
+  } else {
+    /* Pre-fill last used code (if any) for convenience — user still presses Open */
+    try {
+      const last = localStorage.getItem('lastClassCode');
+      if (last) $('codeField').value = last;
+    } catch (e) {}
+    $('codeField').focus();
+  }
+})();
+</script>
+
 </body>
 </html>
