@@ -146,8 +146,14 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
 .r-a .kv b{color:#111827;font-weight:700;}
 .r-a .decl{
   font-size:9.4pt;color:var(--muted);margin-top:14px;
-  border-top:1px dashed var(--line);padding-top:8px;white-space:pre-line;
+  border-top:1px dashed var(--line);padding-top:8px;
 }
+.r-a .decl-text{white-space:pre-line;margin-bottom:22px;}
+.r-a .decl-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:20px;font-size:9.8pt;color:var(--ink);
+}
+.r-a .decl-row b{color:#111827;font-weight:700;}
 
 /* ================= TEMPLATE B : MODERN SIDEBAR ================= */
 .r-b{display:flex;min-height:297mm;font-size:10.5pt;line-height:1.45;}
@@ -215,6 +221,16 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
   padding:2px 8px;border-radius:20px;margin:0 4px 4px 0;
 }
 .r-b p{margin:0;white-space:pre-line;}
+.r-b .decl{
+  margin-top:16px;font-size:9.4pt;color:#5b6777;
+  border-top:1px dashed var(--line);padding-top:10px;
+}
+.r-b .decl-text{white-space:pre-line;margin-bottom:22px;}
+.r-b .decl-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:20px;font-size:9.8pt;color:var(--ink);
+}
+.r-b .decl-row b{color:#111827;font-weight:700;}
 
 /* ---------------- Responsive ---------------- */
 @media (max-width:1080px){
@@ -238,7 +254,7 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
     page-break-after:always;
   }
   .sheet:last-child{page-break-after:auto;}
-  .r-a li,.r-a .item,.r-a h2,.r-b .item,.r-b h2{break-inside:avoid;}
+  .r-a li,.r-a .item,.r-a h2,.r-a .decl,.r-b .item,.r-b h2,.r-b .decl{break-inside:avoid;}
 }
 </style>
 </head>
@@ -261,7 +277,6 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
   <!-- ================= FORM PANEL ================= -->
   <aside class="form-panel" id="formPanel">
 
-    <!-- Personal -->
     <div class="fs">
       <h3>Personal Details</h3>
       <label>Full Name
@@ -294,7 +309,6 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
     </div>
 
-    <!-- Objective -->
     <div class="fs">
       <h3>Career Objective / Profile</h3>
       <label>Summary
@@ -302,14 +316,12 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
     </div>
 
-    <!-- Education -->
     <div class="fs">
       <h3>Education</h3>
       <div id="eduList"></div>
       <button type="button" class="add-btn" onclick="addEdu();render()">+ Add Education</button>
     </div>
 
-    <!-- Skills -->
     <div class="fs">
       <h3>Technical Skills</h3>
       <p class="hintline">Separate multiple skills with commas.</p>
@@ -330,7 +342,6 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
     </div>
 
-    <!-- Projects -->
     <div class="fs">
       <h3>Projects</h3>
       <p class="hintline">One bullet point per line in the description box.</p>
@@ -338,14 +349,12 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       <button type="button" class="add-btn" onclick="addProj();render()">+ Add Project</button>
     </div>
 
-    <!-- Experience -->
     <div class="fs">
       <h3>Internship / Experience</h3>
       <div id="expList"></div>
       <button type="button" class="add-btn" onclick="addExp();render()">+ Add Experience</button>
     </div>
 
-    <!-- Achievements -->
     <div class="fs">
       <h3>Achievements &amp; Activities</h3>
       <label>One achievement per line
@@ -353,7 +362,6 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
     </div>
 
-    <!-- Certifications -->
     <div class="fs">
       <h3>Certifications</h3>
       <label>One certification per line
@@ -361,7 +369,6 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
     </div>
 
-    <!-- Extra -->
     <div class="fs">
       <h3>Other Information</h3>
       <div class="grid-2">
@@ -378,6 +385,14 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       <label>Declaration
         <textarea id="f-declaration" placeholder="I hereby declare that the information furnished above is true to the best of my knowledge."></textarea>
       </label>
+      <div class="grid-2">
+        <label>Place
+          <input id="f-place" placeholder="Bagalkote">
+        </label>
+        <label>Signature
+          <input id="f-signature" placeholder="Harsh M Biradar">
+        </label>
+      </div>
     </div>
 
   </aside>
@@ -399,15 +414,12 @@ function esc(s){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
-/* Escapes, then turns **bold** into <b>bold</b> */
 function rich(s){
   return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 }
-/* Split textarea into non-empty lines */
 function lines(s){
   return String(s || '').split('\n').map(function(x){return x.trim();}).filter(Boolean);
 }
-/* Split into tokens on commas or newlines */
 function tokens(s){
   return String(s || '').split(/[,\n]/).map(function(x){return x.trim();}).filter(Boolean);
 }
@@ -536,8 +548,27 @@ function collectData(){
     knownLangs:  val('f-known-langs'),
     address:     val('f-address'),
     declaration: val('f-declaration'),
+    place:       val('f-place'),
+    signature:   val('f-signature'),
     photo:       photoData
   };
+}
+
+/* ============================================================
+   DECLARATION BLOCK (shared by both templates)
+   ============================================================ */
+function declBlock(d, cls){
+  if(!d.declaration && !d.place && !d.signature) return '';
+  var h = '<div class="' + cls + '">';
+  if(d.declaration) h += '<div class="decl-text">' + rich(d.declaration) + '</div>';
+  if(d.place || d.signature){
+    h += '<div class="decl-row">' +
+           '<span><b>Place:</b> ' + esc(d.place) + '</span>' +
+           '<span><b>Signature:</b> ' + esc(d.signature) + '</span>' +
+         '</div>';
+  }
+  h += '</div>';
+  return h;
 }
 
 /* ============================================================
@@ -653,9 +684,7 @@ function renderA(d){
     h += '</div>';
   }
 
-  if(d.declaration){
-    h += '<div class="decl">' + rich(d.declaration) + '</div>';
-  }
+  h += declBlock(d, 'decl');
 
   document.getElementById('sheetA').innerHTML = h;
 }
@@ -664,7 +693,6 @@ function renderA(d){
    TEMPLATE B : MODERN SIDEBAR
    ============================================================ */
 function renderB(d){
-  /* ---------- SIDEBAR ---------- */
   var side = '';
 
   side += '<div>' +
@@ -718,7 +746,6 @@ function renderB(d){
     side += '</ul></div>';
   }
 
-  /* ---------- MAIN ---------- */
   var main = '';
 
   main += '<h1 class="name">' + (esc(d.name) || 'YOUR NAME') + '</h1>';
@@ -790,10 +817,7 @@ function renderB(d){
             '</ul>';
   }
 
-  if(d.declaration){
-    main += '<p style="margin-top:14px;font-size:9.4pt;color:#5b6777;border-top:1px dashed #d8dee7;padding-top:8px;">' +
-            rich(d.declaration) + '</p>';
-  }
+  main += declBlock(d, 'decl');
 
   document.getElementById('sheetB').innerHTML =
     '<aside class="side">' + side + '</aside>' +
@@ -831,16 +855,16 @@ function setTpl(which){
 }
 
 /* ============================================================
-   SAMPLE DATA
+   SAMPLE DATA  →  Harsh M Biradar
    ============================================================ */
 function loadSample(){
   var S = {
     'f-name':        'HARSH M BIRADAR',
     'f-role':        'Computer Science & Engineering Graduate',
     'f-phone':       '+91 98765 43210',
-    'f-email':       'harshmbiradar.com',
+    'f-email':       'harsh.biradar@email.com',
     'f-linkedin':    'linkedin.com/in/harshbiradar',
-    'f-github':      'github.com/harshmb',
+    'f-github':      'github.com/harshbiradar',
     'f-location':    'Bagalkote, Karnataka',
     'f-objective':   'Final-year B.E. Computer Science student at Basaveshwar Engineering College, Bagalkote, with hands-on experience in full-stack web development and machine learning. Seeking a software engineering role where I can apply strong problem-solving skills, clean coding practices and a collaborative mindset to deliver reliable, scalable products.',
     'f-skills-lang': 'Java, Python, C, JavaScript, SQL',
@@ -853,7 +877,9 @@ function loadSample(){
     'f-dob':         '14 August 2004',
     'f-known-langs': 'English, Kannada, Hindi',
     'f-address':     'Vidyagiri, Bagalkote, Karnataka – 587102',
-    'f-declaration': 'I hereby declare that the information furnished above is true to the best of my knowledge.\n\nPlace: Bagalkote        Signature: Harsh M Biradar'
+    'f-declaration': 'I hereby declare that the information furnished above is true to the best of my knowledge.',
+    'f-place':       'Bagalkote',
+    'f-signature':   'Harsh M Biradar'
   };
   Object.keys(S).forEach(function(id){
     var el = document.getElementById(id);
@@ -911,10 +937,8 @@ function clearAll(){
    ============================================================ */
 var formPanel = document.getElementById('formPanel');
 
-/* Live re-render on any change */
 formPanel.addEventListener('input', render);
 
-/* Remove dynamic card */
 formPanel.addEventListener('click', function(e){
   var btn = e.target.closest('.remove-btn');
   if(btn){
@@ -923,7 +947,6 @@ formPanel.addEventListener('click', function(e){
   }
 });
 
-/* Photo upload */
 document.getElementById('f-photo').addEventListener('change', function(e){
   var file = e.target.files[0];
   if(!file){ photoData = ''; render(); return; }
