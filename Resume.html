@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEC Bagalkote · Placement Resume Builder</title>
 <style>
 :root{
@@ -19,12 +19,13 @@ body{
   font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
   background:#eef1f5;color:var(--ink);
   -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  -webkit-text-size-adjust:100%;
 }
 
 /* ---------------- Toolbar ---------------- */
 .toolbar{
-  position:sticky;top:0;z-index:50;
-  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:60;
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;
   padding:10px 18px;background:#0f2b4d;color:#fff;
   box-shadow:0 2px 10px rgba(0,0,0,.18);
 }
@@ -34,14 +35,33 @@ body{
 .btn{
   border:1px solid rgba(255,255,255,.35);
   background:rgba(255,255,255,.08);color:#fff;
-  padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;
-  cursor:pointer;transition:.18s;font-family:inherit;
+  padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.18s;font-family:inherit;white-space:nowrap;
 }
 .btn:hover{background:rgba(255,255,255,.2);}
 .btn.active{background:#fff;color:#0f2b4d;border-color:#fff;}
 .btn.primary{background:var(--gold);border-color:var(--gold);color:#2b1c00;}
 .btn.primary:hover{background:#ffb81c;}
 .btn.ghost{background:transparent;}
+
+/* ---------------- Mobile Tabs ---------------- */
+.mobile-tabs{
+  display:none;
+  position:sticky;top:52px;z-index:55;
+  background:#e6ebf1;padding:8px;
+  gap:8px;border-bottom:1px solid var(--line);
+  box-shadow:0 2px 6px rgba(15,43,77,.06);
+}
+.mtab{
+  flex:1;padding:11px 8px;border-radius:10px;
+  border:1.5px solid transparent;background:#fff;color:var(--muted);
+  font-size:13.5px;font-weight:700;font-family:inherit;
+  cursor:pointer;transition:.18s;
+}
+.mtab.active{
+  background:var(--accent);color:#fff;border-color:var(--accent);
+  box-shadow:0 3px 10px rgba(26,79,138,.3);
+}
 
 /* ---------------- Layout ---------------- */
 .layout{display:flex;align-items:flex-start;}
@@ -60,6 +80,12 @@ body{
   overflow-x:auto;
 }
 
+.sheet-stack{
+  width:794px;
+  flex-shrink:0;
+  position:relative;
+}
+
 /* ---------------- Form ---------------- */
 .fs{padding:16px 18px;border-bottom:1px solid var(--line);}
 .fs h3{
@@ -73,7 +99,7 @@ label{
   margin-bottom:10px;
 }
 input,textarea{
-  width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);
+  width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--line);
   border-radius:7px;font-size:13px;font-family:inherit;color:var(--ink);
   background:#fbfcfe;transition:.15s;
 }
@@ -90,14 +116,14 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
   padding:12px 12px 4px;margin-bottom:12px;background:#fafbfd;
 }
 .remove-btn{
-  position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;
-  border:none;background:#ffe5e5;color:#c0392b;font-size:15px;line-height:1;
+  position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;
+  border:none;background:#ffe5e5;color:#c0392b;font-size:16px;line-height:1;
   cursor:pointer;font-weight:700;padding:0;font-family:inherit;
 }
 .remove-btn:hover{background:#c0392b;color:#fff;}
 .add-btn{
-  width:100%;padding:9px;border:1.5px dashed var(--accent);background:transparent;
-  color:var(--accent);border-radius:8px;font-size:12.5px;font-weight:600;
+  width:100%;padding:11px;border:1.5px dashed var(--accent);background:transparent;
+  color:var(--accent);border-radius:8px;font-size:13px;font-weight:600;
   cursor:pointer;font-family:inherit;transition:.15s;
 }
 .add-btn:hover{background:var(--accent);color:#fff;border-style:solid;}
@@ -106,7 +132,7 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
 .sheet{
   width:210mm;min-height:297mm;background:#fff;
   box-shadow:0 10px 30px rgba(15,43,77,.18);
-  position:relative;overflow:hidden;flex-shrink:0;
+  position:relative;overflow:hidden;
 }
 .sheet[hidden]{display:none !important;}
 
@@ -232,44 +258,138 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
 }
 .r-b .decl-row b{color:#111827;font-weight:700;}
 
-/* ---------------- Responsive ---------------- */
-@media (max-width:1080px){
-  .layout{flex-direction:column;}
+/* ---------------- Mobile FAB ---------------- */
+.mobile-fab{
+  display:none;
+  position:fixed;right:16px;bottom:16px;z-index:70;
+  padding:14px 20px;border-radius:50px;border:none;
+  background:var(--gold);color:#2b1c00;
+  font-size:14px;font-weight:800;font-family:inherit;
+  box-shadow:0 8px 24px rgba(240,165,0,.45);
+  cursor:pointer;
+}
+.mobile-fab:active{transform:scale(.96);}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  /* Toolbar compact */
+  .toolbar{
+    padding:8px 10px;gap:6px;
+  }
+  .brand{font-size:12.5px;flex:1 1 100%;text-align:center;}
+  .brand span{display:block;font-size:11px;margin-top:1px;}
+  .actions{
+    width:100%;justify-content:center;gap:6px;
+    overflow-x:auto;padding-bottom:2px;
+  }
+  .btn{padding:7px 10px;font-size:11.5px;}
+  .btn.ghost{padding:7px 8px;font-size:11px;}
+
+  /* Show mobile tabs */
+  .mobile-tabs{display:flex;top:auto;position:sticky;}
+
+  /* Stack panels */
+  .layout{display:block;}
+
+  /* Form panel full-width */
   .form-panel{
     width:100%;flex:1 1 auto;height:auto;max-height:none;
-    position:static;border-right:none;border-bottom:2px solid var(--line);
+    position:static;border-right:none;border-bottom:none;
+    display:none;
   }
-  .preview-area{width:100%;padding:18px 8px 70px;}
+
+  /* Preview area full width, hidden by default on mobile */
+  .preview-area{
+    display:none;width:100%;
+    padding:0;overflow:hidden;
+    position:relative;
+  }
+
+  /* Toggle visibility based on body class */
+  body.tab-form .form-panel{display:block;}
+  body.tab-preview .preview-area{display:block;}
+
+  /* Bigger touch targets */
+  input,textarea{
+    font-size:16px;  /* prevents iOS auto-zoom */
+    padding:11px 12px;
+  }
+  label{font-size:12.5px;}
+  .fs{padding:14px 14px;}
+  .grid-2{grid-template-columns:1fr;}  /* single column on mobile */
+  .add-btn{padding:13px;font-size:14px;}
+  .remove-btn{width:30px;height:30px;font-size:18px;}
+
+  /* Show FAB */
+  .mobile-fab{display:block;}
+
+  /* The sheet stack gets scaled via JS */
+  .sheet-stack{
+    transform-origin:top left;
+    transition:transform .15s ease-out;
+  }
+
+  /* Preview mobile "paper" backdrop */
+  .preview-area .sheet-stack{
+    margin:0;
+  }
+  .sheet{
+    box-shadow:0 4px 14px rgba(15,43,77,.15);
+  }
+}
+
+/* Small phone tweaks */
+@media (max-width:420px){
+  .btn{padding:6px 8px;font-size:11px;}
+  .brand{font-size:12px;}
 }
 
 /* ---------------- Print ---------------- */
 @page{size:A4;margin:0;}
 @media print{
-  body{background:#fff;}
-  .toolbar,.form-panel{display:none !important;}
-  .layout{display:block;}
-  .preview-area{padding:0;display:block;overflow:visible;}
+  body{background:#fff !important;}
+  .toolbar,.form-panel,.mobile-tabs,.mobile-fab{display:none !important;}
+  .layout{display:block !important;}
+  .preview-area{
+    padding:0 !important;display:block !important;
+    overflow:visible !important;height:auto !important;
+  }
+  .sheet-stack{
+    transform:none !important;
+    width:auto !important;
+    height:auto !important;
+  }
   .sheet{
-    width:210mm;min-height:0;box-shadow:none;margin:0;
+    width:210mm !important;min-height:0 !important;
+    box-shadow:none !important;margin:0 !important;
     page-break-after:always;
   }
   .sheet:last-child{page-break-after:auto;}
-  .r-a li,.r-a .item,.r-a h2,.r-a .decl,.r-b .item,.r-b h2,.r-b .decl{break-inside:avoid;}
+  .r-a li,.r-a .item,.r-a h2,.r-a .decl,
+  .r-b .item,.r-b h2,.r-b .decl{break-inside:avoid;}
 }
 </style>
 </head>
-<body>
+<body class="tab-form">
 
 <!-- ================= TOOLBAR ================= -->
 <div class="toolbar">
   <div class="brand">BEC Bagalkote <span>· Placement Resume Builder</span></div>
   <div class="actions">
-    <button class="btn active" id="btnA" onclick="setTpl('A')">Template 1 · Classic ATS</button>
-    <button class="btn" id="btnB" onclick="setTpl('B')">Template 2 · Modern Sidebar</button>
-    <button class="btn ghost" onclick="loadSample()">↺ Load Sample</button>
-    <button class="btn ghost" onclick="clearAll()">✕ Clear All</button>
-    <button class="btn primary" onclick="window.print()">🖨 Print / Save PDF</button>
+    <button class="btn active" id="btnA" onclick="setTpl('A')">Template 1 · Classic</button>
+    <button class="btn" id="btnB" onclick="setTpl('B')">Template 2 · Modern</button>
+    <button class="btn ghost" onclick="loadSample()">↺ Sample</button>
+    <button class="btn ghost" onclick="clearAll()">✕ Clear</button>
+    <button class="btn primary" onclick="window.print()">🖨 Print</button>
   </div>
+</div>
+
+<!-- ================= MOBILE TABS ================= -->
+<div class="mobile-tabs">
+  <button class="mtab active" id="tabForm" onclick="setTab('form')">📝 Fill Form</button>
+  <button class="mtab" id="tabPreview" onclick="setTab('preview')">👁 Preview</button>
 </div>
 
 <div class="layout">
@@ -287,10 +407,10 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
       </label>
       <div class="grid-2">
         <label>Phone
-          <input id="f-phone" placeholder="+91 98765 43210">
+          <input id="f-phone" type="tel" placeholder="+91 98765 43210">
         </label>
         <label>Email
-          <input id="f-email" placeholder="you@email.com">
+          <input id="f-email" type="email" placeholder="you@email.com">
         </label>
       </div>
       <div class="grid-2">
@@ -398,12 +518,17 @@ textarea{resize:vertical;min-height:62px;line-height:1.5;}
   </aside>
 
   <!-- ================= PREVIEW ================= -->
-  <main class="preview-area">
-    <div class="sheet r-a" id="sheetA"></div>
-    <div class="sheet r-b" id="sheetB" hidden></div>
+  <main class="preview-area" id="previewArea">
+    <div class="sheet-stack" id="sheetStack">
+      <div class="sheet r-a" id="sheetA"></div>
+      <div class="sheet r-b" id="sheetB" hidden></div>
+    </div>
   </main>
 
 </div>
+
+<!-- ================= MOBILE FAB ================= -->
+<button class="mobile-fab" onclick="window.print()">🖨 Print / Save PDF</button>
 
 <script>
 /* ============================================================
@@ -555,7 +680,7 @@ function collectData(){
 }
 
 /* ============================================================
-   DECLARATION BLOCK (shared by both templates)
+   DECLARATION BLOCK
    ============================================================ */
 function declBlock(d, cls){
   if(!d.declaration && !d.place && !d.signature) return '';
@@ -831,6 +956,10 @@ function render(){
   var d = collectData();
   renderA(d);
   renderB(d);
+  /* Re-fit preview on mobile after content changes */
+  if(typeof requestAnimationFrame === 'function'){
+    requestAnimationFrame(fitPreview);
+  }
 }
 
 /* ============================================================
@@ -851,7 +980,79 @@ function setTpl(which){
     a.hidden = true; b.hidden = false;
     btnA.classList.remove('active'); btnB.classList.add('active');
   }
+  if(window.innerWidth <= 900 && typeof fitPreview === 'function'){
+    setTimeout(fitPreview, 30);
+  }else{
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+/* ============================================================
+   MOBILE TAB SWITCH
+   ============================================================ */
+function setTab(which){
+  document.body.classList.remove('tab-form', 'tab-preview');
+  document.body.classList.add('tab-' + which);
+  document.getElementById('tabForm').classList.toggle('active', which === 'form');
+  document.getElementById('tabPreview').classList.toggle('active', which === 'preview');
   window.scrollTo({top:0, behavior:'smooth'});
+
+  if(which === 'preview'){
+    setTimeout(fitPreview, 50);
+  }
+}
+
+/* ============================================================
+   MOBILE PREVIEW AUTO-FIT
+   Scales the A4 sheet so it fits within phone screen width.
+   ============================================================ */
+var SHEET_W = 794;   /* 210mm @ 96dpi ≈ 793.7px */
+var SHEET_H = 1123;  /* 297mm @ 96dpi ≈ 1122.5px */
+
+function fitPreview(){
+  var stack = document.getElementById('sheetStack');
+  var area  = document.getElementById('previewArea');
+  if(!stack || !area) return;
+
+  if(window.innerWidth > 900){
+    /* Desktop: reset */
+    stack.style.transform = '';
+    stack.style.width = '';
+    stack.style.height = '';
+    area.style.height = '';
+    area.style.paddingTop = '';
+    area.style.paddingBottom = '';
+    return;
+  }
+
+  /* Mobile: scale to fit viewport width */
+  var vw = document.documentElement.clientWidth;
+  var availW = vw - 16; /* 8px padding each side */
+  var scale = Math.min(1, availW / SHEET_W);
+
+  /* Determine natural height of the visible sheet */
+  var visibleSheet = currentTemplate === 'A'
+    ? document.getElementById('sheetA')
+    : document.getElementById('sheetB');
+  var naturalH = visibleSheet ? visibleSheet.scrollHeight : SHEET_H;
+
+  stack.style.transformOrigin = 'top left';
+  stack.style.transform = 'scale(' + scale + ')';
+  stack.style.width = SHEET_W + 'px';
+  stack.style.height = naturalH + 'px';
+
+  /* Set preview-area height to scaled height + padding */
+  var scaledH = naturalH * scale;
+  area.style.paddingTop = '10px';
+  area.style.paddingBottom = '80px';
+  area.style.height = (scaledH + 90) + 'px';
+  area.style.overflowY = 'auto';
+  area.style.overflowX = 'hidden';
+  area.style.display = 'block';
+  area.style.justifyContent = 'flex-start';
+  area.style.alignItems = 'flex-start';
+  area.style.paddingLeft = '8px';
+  area.style.paddingRight = '8px';
 }
 
 /* ============================================================
@@ -958,10 +1159,34 @@ document.getElementById('f-photo').addEventListener('change', function(e){
   reader.readAsDataURL(file);
 });
 
+/* Re-fit on resize / orientation change */
+var resizeTimer;
+window.addEventListener('resize', function(){
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(fitPreview, 120);
+});
+window.addEventListener('orientationchange', function(){
+  setTimeout(fitPreview, 250);
+});
+
 /* ============================================================
    INIT
    ============================================================ */
 loadSample();
+
+/* Initial fit after layout settles */
+window.addEventListener('load', function(){
+  fitPreview();
+  setTimeout(fitPreview, 200);
+});
+
+/* Fit whenever fonts / images change layout */
+if(window.ResizeObserver){
+  var ro = new ResizeObserver(function(){
+    if(window.innerWidth <= 900) fitPreview();
+  });
+  ro.observe(document.getElementById('sheetStack'));
+}
 </script>
 </body>
 </html>
