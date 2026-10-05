@@ -7,633 +7,461 @@
 <style>
 :root{
   --accent:#1a4f8a;
-  --line:#d8dee7;
+  --accent2:#0f2b4d;
   --ink:#1f2937;
+  --muted:#5b6777;
+  --line:#d8dee7;
+  --gold:#f0a500;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
   background:#eef1f5;color:var(--ink);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
 }
 
 /* ---------------- Toolbar ---------------- */
 .toolbar{
-  position:sticky;top:0;z-index:20;
+  position:sticky;top:0;z-index:50;
   display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
   padding:10px 18px;background:#0f2b4d;color:#fff;
   box-shadow:0 2px 10px rgba(0,0,0,.18);
 }
 .brand{font-weight:700;letter-spacing:.3px;font-size:15px;}
-.brand small{display:block;font-weight:400;font-size:11px;opacity:.7;}
-.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-.tools button{
-  border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;
-  padding:7px 12px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;
+.brand span{opacity:.65;font-weight:400;}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.btn{
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.08);color:#fff;
+  padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.18s;
 }
-.tools button:hover{background:rgba(255,255,255,.2);}
-.tools button.primary{background:#ffb703;border-color:#ffb703;color:#1b1b1b;}
-.mini{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.95;}
-.mini input[type=color]{width:32px;height:26px;border:none;background:none;padding:0;cursor:pointer;}
-.mini input[type=range]{width:80px;}
+.btn:hover{background:rgba(255,255,255,.2);}
+.btn.active{background:#fff;color:#0f2b4d;border-color:#fff;}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#2b1c00;}
+.btn.primary:hover{background:#ffb81c;}
+.hint{
+  font-size:12px;color:#c8d6e6;padding:6px 14px 0;text-align:center;
+}
 
-/* ---------------- Layout ---------------- */
-.app{
-  display:grid;grid-template-columns:minmax(340px,420px) 1fr;
-  gap:18px;padding:18px;align-items:start;
+/* ---------------- Stage / Paper ---------------- */
+.stage{padding:26px 12px 70px;display:flex;justify-content:center;}
+.sheet{
+  width:210mm;min-height:297mm;background:#fff;
+  box-shadow:0 10px 30px rgba(15,43,77,.18);
+  position:relative;overflow:hidden;
 }
-.preview-wrap{display:flex;justify-content:center;overflow:auto;}
+.sheet[hidden]{display:none !important;}
+[contenteditable="true"]:focus{
+  outline:2px dashed #9db6d4;outline-offset:3px;border-radius:4px;
+}
 
-/* ---------------- Editor ---------------- */
-.editor{
-  background:#fff;border:1px solid var(--line);border-radius:10px;
-  padding:4px 14px 14px;max-height:calc(100vh - 105px);overflow:auto;
-  position:sticky;top:76px;
+/* ================= OPTION 1 : CLASSIC ATS ================= */
+.r-a{padding:15mm 14mm;font-size:10.8pt;line-height:1.45;color:var(--ink);}
+.r-a .name{
+  font-size:25pt;font-weight:800;letter-spacing:.5px;
+  color:var(--accent2);margin:0;line-height:1.08;
 }
-details{border-bottom:1px solid #eef1f5;padding:6px 0;}
-details:last-child{border-bottom:none;}
-summary{
-  cursor:pointer;font-weight:700;font-size:13.5px;color:#0f2b4d;
-  padding:7px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;
+.r-a .role{
+  font-size:10.5pt;color:var(--accent);font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;margin:5px 0 9px;
 }
-summary::-webkit-details-marker{display:none;}
-summary::after{content:'▾';opacity:.55;font-size:12px;}
-details[open] summary::after{content:'▴';}
-.body{padding:4px 0 6px;}
-label{display:block;font-size:12px;color:#4b5563;font-weight:600;margin-bottom:8px;}
-.body input:not([type=color]):not([type=range]),
-.body textarea{
-  width:100%;margin-top:4px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;
-  font:inherit;font-size:13px;font-weight:400;color:#111;background:#fbfcfe;resize:vertical;
+.r-a .contact{
+  font-size:9.6pt;color:#374151;
+  border-top:2.5px solid var(--accent2);border-bottom:1px solid var(--line);
+  padding:6px 0;display:flex;flex-wrap:wrap;gap:3px 16px;
 }
-.body input:focus,.body textarea:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(26,79,138,.12);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
-.item{background:#f7f9fc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:10px;}
-.item-hd{display:flex;justify-content:space-between;align-items:center;
-  font-size:11.5px;font-weight:700;color:#0f2b4d;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
-.del{background:#fee2e2;color:#b91c1c;border:none;border-radius:5px;width:22px;height:22px;
-  cursor:pointer;font-size:12px;line-height:1;}
-.del:hover{background:#fecaca;}
-.add{width:100%;padding:8px;border:1px dashed #94a3b8;background:#f8fafc;border-radius:7px;
-  cursor:pointer;font-size:12.5px;color:#334155;font-weight:600;margin-top:2px;}
-.add:hover{background:#eef2f7;border-color:var(--accent);color:var(--accent);}
-.hint{font-size:11px;color:#94a3b8;font-weight:400;margin-top:-4px;display:block;}
+.r-a .contact a{color:#374151;text-decoration:none;}
+.r-a h2{
+  font-size:10.6pt;text-transform:uppercase;letter-spacing:1.4px;
+  color:var(--accent2);margin:15px 0 7px;
+  padding-bottom:3px;border-bottom:1.5px solid var(--line);
+  position:relative;
+}
+.r-a h2::after{
+  content:"";position:absolute;left:0;bottom:-1.5px;
+  width:46px;height:1.5px;background:var(--gold);
+}
+.r-a p{margin:0 0 6px;}
+.r-a ul{margin:4px 0 0;padding-left:17px;}
+.r-a li{margin-bottom:3px;}
+.r-a .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;}
+.r-a .row .when{font-size:9.4pt;color:var(--muted);white-space:nowrap;font-weight:600;}
+.r-a .item{margin-bottom:9px;break-inside:avoid;}
+.r-a .item .title{font-weight:700;color:#111827;}
+.r-a .item .sub{font-size:9.7pt;color:var(--muted);font-style:italic;}
+.r-a .kv{display:grid;grid-template-columns:150px 1fr;gap:2px 10px;font-size:10.2pt;}
+.r-a .kv b{color:#111827;font-weight:700;}
+.r-a .decl{font-size:9.4pt;color:var(--muted);margin-top:14px;
+  border-top:1px dashed var(--line);padding-top:8px;}
 
-/* ---------------- A4 Page ---------------- */
-.page{
-  width:210mm;min-height:297mm;background:#fff;padding:12mm 14mm;
-  box-shadow:0 6px 28px rgba(15,23,42,.15);
-  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
-  font-size:10.5pt;line-height:1.36;color:#111;
-  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+/* ================= OPTION 2 : MODERN TWO-COLUMN ================= */
+.r-b{display:flex;min-height:297mm;font-size:10.5pt;line-height:1.45;}
+.r-b .side{
+  width:34%;background:var(--accent2);color:#dfe8f3;
+  padding:13mm 7mm;display:flex;flex-direction:column;gap:14px;
 }
-.page h1{
-  font-size:1.95em;margin:0;text-align:center;text-transform:uppercase;
-  letter-spacing:.6px;color:#000;font-weight:700;
+.r-b .main{width:66%;padding:13mm 9mm;color:var(--ink);}
+.r-b .photo{
+  width:74px;height:74px;border-radius:50%;
+  border:2px dashed rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:center;
+  font-size:8pt;letter-spacing:1px;color:rgba(255,255,255,.6);
+  margin:0 auto 2px;
 }
-.r-contact{text-align:center;font-size:.88em;margin-top:5px;color:#1f2937;word-break:break-word;}
-.r-contact .sep{color:var(--accent);font-weight:700;padding:0 3px;}
-.r-sec{margin-top:11px;}
-.r-sec h2{
-  font-size:1em;text-transform:uppercase;letter-spacing:.9px;margin:0 0 6px;
-  color:var(--accent);border-bottom:1.3px solid var(--accent);padding-bottom:2px;font-weight:700;
+.r-b .side h3{
+  font-size:9.4pt;letter-spacing:1.6px;text-transform:uppercase;
+  color:#fff;margin:0 0 7px;padding-bottom:5px;
+  border-bottom:1px solid rgba(255,255,255,.22);
 }
-.r-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
-.r-left{flex:1 1 auto;min-width:0;}
-.r-right{flex:0 0 auto;text-align:right;white-space:nowrap;}
-.r-strong{font-weight:700;}
-.r-sub{font-size:.94em;color:#333;}
-.r-item{margin-bottom:7px;}
-.r-item:last-child{margin-bottom:0;}
-.page ul{margin:3px 0 0;padding-left:16px;}
-.page li{margin-bottom:2px;text-align:justify;}
-.r-skill{margin-bottom:2.5px;}
-.r-skill b{color:#000;}
-.r-line{margin-bottom:2px;}
-.decl{margin-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
-.decl .sig{text-align:right;}
-.decl .sig b{display:block;margin-top:16px;}
-.placeholder{color:#9ca3af;font-style:italic;}
+.r-b .side p,.r-b .side li{font-size:9.6pt;color:#cfdcec;}
+.r-b .side ul{list-style:none;margin:0;padding:0;}
+.r-b .side ul li{
+  position:relative;padding-left:13px;margin-bottom:4px;
+}
+.r-b .side ul li::before{
+  content:"";position:absolute;left:0;top:6.5px;
+  width:5px;height:5px;border-radius:50%;background:var(--gold);
+}
+.r-b .side .line{margin-bottom:5px;word-break:break-word;}
+.r-b .side .line b{color:#fff;font-weight:600;}
+.r-b .name{
+  font-size:23pt;font-weight:800;color:var(--accent2);
+  margin:0;line-height:1.1;letter-spacing:.3px;
+}
+.r-b .role{
+  font-size:10pt;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--gold);margin:4px 0 12px;
+}
+.r-b h2{
+  font-size:10.4pt;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--accent2);margin:16px 0 8px;padding-left:10px;
+  border-left:4px solid var(--gold);line-height:1.2;
+}
+.r-b h2:first-of-type{margin-top:6px;}
+.r-b .row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;}
+.r-b .row .when{font-size:9.2pt;color:var(--muted);font-weight:600;white-space:nowrap;}
+.r-b .item{margin-bottom:10px;break-inside:avoid;}
+.r-b .item .title{font-weight:700;color:#111827;}
+.r-b .item .sub{font-size:9.5pt;color:var(--muted);font-style:italic;}
+.r-b ul{margin:4px 0 0;padding-left:16px;}
+.r-b li{margin-bottom:3px;}
+.r-b .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.r-b .tag{
+  font-size:8.8pt;font-weight:600;background:#eaf0f8;color:var(--accent);
+  padding:2px 8px;border-radius:20px;
+}
+.r-b .chip{
+  display:inline-block;font-size:8.8pt;font-weight:600;
+  background:rgba(255,255,255,.12);color:#eaf1f9;
+  padding:2px 8px;border-radius:20px;margin:0 4px 4px 0;
+}
 
 /* ---------------- Print ---------------- */
 @page{size:A4;margin:0;}
 @media print{
   body{background:#fff;}
-  .toolbar,.editor{display:none !important;}
-  .app{display:block;padding:0;gap:0;}
-  .preview-wrap{padding:0;display:block;overflow:visible;}
-  .page{width:auto;min-height:0;box-shadow:none;margin:0;padding:12mm 14mm;}
-}
-@media (max-width:900px){
-  .app{grid-template-columns:1fr;padding:10px;}
-  .editor{position:static;max-height:none;}
-  .page{transform-origin:top left;}
+  .toolbar,.hint{display:none !important;}
+  .stage{padding:0;display:block;}
+  .sheet{
+    width:210mm;min-height:0;box-shadow:none;margin:0;
+    page-break-after:always;
+  }
+  .sheet:last-child{page-break-after:auto;}
+  .r-a li,.r-a .item,.r-b .item,.r-b h2,.r-a h2{break-inside:avoid;}
 }
 </style>
 </head>
 <body>
 
-<!-- ============ TOOLBAR ============ -->
+<!-- ================= TOOLBAR ================= -->
 <div class="toolbar">
-  <div class="brand">
-    BEC Bagalkote · Placement Resume Builder
-    <small>Basaveshwar Engineering College (Autonomous), Bagalkote · VTU Belagavi</small>
-  </div>
-  <div class="tools">
-    <label class="mini">Accent <input type="color" id="accent" value="#1a4f8a"></label>
-    <label class="mini">Size <input type="range" id="fs" min="9" max="12" step="0.5" value="10.5"><span id="fsv">10.5pt</span></label>
-    <button id="btn-sample" type="button">Load Sample</button>
-    <button id="btn-clear" type="button">Clear All</button>
-    <button id="btn-print" class="primary" type="button">Print / Save as PDF</button>
+  <div class="brand">BEC Bagalkote <span>· Placement Resume Builder</span></div>
+  <div class="actions">
+    <button class="btn active" id="btnA" onclick="show('A')">Option 1 · Classic ATS</button>
+    <button class="btn" id="btnB" onclick="show('B')">Option 2 · Modern Sidebar</button>
+    <button class="btn primary" onclick="window.print()">🖨 Print / Save PDF</button>
   </div>
 </div>
+<div class="hint">Click any text on the resume to edit it directly. Use <b>Ctrl + P</b> → “Save as PDF”, paper size <b>A4</b>, margins <b>None</b>.</div>
 
-<div class="app">
-  <!-- ============ EDITOR ============ -->
-  <aside class="editor" id="editor">
+<div class="stage">
 
-    <details open>
-      <summary>1 · Personal Details</summary>
-      <div class="body">
-        <label>Full Name <input id="f-name" placeholder="Rutu M Biradar"></label>
-        <div class="grid2">
-          <label>Phone <input id="f-phone" placeholder="+91 98765 43210"></label>
-          <label>Email <input id="f-email" placeholder="rutumb@gmail.com"></label>
-          <label>LinkedIn <input id="f-linkedin" placeholder="linkedin.com/in/ananya"></label>
-          <label>GitHub <input id="f-github" placeholder="github.com/ananya"></label>
-          <label>Portfolio / Coding Profile <input id="f-portfolio" placeholder="leetcode.com/u/ananya"></label>
-          <label>City <input id="f-city" placeholder="Bagalkote, Karnataka"></label>
+  <!-- ============ OPTION 1 : CLASSIC ATS-FRIENDLY ============ -->
+  <div class="sheet r-a" id="sheetA" contenteditable="true" spellcheck="false">
+    <h1 class="name">SHREYA S. KULKARNI</h1>
+    <div class="role">Computer Science &amp; Engineering Graduate</div>
+
+    <div class="contact">
+      <span>📞 +91 98765 43210</span>
+      <span>✉ shreya.kulkarni@email.com</span>
+      <span>🔗 linkedin.com/in/shreyakulkarni</span>
+      <span>💻 github.com/shreyak</span>
+      <span>📍 Bagalkote, Karnataka</span>
+    </div>
+
+    <h2>Career Objective</h2>
+    <p>Final-year B.E. Computer Science student at Basaveshwar Engineering College, Bagalkote, with
+    hands-on experience in full-stack web development and machine learning. Seeking a software
+    engineering role where I can apply strong problem-solving skills, clean coding practices and a
+    collaborative mindset to deliver reliable, scalable products.</p>
+
+    <h2>Education</h2>
+    <div class="item">
+      <div class="row">
+        <span class="title">Basaveshwar Engineering College (BEC), Bagalkote</span>
+        <span class="when">2022 – 2026</span>
+      </div>
+      <div class="sub">B.E. in Computer Science &amp; Engineering — CGPA: 8.72 / 10</div>
+    </div>
+    <div class="item">
+      <div class="row">
+        <span class="title">Sri Siddeshwar PU College, Bagalkote</span>
+        <span class="when">2020 – 2022</span>
+      </div>
+      <div class="sub">Pre-University (PCMB) — 91.2%</div>
+    </div>
+    <div class="item">
+      <div class="row">
+        <span class="title">Basaveshwar English Medium School, Bagalkote</span>
+        <span class="when">2020</span>
+      </div>
+      <div class="sub">SSLC (KSEAB) — 93.4%</div>
+    </div>
+
+    <h2>Technical Skills</h2>
+    <div class="kv">
+      <b>Languages:</b><span>Java, Python, C, JavaScript, SQL</span>
+      <b>Web Technologies:</b><span>HTML5, CSS3, React.js, Node.js, Express.js, REST APIs</span>
+      <b>Databases:</b><span>MySQL, MongoDB</span>
+      <b>Tools &amp; Platforms:</b><span>Git, GitHub, VS Code, Postman, Linux, Docker (basics)</span>
+      <b>Core Subjects:</b><span>Data Structures &amp; Algorithms, DBMS, Operating Systems, OOP, Computer Networks</span>
+    </div>
+
+    <h2>Projects</h2>
+    <div class="item">
+      <div class="row">
+        <span class="title">SmartAttend — Face Recognition Attendance System</span>
+        <span class="when">Jan 2025 – Apr 2025</span>
+      </div>
+      <div class="sub">Python, OpenCV, Flask, MySQL</div>
+      <ul>
+        <li>Built an automated attendance system using Haar-Cascade and LBPH face recognition with 94% accuracy.</li>
+        <li>Designed a Flask dashboard that generates daily and monthly attendance reports in CSV format.</li>
+        <li>Reduced manual roll-call time by approximately 80% during a 60-student pilot at the college department.</li>
+      </ul>
+    </div>
+    <div class="item">
+      <div class="row">
+        <span class="title">CampusConnect — College Placement Portal</span>
+        <span class="when">Aug 2024 – Dec 2024</span>
+      </div>
+      <div class="sub">React.js, Node.js, Express.js, MongoDB</div>
+      <ul>
+        <li>Developed a full-stack portal where students upload resumes and companies post openings with role-based login.</li>
+        <li>Implemented JWT authentication and an admin panel for the placement cell to shortlist applicants.</li>
+        <li>Optimized MongoDB queries with indexing, cutting dashboard load time from 2.4 s to 0.8 s.</li>
+      </ul>
+    </div>
+
+    <h2>Internship &amp; Training</h2>
+    <div class="item">
+      <div class="row">
+        <span class="title">Web Development Intern — TechNova Solutions, Bengaluru</span>
+        <span class="when">Jun 2025 – Jul 2025</span>
+      </div>
+      <ul>
+        <li>Developed 6 responsive UI modules in React.js integrated with REST APIs for an internal CRM product.</li>
+        <li>Fixed 20+ front-end bugs and improved Lighthouse performance score from 68 to 92.</li>
+      </ul>
+    </div>
+
+    <h2>Achievements &amp; Activities</h2>
+    <ul>
+      <li>Secured <b>2nd place</b> in the 24-hour Hackathon conducted by BEC Bagalkote (2025), team of 4.</li>
+      <li>Solved <b>350+ problems</b> on LeetCode; 3-star rating in Java on HackerRank.</li>
+      <li>NPTEL Elite certificate in “Data Structures and Algorithms with Java” — Score 84%.</li>
+      <li>Volunteer, NSS Unit, BEC Bagalkote — organised blood donation and cleanliness drives.</li>
+    </ul>
+
+    <h2>Certifications</h2>
+    <ul>
+      <li>Google Cloud Fundamentals: Core Infrastructure — Coursera</li>
+      <li>Full Stack Web Development Bootcamp — Udemy</li>
+      <li>Database Management Systems — NPTEL (Elite)</li>
+    </ul>
+
+    <h2>Personal Details</h2>
+    <div class="kv">
+      <b>Date of Birth:</b><span>14 August 2004</span>
+      <b>Languages Known:</b><span>English, Kannada, Hindi</span>
+      <b>Address:</b><span>Vidyagiri, Bagalkote, Karnataka – 587102</span>
+    </div>
+
+    <div class="decl">
+      <b>Declaration:</b> I hereby declare that the information furnished above is true to the best of my knowledge.
+      <br><br><b>Place:</b> Bagalkote &nbsp;&nbsp;&nbsp; <b>Signature:</b> Shreya S. Kulkarni
+    </div>
+  </div>
+
+  <!-- ============ OPTION 2 : MODERN TWO-COLUMN ============ -->
+  <div class="sheet r-b" id="sheetB" contenteditable="true" spellcheck="false" hidden>
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <div>
+        <div class="photo">PHOTO</div>
+      </div>
+
+      <div>
+        <h3>Contact</h3>
+        <div class="line"><b>Phone</b><br>+91 98765 43210</div>
+        <div class="line"><b>Email</b><br>shreya.kulkarni@email.com</div>
+        <div class="line"><b>LinkedIn</b><br>linkedin.com/in/shreyakulkarni</div>
+        <div class="line"><b>GitHub</b><br>github.com/shreyak</div>
+        <div class="line"><b>Location</b><br>Bagalkote, Karnataka</div>
+      </div>
+
+      <div>
+        <h3>Technical Skills</h3>
+        <span class="chip">Java</span><span class="chip">Python</span><span class="chip">C</span>
+        <span class="chip">JavaScript</span><span class="chip">SQL</span>
+        <span class="chip">React.js</span><span class="chip">Node.js</span>
+        <span class="chip">Express.js</span><span class="chip">MongoDB</span>
+        <span class="chip">MySQL</span><span class="chip">Git</span><span class="chip">Docker</span>
+      </div>
+
+      <div>
+        <h3>Certifications</h3>
+        <ul>
+          <li>NPTEL Elite — DSA with Java (84%)</li>
+          <li>Google Cloud Fundamentals — Coursera</li>
+          <li>Full Stack Web Dev — Udemy</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Languages</h3>
+        <ul>
+          <li>English — Professional</li>
+          <li>Kannada — Native</li>
+          <li>Hindi — Conversational</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Interests</h3>
+        <ul>
+          <li>Competitive Programming</li>
+          <li>Open Source</li>
+          <li>Chess &amp; Badminton</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <h1 class="name">SHREYA S. KULKARNI</h1>
+      <div class="role">Computer Science &amp; Engineering</div>
+
+      <h2>Profile</h2>
+      <p style="margin:0;">Final-year B.E. Computer Science student at Basaveshwar Engineering College,
+      Bagalkote, passionate about full-stack development and machine learning. Experienced in building
+      and deploying end-to-end web applications, with a strong foundation in data structures,
+      algorithms and databases. Looking for a software engineering role in a growth-driven
+      organisation.</p>
+
+      <h2>Education</h2>
+      <div class="item">
+        <div class="row">
+          <span class="title">Basaveshwar Engineering College, Bagalkote</span>
+          <span class="when">2022 – 2026</span>
         </div>
+        <div class="sub">B.E. Computer Science &amp; Engineering — CGPA 8.72 / 10</div>
       </div>
-    </details>
-
-    <details open>
-      <summary>2 · Career Objective</summary>
-      <div class="body">
-        <label>Objective <span class="hint">2–3 lines. Mention role + strongest skill + what you offer.</span>
-          <textarea id="f-objective" rows="4" placeholder="Final-year Computer Science student with strong fundamentals in Data Structures, Java and SQL. Seeking a Software Engineer role to contribute to scalable backend systems while growing into a full-stack developer."></textarea>
-        </label>
+      <div class="item">
+        <div class="row">
+          <span class="title">Sri Siddeshwar PU College, Bagalkote</span>
+          <span class="when">2020 – 2022</span>
+        </div>
+        <div class="sub">PUC (PCMB) — 91.2%</div>
       </div>
-    </details>
-
-    <details open>
-      <summary>3 · Education</summary>
-      <div class="body">
-        <div id="list-edu" class="list"></div>
-        <button class="add" type="button" data-add="edu">+ Add Education</button>
+      <div class="item">
+        <div class="row">
+          <span class="title">Basaveshwar English Medium School, Bagalkote</span>
+          <span class="when">2020</span>
+        </div>
+        <div class="sub">SSLC (KSEAB) — 93.4%</div>
       </div>
-    </details>
 
-    <details open>
-      <summary>4 · Technical Skills</summary>
-      <div class="body">
-        <div id="list-skills" class="list"></div>
-        <button class="add" type="button" data-add="skill">+ Add Skill Category</button>
+      <h2>Projects</h2>
+      <div class="item">
+        <div class="row">
+          <span class="title">SmartAttend — Face Recognition Attendance</span>
+          <span class="when">2025</span>
+        </div>
+        <div class="sub">Python · OpenCV · Flask · MySQL</div>
+        <ul>
+          <li>Automated attendance marking with LBPH face recognition at 94% accuracy.</li>
+          <li>Flask dashboard generating daily/monthly CSV reports for faculty.</li>
+          <li>Cut manual roll-call time by ~80% in a 60-student pilot.</li>
+        </ul>
+        <div class="tags"><span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Flask</span></div>
       </div>
-    </details>
 
-    <details open>
-      <summary>5 · Academic Projects</summary>
-      <div class="body">
-        <div id="list-projects" class="list"></div>
-        <button class="add" type="button" data-add="project">+ Add Project</button>
+      <div class="item">
+        <div class="row">
+          <span class="title">CampusConnect — Placement Portal</span>
+          <span class="when">2024</span>
+        </div>
+        <div class="sub">React.js · Node.js · Express.js · MongoDB</div>
+        <ul>
+          <li>Full-stack portal for resume upload, job postings and role-based login.</li>
+          <li>JWT authentication plus an admin panel for the placement cell.</li>
+          <li>Indexed MongoDB queries to reduce dashboard load from 2.4 s to 0.8 s.</li>
+        </ul>
+        <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">MongoDB</span></div>
       </div>
-    </details>
 
-    <details>
-      <summary>6 · Internships / Training</summary>
-      <div class="body">
-        <div id="list-interns" class="list"></div>
-        <button class="add" type="button" data-add="intern">+ Add Internship</button>
+      <h2>Internship</h2>
+      <div class="item">
+        <div class="row">
+          <span class="title">Web Development Intern — TechNova Solutions, Bengaluru</span>
+          <span class="when">Jun – Jul 2025</span>
+        </div>
+        <ul>
+          <li>Built 6 responsive React.js UI modules wired to REST APIs for an internal CRM.</li>
+          <li>Resolved 20+ front-end defects; raised Lighthouse score from 68 to 92.</li>
+        </ul>
       </div>
-    </details>
 
-    <details>
-      <summary>7 · Certifications</summary>
-      <div class="body">
-        <label>One per line <textarea id="f-certs" rows="4" placeholder="NPTEL — Programming in Java (Elite, 82%)&#10;AWS Cloud Practitioner Essentials — Coursera"></textarea></label>
-      </div>
-    </details>
+      <h2>Achievements</h2>
+      <ul>
+        <li><b>2nd place</b> — 24-hour Hackathon, BEC Bagalkote (2025).</li>
+        <li><b>350+</b> problems solved on LeetCode; 3★ in Java on HackerRank.</li>
+        <li>NSS volunteer — blood donation and cleanliness drives.</li>
+      </ul>
+    </main>
+  </div>
 
-    <details>
-      <summary>8 · Achievements &amp; Awards</summary>
-      <div class="body">
-        <label>One per line <textarea id="f-achievements" rows="4" placeholder="Secured 2nd place in Smart India Hackathon (Internal), BEC Bagalkote, 2025"></textarea></label>
-      </div>
-    </details>
-
-    <details>
-      <summary>9 · Positions of Responsibility</summary>
-      <div class="body">
-        <label>One per line <textarea id="f-positions" rows="3" placeholder="Technical Lead — Coding Club, BEC Bagalkote (2024–25)"></textarea></label>
-      </div>
-    </details>
-
-    <details>
-      <summary>10 · Extra-curricular Activities</summary>
-      <div class="body">
-        <label>One per line <textarea id="f-extra" rows="3" placeholder="Volunteer — National Service Scheme (NSS) blood donation camp, 2024"></textarea></label>
-      </div>
-    </details>
-
-    <details>
-      <summary>11 · Languages &amp; Declaration</summary>
-      <div class="body">
-        <label>Languages Known <input id="f-languages" placeholder="English, Hindi, Kannada"></label>
-        <label>Declaration <textarea id="f-declaration" rows="2">I hereby declare that the information furnished above is true to the best of my knowledge and belief.</textarea></label>
-      </div>
-    </details>
-
-  </aside>
-
-  <!-- ============ PREVIEW ============ -->
-  <main class="preview-wrap">
-    <div class="page" id="page"></div>
-  </main>
 </div>
 
 <script>
-/* ================= Helpers ================= */
-const $  = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+function show(which){
+  const a = document.getElementById('sheetA');
+  const b = document.getElementById('sheetB');
+  const btnA = document.getElementById('btnA');
+  const btnB = document.getElementById('btnB');
 
-const esc  = t => String(t == null ? '' : t)
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const attr = t => String(t == null ? '' : t)
-  .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-const lines = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean);
-
-const KEY = 'bec-resume-v1';
-
-/* ================= List item builders ================= */
-function addEdu(d = {}) {
-  const el = document.createElement('div');
-  el.className = 'item';
-  el.innerHTML = `
-    <div class="item-hd"><span>Education</span><button type="button" class="del">✕</button></div>
-    <label>Degree / Course
-      <input data-f="degree" value="${attr(d.degree)}" placeholder="B.E. in Computer Science and Engineering">
-    </label>
-    <label>Institute / Board
-      <input data-f="institute" value="${attr(d.institute)}" placeholder="Basaveshwar Engineering College (Autonomous), Bagalkote">
-    </label>
-    <div class="grid2">
-      <label>Year <input data-f="year" value="${attr(d.year)}" placeholder="2022 – 2026"></label>
-      <label>Score <input data-f="score" value="${attr(d.score)}" placeholder="CGPA: 8.6 / 10"></label>
-    </div>`;
-  $('#list-edu').appendChild(el);
-}
-
-function addSkill(d = {}) {
-  const el = document.createElement('div');
-  el.className = 'item';
-  el.innerHTML = `
-    <div class="item-hd"><span>Skill Category</span><button type="button" class="del">✕</button></div>
-    <label>Category
-      <input data-f="category" value="${attr(d.category)}" placeholder="Programming Languages">
-    </label>
-    <label>Skills <span class="hint">Comma separated</span>
-      <input data-f="items" value="${attr(d.items)}" placeholder="C, C++, Java, Python">
-    </label>`;
-  $('#list-skills').appendChild(el);
-}
-
-function addProject(d = {}) {
-  const el = document.createElement('div');
-  el.className = 'item';
-  el.innerHTML = `
-    <div class="item-hd"><span>Project</span><button type="button" class="del">✕</button></div>
-    <label>Title <input data-f="title" value="${attr(d.title)}" placeholder="Smart Attendance System using Face Recognition"></label>
-    <label>Tech Stack <input data-f="tech" value="${attr(d.tech)}" placeholder="Python, OpenCV, Flask, MySQL"></label>
-    <div class="grid2">
-      <label>Duration <input data-f="duration" value="${attr(d.duration)}" placeholder="Jan 2025 – Apr 2025"></label>
-      <label>Team Size / Role <input data-f="role" value="${attr(d.role)}" placeholder="Team of 3 · Backend"></label>
-    </div>
-    <label>Description <span class="hint">One bullet per line, start with an action verb</span>
-      <textarea data-f="points" rows="3" placeholder="Built a real-time face-recognition attendance module with 95% accuracy.&#10;Designed REST APIs in Flask and normalized MySQL schema for 500+ records.">${esc(d.points)}</textarea>
-    </label>`;
-  $('#list-projects').appendChild(el);
-}
-
-function addIntern(d = {}) {
-  const el = document.createElement('div');
-  el.className = 'item';
-  el.innerHTML = `
-    <div class="item-hd"><span>Internship / Training</span><button type="button" class="del">✕</button></div>
-    <label>Role <input data-f="role" value="${attr(d.role)}" placeholder="Web Development Intern"></label>
-    <label>Organisation <input data-f="org" value="${attr(d.org)}" placeholder="Infosys Springboard (Virtual)"></label>
-    <label>Duration <input data-f="duration" value="${attr(d.duration)}" placeholder="Jun 2025 – Aug 2025"></label>
-    <label>Description <span class="hint">One bullet per line</span>
-      <textarea data-f="points" rows="3" placeholder="Developed responsive UI modules using React and Bootstrap.&#10;Integrated REST APIs and reduced page load time by 30%.">${esc(d.points)}</textarea>
-    </label>`;
-  $('#list-interns').appendChild(el);
-}
-
-const ADDERS = { edu: addEdu, skill: addSkill, project: addProject, intern: addIntern };
-
-/* ================= Read state from DOM ================= */
-function readItems(listId, fields) {
-  return $$('#' + listId + ' .item').map(item => {
-    const o = {};
-    fields.forEach(f => {
-      const el = item.querySelector('[data-f="' + f + '"]');
-      o[f] = el ? el.value.trim() : '';
-    });
-    return o;
-  });
-}
-
-function readState() {
-  return {
-    name:      $('#f-name').value.trim(),
-    phone:     $('#f-phone').value.trim(),
-    email:     $('#f-email').value.trim(),
-    linkedin:  $('#f-linkedin').value.trim(),
-    github:    $('#f-github').value.trim(),
-    portfolio: $('#f-portfolio').value.trim(),
-    city:      $('#f-city').value.trim(),
-
-    objective:   $('#f-objective').value.trim(),
-    edu:         readItems('list-edu',      ['degree','institute','year','score']),
-    skills:      readItems('list-skills',   ['category','items']),
-    projects:    readItems('list-projects', ['title','tech','duration','role','points']),
-    interns:     readItems('list-interns',  ['role','org','duration','points']),
-
-    certs:        $('#f-certs').value,
-    achievements: $('#f-achievements').value,
-    positions:    $('#f-positions').value,
-    extra:        $('#f-extra').value,
-    languages:    $('#f-languages').value.trim(),
-    declaration:  $('#f-declaration').value.trim()
-  };
-}
-
-/* ================= Render preview ================= */
-function section(title, body) {
-  if (!body || !body.trim()) return '';
-  return `<section class="r-sec"><h2>${title}</h2>${body}</section>`;
-}
-function bullets(raw) {
-  const l = lines(raw);
-  return l.length ? `<ul>${l.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
-}
-function simpleList(raw) {
-  const l = lines(raw);
-  return l.length ? `<ul>${l.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
-}
-
-function render() {
-  const s = readState();
-  const p = $('#page');
-
-  /* --- header --- */
-  const contacts = [s.phone, s.email, s.linkedin, s.github, s.portfolio, s.city]
-    .filter(Boolean).map(esc);
-
-  let h = `<header>
-    <h1>${s.name ? esc(s.name) : '<span class="placeholder">Your Name</span>'}</h1>
-    ${contacts.length
-      ? `<div class="r-contact">${contacts.join('<span class="sep">|</span>')}</div>`
-      : ''}
-  </header>`;
-
-  /* --- objective --- */
-  h += section('Career Objective',
-    s.objective ? `<div style="text-align:justify">${esc(s.objective)}</div>` : '');
-
-  /* --- education --- */
-  const edu = s.edu.filter(e => e.degree || e.institute || e.year || e.score);
-  h += section('Education', edu.map(e => `
-    <div class="r-row" style="margin-bottom:6px">
-      <div class="r-left">
-        <div class="r-strong">${esc(e.degree)}</div>
-        <div class="r-sub">${esc(e.institute)}</div>
-      </div>
-      <div class="r-right">
-        <div class="r-strong">${esc(e.year)}</div>
-        <div class="r-sub">${esc(e.score)}</div>
-      </div>
-    </div>`).join(''));
-
-  /* --- technical skills --- */
-  const sk = s.skills.filter(x => x.category || x.items);
-  h += section('Technical Skills', sk.map(x =>
-    `<div class="r-skill"><b>${esc(x.category)}${x.category ? ':' : ''}</b> ${esc(x.items)}</div>`
-  ).join(''));
-
-  /* --- projects --- */
-  const pr = s.projects.filter(x => x.title || x.points);
-  h += section('Academic Projects', pr.map(x => `
-    <div class="r-item">
-      <div class="r-row">
-        <div class="r-left r-strong">${esc(x.title)}</div>
-        <div class="r-right r-sub">${esc(x.duration)}</div>
-      </div>
-      ${x.tech ? `<div class="r-sub"><b>Tech Stack:</b> ${esc(x.tech)}</div>` : ''}
-      ${x.role ? `<div class="r-sub"><b>Role:</b> ${esc(x.role)}</div>` : ''}
-      ${bullets(x.points)}
-    </div>`).join(''));
-
-  /* --- internships --- */
-  const it = s.interns.filter(x => x.role || x.org || x.points);
-  h += section('Internships &amp; Training', it.map(x => `
-    <div class="r-item">
-      <div class="r-row">
-        <div class="r-left">
-          <div class="r-strong">${esc(x.role)}</div>
-          <div class="r-sub">${esc(x.org)}</div>
-        </div>
-        <div class="r-right r-sub">${esc(x.duration)}</div>
-      </div>
-      ${bullets(x.points)}
-    </div>`).join(''));
-
-  /* --- other lists --- */
-  h += section('Certifications', simpleList(s.certs));
-  h += section('Achievements &amp; Awards', simpleList(s.achievements));
-  h += section('Positions of Responsibility', simpleList(s.positions));
-  h += section('Extra-curricular Activities', simpleList(s.extra));
-
-  h += section('Languages Known',
-    s.languages ? `<div>${esc(s.languages)}</div>` : '');
-
-  /* --- declaration --- */
-  if (s.declaration) {
-    h += `<div class="decl">
-      <div style="max-width:72%"><b>Declaration:</b> ${esc(s.declaration)}</div>
-      <div class="sig"><b>${esc(s.name)}</b></div>
-    </div>`;
+  if(which === 'A'){
+    a.hidden = false; b.hidden = true;
+    btnA.classList.add('active'); btnB.classList.remove('active');
+  }else{
+    a.hidden = true; b.hidden = false;
+    btnA.classList.remove('active'); btnB.classList.add('active');
   }
-
-  p.innerHTML = h;
-  save();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-
-/* ================= Persistence ================= */
-function save() {
-  try { localStorage.setItem(KEY, JSON.stringify(readState())); } catch (e) {}
-}
-
-function populate(s) {
-  const set = (id, v) => { $(id).value = v || ''; };
-  set('#f-name', s.name); set('#f-phone', s.phone); set('#f-email', s.email);
-  set('#f-linkedin', s.linkedin); set('#f-github', s.github);
-  set('#f-portfolio', s.portfolio); set('#f-city', s.city);
-  set('#f-objective', s.objective);
-  set('#f-certs', s.certs); set('#f-achievements', s.achievements);
-  set('#f-positions', s.positions); set('#f-extra', s.extra);
-  set('#f-languages', s.languages); set('#f-declaration', s.declaration);
-
-  $('#list-edu').innerHTML = '';
-  $('#list-skills').innerHTML = '';
-  $('#list-projects').innerHTML = '';
-  $('#list-interns').innerHTML = '';
-
-  ((s.edu && s.edu.length) ? s.edu : [{}]).forEach(addEdu);
-  ((s.skills && s.skills.length) ? s.skills : [{}]).forEach(addSkill);
-  ((s.projects && s.projects.length) ? s.projects : [{}]).forEach(addProject);
-  ((s.interns && s.interns.length) ? s.interns : [{}]).forEach(addIntern);
-}
-
-function seed() {
-  addEdu({}); addEdu({}); addEdu({});
-  addSkill({ category: 'Programming Languages' });
-  addSkill({ category: 'Frameworks & Tools' });
-  addProject({});
-  addIntern({});
-}
-
-/* ================= Sample data ================= */
-function loadSample() {
-  const sample = {
-    name: 'Ananya R. Kulkarni',
-    phone: '+91 98765 43210',
-    email: 'ananya.kulkarni@gmail.com',
-    linkedin: 'linkedin.com/in/ananyakulkarni',
-    github: 'github.com/ananyakulkarni',
-    portfolio: 'leetcode.com/u/ananya',
-    city: 'Bagalkote, Karnataka',
-    objective: 'Final-year Computer Science and Engineering student with strong fundamentals in Data Structures, Object-Oriented Programming and DBMS. Seeking a Software Engineer role to build scalable backend systems and contribute to high-impact product teams.',
-    edu: [
-      { degree: 'B.E. in Computer Science and Engineering',
-        institute: 'Basaveshwar Engineering College (Autonomous), Bagalkote — VTU Belagavi',
-        year: '2022 – 2026', score: 'CGPA: 8.6 / 10' },
-      { degree: 'Pre-University Course (PCMC)',
-        institute: 'S.S. Government PU College, Bagalkote — Karnataka PU Board',
-        year: '2020 – 2022', score: 'Percentage: 89.3%' },
-      { degree: 'SSLC',
-        institute: 'Basaveshwar English Medium High School, Bagalkote — KSEAB',
-        year: '2020', score: 'Percentage: 92.1%' }
-    ],
-    skills: [
-      { category: 'Programming Languages', items: 'Java, Python, C, JavaScript, SQL' },
-      { category: 'Web Technologies', items: 'HTML5, CSS3, React, Node.js, REST APIs' },
-      { category: 'Databases', items: 'MySQL, MongoDB' },
-      { category: 'Tools & Platforms', items: 'Git, GitHub, VS Code, Postman, Linux, Docker (basics)' },
-      { category: 'Core Subjects', items: 'Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks, Software Engineering' }
-    ],
-    projects: [
-      { title: 'Smart Attendance System using Face Recognition',
-        tech: 'Python, OpenCV, Flask, MySQL',
-        duration: 'Jan 2025 – Apr 2025',
-        role: 'Team of 3 · Backend & Database',
-        points: 'Developed a real-time face-recognition attendance module achieving 95% recognition accuracy.\nDesigned REST APIs in Flask and normalized the MySQL schema to handle 500+ student records.\nGenerated automated daily attendance reports, reducing manual effort by 80%.' },
-      { title: 'Campus Placement Portal',
-        tech: 'React, Node.js, Express, MongoDB',
-        duration: 'Aug 2024 – Nov 2024',
-        role: 'Team of 4 · Full Stack',
-        points: 'Built a full-stack portal enabling 300+ students to apply for drives and track application status.\nImplemented JWT-based authentication with role-based access for students and placement officers.\nDeployed on Render with CI via GitHub Actions.' }
-    ],
-    interns: [
-      { role: 'Web Development Intern',
-        org: 'Infosys Springboard (Virtual)',
-        duration: 'Jun 2025 – Aug 2025',
-        points: 'Built responsive UI modules using React and Bootstrap for an e-commerce dashboard.\nIntegrated REST APIs and optimized rendering, reducing page load time by 30%.' }
-    ],
-    certs: 'NPTEL — Programming in Java (Elite, 82%)\nAWS Cloud Practitioner Essentials — Coursera\nOracle Database SQL Certified Foundations Associate',
-    achievements: 'Secured 2nd place in Smart India Hackathon (Internal), BEC Bagalkote, 2025\nSolved 400+ DSA problems across LeetCode and GeeksforGeeks\nRecipient of BEC Merit Scholarship for academic year 2024–25',
-    positions: 'Technical Lead — Coding Club, BEC Bagalkote (2024–25)\nClass Representative — CSE Department (2023–24)',
-    extra: 'Volunteer — NSS Blood Donation Camp, BEC Bagalkote, 2024\nParticipated in Inter-College Basketball Tournament, VTU Zone, 2023',
-    languages: 'English, Hindi, Kannada',
-    declaration: 'I hereby declare that the information furnished above is true to the best of my knowledge and belief.'
-  };
-  populate(sample);
-  render();
-}
-
-/* ================= Events ================= */
-const editor = $('#editor');
-
-editor.addEventListener('click', e => {
-  const del = e.target.closest('.del');
-  if (del) { del.closest('.item').remove(); render(); return; }
-
-  const add = e.target.closest('[data-add]');
-  if (add) {
-    const fn = ADDERS[add.dataset.add];
-    if (fn) { fn({}); render(); }
-  }
-});
-
-editor.addEventListener('input', render);
-editor.addEventListener('change', render);
-
-$('#accent').addEventListener('input', e => {
-  document.documentElement.style.setProperty('--accent', e.target.value);
-  try { localStorage.setItem('bec-accent', e.target.value); } catch (err) {}
-});
-
-$('#fs').addEventListener('input', e => {
-  const v = e.target.value;
-  $('#fsv').textContent = v + 'pt';
-  $('#page').style.fontSize = v + 'pt';
-  try { localStorage.setItem('bec-fs', v); } catch (err) {}
-});
-
-$('#btn-print').addEventListener('click', () => window.print());
-
-$('#btn-sample').addEventListener('click', () => {
-  if (confirm('Load the sample resume? This will replace your current content.')) loadSample();
-});
-
-$('#btn-clear').addEventListener('click', () => {
-  if (!confirm('Clear everything and start fresh?')) return;
-  try { localStorage.removeItem(KEY); } catch (e) {}
-  $('#f-name').value = ''; $('#f-phone').value = ''; $('#f-email').value = '';
-  $('#f-linkedin').value = ''; $('#f-github').value = ''; $('#f-portfolio').value = '';
-  $('#f-city').value = ''; $('#f-objective').value = '';
-  $('#f-certs').value = ''; $('#f-achievements').value = '';
-  $('#f-positions').value = ''; $('#f-extra').value = '';
-  $('#f-languages').value = '';
-  $('#f-declaration').value = 'I hereby declare that the information furnished above is true to the best of my knowledge and belief.';
-  ['list-edu','list-skills','list-projects','list-interns'].forEach(id => $('#'+id).innerHTML = '');
-  seed();
-  render();
-});
-
-/* ================= Init ================= */
-(function init() {
-  const savedAccent = localStorage.getItem('bec-accent');
-  if (savedAccent) {
-    document.documentElement.style.setProperty('--accent', savedAccent);
-    $('#accent').value = savedAccent;
-  }
-  const savedFs = localStorage.getItem('bec-fs');
-  if (savedFs) {
-    $('#fs').value = savedFs;
-    $('#fsv').textContent = savedFs + 'pt';
-    $('#page').style.fontSize = savedFs + 'pt';
-  }
-
-  const saved = localStorage.getItem(KEY);
-  if (saved) {
-    try { populate(JSON.parse(saved)); }
-    catch (e) { seed(); }
-  } else {
-    seed();
-  }
-  render();
-})();
 </script>
 </body>
 </html>
