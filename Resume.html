@@ -35,29 +35,82 @@ body{
   border:1px solid rgba(255,255,255,.35);
   background:rgba(255,255,255,.08);color:#fff;
   padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;
-  cursor:pointer;transition:.18s;
+  cursor:pointer;transition:.18s;font-family:inherit;
 }
 .btn:hover{background:rgba(255,255,255,.2);}
 .btn.active{background:#fff;color:#0f2b4d;border-color:#fff;}
 .btn.primary{background:var(--gold);border-color:var(--gold);color:#2b1c00;}
 .btn.primary:hover{background:#ffb81c;}
-.hint{
-  font-size:12px;color:#c8d6e6;padding:6px 14px 0;text-align:center;
+.btn.ghost{background:transparent;}
+
+/* ---------------- Layout ---------------- */
+.layout{display:flex;align-items:flex-start;}
+.form-panel{
+  width:400px;flex:0 0 400px;background:#fff;
+  height:calc(100vh - 52px);overflow-y:auto;
+  border-right:1px solid var(--line);
+  position:sticky;top:52px;
+}
+.form-panel::-webkit-scrollbar{width:9px;}
+.form-panel::-webkit-scrollbar-thumb{background:#c3ceda;border-radius:5px;}
+
+.preview-area{
+  flex:1;min-width:0;padding:24px 16px 90px;
+  display:flex;justify-content:center;align-items:flex-start;
+  overflow-x:auto;
 }
 
-/* ---------------- Stage / Paper ---------------- */
-.stage{padding:26px 12px 70px;display:flex;justify-content:center;}
+/* ---------------- Form ---------------- */
+.fs{padding:16px 18px;border-bottom:1px solid var(--line);}
+.fs h3{
+  font-size:11.5px;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--accent);margin:0 0 12px;display:flex;align-items:center;gap:8px;
+  font-weight:700;
+}
+.fs h3::before{content:"";width:4px;height:14px;background:var(--gold);border-radius:2px;}
+label{
+  display:block;font-size:11.5px;font-weight:600;color:var(--muted);
+  margin-bottom:10px;
+}
+input,textarea{
+  width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);
+  border-radius:7px;font-size:13px;font-family:inherit;color:var(--ink);
+  background:#fbfcfe;transition:.15s;
+}
+input:focus,textarea:focus{
+  outline:none;border-color:var(--accent);background:#fff;
+  box-shadow:0 0 0 3px rgba(26,79,138,.1);
+}
+textarea{resize:vertical;min-height:62px;line-height:1.5;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+.hintline{font-size:10.5px;color:#8b98a8;margin:-4px 0 10px;font-style:italic;}
+
+.dyn-card{
+  position:relative;border:1px solid var(--line);border-radius:10px;
+  padding:12px 12px 4px;margin-bottom:12px;background:#fafbfd;
+}
+.remove-btn{
+  position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;
+  border:none;background:#ffe5e5;color:#c0392b;font-size:15px;line-height:1;
+  cursor:pointer;font-weight:700;padding:0;font-family:inherit;
+}
+.remove-btn:hover{background:#c0392b;color:#fff;}
+.add-btn{
+  width:100%;padding:9px;border:1.5px dashed var(--accent);background:transparent;
+  color:var(--accent);border-radius:8px;font-size:12.5px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:.15s;
+}
+.add-btn:hover{background:var(--accent);color:#fff;border-style:solid;}
+
+/* ---------------- Paper ---------------- */
 .sheet{
   width:210mm;min-height:297mm;background:#fff;
   box-shadow:0 10px 30px rgba(15,43,77,.18);
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;flex-shrink:0;
 }
 .sheet[hidden]{display:none !important;}
-[contenteditable="true"]:focus{
-  outline:2px dashed #9db6d4;outline-offset:3px;border-radius:4px;
-}
 
-/* ================= OPTION 1 : CLASSIC ATS ================= */
+/* ================= TEMPLATE A : CLASSIC ATS ================= */
 .r-a{padding:15mm 14mm;font-size:10.8pt;line-height:1.45;color:var(--ink);}
 .r-a .name{
   font-size:25pt;font-weight:800;letter-spacing:.5px;
@@ -72,18 +125,16 @@ body{
   border-top:2.5px solid var(--accent2);border-bottom:1px solid var(--line);
   padding:6px 0;display:flex;flex-wrap:wrap;gap:3px 16px;
 }
-.r-a .contact a{color:#374151;text-decoration:none;}
 .r-a h2{
   font-size:10.6pt;text-transform:uppercase;letter-spacing:1.4px;
   color:var(--accent2);margin:15px 0 7px;
-  padding-bottom:3px;border-bottom:1.5px solid var(--line);
-  position:relative;
+  padding-bottom:3px;border-bottom:1.5px solid var(--line);position:relative;
 }
 .r-a h2::after{
   content:"";position:absolute;left:0;bottom:-1.5px;
   width:46px;height:1.5px;background:var(--gold);
 }
-.r-a p{margin:0 0 6px;}
+.r-a p{margin:0 0 6px;white-space:pre-line;}
 .r-a ul{margin:4px 0 0;padding-left:17px;}
 .r-a li{margin-bottom:3px;}
 .r-a .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;}
@@ -93,10 +144,12 @@ body{
 .r-a .item .sub{font-size:9.7pt;color:var(--muted);font-style:italic;}
 .r-a .kv{display:grid;grid-template-columns:150px 1fr;gap:2px 10px;font-size:10.2pt;}
 .r-a .kv b{color:#111827;font-weight:700;}
-.r-a .decl{font-size:9.4pt;color:var(--muted);margin-top:14px;
-  border-top:1px dashed var(--line);padding-top:8px;}
+.r-a .decl{
+  font-size:9.4pt;color:var(--muted);margin-top:14px;
+  border-top:1px dashed var(--line);padding-top:8px;white-space:pre-line;
+}
 
-/* ================= OPTION 2 : MODERN TWO-COLUMN ================= */
+/* ================= TEMPLATE B : MODERN SIDEBAR ================= */
 .r-b{display:flex;min-height:297mm;font-size:10.5pt;line-height:1.45;}
 .r-b .side{
   width:34%;background:var(--accent2);color:#dfe8f3;
@@ -104,28 +157,32 @@ body{
 }
 .r-b .main{width:66%;padding:13mm 9mm;color:var(--ink);}
 .r-b .photo{
-  width:74px;height:74px;border-radius:50%;
+  width:88px;height:88px;border-radius:50%;
   border:2px dashed rgba(255,255,255,.45);
   display:flex;align-items:center;justify-content:center;
   font-size:8pt;letter-spacing:1px;color:rgba(255,255,255,.6);
-  margin:0 auto 2px;
+  margin:0 auto;
+}
+.r-b .photo-img{
+  width:88px;height:88px;border-radius:50%;object-fit:cover;
+  display:block;margin:0 auto;border:2px solid rgba(255,255,255,.35);
 }
 .r-b .side h3{
   font-size:9.4pt;letter-spacing:1.6px;text-transform:uppercase;
   color:#fff;margin:0 0 7px;padding-bottom:5px;
   border-bottom:1px solid rgba(255,255,255,.22);
 }
-.r-b .side p,.r-b .side li{font-size:9.6pt;color:#cfdcec;}
 .r-b .side ul{list-style:none;margin:0;padding:0;}
 .r-b .side ul li{
   position:relative;padding-left:13px;margin-bottom:4px;
+  font-size:9.6pt;color:#cfdcec;
 }
 .r-b .side ul li::before{
   content:"";position:absolute;left:0;top:6.5px;
   width:5px;height:5px;border-radius:50%;background:var(--gold);
 }
-.r-b .side .line{margin-bottom:5px;word-break:break-word;}
-.r-b .side .line b{color:#fff;font-weight:600;}
+.r-b .side .line{margin-bottom:6px;word-break:break-word;font-size:9.6pt;color:#cfdcec;}
+.r-b .side .line b{color:#fff;font-weight:600;font-size:8.6pt;letter-spacing:.6px;text-transform:uppercase;}
 .r-b .name{
   font-size:23pt;font-weight:800;color:var(--accent2);
   margin:0;line-height:1.1;letter-spacing:.3px;
@@ -157,19 +214,31 @@ body{
   background:rgba(255,255,255,.12);color:#eaf1f9;
   padding:2px 8px;border-radius:20px;margin:0 4px 4px 0;
 }
+.r-b p{margin:0;white-space:pre-line;}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width:1080px){
+  .layout{flex-direction:column;}
+  .form-panel{
+    width:100%;flex:1 1 auto;height:auto;max-height:none;
+    position:static;border-right:none;border-bottom:2px solid var(--line);
+  }
+  .preview-area{width:100%;padding:18px 8px 70px;}
+}
 
 /* ---------------- Print ---------------- */
 @page{size:A4;margin:0;}
 @media print{
   body{background:#fff;}
-  .toolbar,.hint{display:none !important;}
-  .stage{padding:0;display:block;}
+  .toolbar,.form-panel{display:none !important;}
+  .layout{display:block;}
+  .preview-area{padding:0;display:block;overflow:visible;}
   .sheet{
     width:210mm;min-height:0;box-shadow:none;margin:0;
     page-break-after:always;
   }
   .sheet:last-child{page-break-after:auto;}
-  .r-a li,.r-a .item,.r-b .item,.r-b h2,.r-a h2{break-inside:avoid;}
+  .r-a li,.r-a .item,.r-a h2,.r-b .item,.r-b h2{break-inside:avoid;}
 }
 </style>
 </head>
@@ -179,279 +248,577 @@ body{
 <div class="toolbar">
   <div class="brand">BEC Bagalkote <span>· Placement Resume Builder</span></div>
   <div class="actions">
-    <button class="btn active" id="btnA" onclick="show('A')">Option 1 · Classic ATS</button>
-    <button class="btn" id="btnB" onclick="show('B')">Option 2 · Modern Sidebar</button>
+    <button class="btn active" id="btnA" onclick="setTpl('A')">Template 1 · Classic ATS</button>
+    <button class="btn" id="btnB" onclick="setTpl('B')">Template 2 · Modern Sidebar</button>
+    <button class="btn ghost" onclick="loadSample()">↺ Load Sample</button>
+    <button class="btn ghost" onclick="clearAll()">✕ Clear All</button>
     <button class="btn primary" onclick="window.print()">🖨 Print / Save PDF</button>
   </div>
 </div>
-<div class="hint">Click any text on the resume to edit it directly. Use <b>Ctrl + P</b> → “Save as PDF”, paper size <b>A4</b>, margins <b>None</b>.</div>
 
-<div class="stage">
+<div class="layout">
 
-  <!-- ============ OPTION 1 : CLASSIC ATS-FRIENDLY ============ -->
-  <div class="sheet r-a" id="sheetA" contenteditable="true" spellcheck="false">
-    <h1 class="name">SHREYA S. KULKARNI</h1>
-    <div class="role">Computer Science &amp; Engineering Graduate</div>
+  <!-- ================= FORM PANEL ================= -->
+  <aside class="form-panel" id="formPanel">
 
-    <div class="contact">
-      <span>📞 +91 98765 43210</span>
-      <span>✉ shreya.kulkarni@email.com</span>
-      <span>🔗 linkedin.com/in/shreyakulkarni</span>
-      <span>💻 github.com/shreyak</span>
-      <span>📍 Bagalkote, Karnataka</span>
+    <!-- Personal -->
+    <div class="fs">
+      <h3>Personal Details</h3>
+      <label>Full Name
+        <input id="f-name" placeholder="Shreya S. Kulkarni">
+      </label>
+      <label>Headline / Target Role
+        <input id="f-role" placeholder="Computer Science & Engineering Graduate">
+      </label>
+      <div class="grid-2">
+        <label>Phone
+          <input id="f-phone" placeholder="+91 98765 43210">
+        </label>
+        <label>Email
+          <input id="f-email" placeholder="you@email.com">
+        </label>
+      </div>
+      <div class="grid-2">
+        <label>LinkedIn
+          <input id="f-linkedin" placeholder="linkedin.com/in/username">
+        </label>
+        <label>GitHub
+          <input id="f-github" placeholder="github.com/username">
+        </label>
+      </div>
+      <label>Location
+        <input id="f-location" placeholder="Bagalkote, Karnataka">
+      </label>
+      <label>Photo (optional · used in Template 2 only)
+        <input type="file" id="f-photo" accept="image/*">
+      </label>
     </div>
 
-    <h2>Career Objective</h2>
-    <p>Final-year B.E. Computer Science student at Basaveshwar Engineering College, Bagalkote, with
-    hands-on experience in full-stack web development and machine learning. Seeking a software
-    engineering role where I can apply strong problem-solving skills, clean coding practices and a
-    collaborative mindset to deliver reliable, scalable products.</p>
-
-    <h2>Education</h2>
-    <div class="item">
-      <div class="row">
-        <span class="title">Basaveshwar Engineering College (BEC), Bagalkote</span>
-        <span class="when">2022 – 2026</span>
-      </div>
-      <div class="sub">B.E. in Computer Science &amp; Engineering — CGPA: 8.72 / 10</div>
-    </div>
-    <div class="item">
-      <div class="row">
-        <span class="title">Sri Siddeshwar PU College, Bagalkote</span>
-        <span class="when">2020 – 2022</span>
-      </div>
-      <div class="sub">Pre-University (PCMB) — 91.2%</div>
-    </div>
-    <div class="item">
-      <div class="row">
-        <span class="title">Basaveshwar English Medium School, Bagalkote</span>
-        <span class="when">2020</span>
-      </div>
-      <div class="sub">SSLC (KSEAB) — 93.4%</div>
+    <!-- Objective -->
+    <div class="fs">
+      <h3>Career Objective / Profile</h3>
+      <label>Summary
+        <textarea id="f-objective" placeholder="Final-year B.E. Computer Science student at Basaveshwar Engineering College..."></textarea>
+      </label>
     </div>
 
-    <h2>Technical Skills</h2>
-    <div class="kv">
-      <b>Languages:</b><span>Java, Python, C, JavaScript, SQL</span>
-      <b>Web Technologies:</b><span>HTML5, CSS3, React.js, Node.js, Express.js, REST APIs</span>
-      <b>Databases:</b><span>MySQL, MongoDB</span>
-      <b>Tools &amp; Platforms:</b><span>Git, GitHub, VS Code, Postman, Linux, Docker (basics)</span>
-      <b>Core Subjects:</b><span>Data Structures &amp; Algorithms, DBMS, Operating Systems, OOP, Computer Networks</span>
+    <!-- Education -->
+    <div class="fs">
+      <h3>Education</h3>
+      <div id="eduList"></div>
+      <button type="button" class="add-btn" onclick="addEdu();render()">+ Add Education</button>
     </div>
 
-    <h2>Projects</h2>
-    <div class="item">
-      <div class="row">
-        <span class="title">SmartAttend — Face Recognition Attendance System</span>
-        <span class="when">Jan 2025 – Apr 2025</span>
-      </div>
-      <div class="sub">Python, OpenCV, Flask, MySQL</div>
-      <ul>
-        <li>Built an automated attendance system using Haar-Cascade and LBPH face recognition with 94% accuracy.</li>
-        <li>Designed a Flask dashboard that generates daily and monthly attendance reports in CSV format.</li>
-        <li>Reduced manual roll-call time by approximately 80% during a 60-student pilot at the college department.</li>
-      </ul>
-    </div>
-    <div class="item">
-      <div class="row">
-        <span class="title">CampusConnect — College Placement Portal</span>
-        <span class="when">Aug 2024 – Dec 2024</span>
-      </div>
-      <div class="sub">React.js, Node.js, Express.js, MongoDB</div>
-      <ul>
-        <li>Developed a full-stack portal where students upload resumes and companies post openings with role-based login.</li>
-        <li>Implemented JWT authentication and an admin panel for the placement cell to shortlist applicants.</li>
-        <li>Optimized MongoDB queries with indexing, cutting dashboard load time from 2.4 s to 0.8 s.</li>
-      </ul>
+    <!-- Skills -->
+    <div class="fs">
+      <h3>Technical Skills</h3>
+      <p class="hintline">Separate multiple skills with commas.</p>
+      <label>Languages
+        <input id="f-skills-lang" placeholder="Java, Python, C, JavaScript, SQL">
+      </label>
+      <label>Web Technologies
+        <input id="f-skills-web" placeholder="HTML5, CSS3, React.js, Node.js, Express.js">
+      </label>
+      <label>Databases
+        <input id="f-skills-db" placeholder="MySQL, MongoDB">
+      </label>
+      <label>Tools &amp; Platforms
+        <input id="f-skills-tools" placeholder="Git, GitHub, VS Code, Postman, Linux">
+      </label>
+      <label>Core Subjects
+        <input id="f-skills-core" placeholder="DSA, DBMS, Operating Systems, OOP, Networks">
+      </label>
     </div>
 
-    <h2>Internship &amp; Training</h2>
-    <div class="item">
-      <div class="row">
-        <span class="title">Web Development Intern — TechNova Solutions, Bengaluru</span>
-        <span class="when">Jun 2025 – Jul 2025</span>
-      </div>
-      <ul>
-        <li>Developed 6 responsive UI modules in React.js integrated with REST APIs for an internal CRM product.</li>
-        <li>Fixed 20+ front-end bugs and improved Lighthouse performance score from 68 to 92.</li>
-      </ul>
+    <!-- Projects -->
+    <div class="fs">
+      <h3>Projects</h3>
+      <p class="hintline">One bullet point per line in the description box.</p>
+      <div id="projList"></div>
+      <button type="button" class="add-btn" onclick="addProj();render()">+ Add Project</button>
     </div>
 
-    <h2>Achievements &amp; Activities</h2>
-    <ul>
-      <li>Secured <b>2nd place</b> in the 24-hour Hackathon conducted by BEC Bagalkote (2025), team of 4.</li>
-      <li>Solved <b>350+ problems</b> on LeetCode; 3-star rating in Java on HackerRank.</li>
-      <li>NPTEL Elite certificate in “Data Structures and Algorithms with Java” — Score 84%.</li>
-      <li>Volunteer, NSS Unit, BEC Bagalkote — organised blood donation and cleanliness drives.</li>
-    </ul>
-
-    <h2>Certifications</h2>
-    <ul>
-      <li>Google Cloud Fundamentals: Core Infrastructure — Coursera</li>
-      <li>Full Stack Web Development Bootcamp — Udemy</li>
-      <li>Database Management Systems — NPTEL (Elite)</li>
-    </ul>
-
-    <h2>Personal Details</h2>
-    <div class="kv">
-      <b>Date of Birth:</b><span>14 August 2004</span>
-      <b>Languages Known:</b><span>English, Kannada, Hindi</span>
-      <b>Address:</b><span>Vidyagiri, Bagalkote, Karnataka – 587102</span>
+    <!-- Experience -->
+    <div class="fs">
+      <h3>Internship / Experience</h3>
+      <div id="expList"></div>
+      <button type="button" class="add-btn" onclick="addExp();render()">+ Add Experience</button>
     </div>
 
-    <div class="decl">
-      <b>Declaration:</b> I hereby declare that the information furnished above is true to the best of my knowledge.
-      <br><br><b>Place:</b> Bagalkote &nbsp;&nbsp;&nbsp; <b>Signature:</b> Shreya S. Kulkarni
+    <!-- Achievements -->
+    <div class="fs">
+      <h3>Achievements &amp; Activities</h3>
+      <label>One achievement per line
+        <textarea id="f-achievements" placeholder="Secured 2nd place in the 24-hour Hackathon..."></textarea>
+      </label>
     </div>
-  </div>
 
-  <!-- ============ OPTION 2 : MODERN TWO-COLUMN ============ -->
-  <div class="sheet r-b" id="sheetB" contenteditable="true" spellcheck="false" hidden>
-    <!-- SIDEBAR -->
-    <aside class="side">
-      <div>
-        <div class="photo">PHOTO</div>
+    <!-- Certifications -->
+    <div class="fs">
+      <h3>Certifications</h3>
+      <label>One certification per line
+        <textarea id="f-certs" placeholder="Google Cloud Fundamentals — Coursera"></textarea>
+      </label>
+    </div>
+
+    <!-- Extra -->
+    <div class="fs">
+      <h3>Other Information</h3>
+      <div class="grid-2">
+        <label>Date of Birth
+          <input id="f-dob" placeholder="14 August 2004">
+        </label>
+        <label>Languages Known
+          <input id="f-known-langs" placeholder="English, Kannada, Hindi">
+        </label>
       </div>
+      <label>Address
+        <input id="f-address" placeholder="Vidyagiri, Bagalkote, Karnataka – 587102">
+      </label>
+      <label>Declaration
+        <textarea id="f-declaration" placeholder="I hereby declare that the information furnished above is true to the best of my knowledge."></textarea>
+      </label>
+    </div>
 
-      <div>
-        <h3>Contact</h3>
-        <div class="line"><b>Phone</b><br>+91 98765 43210</div>
-        <div class="line"><b>Email</b><br>shreya.kulkarni@email.com</div>
-        <div class="line"><b>LinkedIn</b><br>linkedin.com/in/shreyakulkarni</div>
-        <div class="line"><b>GitHub</b><br>github.com/shreyak</div>
-        <div class="line"><b>Location</b><br>Bagalkote, Karnataka</div>
-      </div>
+  </aside>
 
-      <div>
-        <h3>Technical Skills</h3>
-        <span class="chip">Java</span><span class="chip">Python</span><span class="chip">C</span>
-        <span class="chip">JavaScript</span><span class="chip">SQL</span>
-        <span class="chip">React.js</span><span class="chip">Node.js</span>
-        <span class="chip">Express.js</span><span class="chip">MongoDB</span>
-        <span class="chip">MySQL</span><span class="chip">Git</span><span class="chip">Docker</span>
-      </div>
-
-      <div>
-        <h3>Certifications</h3>
-        <ul>
-          <li>NPTEL Elite — DSA with Java (84%)</li>
-          <li>Google Cloud Fundamentals — Coursera</li>
-          <li>Full Stack Web Dev — Udemy</li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Languages</h3>
-        <ul>
-          <li>English — Professional</li>
-          <li>Kannada — Native</li>
-          <li>Hindi — Conversational</li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Interests</h3>
-        <ul>
-          <li>Competitive Programming</li>
-          <li>Open Source</li>
-          <li>Chess &amp; Badminton</li>
-        </ul>
-      </div>
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main">
-      <h1 class="name">SHREYA S. KULKARNI</h1>
-      <div class="role">Computer Science &amp; Engineering</div>
-
-      <h2>Profile</h2>
-      <p style="margin:0;">Final-year B.E. Computer Science student at Basaveshwar Engineering College,
-      Bagalkote, passionate about full-stack development and machine learning. Experienced in building
-      and deploying end-to-end web applications, with a strong foundation in data structures,
-      algorithms and databases. Looking for a software engineering role in a growth-driven
-      organisation.</p>
-
-      <h2>Education</h2>
-      <div class="item">
-        <div class="row">
-          <span class="title">Basaveshwar Engineering College, Bagalkote</span>
-          <span class="when">2022 – 2026</span>
-        </div>
-        <div class="sub">B.E. Computer Science &amp; Engineering — CGPA 8.72 / 10</div>
-      </div>
-      <div class="item">
-        <div class="row">
-          <span class="title">Sri Siddeshwar PU College, Bagalkote</span>
-          <span class="when">2020 – 2022</span>
-        </div>
-        <div class="sub">PUC (PCMB) — 91.2%</div>
-      </div>
-      <div class="item">
-        <div class="row">
-          <span class="title">Basaveshwar English Medium School, Bagalkote</span>
-          <span class="when">2020</span>
-        </div>
-        <div class="sub">SSLC (KSEAB) — 93.4%</div>
-      </div>
-
-      <h2>Projects</h2>
-      <div class="item">
-        <div class="row">
-          <span class="title">SmartAttend — Face Recognition Attendance</span>
-          <span class="when">2025</span>
-        </div>
-        <div class="sub">Python · OpenCV · Flask · MySQL</div>
-        <ul>
-          <li>Automated attendance marking with LBPH face recognition at 94% accuracy.</li>
-          <li>Flask dashboard generating daily/monthly CSV reports for faculty.</li>
-          <li>Cut manual roll-call time by ~80% in a 60-student pilot.</li>
-        </ul>
-        <div class="tags"><span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Flask</span></div>
-      </div>
-
-      <div class="item">
-        <div class="row">
-          <span class="title">CampusConnect — Placement Portal</span>
-          <span class="when">2024</span>
-        </div>
-        <div class="sub">React.js · Node.js · Express.js · MongoDB</div>
-        <ul>
-          <li>Full-stack portal for resume upload, job postings and role-based login.</li>
-          <li>JWT authentication plus an admin panel for the placement cell.</li>
-          <li>Indexed MongoDB queries to reduce dashboard load from 2.4 s to 0.8 s.</li>
-        </ul>
-        <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">MongoDB</span></div>
-      </div>
-
-      <h2>Internship</h2>
-      <div class="item">
-        <div class="row">
-          <span class="title">Web Development Intern — TechNova Solutions, Bengaluru</span>
-          <span class="when">Jun – Jul 2025</span>
-        </div>
-        <ul>
-          <li>Built 6 responsive React.js UI modules wired to REST APIs for an internal CRM.</li>
-          <li>Resolved 20+ front-end defects; raised Lighthouse score from 68 to 92.</li>
-        </ul>
-      </div>
-
-      <h2>Achievements</h2>
-      <ul>
-        <li><b>2nd place</b> — 24-hour Hackathon, BEC Bagalkote (2025).</li>
-        <li><b>350+</b> problems solved on LeetCode; 3★ in Java on HackerRank.</li>
-        <li>NSS volunteer — blood donation and cleanliness drives.</li>
-      </ul>
-    </main>
-  </div>
+  <!-- ================= PREVIEW ================= -->
+  <main class="preview-area">
+    <div class="sheet r-a" id="sheetA"></div>
+    <div class="sheet r-b" id="sheetB" hidden></div>
+  </main>
 
 </div>
 
 <script>
-function show(which){
-  const a = document.getElementById('sheetA');
-  const b = document.getElementById('sheetB');
-  const btnA = document.getElementById('btnA');
-  const btnB = document.getElementById('btnB');
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+/* Escapes, then turns **bold** into <b>bold</b> */
+function rich(s){
+  return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+/* Split textarea into non-empty lines */
+function lines(s){
+  return String(s || '').split('\n').map(function(x){return x.trim();}).filter(Boolean);
+}
+/* Split into tokens on commas or newlines */
+function tokens(s){
+  return String(s || '').split(/[,\n]/).map(function(x){return x.trim();}).filter(Boolean);
+}
+
+var photoData = '';
+
+/* ============================================================
+   DYNAMIC FORM BLOCKS
+   ============================================================ */
+function addEdu(v){
+  v = v || {};
+  var div = document.createElement('div');
+  div.className = 'dyn-card';
+  div.innerHTML =
+    '<button type="button" class="remove-btn" title="Remove">×</button>' +
+    '<div class="grid-2">' +
+      '<label>Institution / School<input class="edu-inst" placeholder="Basaveshwar Engineering College" value="' + esc(v.inst) + '"></label>' +
+      '<label>Year<input class="edu-year" placeholder="2022 – 2026" value="' + esc(v.year) + '"></label>' +
+    '</div>' +
+    '<label>Degree / Course<input class="edu-degree" placeholder="B.E. Computer Science &amp; Engineering" value="' + esc(v.degree) + '"></label>' +
+    '<label>Score / CGPA<input class="edu-score" placeholder="CGPA: 8.72 / 10" value="' + esc(v.score) + '"></label>';
+  document.getElementById('eduList').appendChild(div);
+}
+
+function addProj(v){
+  v = v || {};
+  var div = document.createElement('div');
+  div.className = 'dyn-card';
+  div.innerHTML =
+    '<button type="button" class="remove-btn" title="Remove">×</button>' +
+    '<label>Project Title<input class="proj-title" placeholder="SmartAttend — Attendance System" value="' + esc(v.title) + '"></label>' +
+    '<div class="grid-2">' +
+      '<label>Tech Stack<input class="proj-tech" placeholder="Python, Flask, MySQL" value="' + esc(v.tech) + '"></label>' +
+      '<label>Duration<input class="proj-duration" placeholder="Jan 2025 – Apr 2025" value="' + esc(v.duration) + '"></label>' +
+    '</div>' +
+    '<label>Description (one bullet per line)<textarea class="proj-points" placeholder="Built an automated attendance system...">' + esc(v.points) + '</textarea></label>';
+  document.getElementById('projList').appendChild(div);
+}
+
+function addExp(v){
+  v = v || {};
+  var div = document.createElement('div');
+  div.className = 'dyn-card';
+  div.innerHTML =
+    '<button type="button" class="remove-btn" title="Remove">×</button>' +
+    '<label>Company / Organisation<input class="exp-company" placeholder="TechNova Solutions, Bengaluru" value="' + esc(v.company) + '"></label>' +
+    '<div class="grid-2">' +
+      '<label>Role<input class="exp-role" placeholder="Web Development Intern" value="' + esc(v.role) + '"></label>' +
+      '<label>Duration<input class="exp-duration" placeholder="Jun 2025 – Jul 2025" value="' + esc(v.duration) + '"></label>' +
+    '</div>' +
+    '<label>Description (one bullet per line)<textarea class="exp-points" placeholder="Developed 6 responsive UI modules...">' + esc(v.points) + '</textarea></label>';
+  document.getElementById('expList').appendChild(div);
+}
+
+/* ============================================================
+   COLLECT FORM DATA
+   ============================================================ */
+function collectData(){
+  function val(id){
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+  function q(card, sel){
+    var el = card.querySelector(sel);
+    return el ? el.value.trim() : '';
+  }
+
+  var education = Array.prototype.map.call(
+    document.querySelectorAll('#eduList .dyn-card'),
+    function(c){
+      return {
+        inst:   q(c, '.edu-inst'),
+        degree: q(c, '.edu-degree'),
+        year:   q(c, '.edu-year'),
+        score:  q(c, '.edu-score')
+      };
+    }
+  ).filter(function(e){ return e.inst || e.degree; });
+
+  var projects = Array.prototype.map.call(
+    document.querySelectorAll('#projList .dyn-card'),
+    function(c){
+      return {
+        title:    q(c, '.proj-title'),
+        tech:     q(c, '.proj-tech'),
+        duration: q(c, '.proj-duration'),
+        points:   lines(q(c, '.proj-points'))
+      };
+    }
+  ).filter(function(p){ return p.title; });
+
+  var experience = Array.prototype.map.call(
+    document.querySelectorAll('#expList .dyn-card'),
+    function(c){
+      return {
+        company:  q(c, '.exp-company'),
+        role:     q(c, '.exp-role'),
+        duration: q(c, '.exp-duration'),
+        points:   lines(q(c, '.exp-points'))
+      };
+    }
+  ).filter(function(x){ return x.company || x.role; });
+
+  return {
+    name:       val('f-name'),
+    role:       val('f-role'),
+    phone:      val('f-phone'),
+    email:      val('f-email'),
+    linkedin:   val('f-linkedin'),
+    github:     val('f-github'),
+    location:   val('f-location'),
+    objective:  val('f-objective'),
+    education:  education,
+    skills: {
+      languages: val('f-skills-lang'),
+      web:       val('f-skills-web'),
+      db:        val('f-skills-db'),
+      tools:     val('f-skills-tools'),
+      core:      val('f-skills-core')
+    },
+    projects:     projects,
+    experience:   experience,
+    achievements: lines(val('f-achievements')),
+    certifications: lines(val('f-certs')),
+    dob:         val('f-dob'),
+    knownLangs:  val('f-known-langs'),
+    address:     val('f-address'),
+    declaration: val('f-declaration'),
+    photo:       photoData
+  };
+}
+
+/* ============================================================
+   TEMPLATE A : CLASSIC ATS
+   ============================================================ */
+function renderA(d){
+  var h = '';
+
+  h += '<h1 class="name">' + (esc(d.name) || 'YOUR NAME') + '</h1>';
+  if(d.role) h += '<div class="role">' + esc(d.role) + '</div>';
+
+  var contacts = [];
+  if(d.phone)    contacts.push('📞 ' + esc(d.phone));
+  if(d.email)    contacts.push('✉ ' + esc(d.email));
+  if(d.linkedin) contacts.push('🔗 ' + esc(d.linkedin));
+  if(d.github)   contacts.push('💻 ' + esc(d.github));
+  if(d.location) contacts.push('📍 ' + esc(d.location));
+  if(contacts.length){
+    h += '<div class="contact">' + contacts.map(function(c){
+      return '<span>' + c + '</span>';
+    }).join('') + '</div>';
+  }
+
+  if(d.objective){
+    h += '<h2>Career Objective</h2><p>' + rich(d.objective) + '</p>';
+  }
+
+  if(d.education.length){
+    h += '<h2>Education</h2>';
+    d.education.forEach(function(e){
+      var sub = [e.degree, e.score].filter(Boolean).join(' — ');
+      h += '<div class="item">' +
+             '<div class="row">' +
+               '<span class="title">' + esc(e.inst) + '</span>' +
+               '<span class="when">' + esc(e.year) + '</span>' +
+             '</div>' +
+             (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') +
+           '</div>';
+    });
+  }
+
+  var skillRows = [
+    ['Languages',        d.skills.languages],
+    ['Web Technologies', d.skills.web],
+    ['Databases',        d.skills.db],
+    ['Tools & Platforms',d.skills.tools],
+    ['Core Subjects',    d.skills.core]
+  ].filter(function(r){ return r[1]; });
+
+  if(skillRows.length){
+    h += '<h2>Technical Skills</h2><div class="kv">';
+    skillRows.forEach(function(r){
+      h += '<b>' + r[0] + ':</b><span>' + esc(r[1]) + '</span>';
+    });
+    h += '</div>';
+  }
+
+  if(d.projects.length){
+    h += '<h2>Projects</h2>';
+    d.projects.forEach(function(p){
+      h += '<div class="item">' +
+             '<div class="row">' +
+               '<span class="title">' + esc(p.title) + '</span>' +
+               '<span class="when">' + esc(p.duration) + '</span>' +
+             '</div>' +
+             (p.tech ? '<div class="sub">' + esc(p.tech) + '</div>' : '') +
+             (p.points.length
+               ? '<ul>' + p.points.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') + '</ul>'
+               : '') +
+           '</div>';
+    });
+  }
+
+  if(d.experience.length){
+    h += '<h2>Internship &amp; Training</h2>';
+    d.experience.forEach(function(x){
+      var head = [x.role, x.company].filter(Boolean).join(' — ');
+      h += '<div class="item">' +
+             '<div class="row">' +
+               '<span class="title">' + esc(head) + '</span>' +
+               '<span class="when">' + esc(x.duration) + '</span>' +
+             '</div>' +
+             (x.points.length
+               ? '<ul>' + x.points.map(function(y){ return '<li>' + rich(y) + '</li>'; }).join('') + '</ul>'
+               : '') +
+           '</div>';
+    });
+  }
+
+  if(d.achievements.length){
+    h += '<h2>Achievements &amp; Activities</h2><ul>' +
+         d.achievements.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') +
+         '</ul>';
+  }
+
+  if(d.certifications.length){
+    h += '<h2>Certifications</h2><ul>' +
+         d.certifications.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') +
+         '</ul>';
+  }
+
+  var pd = [
+    ['Date of Birth',    d.dob],
+    ['Languages Known',  d.knownLangs],
+    ['Address',          d.address]
+  ].filter(function(r){ return r[1]; });
+
+  if(pd.length){
+    h += '<h2>Personal Details</h2><div class="kv">';
+    pd.forEach(function(r){
+      h += '<b>' + r[0] + ':</b><span>' + esc(r[1]) + '</span>';
+    });
+    h += '</div>';
+  }
+
+  if(d.declaration){
+    h += '<div class="decl">' + rich(d.declaration) + '</div>';
+  }
+
+  document.getElementById('sheetA').innerHTML = h;
+}
+
+/* ============================================================
+   TEMPLATE B : MODERN SIDEBAR
+   ============================================================ */
+function renderB(d){
+  /* ---------- SIDEBAR ---------- */
+  var side = '';
+
+  side += '<div>' +
+    (d.photo
+      ? '<img src="' + d.photo + '" class="photo-img" alt="">'
+      : '<div class="photo">PHOTO</div>') +
+    '</div>';
+
+  var cl = [];
+  if(d.phone)    cl.push(['Phone', d.phone]);
+  if(d.email)    cl.push(['Email', d.email]);
+  if(d.linkedin) cl.push(['LinkedIn', d.linkedin]);
+  if(d.github)   cl.push(['GitHub', d.github]);
+  if(d.location) cl.push(['Location', d.location]);
+  if(cl.length){
+    side += '<div><h3>Contact</h3>' +
+      cl.map(function(r){
+        return '<div class="line"><b>' + r[0] + '</b><br>' + esc(r[1]) + '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  var chips = [].concat(
+    tokens(d.skills.languages),
+    tokens(d.skills.web),
+    tokens(d.skills.db),
+    tokens(d.skills.tools)
+  );
+  if(chips.length){
+    side += '<div><h3>Technical Skills</h3>' +
+      chips.map(function(c){ return '<span class="chip">' + esc(c) + '</span>'; }).join('') +
+      '</div>';
+  }
+
+  if(d.certifications.length){
+    side += '<div><h3>Certifications</h3><ul>' +
+      d.certifications.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') +
+      '</ul></div>';
+  }
+
+  if(d.knownLangs){
+    side += '<div><h3>Languages</h3><ul>' +
+      tokens(d.knownLangs).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') +
+      '</ul></div>';
+  }
+
+  if(d.dob || d.address){
+    side += '<div><h3>Personal</h3><ul>';
+    if(d.dob)     side += '<li>DOB: ' + esc(d.dob) + '</li>';
+    if(d.address) side += '<li>' + esc(d.address) + '</li>';
+    side += '</ul></div>';
+  }
+
+  /* ---------- MAIN ---------- */
+  var main = '';
+
+  main += '<h1 class="name">' + (esc(d.name) || 'YOUR NAME') + '</h1>';
+  if(d.role) main += '<div class="role">' + esc(d.role) + '</div>';
+
+  if(d.objective){
+    main += '<h2>Profile</h2><p>' + rich(d.objective) + '</p>';
+  }
+
+  if(d.education.length){
+    main += '<h2>Education</h2>';
+    d.education.forEach(function(e){
+      var sub = [e.degree, e.score].filter(Boolean).join(' — ');
+      main += '<div class="item">' +
+                '<div class="row">' +
+                  '<span class="title">' + esc(e.inst) + '</span>' +
+                  '<span class="when">' + esc(e.year) + '</span>' +
+                '</div>' +
+                (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') +
+              '</div>';
+    });
+  }
+
+  if(d.projects.length){
+    main += '<h2>Projects</h2>';
+    d.projects.forEach(function(p){
+      var tagList = tokens(p.tech);
+      main += '<div class="item">' +
+                '<div class="row">' +
+                  '<span class="title">' + esc(p.title) + '</span>' +
+                  '<span class="when">' + esc(p.duration) + '</span>' +
+                '</div>' +
+                (p.tech ? '<div class="sub">' + esc(p.tech) + '</div>' : '') +
+                (p.points.length
+                  ? '<ul>' + p.points.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') + '</ul>'
+                  : '') +
+                (tagList.length
+                  ? '<div class="tags">' + tagList.map(function(t){ return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>'
+                  : '') +
+              '</div>';
+    });
+  }
+
+  if(d.experience.length){
+    main += '<h2>Internship &amp; Experience</h2>';
+    d.experience.forEach(function(x){
+      var head = [x.role, x.company].filter(Boolean).join(' — ');
+      main += '<div class="item">' +
+                '<div class="row">' +
+                  '<span class="title">' + esc(head) + '</span>' +
+                  '<span class="when">' + esc(x.duration) + '</span>' +
+                '</div>' +
+                (x.points.length
+                  ? '<ul>' + x.points.map(function(y){ return '<li>' + rich(y) + '</li>'; }).join('') + '</ul>'
+                  : '') +
+              '</div>';
+    });
+  }
+
+  if(d.achievements.length){
+    main += '<h2>Achievements &amp; Activities</h2><ul>' +
+            d.achievements.map(function(x){ return '<li>' + rich(x) + '</li>'; }).join('') +
+            '</ul>';
+  }
+
+  if(d.skills.core){
+    main += '<h2>Core Competencies</h2><ul>' +
+            tokens(d.skills.core).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') +
+            '</ul>';
+  }
+
+  if(d.declaration){
+    main += '<p style="margin-top:14px;font-size:9.4pt;color:#5b6777;border-top:1px dashed #d8dee7;padding-top:8px;">' +
+            rich(d.declaration) + '</p>';
+  }
+
+  document.getElementById('sheetB').innerHTML =
+    '<aside class="side">' + side + '</aside>' +
+    '<main class="main">' + main + '</main>';
+}
+
+/* ============================================================
+   MASTER RENDER
+   ============================================================ */
+function render(){
+  var d = collectData();
+  renderA(d);
+  renderB(d);
+}
+
+/* ============================================================
+   TEMPLATE SWITCH
+   ============================================================ */
+var currentTemplate = 'A';
+function setTpl(which){
+  currentTemplate = which;
+  var a = document.getElementById('sheetA');
+  var b = document.getElementById('sheetB');
+  var btnA = document.getElementById('btnA');
+  var btnB = document.getElementById('btnB');
 
   if(which === 'A'){
     a.hidden = false; b.hidden = true;
@@ -460,8 +827,118 @@ function show(which){
     a.hidden = true; b.hidden = false;
     btnA.classList.remove('active'); btnB.classList.add('active');
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
+
+/* ============================================================
+   SAMPLE DATA
+   ============================================================ */
+function loadSample(){
+  var S = {
+    'f-name':        'SHREYA S. KULKARNI',
+    'f-role':        'Computer Science & Engineering Graduate',
+    'f-phone':       '+91 98765 43210',
+    'f-email':       'shreya.kulkarni@email.com',
+    'f-linkedin':    'linkedin.com/in/shreyakulkarni',
+    'f-github':      'github.com/shreyak',
+    'f-location':    'Bagalkote, Karnataka',
+    'f-objective':   'Final-year B.E. Computer Science student at Basaveshwar Engineering College, Bagalkote, with hands-on experience in full-stack web development and machine learning. Seeking a software engineering role where I can apply strong problem-solving skills, clean coding practices and a collaborative mindset to deliver reliable, scalable products.',
+    'f-skills-lang': 'Java, Python, C, JavaScript, SQL',
+    'f-skills-web':  'HTML5, CSS3, React.js, Node.js, Express.js, REST APIs',
+    'f-skills-db':   'MySQL, MongoDB',
+    'f-skills-tools':'Git, GitHub, VS Code, Postman, Linux, Docker (basics)',
+    'f-skills-core': 'Data Structures & Algorithms, DBMS, Operating Systems, OOP, Computer Networks',
+    'f-achievements':'Secured **2nd place** in the 24-hour Hackathon conducted by BEC Bagalkote (2025), team of 4.\nSolved **350+ problems** on LeetCode; 3-star rating in Java on HackerRank.\nNPTEL Elite certificate in "Data Structures and Algorithms with Java" — Score 84%.\nVolunteer, NSS Unit, BEC Bagalkote — organised blood donation and cleanliness drives.',
+    'f-certs':       'Google Cloud Fundamentals: Core Infrastructure — Coursera\nFull Stack Web Development Bootcamp — Udemy\nDatabase Management Systems — NPTEL (Elite)',
+    'f-dob':         '14 August 2004',
+    'f-known-langs': 'English, Kannada, Hindi',
+    'f-address':     'Vidyagiri, Bagalkote, Karnataka – 587102',
+    'f-declaration': 'I hereby declare that the information furnished above is true to the best of my knowledge.\n\nPlace: Bagalkote        Signature: Shreya S. Kulkarni'
+  };
+  Object.keys(S).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = S[id];
+  });
+
+  document.getElementById('eduList').innerHTML = '';
+  addEdu({inst:'Basaveshwar Engineering College (BEC), Bagalkote',
+          degree:'B.E. in Computer Science & Engineering',
+          year:'2022 – 2026', score:'CGPA: 8.72 / 10'});
+  addEdu({inst:'Sri Siddeshwar PU College, Bagalkote',
+          degree:'Pre-University (PCMB)',
+          year:'2020 – 2022', score:'91.2%'});
+  addEdu({inst:'Basaveshwar English Medium School, Bagalkote',
+          degree:'SSLC (KSEAB)',
+          year:'2020', score:'93.4%'});
+
+  document.getElementById('projList').innerHTML = '';
+  addProj({title:'SmartAttend — Face Recognition Attendance System',
+           tech:'Python, OpenCV, Flask, MySQL',
+           duration:'Jan 2025 – Apr 2025',
+           points:'Built an automated attendance system using Haar-Cascade and LBPH face recognition with 94% accuracy.\nDesigned a Flask dashboard that generates daily and monthly attendance reports in CSV format.\nReduced manual roll-call time by approximately 80% during a 60-student pilot at the college department.'});
+  addProj({title:'CampusConnect — College Placement Portal',
+           tech:'React.js, Node.js, Express.js, MongoDB',
+           duration:'Aug 2024 – Dec 2024',
+           points:'Developed a full-stack portal where students upload resumes and companies post openings with role-based login.\nImplemented JWT authentication and an admin panel for the placement cell to shortlist applicants.\nOptimized MongoDB queries with indexing, cutting dashboard load time from 2.4 s to 0.8 s.'});
+
+  document.getElementById('expList').innerHTML = '';
+  addExp({company:'TechNova Solutions, Bengaluru',
+          role:'Web Development Intern',
+          duration:'Jun 2025 – Jul 2025',
+          points:'Developed 6 responsive UI modules in React.js integrated with REST APIs for an internal CRM product.\nFixed 20+ front-end bugs and improved Lighthouse performance score from 68 to 92.'});
+
+  render();
+}
+
+/* ============================================================
+   CLEAR ALL
+   ============================================================ */
+function clearAll(){
+  document.querySelectorAll('#formPanel input, #formPanel textarea').forEach(function(el){
+    if(el.type === 'file'){ el.value = ''; return; }
+    el.value = '';
+  });
+  photoData = '';
+  document.getElementById('eduList').innerHTML = '';
+  document.getElementById('projList').innerHTML = '';
+  document.getElementById('expList').innerHTML = '';
+  addEdu(); addProj(); addExp();
+  render();
+}
+
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
+var formPanel = document.getElementById('formPanel');
+
+/* Live re-render on any change */
+formPanel.addEventListener('input', render);
+
+/* Remove dynamic card */
+formPanel.addEventListener('click', function(e){
+  var btn = e.target.closest('.remove-btn');
+  if(btn){
+    btn.closest('.dyn-card').remove();
+    render();
+  }
+});
+
+/* Photo upload */
+document.getElementById('f-photo').addEventListener('change', function(e){
+  var file = e.target.files[0];
+  if(!file){ photoData = ''; render(); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    photoData = ev.target.result;
+    render();
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadSample();
 </script>
 </body>
 </html>
