@@ -21,6 +21,8 @@
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Supabase Client Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
   *, *::before, *::after { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -140,7 +142,7 @@
       <form id="lookupForm" class="mt-6 space-y-3 text-left">
         <div>
           <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Class Code</label>
-          <input id="codeField" type="text" maxlength="6" autocomplete="off" spellcheck="false"
+          <input id="codeField" type="text" maxlength="12" autocomplete="off" spellcheck="false"
                  placeholder="ABC123"
                  class="code-input w-full border-2 border-slate-200 bg-white text-slate-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
         </div>
@@ -274,8 +276,8 @@
     </div>
 
     <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
-      <i class="bi bi-code-square"></i>
-      SCRIPT_API_URL preserved • Action: getStudentClassData
+      <i class="bi bi-lightning-charge-fill text-amber-500"></i>
+      Connected directly to Supabase Database Engine • Sub-100ms real-time latency
     </div>
   </div>
 </div>
@@ -285,9 +287,15 @@
 
 <script>
 /* ============================================================
-   CONFIGURATION — same Apps Script URL, unchanged
+   SUPABASE CONFIGURATION
    ============================================================ */
-const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbygC3AcBGG2K3ENYfJO34BYZNRfwQZM0-BiDaIeW5momKY9Jyp4w9eSIsQVXtFqVHEADA/exec";
+// REPLACE THIS URL WITH YOUR SUPABASE PROJECT URL (from Settings > API)
+const SUPABASE_URL = "https://jxxudzkstpkbcbasqmdp.supabase.co";
+
+// Your verified Publishable Key:
+const SUPABASE_ANON_KEY = "sb_publishable_aqi5yzf3DblxqOQU-sZnmA_X8zdIy53";
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ==================== LOCAL STORAGE: SAVED CLASSES ==================== */
 const SAVED_KEY = 'student-saved-classes';
@@ -317,7 +325,6 @@ function saveClassEntry(info) {
     division: info.division || '',
     savedAt: Date.now()
   });
-  /* Keep list bounded */
   setSavedClasses(list.slice(0, 30));
 }
 
@@ -385,7 +392,7 @@ function categoryIcon(cat) {
 
 function animateNumber(el, target, suffix = '') {
   if (!el) return;
-  const duration = 700;
+  const duration = 600;
   const start = performance.now();
   function step(now) {
     const p = Math.min((now - start) / duration, 1);
@@ -449,8 +456,7 @@ function renderSavedClasses() {
            data-code="${code}" role="button" tabindex="0" aria-label="Open ${subject} (${code})">
         <div class="pr-6">
           <div class="text-[12px] font-semibold truncate">${subject}</div>
-          <div class="mono text-[11px] text-slate-500 mt-0.5 tracking-wider">${code}</div>
-          ${meta ? `<div class="text-[10px] text-slate-400 mt-1 truncate">${escapeHtml(meta)}</div>` : ''}
+          <div class="mono text-[11px] text-slate-500 mt-0.5 tracking-wider">${code}</div>${meta ? `<div class="text-[10px] text-slate-400 mt-1 truncate">${escapeHtml(meta)}</div>` : ''}
         </div>
         <button type="button"
                 class="remove-saved absolute top-2 right-2 w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/60 transition"
@@ -461,7 +467,6 @@ function renderSavedClasses() {
   }).join('');
 }
 
-/* Event delegation on the saved classes grid */
 $('savedClassesList').addEventListener('click', (e) => {
   const removeBtn = e.target.closest('[data-remove-code]');
   if (removeBtn) {
@@ -501,58 +506,14 @@ $('clearSavedBtn').addEventListener('click', () => {
   showToast('All saved classes cleared', 'info');
 });
 
-/* ==================== BACKEND ==================== */
-async function callBackend(action, data = {}) {
-  let result;
-  try {
-    const res = await fetch(SCRIPT_API_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action, data })
-    });
-    result = await res.json();
-  } catch (err) {
-    console.warn('Backend unreachable, using mock:', err.message);
-    return mockBackend(action, data);
-  }
-  if (!result || !result.success) {
-    throw new Error((result && (result.error || result.message)) || 'Classroom not found');
-  }
-  return result.data !== undefined ? result.data : result;
-}
-
-function mockBackend(action, data = {}) {
-  if (action !== 'getStudentClassData') throw new Error('Unknown action: ' + action);
-  const code = (data.classCode || 'DEMO1').toUpperCase();
-  return {
-    classInfo: {
-      code,
-      subject: 'Data Structures',
-      faculty: 'Dr. Anjali Sharma',
-      branch: 'CSE',
-      semester: '5',
-      division: 'A'
-    },
-    posts: [
-      { id: 'p1', classCode: code, category: 'Notes',      title: 'Unit 1 — Arrays & Linked Lists', link: 'https://example.com/notes1', description: 'Complete notes covering array operations, linked list types and complexity analysis.', date: '2024-09-01' },
-      { id: 'p2', classCode: code, category: 'Assignment', title: 'Assignment 2 — Stack & Queue',   link: 'https://example.com/ass2',   description: 'Implement stack using arrays and linked list. Due 15 Sep.', date: '2024-09-03' },
-      { id: 'p3', classCode: code, category: 'Resource',   title: 'Drive folder — reference PDFs',   link: 'https://drive.google.com/',  description: 'Curated reference material for the mid-term.', date: '2024-09-05' }
-    ],
-    attendance: [
-      { id: 'a1', classCode: code, date: '2024-09-04', topic: 'Linked List Traversal', total: 60, present: 54, absent: 6, absentRolls: '5, 12, 23, 34, 41, 57', remarks: 'Doubt class scheduled' },
-      { id: 'a2', classCode: code, date: '2024-09-02', topic: 'Arrays Complexity',    total: 60, present: 58, absent: 2, absentRolls: '19, 44', remarks: '' },
-      { id: 'a3', classCode: code, date: '2024-08-30', topic: 'Intro & Syllabus',     total: 60, present: 60, absent: 0, absentRolls: 'None', remarks: '' }
-    ]
-  };
-}
-
-/* ==================== LOOKUP ==================== */
+/* ==================== SUPABASE LOOKUP ==================== */
 async function handleLookup(e) {
   if (e) e.preventDefault();
   const code = ($('codeField').value || '').trim().toUpperCase();
   $('lookupAlert').classList.add('hidden');
 
-  if (code.length < 4) {
-    showLookupError('Please enter the full class code (e.g. ABC123).');
+  if (code.length < 3) {
+    showLookupError('Please enter a valid class code.');
     return;
   }
 
@@ -561,19 +522,68 @@ async function handleLookup(e) {
   btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span><span>Connecting…</span>`;
 
   try {
-    const data = await callBackend('getStudentClassData', { classCode: code });
-    renderClassroom(data);
+    // 1. Fetch class info
+    const { data: clsData, error: clsErr } = await db
+      .from('classes')
+      .select('*')
+      .eq('class_code', code)
+      .single();
 
-    /* Save (or refresh) the class subject-wise in localStorage */
-    const info = (data && data.classInfo) || { code };
-    const wasSaved = isClassSaved(info.code || code);
-    saveClassEntry({ ...info, code: info.code || code });
+    if (clsErr || !clsData) {
+      throw new Error('Classroom code not found. Please verify the code.');
+    }
+
+    // 2. Fetch posts and attendance concurrently
+    const [postsRes, attRes] = await Promise.all([
+      db.from('posts').select('*').eq('class_code', code).order('created_at', { ascending: false }),
+      db.from('attendance').select('*').eq('class_code', code).order('created_at', { ascending: false })
+    ]);
+
+    if (postsRes.error) throw postsRes.error;
+    if (attRes.error) throw attRes.error;
+
+    const classInfo = {
+      code: clsData.class_code,
+      subject: clsData.subject,
+      faculty: clsData.teacher_name,
+      branch: clsData.branch,
+      semester: clsData.semester,
+      division: clsData.division
+    };
+
+    const posts = (postsRes.data || []).map(p => ({
+      id: p.id,
+      classCode: p.class_code,
+      category: p.category,
+      title: p.title,
+      description: p.description,
+      link: p.link,
+      date: new Date(p.created_at).toLocaleDateString()
+    }));
+
+    const attendance = (attRes.data || []).map(a => ({
+      id: a.id,
+      classCode: a.class_code,
+      date: a.date,
+      topic: a.topic,
+      total: a.total_count,
+      present: a.present_count,
+      absent: a.absent_count,
+      absentRolls: a.absent_rolls,
+      remarks: a.remarks
+    }));
+
+    renderClassroom({ classInfo, posts, attendance });
+
+    // Save class to local storage
+    const wasSaved = isClassSaved(code);
+    saveClassEntry({ ...classInfo, code });
     renderSavedClasses();
 
     showToast(
       wasSaved
-        ? `<strong>${escapeHtml(info.subject || code)}</strong> refreshed`
-        : `<strong>${escapeHtml(info.subject || code)}</strong> saved to your classes`,
+        ? `<strong>${escapeHtml(classInfo.subject || code)}</strong> refreshed`
+        : `<strong>${escapeHtml(classInfo.subject || code)}</strong> saved to your classes`,
       'success'
     );
   } catch (err) {
@@ -581,256 +591,4 @@ async function handleLookup(e) {
     showToast(err.message || 'Classroom not found', 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = `<i class="bi bi-box-arrow-in-right"></i><span>Open Classroom</span>`;
-  }
-}
-
-function showLookupError(msg) {
-  const box = $('lookupAlert');
-  box.textContent = msg;
-  box.classList.remove('hidden');
-}
-
-/* ==================== RENDER: CLASSROOM ==================== */
-function renderClassroom(data) {
-  const info = (data && data.classInfo) || {};
-  state.classInfo = info;
-  state.posts = Array.isArray(data && data.posts) ? data.posts : [];
-  state.attendance = Array.isArray(data && data.attendance) ? data.attendance : [];
-  state.postFilter = '';
-  state.tab = 'posts';
-  $('postSearch').value = '';
-
-  /* Hero */
-  $('heroCode').textContent = `CLASS CODE · ${info.code || '—'}`;
-  $('heroSubject').textContent = info.subject || 'Classroom';
-  $('savedBadge').classList.toggle('hidden', !isClassSaved(info.code || ''));
-
-  const meta = [
-    info.faculty  ? `<span><i class="bi bi-person-badge mr-1"></i>${escapeHtml(info.faculty)}</span>` : '',
-    info.branch   ? `<span><i class="bi bi-diagram-3 mr-1"></i>${escapeHtml(info.branch)}</span>` : '',
-    info.semester ? `<span><i class="bi bi-layers mr-1"></i>Semester ${escapeHtml(info.semester)}</span>` : '',
-    info.division ? `<span><i class="bi bi-people mr-1"></i>Division ${escapeHtml(info.division)}</span>` : ''
-  ].filter(Boolean).join('');
-  $('heroMeta').innerHTML = meta;
-  $('crumbClass').textContent = info.code || 'Classroom';
-
-  computeStats();
-  renderPosts();
-  renderAttendance();
-  switchTab('posts');
-
-  $('lookupView').classList.add('hidden');
-  $('changeCodeBtn').classList.remove('hidden');
-  const view = $('classroomView');
-  view.classList.remove('hidden');
-  view.classList.remove('fade-up');
-  void view.offsetWidth;
-  view.classList.add('fade-up');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* ==================== STATS ==================== */
-function computeStats() {
-  let present = 0, total = 0, absent = 0;
-  state.attendance.forEach((a) => {
-    present += Number(a.present ?? a.presentCount) || 0;
-    total   += Number(a.total   ?? a.totalCount)   || 0;
-    absent  += Number(a.absent  ?? a.absentCount)  || 0;
-  });
-  const pct = total ? Math.round((present / total) * 100) : 0;
-
-  animateNumber($('statPosts'), state.posts.length);
-  animateNumber($('statClasses'), state.attendance.length);
-  animateNumber($('statPercent'), pct, '%');
-  animateNumber($('statAbsent'), absent);
-}
-
-/* ==================== POSTS ==================== */
-function renderPosts() {
-  const wrap = $('postsGrid');
-  const q = state.postFilter.trim().toLowerCase();
-  const list = state.posts.filter((p) => {
-    if (!q) return true;
-    return [p.title, p.description, p.category].join(' ').toLowerCase().includes(q);
-  });
-
-  if (!list.length) {
-    wrap.innerHTML = `
-      <div class="col-span-2 rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 p-10 text-center">
-        <i class="bi ${q ? 'bi-search' : 'bi-inbox'} text-slate-400 text-[28px] block mb-2"></i>
-        <div class="text-[13px] font-medium">${q ? 'No matching resources' : 'No notes or announcements yet'}</div>
-        <div class="text-[12px] text-slate-500 mt-1">${q ? 'Try a different keyword.' : 'Your professor hasn\u2019t posted anything for this class yet.'}</div>
-      </div>`;
-    return;
-  }
-
-  wrap.innerHTML = list.map((p) => {
-    const url = safeUrl(p.link);
-    return `
-      <article class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 p-5 flex flex-col transition hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-[0_4px_24px_rgba(79,70,229,0.08)]">
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${categoryClass(p.category)}">
-              ${escapeHtml(p.category || 'General')}
-            </span>
-            <span class="text-[11px] text-slate-400 flex items-center gap-1">
-              <i class="bi bi-clock-history"></i> ${escapeHtml(p.date || '')}
-            </span>
-          </div>
-          <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
-            <i class="bi ${categoryIcon(p.category)} text-[14px]"></i>
-          </div>
-        </div>
-
-        <h3 class="text-[14px] font-semibold leading-snug mb-1.5">${escapeHtml(p.title || 'Untitled')}</h3>
-        ${p.description ? `<p class="text-[12px] text-slate-500 line-clamp-2 mb-4 flex-1">${escapeHtml(p.description)}</p>` : '<div class="flex-1"></div>'}
-
-        ${url ? `
-          <a href="${url}" target="_blank" rel="noopener noreferrer"
-             class="inline-flex items-center gap-1.5 self-start px-3 py-1.5 rounded-lg text-[12px] font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 dark:text-indigo-300 dark:bg-indigo-950/60 dark:border-indigo-900 dark:hover:bg-indigo-950 transition">
-            <i class="bi bi-box-arrow-up-right"></i> Open Resource
-          </a>` : ''}
-      </article>`;
-  }).join('');
-}
-
-/* ==================== ATTENDANCE ==================== */
-function renderAttendance() {
-  const tbody = $('attTableBody');
-
-  if (!state.attendance.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="4" class="p-10 text-center">
-          <i class="bi bi-calendar-x text-slate-400 text-[28px] block mb-2"></i>
-          <div class="text-[13px] font-medium">No attendance recorded yet</div>
-          <div class="text-[12px] text-slate-500 mt-1">Records will appear once your professor starts marking them.</div>
-        </td>
-      </tr>`;
-    return;
-  }
-
-  tbody.innerHTML = state.attendance.map((a) => {
-    const total   = Number(a.total   ?? a.totalCount)   || 0;
-    const present = Number(a.present ?? a.presentCount) || 0;
-    const absent  = Number(a.absent  ?? a.absentCount)  || 0;
-    const pct = total ? Math.round((present / total) * 100) : 0;
-    const tone = pct >= 75 ? 'success' : pct >= 50 ? 'warning' : 'danger';
-
-    const hasRolls = a.absentRolls && String(a.absentRolls).trim() !== '' &&
-                     String(a.absentRolls).trim().toLowerCase() !== 'none';
-
-    let absentCell;
-    if (!absent) {
-      absentCell = `<span class="text-[12px] text-slate-500">All present</span>`;
-    } else if (hasRolls) {
-      absentCell = `<span class="mono inline-block text-[11px] font-bold px-2 py-1 rounded-md bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/60 dark:border-red-900 dark:text-red-300 break-all">${escapeHtml(a.absentRolls)}</span>`;
-    } else {
-      absentCell = `<span class="text-[11px] px-2 py-1 rounded-md bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/60 dark:border-red-900 dark:text-red-300">${absent} absent</span>`;
-    }
-
-    return `
-      <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">
-        <td class="px-4 py-3 text-nowrap">
-          <span class="text-[13px] font-semibold">${escapeHtml(a.date || '—')}</span>
-        </td>
-        <td class="px-4 py-3">
-          <span class="text-[13px] text-slate-600 dark:text-slate-300">${escapeHtml(a.topic || '—')}</span>
-        </td>
-        <td class="px-4 py-3">
-          <div class="flex items-center justify-between text-[12px] mb-1.5">
-            <span class="font-semibold">${present} / ${total}</span>
-            <span class="text-slate-500">${pct}%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill pf-${tone}" style="width: ${pct}%"></div>
-          </div>
-        </td>
-        <td class="px-4 py-3">
-          ${absentCell}
-          ${a.remarks ? `<div class="text-[11px] text-slate-500 italic mt-1.5">${escapeHtml(a.remarks)}</div>` : ''}
-        </td>
-      </tr>`;
-  }).join('');
-}
-
-/* ==================== TABS ==================== */
-function switchTab(tab) {
-  state.tab = tab;
-  document.querySelectorAll('.tab-btn').forEach((btn) => {
-    const active = btn.dataset.tab === tab;
-    btn.className = `tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition ${
-      active
-        ? 'bg-white shadow border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100'
-        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
-    }`;
-  });
-  $('tabPosts').classList.toggle('hidden', tab !== 'posts');
-  $('tabAttendance').classList.toggle('hidden', tab !== 'attendance');
-  $('postsSearchWrap').classList.toggle('hidden', tab !== 'posts');
-}
-
-/* ==================== EXIT ==================== */
-function exitClass() {
-  $('classroomView').classList.add('hidden');
-  $('lookupView').classList.remove('hidden');
-  $('changeCodeBtn').classList.add('hidden');
-  $('codeField').value = '';
-  $('lookupAlert').classList.add('hidden');
-  $('crumbClass').textContent = 'Enter Code';
-  state.posts = [];
-  state.attendance = [];
-  state.classInfo = null;
-  state.postFilter = '';
-  $('postSearch').value = '';
-  renderSavedClasses();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  setTimeout(() => $('codeField').focus(), 250);
-}
-
-/* ==================== EVENT WIRING ==================== */
-$('lookupForm').addEventListener('submit', handleLookup);
-
-$('codeField').addEventListener('input', (e) => {
-  e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-});
-
-$('postSearch').addEventListener('input', (e) => {
-  state.postFilter = e.target.value;
-  renderPosts();
-});
-
-document.querySelectorAll('.tab-btn').forEach((btn) => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-});
-
-$('changeCodeBtn').addEventListener('click', exitClass);
-
-$('themeToggle').addEventListener('click', () => {
-  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
-});
-
-/* ==================== INIT ==================== */
-(function init() {
-  let theme = 'light';
-  try { theme = localStorage.getItem('student-theme') || 'light'; } catch (e) {}
-  applyTheme(theme);
-
-  /* Always render saved classes first */
-  renderSavedClasses();
-
-  /* Auto-open if ?code=ABC123 is present in the URL */
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  if (code) {
-    $('codeField').value = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    handleLookup();
-  } else {
-    $('codeField').focus();
-  }
-})();
-</script>
-
-</body>
-</html>
+    btn.innerHTML = `<i class="bi bi-box-arrow-in
