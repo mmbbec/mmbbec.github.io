@@ -21,7 +21,6 @@
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Supabase Client Library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -30,48 +29,13 @@
   body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
 
   .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .card-hover:hover { border-color: #a5b4fc !important; box-shadow: 0 4px 24px rgba(79,70,229,0.08); }
   .btn-primary-grad { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border: none; }
   .btn-primary-grad:hover { background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%); }
   .pill-mono { background: #f1f5f9; border: 1px solid #e2e8f0; font-family: "JetBrains Mono", monospace; font-size: 12px; }
   .dark .pill-mono { background: #1e293b; border-color: #334155; color: #e2e8f0; }
 
-  .code-input {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-weight: 700;
-    font-size: 1.35rem;
-    letter-spacing: .55em;
-    padding-left: .55em;
-    text-transform: uppercase;
-    text-align: center;
-    height: 58px;
-    border-radius: 1rem;
-  }
-  .code-input::placeholder { letter-spacing: .35em; color: #cbd5e1; }
-
-  .hero {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 48%, #06b6d4 125%);
-  }
-  .hero::before, .hero::after {
-    content: ""; position: absolute; border-radius: 50%; pointer-events: none;
-  }
-  .hero::before {
-    width: 300px; height: 300px; top: -140px; right: -70px;
-    background: radial-gradient(circle, rgba(255,255,255,.28), transparent 68%);
-  }
-  .hero::after {
-    width: 240px; height: 240px; bottom: -140px; left: -60px;
-    background: radial-gradient(circle, rgba(255,255,255,.18), transparent 68%);
-  }
-
   .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-  .progress-track { height: 6px; border-radius: 999px; background: rgba(100,116,139,.18); overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
-  .pf-success { background: linear-gradient(90deg, #10b981, #22c55e); }
-  .pf-warning { background: linear-gradient(90deg, #f59e0b, #eab308); }
-  .pf-danger  { background: linear-gradient(90deg, #f43f5e, #dc2626); }
 
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; }
@@ -83,14 +47,16 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .fade-up { animation: fadeUp .35s cubic-bezier(.22, 1, .36, 1) both; }
 
-  .saved-class-item { transition: border-color .15s, background-color .15s, transform .15s; }
-  .saved-class-item:hover { transform: translateY(-1px); }
-  .saved-class-item .remove-saved { opacity: 0; transition: opacity .15s; }
-  .saved-class-item:hover .remove-saved,
-  .saved-class-item:focus-within .remove-saved { opacity: 1; }
-  @media (hover: none) {
-    .saved-class-item .remove-saved { opacity: 1; }
-  }
+  .google-btn { background:#fff; border:1px solid #e2e8f0; color:#0f172a; }
+  .google-btn:hover { background:#f8fafc; border-color:#cbd5e1; }
+  .dark .google-btn { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+  .dark .google-btn:hover { background:#1e293b; border-color:#475569; }
+
+  .att-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+  .dark .att-bar { background: #334155; }
+  .att-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4f46e5, #8b5cf6); transition: width .5s ease; }
+  .att-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #f97316); }
+  .att-bar-fill.bad { background: linear-gradient(90deg, #dc2626, #ef4444); }
 </style>
 </head>
 
@@ -110,7 +76,7 @@
       <div class="hidden md:flex items-center gap-2 ml-6 pl-6 border-l border-slate-200 dark:border-slate-800">
         <span class="text-[12px] text-slate-500">Student</span>
         <span class="text-slate-300 dark:text-slate-600">/</span>
-        <span id="crumbClass" class="text-[12px] font-medium">Enter Code</span>
+        <span class="text-[12px] font-medium">My Classes</span>
       </div>
     </div>
 
@@ -119,166 +85,228 @@
         <i id="themeIcon" class="bi bi-moon text-[14px]"></i>
       </button>
 
-      <button id="changeCodeBtn" class="hidden ml-2 text-[12px] px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-        <i class="bi bi-arrow-left-right mr-1"></i> Change Code
-      </button>
+      <div id="navUser" class="hidden items-center gap-2 pl-2">
+        <div class="hidden md:flex items-center gap-2">
+          <div id="navAvatar" class="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-950 dark:border-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-[12px] overflow-hidden"></div>
+          <div class="leading-tight">
+            <div id="navName" class="text-[13px] font-medium"></div>
+            <div id="navEmail" class="text-[11px] text-slate-500"></div>
+          </div>
+        </div>
+        <button id="signOutBtn" class="ml-2 text-[12px] px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+          Sign out
+        </button>
+      </div>
     </div>
   </div>
 </nav>
 
-<!-- ================= CODE LOOKUP ================= -->
-<div id="lookupView" class="min-h-[calc(100vh-64px)] flex items-start md:items-center justify-center p-4">
-  <div class="w-full max-w-[500px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up my-4 md:my-0">
-    <div class="p-8 pb-6 text-center">
-      <div class="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center text-white text-[22px]"
-           style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #06b6d4 100%); box-shadow: 0 18px 32px -18px rgba(79,70,229,0.95);">
-        <i class="bi bi-shield-lock-fill"></i>
-      </div>
-      <h1 class="text-[18px] font-semibold tracking-tight">BEC Bagalkote</h1>
-      <p class="text-[13px] text-slate-500 mt-1 leading-relaxed">
-        Use the 6-character code shared by your professor to unlock notes, resources and attendance.
-      </p>
-
-      <form id="lookupForm" class="mt-6 space-y-3 text-left">
-        <div>
-          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Class Code</label>
-          <input id="codeField" type="text" maxlength="12" autocomplete="off" spellcheck="false"
-                 placeholder="ABC123"
-                 class="code-input w-full border-2 border-slate-200 bg-white text-slate-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 transition dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+<!-- ================= AUTH VIEW ================= -->
+<div id="authView" class="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
+  <div class="w-full max-w-[440px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up">
+    <div class="p-8 pb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-[#4f46e5] flex items-center justify-center text-white">
+          <i class="bi bi-mortarboard-fill"></i>
         </div>
-        <button type="submit" id="lookupBtn"
-                class="w-full h-11 rounded-xl btn-primary-grad text-white font-medium text-[14px] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
-          <i class="bi bi-box-arrow-in-right"></i><span>Open Classroom</span>
-        </button>
+        <div>
+          <h1 class="text-[18px] font-semibold tracking-tight">BEC Bagalkote Student Portal</h1>
+          <p class="text-[13px] text-slate-500">Join classes, access materials, track attendance</p>
+        </div>
+      </div>
+
+      <!-- Google sign-in -->
+      <button id="googleSignInBtn" type="button"
+        class="google-btn w-full h-11 rounded-xl text-[14px] font-medium flex items-center justify-center gap-2.5 transition mb-4">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+          <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2.1 1.5-4.7 2.4-7.2 2.4-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/>
+          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41.9 35.5 44 30.2 44 24c0-1.2-.1-2.4-.4-3.5z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="flex items-center gap-3 my-4">
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+        <span class="text-[11px] uppercase tracking-widest text-slate-400">or use email</span>
+        <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+      </div>
+
+      <div class="flex p-1 rounded-full bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 mb-6">
+        <button data-auth-tab="login" class="auth-tab-btn flex-1 py-1.5 rounded-full text-[13px] font-medium transition">Login</button>
+        <button data-auth-tab="register" class="auth-tab-btn flex-1 py-1.5 rounded-full text-[13px] font-medium transition">Register</button>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Email</label>
+          <input id="loginEmail" type="email" placeholder="student@gmail.com" autocomplete="email" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[14px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Password</label>
+          <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[14px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+        </div>
+        <button type="submit" id="loginSubmitBtn" class="w-full h-11 rounded-xl btn-primary-grad text-white font-medium text-[14px] shadow-[0_4px_12px_rgba(79,70,229,0.25)]">Sign in with Email</button>
+        <p class="text-[11px] text-slate-500 text-center">BEC Bagalkote • Student Access</p>
       </form>
 
-      <div id="lookupAlert" class="hidden mt-3 text-[12px] py-2 px-3 rounded-xl border border-red-200 bg-red-50 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300"></div>
-    </div>
-
-    <!-- ============ SAVED CLASSES PANEL ============ -->
-    <div id="savedClassesWrap" class="hidden px-8 pb-6 text-left">
-      <div class="pt-5 border-t border-slate-200 dark:border-slate-800">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <i class="bi bi-bookmark-star-fill text-indigo-500 text-[13px]"></i>
-            <span class="text-[11px] font-semibold tracking-widest uppercase text-slate-500">Saved Classes</span>
-            <span id="savedCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[10px]">0</span>
-          </div>
-          <button id="clearSavedBtn" type="button"
-                  class="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition">
-            <i class="bi bi-trash3"></i> Clear all
-          </button>
+      <form id="registerForm" class="space-y-4 hidden">
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Full Name</label>
+          <input id="regName" type="text" placeholder="Your full name" autocomplete="name" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[14px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
         </div>
-        <div id="savedClassesList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[240px] overflow-auto scrollbar-thin pr-0.5"></div>
-      </div>
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Email</label>
+          <input id="regEmail" type="email" placeholder="student@gmail.com" autocomplete="email" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[14px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Password</label>
+          <input id="regPass" type="password" placeholder="Create password (min 6 chars)" autocomplete="new-password" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[14px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
+        </div>
+        <button type="submit" id="regSubmitBtn" class="w-full h-11 rounded-xl btn-primary-grad text-white font-medium text-[14px] shadow-[0_4px_12px_rgba(79,70,229,0.25)]">Create Account</button>
+      </form>
     </div>
 
     <div class="px-8 py-4 rounded-b-[20px] border-t text-[11px] text-slate-500 flex items-center gap-2 bg-slate-50 border-slate-200 dark:bg-[#0f172a] dark:border-slate-800">
-      <i class="bi bi-lock"></i> Created by Dr Mahadev Biradar.
+      <i class="bi bi-shield-check"></i> Your data is protected with Supabase Auth
     </div>
   </div>
 </div>
 
-<!-- ================= CLASSROOM VIEW ================= -->
-<div id="classroomView" class="hidden">
+<!-- ================= DASHBOARD ================= -->
+<div id="dashView" class="hidden">
   <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
 
-    <!-- Hero banner -->
-    <div class="hero rounded-[20px] p-6 md:p-8 text-white mb-6 shadow-[0_26px_55px_-30px_rgba(79,70,229,1)]">
-      <div class="relative flex flex-col md:flex-row md:items-start justify-between gap-4" style="z-index:1;">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase bg-white/20 border border-white/40 backdrop-blur-sm">
-              <i class="bi bi-key-fill"></i> <span id="heroCode">CLASS CODE</span>
-            </span>
-            <span id="savedBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-white/15 border border-white/30 backdrop-blur-sm">
-              <i class="bi bi-bookmark-star-fill"></i> Saved
-            </span>
-          </div>
-          <h1 id="heroSubject" class="text-[24px] md:text-[28px] font-semibold tracking-tight mt-3 mb-2">Classroom</h1>
-          <div id="heroMeta" class="flex flex-wrap gap-x-4 gap-y-1 text-[13px] opacity-95"></div>
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center gap-2 text-[12px] text-slate-500 mb-2">
+        <span>Student</span>
+        <i class="bi bi-chevron-right text-[10px]"></i>
+        <span class="text-slate-900 dark:text-slate-100 font-medium">My Classes</span>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 id="welcomeTitle" class="text-[24px] md:text-[28px] font-semibold tracking-tight text-slate-900 dark:text-slate-100"></h1>
+          <p class="text-[13px] text-slate-500 mt-1">Join new classes, access study materials and track your attendance.</p>
         </div>
+        <button id="joinClassBtn" class="h-10 px-4 rounded-xl btn-primary-grad text-white text-[13px] font-medium flex items-center gap-2 shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
+          <i class="bi bi-box-arrow-in-right"></i> Join a Class
+        </button>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">
-          <i class="bi bi-journal-text"></i>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div>
+          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Enrolled Classes</div>
+          <div id="statClassCount" class="text-[22px] font-semibold">0</div>
+          <div class="text-[12px] text-slate-500 mt-0.5">Active enrollments</div>
         </div>
-        <div id="statPosts" class="text-[22px] font-semibold tracking-tight">0</div>
-        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Resources</div>
-      </div>
-      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#06b6d4,#0ea5e9);">
-          <i class="bi bi-calendar3"></i>
+        <div class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
+          <i class="bi bi-collection"></i>
         </div>
-        <div id="statClasses" class="text-[22px] font-semibold tracking-tight">0</div>
-        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Classes Held</div>
       </div>
-      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#10b981,#22c55e);">
+
+      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Student</div>
+          <div id="statStudentName" class="text-[16px] font-semibold truncate">—</div>
+          <div id="statStudentEmail" class="text-[12px] text-slate-500 mt-0.5 truncate">—</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-950 dark:border-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+          <i class="bi bi-person-badge"></i>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Overall Attendance</div>
+          <div id="statOverallAtt" class="text-[22px] font-semibold">—</div>
+          <div class="text-[12px] text-slate-500 mt-0.5">Across all classes</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 dark:bg-emerald-950 dark:border-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
           <i class="bi bi-graph-up-arrow"></i>
         </div>
-        <div id="statPercent" class="text-[22px] font-semibold tracking-tight">0%</div>
-        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Avg. Attendance</div>
       </div>
-      <div class="rounded-2xl border p-4 md:p-5 bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white mb-3" style="background: linear-gradient(135deg,#f43f5e,#fb7185);">
-          <i class="bi bi-person-x"></i>
+    </div>
+
+    <!-- Main grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+
+      <!-- Class list -->
+      <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+        <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <h2 class="text-[13px] font-semibold tracking-tight">My Classes</h2>
+          <span id="classCountPill" class="pill-mono px-2.5 py-1 rounded-full text-[11px]">0 total</span>
         </div>
-        <div id="statAbsent" class="text-[22px] font-semibold tracking-tight">0</div>
-        <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mt-0.5">Total Absences</div>
-      </div>
-    </div>
-
-    <!-- Tabs + search -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-      <div class="inline-flex p-1 rounded-full bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 w-full md:w-auto">
-        <button data-tab="posts" class="tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition">
-          <i class="bi bi-folder2-open mr-1.5"></i> Notes & Resources
-        </button>
-        <button data-tab="attendance" class="tab-btn flex-1 md:flex-none md:px-5 py-1.5 rounded-full text-[13px] font-medium transition">
-          <i class="bi bi-calendar-check mr-1.5"></i> Attendance
-        </button>
+        <div id="classList" class="p-3 space-y-2 max-h-[560px] overflow-auto scrollbar-thin"></div>
       </div>
 
-      <div id="postsSearchWrap" class="relative w-full md:w-auto">
-        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px] pointer-events-none"></i>
-        <input id="postSearch" type="search" placeholder="Search resources…"
-               class="w-full md:w-[260px] h-10 pl-9 pr-3 rounded-full border border-slate-200 bg-white text-[13px] outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950">
-      </div>
-    </div>
+      <!-- Right column -->
+      <div class="space-y-6">
+        <div id="classDetailsCard" class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 overflow-hidden"></div>
 
-    <!-- Tab 1: Posts -->
-    <div id="tabPosts">
-      <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Posts -->
+          <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center">
+                  <i class="bi bi-journal-text text-[13px]"></i>
+                </div>
+                <h3 class="text-[13px] font-semibold">Materials & Notices</h3>
+              </div>
+              <span id="postsCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[11px]">0</span>
+            </div>
+            <div id="postsList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-[420px] overflow-auto scrollbar-thin"></div>
+          </div>
 
-    <!-- Tab 2: Attendance -->
-    <div id="tabAttendance" class="hidden">
-      <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left">
-            <thead>
-              <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
-                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500 whitespace-nowrap">Date</th>
-                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500">Topic / Hour</th>
-                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500" style="min-width: 200px;">Attendance</th>
-                <th class="px-4 py-3 text-[11px] font-semibold tracking-widest uppercase text-slate-500">Absentees</th>
-              </tr>
-            </thead>
-            <tbody id="attTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-          </table>
+          <!-- Attendance -->
+          <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center">
+                  <i class="bi bi-calendar-check text-[13px]"></i>
+                </div>
+                <h3 class="text-[13px] font-semibold">My Attendance</h3>
+              </div>
+              <span id="attCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[11px]">0</span>
+            </div>
+            <div id="attList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-[420px] overflow-auto scrollbar-thin"></div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
       <i class="bi bi-lightning-charge-fill text-amber-500"></i>
-      Connected directly to Supabase Database Engine • Sub-100ms real-time latency
+      Connected to Supabase • Real-time sync
     </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: JOIN CLASS ================= -->
+<div id="joinClassModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" data-close-modal="joinClass"></div>
+  <div class="relative w-full max-w-[440px] rounded-[16px] border shadow-[0_20px_60px_rgba(0,0,0,0.15)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-700 fade-up">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+      <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Join Classroom</div>
+      <h3 class="text-[16px] font-semibold">Enter class code</h3>
+      <p class="text-[12px] text-slate-500 mt-1">Ask your faculty for the class code.</p>
+    </div>
+    <form id="joinClassForm" class="p-6 space-y-4">
+      <div>
+        <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Class Code</label>
+        <input id="joinCode" type="text" placeholder="CSE5A-DS23" required autocomplete="off"
+          class="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white text-[14px] mono tracking-wider outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 uppercase">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" data-close-modal="joinClass" class="flex-1 h-10 rounded-xl border border-slate-200 bg-white text-[13px] font-medium dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">Cancel</button>
+        <button type="submit" id="joinClassSubmitBtn" class="flex-1 h-10 rounded-xl btn-primary-grad text-white text-[13px] font-medium">Join Class</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -287,69 +315,30 @@
 
 <script>
 /* ============================================================
-   SUPABASE CONFIGURATION
+   SUPABASE CONFIGURATION  (same project as faculty portal)
    ============================================================ */
-// REPLACE THIS URL WITH YOUR SUPABASE PROJECT URL (from Settings > API)
 const SUPABASE_URL = "https://jxxudzkstpkbcbasqmdp.supabase.co";
-
-// Your verified Publishable Key:
 const SUPABASE_ANON_KEY = "sb_publishable_aqi5yzf3DblxqOQU-sZnmA_X8zdIy53";
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ==================== LOCAL STORAGE: SAVED CLASSES ==================== */
-const SAVED_KEY = 'student-saved-classes';
-
-function getSavedClasses() {
-  try {
-    const raw = localStorage.getItem(SAVED_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.filter((c) => c && c.code) : [];
-  } catch (e) { return []; }
-}
-
-function setSavedClasses(list) {
-  try { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); } catch (e) {}
-}
-
-function saveClassEntry(info) {
-  if (!info || !info.code) return;
-  const code = String(info.code).toUpperCase();
-  const list = getSavedClasses().filter((c) => String(c.code).toUpperCase() !== code);
-  list.unshift({
-    code,
-    subject: info.subject || 'Untitled Class',
-    faculty: info.faculty || '',
-    branch: info.branch || '',
-    semester: info.semester || '',
-    division: info.division || '',
-    savedAt: Date.now()
-  });
-  setSavedClasses(list.slice(0, 30));
-}
-
-function removeSavedClass(code) {
-  const upper = String(code).toUpperCase();
-  setSavedClasses(getSavedClasses().filter((c) => String(c.code).toUpperCase() !== upper));
-}
-
-function clearSavedClasses() {
-  try { localStorage.removeItem(SAVED_KEY); } catch (e) {}
-}
-
-function isClassSaved(code) {
-  const upper = String(code).toUpperCase();
-  return getSavedClasses().some((c) => String(c.code).toUpperCase() === upper);
-}
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 
 /* ==================== STATE ==================== */
 const state = {
   theme: 'light',
-  tab: 'posts',
-  classInfo: null,
+  authTab: 'login',
+  student: null,        // { name, email, avatar }
+  enrollments: [],      // [{ class_code, classObj }]
+  classes: [],          // enriched list of classes
+  selectedClass: null,
   posts: [],
   attendance: [],
-  postFilter: ''
+  loading: false
 };
 
 const $ = (id) => document.getElementById(id);
@@ -363,44 +352,26 @@ function escapeHtml(v) {
 }
 
 function safeUrl(v) {
-  if (!v) return '';
+  if (!v) return '#';
   try {
     const u = new URL(v, window.location.href);
-    return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '';
-  } catch (e) { return ''; }
-}
-
-function categoryClass(cat) {
-  const c = String(cat || '').toLowerCase();
-  if (c.includes('note'))      return 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950 dark:border-indigo-900 dark:text-indigo-300';
-  if (c.includes('assign'))    return 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950 dark:border-amber-900 dark:text-amber-300';
-  if (c.includes('exam') || c.includes('test') || c.includes('quiz')) return 'bg-red-50 border-red-200 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300';
-  if (c.includes('resource') || c.includes('link') || c.includes('material') || c.includes('pdf')) return 'bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950 dark:border-sky-900 dark:text-sky-300';
-  if (c.includes('announce') || c.includes('notice')) return 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300';
-  return 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300';
-}
-
-function categoryIcon(cat) {
-  const c = String(cat || '').toLowerCase();
-  if (c.includes('note'))      return 'bi-file-earmark-text';
-  if (c.includes('assign'))    return 'bi-clipboard-check';
-  if (c.includes('exam') || c.includes('test') || c.includes('quiz')) return 'bi-clipboard2-pulse';
-  if (c.includes('resource') || c.includes('link') || c.includes('material') || c.includes('pdf')) return 'bi-link-45deg';
-  if (c.includes('announce') || c.includes('notice')) return 'bi-megaphone';
-  return 'bi-journal-text';
-}
-
-function animateNumber(el, target, suffix = '') {
-  if (!el) return;
-  const duration = 600;
-  const start = performance.now();
-  function step(now) {
-    const p = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(target * eased) + suffix;
-    if (p < 1) requestAnimationFrame(step);
+    return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '#';
+  } catch (e) {
+    return String(v).startsWith('http') ? v : '#';
   }
-  requestAnimationFrame(step);
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function extractUserInfo(user) {
+  if (!user) return { name: '', email: '', avatar: '' };
+  const meta = user.user_metadata || {};
+  const email = user.email || '';
+  const name = meta.full_name || meta.name || meta.display_name || (email ? email.split('@')[0] : 'Student');
+  const avatar = meta.avatar_url || meta.picture || '';
+  return { name, email, avatar };
 }
 
 /* ==================== TOASTS ==================== */
@@ -412,10 +383,15 @@ function showToast(msg, type = 'info') {
   const borders = { success: 'border-emerald-200 dark:border-emerald-900',
                     error: 'border-red-200 dark:border-red-900',
                     info: 'border-slate-200 dark:border-slate-700' };
+
   const el = document.createElement('div');
   el.className = `toast-in pointer-events-auto min-w-[280px] max-w-[380px] rounded-xl border px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-start gap-2.5 text-[13px] bg-white dark:bg-[#1e293b] dark:text-slate-100 ${borders[type] || borders.info}`;
-  el.innerHTML = `<i class="bi ${icons[type] || icons.info} mt-0.5"></i><span class="flex-1 leading-snug">${msg}</span>`;
+  el.innerHTML = `
+    <i class="bi ${icons[type] || icons.info} mt-0.5"></i>
+    <span class="flex-1 leading-snug">${escapeHtml(msg)}</span>
+  `;
   stack.appendChild(el);
+
   setTimeout(() => {
     el.style.transition = 'opacity .3s, transform .3s';
     el.style.opacity = '0';
@@ -432,108 +408,285 @@ function applyTheme(theme) {
   try { localStorage.setItem('student-theme', theme); } catch (e) {}
 }
 
-/* ==================== SAVED CLASSES UI ==================== */
-function renderSavedClasses() {
-  const list = getSavedClasses();
-  const wrap = $('savedClassesWrap');
-  const grid = $('savedClassesList');
-  const countPill = $('savedCountPill');
-
-  if (!list.length) {
-    wrap.classList.add('hidden');
-    return;
-  }
-  wrap.classList.remove('hidden');
-  countPill.textContent = list.length;
-
-  grid.innerHTML = list.map((c) => {
-    const code = escapeHtml(c.code);
-    const subject = escapeHtml(c.subject || 'Untitled Class');
-    const meta = [c.branch, c.semester ? `Sem ${c.semester}` : '', c.division ? `Div ${c.division}` : '']
-      .filter(Boolean).join(' · ');
-    return `
-      <div class="saved-class-item relative group rounded-xl border p-3 border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-indigo-700 dark:hover:bg-indigo-950/40 cursor-pointer"
-           data-code="${code}" role="button" tabindex="0" aria-label="Open ${subject} (${code})">
-        <div class="pr-6">
-          <div class="text-[12px] font-semibold truncate">${subject}</div>
-          <div class="mono text-[11px] text-slate-500 mt-0.5 tracking-wider">${code}</div>${meta ? `<div class="text-[10px] text-slate-400 mt-1 truncate">${escapeHtml(meta)}</div>` : ''}
-        </div>
-        <button type="button"
-                class="remove-saved absolute top-2 right-2 w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/60 transition"
-                data-remove-code="${code}" title="Remove from saved" aria-label="Remove ${subject}">
-          <i class="bi bi-x-lg text-[10px]"></i>
-        </button>
-      </div>`;
-  }).join('');
+/* ==================== AUTH UI ==================== */
+function switchAuthTab(tab) {
+  state.authTab = tab;
+  document.querySelectorAll('.auth-tab-btn').forEach((btn) => {
+    const isActive = btn.dataset.authTab === tab;
+    btn.className = `auth-tab-btn flex-1 py-1.5 rounded-full text-[13px] font-medium transition ${
+      isActive
+        ? 'bg-white shadow border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100'
+        : 'text-slate-500 dark:text-slate-400'
+    }`;
+  });
+  $('loginForm').classList.toggle('hidden', tab !== 'login');
+  $('registerForm').classList.toggle('hidden', tab !== 'register');
 }
 
-$('savedClassesList').addEventListener('click', (e) => {
-  const removeBtn = e.target.closest('[data-remove-code]');
-  if (removeBtn) {
-    e.stopPropagation();
-    const code = removeBtn.dataset.removeCode;
-    removeSavedClass(code);
-    renderSavedClasses();
-    if (state.classInfo && String(state.classInfo.code).toUpperCase() === String(code).toUpperCase()) {
-      $('savedBadge').classList.add('hidden');
-    }
-    showToast('Removed from saved classes', 'info');
-    return;
-  }
-  const item = e.target.closest('.saved-class-item');
-  if (item) openSavedClass(item.dataset.code);
-});
-
-$('savedClassesList').addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  const item = e.target.closest('.saved-class-item');
-  if (!item) return;
-  e.preventDefault();
-  openSavedClass(item.dataset.code);
-});
-
-function openSavedClass(code) {
-  $('codeField').value = String(code).toUpperCase();
-  handleLookup();
-}
-
-$('clearSavedBtn').addEventListener('click', () => {
-  if (!getSavedClasses().length) return;
-  if (!confirm('Remove all saved classes from this device?')) return;
-  clearSavedClasses();
-  renderSavedClasses();
-  $('savedBadge').classList.add('hidden');
-  showToast('All saved classes cleared', 'info');
-});
-
-/* ==================== SUPABASE LOOKUP ==================== */
-async function handleLookup(e) {
-  if (e) e.preventDefault();
-  const code = ($('codeField').value || '').trim().toUpperCase();
-  $('lookupAlert').classList.add('hidden');
-
-  if (code.length < 3) {
-    showLookupError('Please enter a valid class code.');
-    return;
-  }
-
-  const btn = $('lookupBtn');
+/* ==================== AUTH ACTIONS ==================== */
+async function signInWithGoogle() {
+  const btn = $('googleSignInBtn');
   btn.disabled = true;
-  btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span><span>Connecting…</span>`;
+  try {
+    const redirectTo = window.location.origin + window.location.pathname;
+    const { error } = await db.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo, queryParams: { prompt: 'select_account' } }
+    });
+    if (error) throw error;
+  } catch (err) {
+    showToast(err.message || 'Google sign-in failed', 'error');
+    btn.disabled = false;
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = $('regName').value.trim();
+  const email = $('regEmail').value.trim().toLowerCase();
+  const password = $('regPass').value;
+  if (!name || !email || !password) { showToast('Fill all fields', 'error'); return; }
+  if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+
+  const btn = $('regSubmitBtn');
+  btn.disabled = true;
+  btn.innerText = 'Creating account…';
 
   try {
-    // 1. Fetch class info
-    const { data: clsData, error: clsErr } = await db
-      .from('classes')
-      .select('*')
-      .eq('class_code', code)
-      .single();
+    const { data, error } = await db.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: window.location.origin + window.location.pathname
+      }
+    });
+    if (error) throw error;
 
-    if (clsErr || !clsData) {
-      throw new Error('Classroom code not found. Please verify the code.');
+    if (data.session) {
+      showToast('Account created. Welcome!', 'success');
+    } else {
+      showToast('Account created. Please confirm your email, then sign in.', 'success');
+      switchAuthTab('login');
+      $('loginEmail').value = email;
+    }
+    $('registerForm').reset();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = 'Create Account';
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = $('loginEmail').value.trim().toLowerCase();
+  const password = $('loginPass').value;
+  if (!email || !password) { showToast('Fill credentials', 'error'); return; }
+
+  const btn = $('loginSubmitBtn');
+  btn.disabled = true;
+  btn.innerText = 'Verifying…';
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    showToast(`Welcome ${extractUserInfo(data.user).name}`, 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = 'Sign in with Email';
+  }
+}
+
+async function logout() {
+  try { await db.auth.signOut(); } catch (e) {}
+  handleSignedOut();
+  showToast('Signed out', 'info');
+}
+
+/* ==================== SESSION HANDLERS ==================== */
+async function handleSignedIn(user) {
+  const info = extractUserInfo(user);
+  state.student = { name: info.name, email: info.email, avatar: info.avatar };
+
+  const avatarEl = $('navAvatar');
+  if (info.avatar) {
+    avatarEl.innerHTML = `<img src="${escapeHtml(info.avatar)}" alt="" class="w-full h-full object-cover" referrerpolicy="no-referrer">`;
+  } else {
+    avatarEl.textContent = (info.name || 'S').trim().charAt(0).toUpperCase();
+  }
+
+  $('navName').textContent = info.name;
+  $('navEmail').textContent = info.email;
+  $('navUser').classList.remove('hidden');
+  $('navUser').classList.add('flex');
+
+  $('welcomeTitle').textContent = `Welcome, ${(info.name || 'Student').split(' ')[0]}`;
+  $('statStudentName').textContent = info.name;
+  $('statStudentEmail').textContent = info.email;
+
+  $('authView').classList.add('hidden');
+  $('dashView').classList.remove('hidden');
+  $('dashView').classList.remove('fade-up');
+  void $('dashView').offsetWidth;
+  $('dashView').classList.add('fade-up');
+
+  await loadEnrollments();
+}
+
+function handleSignedOut() {
+  state.student = null;
+  state.enrollments = [];
+  state.classes = [];
+  state.selectedClass = null;
+  state.posts = [];
+  state.attendance = [];
+
+  $('dashView').classList.add('hidden');
+  $('authView').classList.remove('hidden');
+  $('navUser').classList.add('hidden');
+  $('navUser').classList.remove('flex');
+}
+
+/* ==================== ENROLLMENT / CLASSES ==================== */
+async function loadEnrollments() {
+  if (!state.student) return;
+  state.loading = true;
+  renderClassList();
+
+  try {
+    const { data: enrolls, error: eErr } = await db.from('students')
+      .select('*')
+      .eq('email', state.student.email)
+      .order('joined_at', { ascending: false });
+    if (eErr) throw eErr;
+
+    state.enrollments = enrolls || [];
+
+    if (state.enrollments.length === 0) {
+      state.classes = [];
+      state.selectedClass = null;
+      updateClassStats();
+      renderClassList();
+      renderClassDetails();
+      renderPosts();
+      renderAttendance();
+      return;
     }
 
-    // 2. Fetch posts and attendance concurrently
+    const codes = state.enrollments.map(e => e.class_code);
+
+    const { data: classRows, error: cErr } = await db.from('classes')
+      .select('*')
+      .in('class_code', codes);
+    if (cErr) throw cErr;
+
+    // preserve enrollment order
+    const order = new Map(codes.map((c, i) => [c, i]));
+    state.classes = (classRows || [])
+      .map(c => ({
+        id: c.id,
+        classCode: c.class_code,
+        teacherEmail: c.teacher_email,
+        teacherName: c.teacher_name,
+        subject: c.subject,
+        branch: c.branch,
+        semester: c.semester,
+        division: c.division,
+        createdAt: new Date(c.created_at).toLocaleDateString()
+      }))
+      .sort((a, b) => (order.get(a.classCode) ?? 0) - (order.get(b.classCode) ?? 0));
+
+    updateClassStats();
+    renderClassList();
+
+    if (state.classes.length) {
+      const stillExists = state.selectedClass && state.classes.find(c => c.classCode === state.selectedClass.classCode);
+      await selectClass(stillExists || state.classes[0]);
+    } else {
+      renderClassDetails();
+      renderPosts();
+      renderAttendance();
+    }
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    state.loading = false;
+    renderClassList();
+  }
+}
+
+function updateClassStats() {
+  $('statClassCount').textContent = state.classes.length;
+  $('classCountPill').textContent = `${state.classes.length} total`;
+}
+
+function renderClassList() {
+  const wrap = $('classList');
+  if (state.loading) {
+    wrap.innerHTML = `<div class="p-8 text-center text-[13px] text-slate-500">Loading classes…</div>`;
+    return;
+  }
+  if (!state.classes.length) {
+    wrap.innerHTML = `
+      <div class="p-8 text-center">
+        <div class="w-10 h-10 mx-auto rounded-full bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center mb-2">
+          <i class="bi bi-inbox"></i>
+        </div>
+        <div class="text-[13px] text-slate-600 dark:text-slate-400">No classes joined yet</div>
+        <button class="mt-3 text-[12px] text-indigo-600 hover:underline" onclick="document.getElementById('joinClassBtn').click()">+ Join your first class</button>
+      </div>`;
+    return;
+  }
+
+  wrap.innerHTML = state.classes.map((c) => {
+    const code = c.classCode;
+    const isActive = state.selectedClass && state.selectedClass.classCode === code;
+    return `
+      <button type="button" data-class-code="${escapeHtml(code)}"
+        class="class-card w-full text-left rounded-xl border p-4 transition card-hover ${
+          isActive
+            ? 'border-indigo-300 bg-indigo-50/60 dark:border-indigo-700 dark:bg-indigo-950/40'
+            : 'border-slate-200 bg-white dark:border-slate-700 dark:bg-[#0f172a] dark:hover:bg-slate-800'
+        }">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="pill-mono px-2 py-0.5 rounded-full">${escapeHtml(code)}</span>
+              <span class="text-[11px] text-slate-500">${escapeHtml(c.branch)} · Sem ${escapeHtml(c.semester)}</span>
+            </div>
+            <div class="text-[14px] font-medium leading-tight truncate">${escapeHtml(c.subject)}</div>
+            <div class="text-[12px] text-slate-500">Div ${escapeHtml(c.division)} • ${escapeHtml(c.teacherName || '')}</div>
+          </div>
+          <i class="bi bi-chevron-right text-[12px] ${isActive ? 'text-indigo-500' : 'text-slate-300 dark:text-slate-600'}"></i>
+        </div>
+      </button>`;
+  }).join('');
+
+  wrap.querySelectorAll('.class-card').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const code = btn.dataset.classCode;
+      const cls = state.classes.find((c) => c.classCode === code);
+      if (cls) selectClass(cls);
+    });
+  });
+}
+
+async function selectClass(cls) {
+  state.selectedClass = cls;
+  renderClassList();
+  renderClassDetails();
+  await loadClassData(cls.classCode);
+}
+
+async function loadClassData(code) {
+  state.loading = true;
+  renderPosts();
+  renderAttendance();
+  try {
     const [postsRes, attRes] = await Promise.all([
       db.from('posts').select('*').eq('class_code', code).order('created_at', { ascending: false }),
       db.from('attendance').select('*').eq('class_code', code).order('created_at', { ascending: false })
@@ -542,53 +695,303 @@ async function handleLookup(e) {
     if (postsRes.error) throw postsRes.error;
     if (attRes.error) throw attRes.error;
 
-    const classInfo = {
-      code: clsData.class_code,
-      subject: clsData.subject,
-      faculty: clsData.teacher_name,
-      branch: clsData.branch,
-      semester: clsData.semester,
-      division: clsData.division
-    };
-
-    const posts = (postsRes.data || []).map(p => ({
+    state.posts = (postsRes.data || []).map(p => ({
       id: p.id,
       classCode: p.class_code,
       category: p.category,
       title: p.title,
-      description: p.description,
       link: p.link,
-      date: new Date(p.created_at).toLocaleDateString()
+      description: p.description,
+      createdAt: new Date(p.created_at).toLocaleDateString()
     }));
 
-    const attendance = (attRes.data || []).map(a => ({
+    state.attendance = (attRes.data || []).map(a => ({
       id: a.id,
       classCode: a.class_code,
       date: a.date,
       topic: a.topic,
-      total: a.total_count,
-      present: a.present_count,
-      absent: a.absent_count,
+      totalCount: a.total_count,
+      presentCount: a.present_count,
+      absentCount: a.absent_count,
       absentRolls: a.absent_rolls,
-      remarks: a.remarks
+      remarks: a.remarks,
+      createdAt: new Date(a.created_at).toLocaleDateString()
     }));
 
-    renderClassroom({ classInfo, posts, attendance });
-
-    // Save class to local storage
-    const wasSaved = isClassSaved(code);
-    saveClassEntry({ ...classInfo, code });
-    renderSavedClasses();
-
-    showToast(
-      wasSaved
-        ? `<strong>${escapeHtml(classInfo.subject || code)}</strong> refreshed`
-        : `<strong>${escapeHtml(classInfo.subject || code)}</strong> saved to your classes`,
-      'success'
-    );
+    updateOverallAttendance();
   } catch (err) {
-    showLookupError(err.message || 'Classroom not found.');
-    showToast(err.message || 'Classroom not found', 'error');
+    showToast(err.message, 'error');
+    state.posts = [];
+    state.attendance = [];
+  } finally {
+    state.loading = false;
+    renderPosts();
+    renderAttendance();
+  }
+}
+
+function updateOverallAttendance() {
+  // Since students may not have a roll number stored, we show total sessions conducted
+  // as the "overall" metric for the currently selected class.
+  const total = state.attendance.length;
+  $('statOverallAtt').textContent = total ? `${total} sessions` : '—';
+}
+
+/* ==================== CLASS DETAILS ==================== */
+function renderClassDetails() {
+  const card = $('classDetailsCard');
+  const s = state.selectedClass;
+  if (!s) {
+    card.innerHTML = `<div class="p-10 text-center text-slate-500 text-[13px]">Select a class to view details</div>`;
+    return;
+  }
+  card.innerHTML = `
+    <div class="h-1 w-full bg-gradient-to-r from-indigo-600 to-violet-500"></div>
+    <div class="p-5 md:p-6">
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <span class="pill-mono px-2.5 py-1 rounded-full text-[12px] font-medium">${escapeHtml(s.classCode)}</span>
+            <span class="text-[12px] text-slate-500">${escapeHtml(s.branch)} • Sem ${escapeHtml(s.semester)} • Div ${escapeHtml(s.division)}</span>
+          </div>
+          <h2 class="text-[20px] font-semibold tracking-tight">${escapeHtml(s.subject)}</h2>
+          <p class="text-[13px] text-slate-500 mt-1">Faculty: ${escapeHtml(s.teacherName || '—')}</p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button id="leaveClassBtn" class="h-9 px-4 rounded-xl border text-[13px] font-medium flex items-center gap-1.5 border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900">
+            <i class="bi bi-box-arrow-left"></i> Leave Class
+          </button>
+        </div>
+      </div>
+    </div>`;
+
+  $('leaveClassBtn').addEventListener('click', () => leaveClass(s.classCode));
+}
+
+/* ==================== LEAVE CLASS ==================== */
+async function leaveClass(code) {
+  if (!confirm(`Leave class ${code}? You can rejoin later with the code.`)) return;
+  try {
+    const { error } = await db.from('students')
+      .delete()
+      .eq('email', state.student.email)
+      .eq('class_code', code);
+    if (error) throw error;
+
+    showToast(`Left ${code}`, 'info');
+    if (state.selectedClass && state.selectedClass.classCode === code) {
+      state.selectedClass = null;
+      state.posts = [];
+      state.attendance = [];
+      renderClassDetails();
+      renderPosts();
+      renderAttendance();
+    }
+    await loadEnrollments();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/* ==================== JOIN CLASS ==================== */
+function openJoinModal() {
+  $('joinCode').value = '';
+  $('joinClassModal').classList.remove('hidden');
+  setTimeout(() => $('joinCode').focus(), 50);
+}
+
+function closeJoinModal() {
+  $('joinClassModal').classList.add('hidden');
+  $('joinClassForm').reset();
+}
+
+async function handleJoinClass(e) {
+  e.preventDefault();
+  const code = $('joinCode').value.trim().toUpperCase();
+  if (!code) { showToast('Enter a class code', 'error'); return; }
+
+  const btn = $('joinClassSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Joining…';
+
+  try {
+    // 1. Does the class exist?
+    const { data: cls, error: cErr } = await db.from('classes')
+      .select('*')
+      .eq('class_code', code)
+      .maybeSingle();
+    if (cErr) throw cErr;
+    if (!cls) throw new Error('Class code not found. Check with your faculty.');
+
+    // 2. Already enrolled?
+    const { data: existing, error: eErr } = await db.from('students')
+      .select('id')
+      .eq('email', state.student.email)
+      .eq('class_code', code)
+      .maybeSingle();
+    if (eErr) throw eErr;
+    if (existing) {
+      showToast('You are already enrolled in this class', 'info');
+      closeJoinModal();
+      return;
+    }
+
+    // 3. Insert enrollment
+    const { error: insErr } = await db.from('students').insert([{
+      email: state.student.email,
+      name: state.student.name,
+      class_code: code
+    }]);
+    if (insErr) throw insErr;
+
+    showToast(`Joined ${code} — ${cls.subject}`, 'success');
+    closeJoinModal();
+    await loadEnrollments();
+
+    // Auto-select the newly joined class
+    const found = state.classes.find(c => c.classCode === code);
+    if (found) await selectClass(found);
+  } catch (err) {
+    showToast(err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = `<i class="bi bi-box-arrow-in
+    btn.textContent = 'Join Class';
+  }
+}
+
+/* ==================== POSTS ==================== */
+function categoryClass(cat) {
+  if (cat === 'Assignment') return 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950 dark:border-amber-900 dark:text-amber-300';
+  if (cat === 'Material')   return 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950 dark:border-indigo-900 dark:text-indigo-300';
+  if (cat === 'Notice')     return 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300';
+  if (cat === 'Link')       return 'bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950 dark:border-sky-900 dark:text-sky-300';
+  return 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300';
+}
+
+function renderPosts() {
+  const wrap = $('postsList');
+  $('postsCountPill').textContent = state.posts.length;
+
+  if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
+
+  if (!state.posts.length) {
+    wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No materials yet</div>`;
+    return;
+  }
+
+  wrap.innerHTML = state.posts.map((p) => {
+    const url = p.link ? safeUrl(p.link) : '';
+    const linkLabel = p.link ? (p.link.length > 40 ? p.link.slice(0, 40) + '…' : p.link) : '';
+    return `
+      <div class="p-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${categoryClass(p.category)}">${escapeHtml(p.category || 'General')}</span>
+          <span class="text-[11px] text-slate-400">${escapeHtml(p.createdAt || '')}</span>
+        </div>
+        <div class="text-[13px] font-medium">${escapeHtml(p.title)}</div>
+        ${p.description ? `<div class="text-[12px] text-slate-500 line-clamp-2 mt-0.5">${escapeHtml(p.description)}</div>` : ''}
+        ${url && url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 text-[11px] text-indigo-600 hover:underline dark:text-indigo-400"><i class="bi bi-box-arrow-up-right"></i> Open link</a>` : ''}
+      </div>`;
+  }).join('');
+}
+
+/* ==================== ATTENDANCE ==================== */
+function renderAttendance() {
+  const wrap = $('attList');
+  $('attCountPill').textContent = state.attendance.length;
+
+  if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
+
+  if (!state.attendance.length) {
+    wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No attendance records yet</div>`;
+    return;
+  }
+
+  wrap.innerHTML = state.attendance.map((a) => {
+    const total = Number(a.totalCount) || 0;
+    const present = Number(a.presentCount) || 0;
+    const absent = Number(a.absentCount) || 0;
+    const pct = total ? Math.round((present / total) * 100) : 0;
+    const fillClass = pct >= 75 ? '' : (pct >= 50 ? 'warn' : 'bad');
+    return `
+      <div class="p-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition">
+        <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+          <div class="flex items-center gap-2">
+            <span class="text-[12px] font-medium">${escapeHtml(a.date || '')}</span>
+            <span class="text-[11px] text-slate-500">• ${escapeHtml(a.topic || 'No topic')}</span>
+          </div>
+          <span class="text-[11px] font-medium ${pct >= 75 ? 'text-emerald-600 dark:text-emerald-400' : (pct >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400')}">
+            ${pct}%
+          </span>
+        </div>
+        <div class="att-bar mb-1.5"><div class="att-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300">
+            ${present}/${total} present
+          </span>
+          ${absent > 0 ? `<span class="text-[11px] px-2 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300">${absent} absent</span>` : ''}
+        </div>
+        ${a.remarks ? `<div class="text-[11px] text-slate-500 mt-1.5 truncate">${escapeHtml(a.remarks)}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+/* ==================== MODAL HELPERS ==================== */
+function openModal(id)  { $(id).classList.remove('hidden'); }
+function closeModal(id) { $(id).classList.add('hidden'); }
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-close-modal]');
+  if (!t) return;
+  if (t.dataset.closeModal === 'joinClass') closeJoinModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeJoinModal();
+});
+
+/* ==================== EVENT WIRING ==================== */
+document.querySelectorAll('.auth-tab-btn').forEach((btn) => {
+  btn.addEventListener('click', () => switchAuthTab(btn.dataset.authTab));
+});
+
+$('googleSignInBtn').addEventListener('click', signInWithGoogle);
+$('loginForm').addEventListener('submit', handleLogin);
+$('registerForm').addEventListener('submit', handleRegister);
+$('signOutBtn').addEventListener('click', logout);
+
+$('themeToggle').addEventListener('click', () => {
+  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+});
+
+$('joinClassBtn').addEventListener('click', openJoinModal);
+$('joinClassForm').addEventListener('submit', handleJoinClass);
+
+/* ==================== INIT ==================== */
+(async function init() {
+  let theme = 'light';
+  try { theme = localStorage.getItem('student-theme') || 'light'; } catch (e) {}
+  applyTheme(theme);
+  switchAuthTab('login');
+
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (session && session.user) {
+      await handleSignedIn(session.user);
+    } else {
+      $('loginEmail').focus();
+    }
+  } catch (e) { /* ignore */ }
+
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session && session.user) {
+      if (!state.student) await handleSignedIn(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      handleSignedOut();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
