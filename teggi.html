@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BEC-BIPS Staff Quarters - Electricity Bill & Receipt Desk</title>
+  <title>BEC-BIPS Staff Quarters - Current Bill & Payment Portal</title>
   
   <!-- html2pdf Library for Client-side PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -13,12 +13,13 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; padding: 20px; }
     
-    .main-wrapper { max-width: 1340px; margin: 0 auto; }
+    .main-wrapper { max-width: 1360px; margin: 0 auto; }
 
-    /* Top Navigation Switcher */
+    /* Top Navigation Tabs */
     .tab-nav {
       display: flex;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 20px;
       background: #e2e8f0;
       padding: 6px;
@@ -26,11 +27,11 @@
       width: fit-content;
     }
     .tab-btn {
-      padding: 10px 24px;
+      padding: 10px 22px;
       border: none;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       cursor: pointer;
       color: #475569;
       background: transparent;
@@ -42,8 +43,10 @@
       box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
     }
 
+    /* Tab Content Displays */
     .tab-content { display: none; }
     .tab-content.active { display: grid; grid-template-columns: 430px 1fr; gap: 24px; }
+    .tab-content.full-width.active { display: block; }
 
     /* Control Sidebars */
     .control-panel {
@@ -108,6 +111,8 @@
     .btn-wa:hover { background: #15803d; }
     .btn-print { background: #475569; color: #ffffff; }
     .btn-print:hover { background: #334155; }
+    .btn-outline { background: #ffffff; border: 1.5px solid #1e3a8a; color: #1e3a8a; }
+    .btn-outline:hover { background: #eff6ff; }
 
     /* Document Previews */
     .preview-wrapper {
@@ -202,13 +207,55 @@
       font-weight: 600;
     }
 
+    /* Google Form Tab Styles */
+    .form-tab-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .form-config-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
+    .form-config-bar input {
+      flex: 1;
+      padding: 10px 12px;
+    }
+
+    .iframe-holder {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+    }
+
+    .iframe-holder iframe {
+      width: 100%;
+      height: 1200px;
+      border: none;
+      display: block;
+    }
+
     @media (max-width: 900px) {
       .tab-content.active { grid-template-columns: 1fr; }
+      .form-config-bar { flex-direction: column; align-items: stretch; }
     }
 
     @media print {
       body { background: white; padding: 0; }
-      .tab-nav, .control-panel, .btn-group { display: none !important; }
+      .tab-nav, .control-panel, .btn-group, .form-config-bar { display: none !important; }
       .preview-wrapper { box-shadow: none; padding: 0; }
       .doc-card { border: 2px solid #000; }
     }
@@ -218,10 +265,11 @@
 
 <div class="main-wrapper">
   
-  <!-- Navigation Switcher -->
+  <!-- Navigation Switcher with 3 Tabs -->
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchMainTab('billTab', this)">⚡ Generate & Share Bill</button>
     <button class="tab-btn" onclick="switchMainTab('receiptTab', this)">🧾 Generate & Share Receipt</button>
+    <button class="tab-btn" onclick="switchMainTab('formTab', this)">📝 Staff Payment Google Form</button>
   </div>
 
   <!-- ==================== TAB 1: BILL GENERATOR ==================== -->
@@ -253,4 +301,323 @@
         <input type="text" id="b_name" oninput="updateBillCalc()">
       </div>
 
-      <div class="grid-2
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Billing Month / Period</label>
+          <input type="text" id="b_month" value="July 2026" oninput="updateBillCalc()">
+        </div>
+        <div class="form-group">
+          <label>Bill Number</label>
+          <input type="text" id="b_no" value="BEC/BILL/2026/01" oninput="updateBillCalc()">
+        </div>
+      </div>
+
+      <!-- Meter Reading Group -->
+      <fieldset class="meter-highlight-box">
+        <legend>Meter Reading & Consumption</legend>
+        <div class="grid-3">
+          <div class="form-group">
+            <label>Last Month Rdg</label>
+            <input type="number" id="b_prev" value="0" step="any" oninput="updateBillCalc()">
+          </div>
+          <div class="form-group">
+            <label>Today Rdg</label>
+            <input type="number" id="b_curr" value="200" step="any" oninput="updateBillCalc()">
+          </div>
+          <div class="form-group">
+            <label>Units Used</label>
+            <input type="number" id="b_units" readonly style="font-weight: 700; color: #1e3a8a;">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Unit Rate (₹)</label>
+          <input type="number" id="b_rate" value="6.35" step="0.01" oninput="updateBillCalc()">
+        </div>
+        <div class="form-group">
+          <label>Fixed Charges (₹)</label>
+          <input type="number" id="b_fixed" value="240.00" step="0.01" oninput="updateBillCalc()">
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-pdf" onclick="downloadBillPDF()">📥 Download Bill PDF</button>
+        <a class="btn btn-wa" id="btnBillWa" href="#" target="_blank">💬 Share Bill on WhatsApp</a>
+        <button class="btn btn-print" onclick="window.print()">🖨 Print Bill Direct</button>
+      </div>
+    </div>
+
+    <!-- Bill Document Preview -->
+    <div class="preview-wrapper">
+      <div class="doc-card" id="billInvoiceCard">
+        <div class="doc-header">
+          <h1>Basaveshwar Engineering College & BIPS</h1>
+          <h2>Staff Quarters - Electricity Consumption Bill</h2>
+          <p>Vidyagiri, Bagalkote - 587102, Karnataka</p>
+        </div>
+
+        <div class="meta-bar">
+          <div><strong>Bill No:</strong> <span id="v_b_no">BEC/BILL/2026/01</span></div>
+          <div><strong>Billing Period:</strong> <span id="v_b_month">July 2026</span></div>
+          <div><strong>Bill Date:</strong> <span id="v_b_date"></span></div>
+        </div>
+
+        <div class="resident-card">
+          <div><strong>Quarter No:</strong> <span id="v_b_qtr">AG-1</span></div>
+          <div><strong>Resident Name:</strong> <span id="v_b_name">POLICE PATIL</span></div>
+          <div><strong>Mobile No:</strong> <span id="v_b_phone">9880840647</span></div>
+          <div><strong>Meter Consumer UID:</strong> <span id="v_b_uid">EL-AG-1-MTR</span></div>
+        </div>
+
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Meter Reading Details</th>
+              <th class="text-center">Meter Reading</th>
+              <th class="text-right">Multiplier / Rate</th>
+              <th class="text-right">Charges (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last Month Reading (Previous Reading)</td>
+              <td class="text-center" id="v_b_prev">0.00</td>
+              <td class="text-right">—</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr>
+              <td>Today Reading (Current Reading)</td>
+              <td class="text-center" id="v_b_curr">200.00</td>
+              <td class="text-right">—</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr class="reading-highlight-row">
+              <td><strong>Total Units Used (Consumed)</strong></td>
+              <td class="text-center"><strong style="color: #1e3a8a;"><span id="v_b_units">200.00</span> Units</strong></td>
+              <td class="text-right">@ ₹<span id="v_b_rate">6.35</span> / unit</td>
+              <td class="text-right" id="v_b_energy">1,270.00</td>
+            </tr>
+            <tr>
+              <td colspan="3">Monthly Fixed & Maintenance Charges</td>
+              <td class="text-right" id="v_b_fixed">240.00</td>
+            </tr>
+            <tr class="total-box">
+              <td colspan="3"><strong>NET PAYABLE BILL AMOUNT</strong></td>
+              <td class="text-right" style="color: #1e3a8a; font-size: 1.05rem;">
+                ₹<span id="v_b_total">1,510.00</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-notice">
+          <strong>Payment Guidelines:</strong> Please pay the total amount via <strong>PhonePe / UPI</strong> or bank transfer. Submit transaction UTR and screenshot for reconciliation.
+        </div>
+
+        <div class="signature-row">
+          <div>Resident Signature</div>
+          <div>Office Superintendent / Dean R&D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: RECEIPT GENERATOR ==================== -->
+  <div id="receiptTab" class="tab-content">
+    <div class="control-panel">
+      <h2>Payment Acknowledgment Desk</h2>
+      <p>Issue verified receipt with meter reading details upon PhonePe payment.</p>
+
+      <div class="form-group">
+        <label>Select Quarter & Resident *</label>
+        <select id="receiptSelect" onchange="onReceiptQuarterChange()">
+          <option value="" disabled selected>-- Choose Quarter --</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Quarter No</label>
+          <input type="text" id="r_qtr" readonly>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="text" id="r_phone" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Resident Name</label>
+        <input type="text" id="r_name" oninput="updateReceiptCalc()">
+      </div>
+
+      <!-- Meter Reading Group in Receipt -->
+      <fieldset class="meter-highlight-box">
+        <legend>Associated Meter Consumption</legend>
+        <div class="grid-3">
+          <div class="form-group">
+            <label>Last Month Rdg</label>
+            <input type="number" id="r_prev" value="0" step="any" oninput="updateReceiptCalc()">
+          </div>
+          <div class="form-group">
+            <label>Today Rdg</label>
+            <input type="number" id="r_curr" value="200" step="any" oninput="updateReceiptCalc()">
+          </div>
+          <div class="form-group">
+            <label>Units Used</label>
+            <input type="number" id="r_units" readonly style="font-weight: 700; color: #1e3a8a;">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Receipt Number</label>
+          <input type="text" id="r_no" value="BEC/REC/2026/01" oninput="updateReceiptCalc()">
+        </div>
+        <div class="form-group">
+          <label>Payment Date</label>
+          <input type="date" id="r_date" oninput="updateReceiptCalc()">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Amount Received (₹) *</label>
+          <input type="number" id="r_amount" value="1510" step="any" oninput="updateReceiptCalc()">
+        </div>
+        <div class="form-group">
+          <label>Payment Mode</label>
+          <select id="r_mode" onchange="updateReceiptCalc()">
+            <option value="PhonePe">PhonePe</option>
+            <option value="Google Pay">Google Pay</option>
+            <option value="BHIM UPI">BHIM UPI</option>
+            <option value="Net Banking">Net Banking</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>PhonePe / UPI Transaction UTR Reference *</label>
+        <input type="text" id="r_utr" value="T26100712345678" oninput="updateReceiptCalc()">
+      </div>
+
+      <div class="form-group">
+        <label>Payment Description</label>
+        <input type="text" id="r_desc" value="Electricity Bill for July 2026" oninput="updateReceiptCalc()">
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-pdf" onclick="downloadReceiptPDF()">📥 Download Receipt PDF</button>
+        <a class="btn btn-wa" id="btnReceiptWa" href="#" target="_blank">💬 Share Receipt on WhatsApp</a>
+        <button class="btn btn-print" onclick="window.print()">🖨 Print Receipt Direct</button>
+      </div>
+    </div>
+
+    <!-- Receipt Document Preview -->
+    <div class="preview-wrapper">
+      <div class="doc-card" id="receiptInvoiceCard">
+        <div class="doc-header">
+          <h1>Basaveshwar Engineering College & BIPS</h1>
+          <h2>Official Payment Receipt / Acknowledgment</h2>
+          <p>Vidyagiri, Bagalkote - 587102, Karnataka</p>
+        </div>
+
+        <div class="meta-bar">
+          <div><strong>Receipt No:</strong> <span id="v_r_no">BEC/REC/2026/01</span></div>
+          <div><strong>Status:</strong> <span class="stamp-badge">PAID & VERIFIED</span></div>
+          <div><strong>Receipt Date:</strong> <span id="v_r_date"></span></div>
+        </div>
+
+        <div class="resident-card">
+          <div><strong>Quarter No:</strong> <span id="v_r_qtr">AG-1</span></div>
+          <div><strong>Resident Name:</strong> <span id="v_r_name">POLICE PATIL</span></div>
+          <div><strong>Mobile No:</strong> <span id="v_r_phone">9880840647</span></div>
+          <div><strong>Payment Mode:</strong> <span id="v_r_mode">PhonePe</span></div>
+        </div>
+
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Particulars & Meter Consumption Details</th>
+              <th class="text-center">Readings / Units</th>
+              <th class="text-right">Settled Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last Month Reading (Previous Reading)</td>
+              <td class="text-center" id="v_r_prev">0.00</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr>
+              <td>Today Reading (Current Reading)</td>
+              <td class="text-center" id="v_r_curr">200.00</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr class="reading-highlight-row">
+              <td><strong>Total Units Used (Billed)</strong></td>
+              <td class="text-center"><strong style="color: #1e3a8a;"><span id="v_r_units">200.00</span> kWh</strong></td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr>
+              <td>
+                <span id="v_r_desc">Electricity Bill for July 2026</span><br>
+                <small style="color: #64748b;">Transaction UTR: <strong id="v_r_utr">T26100712345678</strong></small>
+              </td>
+              <td class="text-center" style="font-weight: 600; color: #166534;">Verified</td>
+              <td class="text-right" style="font-weight: 700;">₹<span id="v_r_amount">1,510.00</span></td>
+            </tr>
+            <tr class="total-box">
+              <td colspan="2"><strong>TOTAL AMOUNT RECEIVED & CLEARED</strong></td>
+              <td class="text-right" style="color: #16a34a; font-size: 1.05rem;">
+                ₹<span id="v_r_total">1,510.00</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-notice">
+          <strong>Digital Confirmation:</strong> Received and verified with thanks. Current electricity charges for the stated units have been settled in full.
+        </div>
+
+        <div class="signature-row">
+          <div>Accounts Section: <strong>Verified</strong></div>
+          <div>Authorized Signatory / Dean R&D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 3: STAFF GOOGLE FORM TAB ==================== -->
+  <div id="formTab" class="tab-content full-width">
+    <div class="form-tab-card">
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h2 style="color: #1e3a8a; font-size: 1.3rem;">Staff Bill Payment Submission Portal</h2>
+        <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">Quarters staff can pay via PhonePe and record their UTR & payment details here.</p>
+      </div>
+
+      <!-- Google Form URL Configuration Bar -->
+      <div class="form-config-bar">
+        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; white-space: nowrap;">Google Form URL:</label>
+        <input type="text" id="customFormUrl" value="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" placeholder="Paste your Google Form URL here">
+        <button class="btn btn-pdf" style="padding: 9px 16px;" onclick="loadGoogleForm()">Load Form</button>
+        <a class="btn btn-outline" id="btnOpenExternal" href="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" target="_blank" style="padding: 9px 16px; white-space: nowrap;">↗ Open in New Window</a>
+      </div>
+
+      <!-- Embedded Iframe Container -->
+      <div class="iframe-holder">
+        <iframe id="googleFormIframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?embedded=true">
+          Loading Google Form...
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  //
