@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEC-BIPS Staff Quarters - Bill & Payment Receipt Desk</title>
+  
+  <!-- html2pdf Library for client-side PDF downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; padding: 20px; }
+    
+    .main-wrapper { max-width: 1320px; margin: 0 auto; }
+
+    /* Top Navigation Tabs */
+    .tab-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      background: #e2e8f0;
+      padding: 6px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: #475569;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: #1e3a8a;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: grid; grid-template-columns: 420px 1fr; gap: 24px; }
+
+    /* Left Control Panels */
+    .control-panel {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      height: fit-content;
+    }
+    .control-panel h2 { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+    .control-panel p { font-size: 0.8rem; color: #64748b; margin-bottom: 18px; }
+
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 4px; }
+    input, select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus { border-color: #2563eb; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-pdf { background: #1e40af; color: #ffffff; }
+    .btn-pdf:hover { background: #1d4ed8; }
+    .btn-wa { background: #16a34a; color: #ffffff; }
+    .btn-wa:hover { background: #15803d; }
+    .btn-print { background: #475569; color: #ffffff; }
+    .btn-print:hover { background: #334155; }
+
+    /* Right Preview Document Containers */
+    .preview-wrapper {
+      background: #ffffff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      min-height: 600px;
+    }
+
+    .doc-card {
+      background: #ffffff;
+      border: 2px solid #0f172a;
+      padding: 24px;
+      position: relative;
+    }
+
+    .doc-header {
+      text-align: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .doc-header h1 { font-size: 1.25rem; font-weight: 800; color: #0f172a; text-transform: uppercase; }
+    .doc-header h2 { font-size: 0.95rem; font-weight: 700; color: #1e40af; margin-top: 2px; }
+    .doc-header p { font-size: 0.78rem; color: #475569; margin-top: 2px; }
+
+    .meta-bar {
+      display: flex;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+    }
+
+    .resident-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 6px;
+      font-size: 0.85rem;
+      border: 1px dashed #cbd5e1;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+    .doc-table th, .doc-table td {
+      border: 1px solid #0f172a;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .doc-table th { background: #f1f5f9; font-weight: 700; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    .total-box { background: #f8fafc; font-weight: 800; font-size: 1rem; }
+
+    .stamp-badge {
+      display: inline-block;
+      border: 2px solid #16a34a;
+      color: #16a34a;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .doc-notice {
+      border: 1px solid #cbd5e1;
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: #334155;
+      margin-bottom: 24px;
+    }
+
+    .signature-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 36px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .tab-content.active { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .tab-nav, .control-panel, .btn-group { display: none !important; }
+      .preview-wrapper { box-shadow: none; padding: 0; }
+      .doc-card { border: 2px solid #000; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  
+  <!-- Navigation Switcher -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchMainTab('billTab', this)">⚡ Generate & Share Bill</button>
+    <button class="tab-btn" onclick="switchMainTab('receiptTab', this)">🧾 Generate & Share Receipt</button>
+  </div>
+
+  <!-- TAB 1: BILL GENERATOR -->
+  <div id="billTab" class="tab-content active">
+    <div class="control-panel">
+      <h2>Electricity Bill Desk</h2>
+      <p>Select resident quarter, verify readings, and export individual bill.</p>
+
+      <div class="form-group">
+        <label>Select Quarter & Resident *</label>
+        <select id="billSelect" onchange="onBillQuarterChange()">
+          <option value="" disabled selected>-- Choose Quarter --</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Quarter No</label>
+          <input type="text" id="b_qtr" readonly>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="text" id="b_phone" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Resident Name</label>
+        <input type="text" id="b_name" oninput="updateBillCalc()">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Billing Month</label>
+          <input type="text" id="b_month" value="July 2026" oninput="updateBillCalc()">
+        </div>
+        <div class="form-group">
+          <label>Bill Number</label>
+          <input type="text" id="b_no" value="BEC/BILL/2026/01" oninput="updateBillCalc()">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Opening Reading (OR)</label>
+          <input type="number" id="b_prev" value="0" step="any" oninput="updateBillCalc()">
+        </div>
+        <div class="form-group">
+          <label>Closing Reading (CR)</label>
+          <input type="number" id="b_curr" value="200" step="any" oninput="updateBillCalc()">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Unit Rate (₹)</label>
+          <input type="number" id="b_rate" value="6.35" step="0.01" oninput="updateBillCalc()">
+        </div>
+        <div class="form-group">
+          <label>Fixed Charges (₹)</label>
+          <input type="number" id="b_fixed" value="240.00" step="0.01" oninput="updateBillCalc()">
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-pdf" onclick="downloadBillPDF()">📥 Download Bill PDF</button>
+        <a class="btn btn-wa" id="btnBillWa" href="#" target="_blank">💬 Share Bill on WhatsApp</a>
+        <button class="btn btn-print" onclick="window.print()">🖨 Print Bill Direct</button>
+      </div>
+    </div>
+
+    <!-- Bill Document Preview -->
+    <div class="preview-wrapper">
+      <div class="doc-card" id="billInvoiceCard">
+        <div class="doc-header">
+          <h1>Basaveshwar Engineering College & BIPS</h1>
+          <h2>Staff Quarters - Electricity Consumption Bill</h2>
+          <p>Vidyagiri, Bagalkote - 587102, Karnataka</p>
+        </div>
+
+        <div class="meta-bar">
+          <div><strong>Bill No:</strong> <span id="v_b_no">BEC/BILL/2026/01</span></div>
+          <div><strong>Billing Period:</strong> <span id="v_b_month">July 2026</span></div>
+          <div><strong>Bill Date:</strong> <span id="v_b_date"></span></div>
+        </div>
+
+        <div class="resident-card">
+          <div><strong>Quarter No:</strong> <span id="v_b_qtr">AG-1</span></div>
+          <div><strong>Resident Name:</strong> <span id="v_b_name">POLICE PATIL</span></div>
+          <div><strong>Mobile No:</strong> <span id="v_b_phone">9880840647</span></div>
+          <div><strong>Consumer UID:</strong> <span id="v_b_uid">EL-AG-1-MTR</span></div>
+        </div>
+
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-center">Readings</th>
+              <th class="text-right">Rate / Units</th>
+              <th class="text-right">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Opening Meter Reading (OR)</td>
+              <td class="text-center" id="v_b_prev">0.00</td>
+              <td class="text-right">—</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr>
+              <td>Closing Meter Reading (CR)</td>
+              <td class="text-center" id="v_b_curr">200.00</td>
+              <td class="text-right">—</td>
+              <td class="text-right">—</td>
+            </tr>
+            <tr>
+              <td>Total Energy Consumption</td>
+              <td class="text-center"><strong><span id="v_b_units">200.00</span> Units</strong></td>
+              <td class="text-right">@ ₹<span id="v_b_rate">6.35</span></td>
+              <td class="text-right" id="v_b_energy">1,270.00</td>
+            </tr>
+            <tr>
+              <td colspan="3">Monthly Fixed / Common Charges</td>
+              <td class="text-right" id="v_b_fixed">240.00</td>
+            </tr>
+            <tr class="total-box">
+              <td colspan="3"><strong>TOTAL PAYABLE AMOUNT</strong></td>
+              <td class="text-right" style="color: #1e3a8a;">₹<span id="v_b_total">1,510.00</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-notice">
+          <strong>Payment Note:</strong> Please pay the bill amount via <strong>PhonePe / UPI</strong> and share the screenshot/reference UTR to the office for reconciliation.
+        </div>
+
+        <div class="signature-row">
+          <div>Resident Signature</div>
+          <div>Office Superintendent / Dean R&D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: RECEIPT GENERATOR -->
+  <div id="receiptTab" class="tab-content">
+    <div class="control-panel">
+      <h2>Payment Acknowledgment Desk</h2>
+      <p>Issue official receipt upon payment verification via PhonePe or UPI.</p>
+
+      <div class="form-group">
+        <label>Select Quarter & Resident *</label>
+        <select id="receiptSelect" onchange="onReceiptQuarterChange()">
+          <option value="" disabled selected>-- Choose Quarter --</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Quarter No</label>
+          <input type="text" id="r_qtr" readonly>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="text" id="r_phone" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Resident Name</label>
+        <input type="text" id="r_name" oninput="updateReceiptCalc()">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Receipt Number</label>
+          <input type="text" id="r_no" value="BEC/REC/2026/01" oninput="updateReceiptCalc()">
+        </div>
+        <div class="form-group">
+          <label>Payment Date</label>
+          <input type="date" id="r_date" oninput="updateReceiptCalc()">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Amount Received (₹) *</label>
+          <input type="number" id="r_amount" value="1510" step="any" oninput="updateReceiptCalc()">
+        </div>
+        <div class="form-group">
+          <label>Payment Mode</label>
+          <select id="r_mode" onchange="updateReceiptCalc()">
+            <option value="PhonePe">PhonePe</option>
+            <option value="Google Pay">Google Pay</option>
+            <option value="BHIM UPI">BHIM UPI</option>
+            <option value="Net Banking">Net Banking</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>PhonePe UTR / Transaction Reference ID *</label>
+        <input type="text" id="r_utr" value="T26100712345678" oninput="updateReceiptCalc()">
+      </div>
+
+      <div class="form-group">
+        <label>Payment Towards</label>
+        <input type="text" id="r_desc" value="Electricity Bill for July 2026" oninput="updateReceiptCalc()">
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-pdf" onclick="downloadReceiptPDF()">📥 Download Receipt PDF</button>
+        <a class="btn btn-wa" id="btnReceiptWa" href="#" target="_blank">💬 Share Receipt on WhatsApp</a>
+        <button class="btn btn-print" onclick="window.print()">🖨 Print Receipt Direct</button>
+      </div>
+    </div>
+
+    <!-- Receipt Document Preview -->
+    <div class="preview-wrapper">
+      <div class="doc-card" id="receiptInvoiceCard">
+        <div class="doc-header">
+          <h1>Basaveshwar Engineering College & BIPS</h1>
+          <h2>Official Payment Receipt / Acknowledgment</h2>
+          <p>Vidyagiri, Bagalkote - 587102, Karnataka</p>
+        </div>
+
+        <div class="meta-bar">
+          <div><strong>Receipt No:</strong> <span id="v_r_no">BEC/REC/2026/01</span></div>
+          <div><strong>Status:</strong> <span class="stamp-badge">PAID & VERIFIED</span></div>
+          <div><strong>Payment Date:</strong> <span id="v_r_date"></span></div>
+        </div>
+
+        <div class="resident-card">
+          <div><strong>Quarter No:</strong> <span id="v_r_qtr">AG-1</span></div>
+          <div><strong>Resident Name:</strong> <span id="v_r_name">POLICE PATIL</span></div>
+          <div><strong>Mobile No:</strong> <span id="v_r_phone">9880840647</span></div>
+          <div><strong>Payment Mode:</strong> <span id="v_r_mode">PhonePe</span></div>
+        </div>
+
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Particulars</th>
+              <th>Transaction ID / Reference UTR</th>
+              <th class="text-right">Amount Received (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="v_r_desc">Electricity Bill for July 2026</td>
+              <td id="v_r_utr">T26100712345678</td>
+              <td class="text-right" style="font-weight: 700;">₹<span id="v_r_amount">1,510.00</span></td>
+            </tr>
+            <tr class="total-box">
+              <td colspan="2"><strong>NET AMOUNT SETTLED</strong></td>
+              <td class="text-right" style="color: #16a34a; font-size: 1.05rem;">
+                ₹<span id="v_r_total">1,510.00</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-notice">
+          <strong>Acknowledgment Note:</strong> This is an authentic digital confirmation that payment has been received and credited to the BEC-BIPS Staff Quarters Maintenance Account. Dues for the specified period are cleared.
+        </div>
+
+        <div class="signature-row">
+          <div>Verified By: <strong>Accounts Section</strong></div>
+          <div>Authorized Signatory / Dean R&D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Directory of quarters extracted from records
+  const quartersDirectory = [
+    { qtr: "AG-1", name: "POLICE PATIL", phone: "9880840647", prev: 0, curr: 896.00 },
+    { qtr: "AFL-1", name: "RAMESH AMAN", phone: "7483573516", prev: 0, curr: 140.00 },
+    { qtr: "AFS-1", name: "CHETAN DADED", phone: "9901938381", prev: 0, curr: 98.00 },
+    { qtr: "AG-2", name: "ANDANAYYAV M", phone: "9538339706", prev: 0, curr: 220.00 },
+    { qtr: "AFL-2", name: "RAVI H D", phone: "9900180914", prev: 0, curr: 259.00 },
+    { qtr: "AFS-2", name: "SANTOSH G G", phone: "7353117056", prev: 0, curr: 192.00 },
+    { qtr: "AG-3", name: "ANDANAYYA MALUGITTIMATH", phone: "9538339706", prev: 0, curr: 277.00 },
+    { qtr: "AFL-3", name: "GURABASAPPA HOLI", phone: "9740492007", prev: 0, curr: 373.00 },
+    { qtr: "AFS-3", name: "SANTOSH SUBHANJI", phone: "7019964899", prev: 0, curr: 343.00 },
+    { qtr: "AG-4", name: "MEENAKSHI SHETTER", phone: "9686505040", prev: 0, curr: 276.00 },
+    { qtr: "AFL-4", name: "SHUBHANGI S GHATAGI", phone: "7975498925", prev: 0, curr: 163.00 },
+    { qtr: "AFS-4", name: "BASAVARAJ SHIDRAMSHETTAR", phone: "8884897169", prev: 0, curr: 125.00 },
+    { qtr: "AG-5", name: "PRAVEEN GUNDAGANVI", phone: "9611256825", prev: 0, curr: 332.00 },
+    { qtr: "AFL-5", name: "MALIKA M SATALI", phone: "8951020038", prev: 0, curr: 161.00 },
+    { qtr: "AFS-5", name: "VINAYAK KASAMI", phone: "7411039074", prev: 0, curr: 94.00 },
+    { qtr: "BG-1", name: "RAMESH KARJOL", phone: "8197949999", prev: 0, curr: 261.00 },
+    { qtr: "BFL-1", name: "VIDYARANYA DEVANGAMATH", phone: "8951343472", prev: 0, curr: 297.00 },
+    { qtr: "BFS-1", name: "DURUDUNDESHWAR C H", phone: "9449225195", prev: 0, curr: 192.00 },
+    { qtr: "BG-2", name: "VASUDA BONAL", phone: "9611256533", prev: 0, curr: 283.00 },
+    { qtr: "BFL-2", name: "ARATI PATIL", phone: "9036152295", prev: 0, curr: 368.00 },
+    { qtr: "BFS-2", name: "BHEERAPPA HONGOND", phone: "9880048528", prev: 0, curr: 167.00 },
+    { qtr: "BG-3", name: "DR MAHADEV BIRADAR", phone: "9035246580", prev: 0, curr: 230.00 },
+    { qtr: "BFL-3", name: "N R BARADI", phone: "6366684359", prev: 0, curr: 168.00 },
+    { qtr: "BFS-3", name: "CHNNAMMA D", phone: "9620258137", prev: 0, curr: 137.00 },
+    { qtr: "BG-4", name: "SHRI S S HIREMATH", phone: "8867348752", prev: 0, curr: 259.00 },
+    { qtr: "BFL-4", name: "VARSHA KULKARNI", phone: "8095244122", prev: 0, curr: 273.00 },
+    { qtr: "BFS-4", name: "KAUITA HIREMATH", phone: "7975127691", prev: 0, curr: 36.00 },
+    { qtr: "BG-5", name: "DR V V KUPPAST", phone: "9986419729", prev: 0, curr: 573.00 },
+    { qtr: "BFL-5", name: "SACHIN CHAUHAN", phone: "9569373577", prev: 0, curr: 250.00 },
+    { qtr: "BFS-5", name: "VIJAYALAXMI R C", phone: "9449357308", prev: 0, curr: 93.00 },
+    { qtr: "CG-1", name: "PATOLI", phone: "8217732534", prev: 0, curr: 248.00 },
+    { qtr: "CF-1", name: "VIJAYA", phone: "8904583861", prev: 0, curr: 315.00 },
+    { qtr: "CG-2", name: "CBSE", phone: "9886847791", prev: 0, curr: 574.00 },
+    { qtr: "CF-2", name: "JADAV", phone: "9481981118", prev: 0, curr: 435.00 },
+    { qtr: "CG-3", name: "SATISH HIREMATH", phone: "9591433373", prev: 0, curr: 235.00 },
+    { qtr: "CF-3", name: "SAROJINI SITALE", phone: "9591104001", prev: 0, curr: 446.00 },
+    { qtr: "CG-4", name: "BRJMOHAN VYAS", phone: "9743391794", prev: 0, curr: 301.00 },
+    { qtr: "CF-4", name: "PARASAPPA PUJARI", phone: "9110456943", prev: 0, curr: 212.00 },
+    { qtr: "CG-5", name: "GANESH KORI", phone: "8050206253", prev: 0, curr: 319.00 },
+    { qtr: "CF-5", name: "SHILAPA PUJAR", phone: "9164357631", prev: 0, curr: 101.00 },
+    { qtr: "CG-6", name: "SHRI SANJAY S J", phone: "9611397368", prev: 0, curr: 258.00 },
+    { qtr: "CF-6", name: "BASHIRA KITTUR", phone: "9916781246", prev: 0, curr: 313.00 },
+    { qtr: "CG-7", name: "APURVA V KULAKARNI", phone: "7829089298", prev: 0, curr: 190.00 },
+    { qtr: "CF-7", name: "DR JAYALATA N A", phone: "8971387766", prev: 0, curr: 477.00 },
+    { qtr: "CG-8", name: "DR I M POLICEPATIL", phone: "9916201677", prev: 0, curr: 451.00 },
+    { qtr: "CF-8", name: "SHRI MALLIKARJUN A", phone: "9945746379", prev: 0, curr: 571.00 },
+    { qtr: "CG-9", name: "DR S Y GOUDAPPANAVAR", phone: "9916377743", prev: 0, curr: 454.00 },
+    { qtr: "CF-9", name: "SHRI MALLIKARJUN M", phone: "8757381125", prev: 0, curr: 233.00 },
+    { qtr: "CG-10", name: "SHRISHAIL HEGONAD", phone: "8793351791", prev: 0, curr: 361.00 },
+    { qtr: "CF-10", name: "SHRI S S KANDAGAL", phone: "9741988498", prev: 0, curr: 418.00 },
+    { qtr: "DG-1", name: "H TEGGI", phone: "8147555645", prev: 0, curr: 168.00 },
+    { qtr: "DG-2", name: "SHRI SHIVANAND K BUGADI", phone: "6360072326", prev: 0, curr: 342.00 },
+    { qtr: "DG-3", name: "SHRI DEVAPPA GADAD", phone: "9620611406", prev: 0, curr: 70.00 },
+    { qtr: "DG-4", name: "LABOURE", phone: "", prev: 0, curr: 20.00 }
+  ];
+
+  // Initialize both tabs
+  window.onload = function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('r_date').value = today;
+    document.getElementById('v_b_date').innerText = new Date().toLocaleDateString('en-IN');
+    document.getElementById('v_r_date').innerText = new Date().toLocaleDateString('en-IN');
+
+    const billSel = document.getElementById('billSelect');
+    const recSel = document.getElementById('receiptSelect');
+
+    quartersDirectory.forEach((item, idx) => {
+      const opt1 = document.createElement('option');
+      opt1.value = idx;
+      opt1.textContent = `${item.qtr} - ${item.name}`;
+      billSel.appendChild(opt1);
+
+      const opt2 = document.createElement('option');
+      opt2.value = idx;
+      opt2.textContent = `${item.qtr} - ${item.name}`;
+      recSel.appendChild(opt2);
+    });
+
+    billSel.selectedIndex = 1;
+    recSel.selectedIndex = 1;
+    onBillQuarterChange();
+    onReceiptQuarterChange();
+  };
+
+  // Tab Switcher
+  function switchMainTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  // --- TAB 1 (BILL) LOGIC ---
+  function onBillQuarterChange() {
+    const idx = document.getElementById('billSelect').value;
+    const item = quartersDirectory[idx];
+    if (!item) return;
+
+    document.getElementById('b_qtr').value = item.qtr;
+    document.getElementById('b_name').value = item.name;
+    document.getElementById('b_phone').value = item.phone || 'N/A';
+    document.getElementById('b_prev').value = item.prev;
+    document.getElementById('b_curr').value = item.curr;
+    document.getElementById('b_no').value = `BEC/BILL/${item.qtr}/${new Date().getFullYear()}`;
+
+    updateBillCalc();
+  }
+
+  function updateBillCalc() {
+    const qtr = document.getElementById('b_qtr').value;
+    const name = document.getElementById('b_name').value;
+    const phone = document.getElementById('b_phone').value;
+    const month = document.getElementById('b_month').value;
+    const billNo = document.getElementById('b_no').value;
+
+    const prev = parseFloat(document.getElementById('b_prev').value) || 0;
+    const curr = parseFloat(document.getElementById('b_curr').value) || 0;
+    const rate = parseFloat(document.getElementById('b_rate').value) || 6.35;
+    const fixed = parseFloat(document.getElementById('b_fixed').value) || 240.00;
+
+    const units = Math.max(0, curr - prev);
+    const energy = units * rate;
+    const total = Math.round(energy + fixed);
+
+    document.getElementById('v_b_qtr').innerText = qtr;
+    document.getElementById('v_b_name').innerText = name;
+    document.getElementById('v_b_phone').innerText = phone;
+    document.getElementById('v_b_month').innerText = month;
+    document.getElementById('v_b_no').innerText = billNo;
+    document.getElementById('v_b_uid').innerText = `EL-${qtr}-MTR`;
+
+    document.getElementById('v_b_prev').innerText = prev.toFixed(2);
+    document.getElementById('v_b_curr').innerText = curr.toFixed(2);
+    document.getElementById('v_b_units').innerText = units.toFixed(2);
+    document.getElementById('v_b_rate').innerText = rate.toFixed(2);
+    document.getElementById('v_b_energy').innerText = energy.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    document.getElementById('v_b_fixed').innerText = fixed.toFixed(2);
+    document.getElementById('v_b_total').innerText = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+    // WhatsApp Message
+    const text = encodeURIComponent(
+      `*BEC-BIPS Staff Quarters - Electricity Bill*\n` +
+      `Quarter: ${qtr}\n` +
+      `Resident: ${name}\n` +
+      `Period: ${month}\n` +
+      `Units: ${units.toFixed(2)} kWh\n` +
+      `*Total Payable: ₹${total}*\n\n` +
+      `Please pay via PhonePe / UPI and submit receipt.`
+    );
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    document.getElementById('btnBillWa').href = cleanPhone.length === 10 ? `https://wa.me/91${cleanPhone}?text=${text}` : `https://wa.me/?text=${text}`;
+  }
+
+  function downloadBillPDF() {
+    const el = document.getElementById('billInvoiceCard');
+    const qtr = document.getElementById('b_qtr').value;
+    const name = document.getElementById('b_name').value.replace(/\s+/g, '_');
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: `Bill_${qtr}_${name}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save();
+  }
+
+  // --- TAB 2 (RECEIPT) LOGIC ---
+  function onReceiptQuarterChange() {
+    const idx = document.getElementById('receiptSelect').value;
+    const item = quartersDirectory[idx];
+    if (!item) return;
+
+    document.getElementById('r_qtr').value = item.qtr;
+    document.getElementById('r_name').value = item.name;
+    document.getElementById('r_phone').value = item.phone || 'N/A';
+    document.getElementById('r_no').value = `BEC/REC/${item.qtr}/${new Date().getFullYear()}`;
+
+    // Compute bill amount as default received amount
+    const units = Math.max(0, item.curr - item.prev);
+    const defaultTotal = Math.round((units * 6.35) + 240);
+    document.getElementById('r_amount').value = defaultTotal;
+
+    updateReceiptCalc();
+  }
+
+  function updateReceiptCalc() {
+    const qtr = document.getElementById('r_qtr').value;
+    const name = document.getElementById('r_name').value;
+    const phone = document.getElementById('r_phone').value;
+    const rNo = document.getElementById('r_no').value;
+    const rDate = document.getElementById('r_date').value;
+    const amount = parseFloat(document.getElementById('r_amount').value) || 0;
+    const mode = document.getElementById('r_mode').value;
+    const utr = document.getElementById('r_utr').value;
+    const desc = document.getElementById('r_desc').value;
+
+    document.getElementById('v_r_no').innerText = rNo;
+    document.getElementById('v_r_date').innerText = rDate ? new Date(rDate).toLocaleDateString('en-IN') : new Date().toLocaleDateString('en-IN');
+    document.getElementById('v_r_qtr').innerText = qtr;
+    document.getElementById('v_r_name').innerText = name;
+    document.getElementById('v_r_phone').innerText = phone;
+    document.getElementById('v_r_mode').innerText = mode;
+    document.getElementById('v_r_desc').innerText = desc;
+    document.getElementById('v_r_utr').innerText = utr;
+    document.getElementById('v_r_amount').innerText = amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    document.getElementById('v_r_total').innerText = amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+    // WhatsApp Message
+    const text = encodeURIComponent(
+      `*BEC-BIPS Staff Quarters - Payment Receipt*\n` +
+      `------------------------------------\n` +
+      `Receipt No: ${rNo}\n` +
+      `Quarter No: ${qtr}\n` +
+      `Resident: ${name}\n` +
+      `Amount Received: ₹${amount}\n` +
+      `Payment Mode: ${mode}\n` +
+      `Reference UTR: ${utr}\n` +
+      `Status: VERIFIED & PAID ✅\n` +
+      `------------------------------------\n` +
+      `Thank you for your timely payment.`
+    );
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    document.getElementById('btnReceiptWa').href = cleanPhone.length === 10 ? `https://wa.me/91${cleanPhone}?text=${text}` : `https://wa.me/?text=${text}`;
+  }
+
+  function downloadReceiptPDF() {
+    const el = document.getElementById('receiptInvoiceCard');
+    const qtr = document.getElementById('r_qtr').value;
+    const name = document.getElementById('r_name').value.replace(/\s+/g, '_');
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: `Receipt_${qtr}_${name}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save();
+  }
+</script>
+
+</body>
+</html>
