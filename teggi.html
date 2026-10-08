@@ -215,21 +215,27 @@
       margin: 0 auto;
     }
 
-    .form-config-bar {
+    /* Direct link bar (replaces the old config/load bar) */
+    .form-link-bar {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 18px;
       padding: 14px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
     }
-
-    .form-config-bar input {
+    .form-link-bar .link-text {
+      font-size: 0.78rem;
+      color: #334155;
+      word-break: break-all;
       flex: 1;
-      padding: 10px 12px;
+      min-width: 200px;
     }
+    .form-link-bar .link-text strong { color: #1e3a8a; }
 
     .iframe-holder {
       width: 100%;
@@ -248,12 +254,12 @@
 
     @media (max-width: 900px) {
       .tab-content.active { grid-template-columns: 1fr; }
-      .form-config-bar { flex-direction: column; align-items: stretch; }
+      .form-link-bar { flex-direction: column; align-items: stretch; }
     }
 
     @media print {
       body { background: white; padding: 0; }
-      .tab-nav, .control-panel, .btn-group, .form-config-bar { display: none !important; }
+      .tab-nav, .control-panel, .btn-group, .form-link-bar { display: none !important; }
       .preview-wrapper { box-shadow: none; padding: 0; }
       .doc-card { border: 2px solid #000; }
     }
@@ -416,7 +422,7 @@
 
         <div class="signature-row">
           <div>Resident Signature</div>
-          <div>Authorized Signatory: Dr. Mahadev Biradar</div>
+          <div>Signature: </div>
         </div>
       </div>
     </div>
@@ -584,7 +590,7 @@
 
         <div class="signature-row">
           <div>Accounts Section: <strong>Verified</strong></div>
-          <div>Authorized Signatory: Dr. Mahadev Biradar</div>
+          <div>Authorized Signatory:</div>
         </div>
       </div>
     </div>
@@ -598,15 +604,18 @@
         <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">Quarters staff can pay via PhonePe and record their UTR & payment details here.</p>
       </div>
 
-      <!-- Google Form URL Configuration Bar -->
-      <div class="form-config-bar">
-        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; white-space: nowrap;">Google Form URL:</label>
-        <input type="text" id="customFormUrl" value="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" placeholder="Paste your Google Form URL here">
-        <button class="btn btn-pdf" style="padding: 9px 16px;" onclick="loadGoogleForm()">Load Form</button>
-        <a class="btn btn-outline" id="btnOpenExternal" href="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" target="_blank" style="padding: 9px 16px; white-space: nowrap;">↗ Open in New Window</a>
+      <!-- Direct Link Bar (no Load button — the form opens automatically) -->
+      <div class="form-link-bar">
+        <div class="link-text">
+          <strong>Google Form Link:</strong>
+          <a id="formDirectLink" href="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" target="_blank" rel="noopener">
+            https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform
+          </a>
+        </div>
+        <a class="btn btn-pdf" id="btnOpenExternal" href="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog" target="_blank" rel="noopener" style="padding: 9px 16px; white-space: nowrap;">↗ Open Google Form</a>
       </div>
 
-      <!-- Embedded Iframe Container -->
+      <!-- Embedded Iframe Container (auto-loaded) -->
       <div class="iframe-holder">
         <iframe id="googleFormIframe" src="https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?embedded=true">
           Loading Google Form...
@@ -618,6 +627,10 @@
 </div>
 
 <script>
+  /* ====== GOOGLE FORM LINK (change here if the form changes) ====== */
+  const GOOGLE_FORM_URL   = "https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?usp=dialog";
+  const GOOGLE_FORM_EMBED = "https://docs.google.com/forms/d/e/1FAIpQLSfBvhxNjaxmMbTH0p_Xce8RJ-9hVuuRRLnITHekXMwqIq2jfQ/viewform?embedded=true";
+
   // All 54 Quarters directory from records
   const quartersDirectory = [
     { qtr: "AG-1", name: "POLICE PATIL", phone: "9880840647", prev: 0, curr: 896.00 },
@@ -701,6 +714,11 @@
     recSel.selectedIndex = 1;
     onBillQuarterChange();
     onReceiptQuarterChange();
+
+    // Third tab form link + iframe are always ready (no Load button needed)
+    document.getElementById('formDirectLink').href = GOOGLE_FORM_URL;
+    document.getElementById('btnOpenExternal').href = GOOGLE_FORM_URL;
+    document.getElementById('googleFormIframe').src = GOOGLE_FORM_EMBED;
   };
 
   function switchMainTab(tabId, btn) {
@@ -708,20 +726,11 @@
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(tabId).classList.add('active');
-  }
 
-  // --- GOOGLE FORM TAB HANDLERS ---
-  function loadGoogleForm() {
-    let inputUrl = document.getElementById('customFormUrl').value.trim();
-    if (!inputUrl) return;
-
-    let embedUrl = inputUrl;
-    if (embedUrl.includes('viewform')) {
-      embedUrl = embedUrl.replace(/\?.*$/, '') + '?embedded=true';
+    // ---- Third tab: auto-open the Google Form in a new window/tab ----
+    if (tabId === 'formTab') {
+      window.open(GOOGLE_FORM_URL, '_blank', 'noopener');
     }
-
-    document.getElementById('googleFormIframe').src = embedUrl;
-    document.getElementById('btnOpenExternal').href = inputUrl;
   }
 
   // --- TAB 1 (BILL) LOGIC ---
