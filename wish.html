@@ -654,6 +654,11 @@ button,input,textarea{font-family:inherit}
 
 <script>
 /* =========================================================
+   SITE URL — shown in WhatsApp / copy text
+   ========================================================= */
+const SITE_URL = 'mahadevbiradar.in';
+
+/* =========================================================
    CATEGORIES
    ========================================================= */
 const CATEGORIES = {
@@ -1248,7 +1253,7 @@ function renderCard(){
 }
 
 /* =========================================================
-   DECORATIONS (only on occasion change — avoids flicker)
+   DECORATIONS
    ========================================================= */
 function renderDecor(){
   const occ = OCCASIONS[state.occasion];
@@ -1368,18 +1373,16 @@ function wishTitle(){
 }
 
 function shareWhatsApp(){
-  const link = buildShareLink();
   const txt = `*${wishTitle()}*\n\n${$('cardMsg').textContent}\n\n` +
               (state.from ? `With Best Wishes,\n${state.from}\n\n` : '') +
-              `For more visit ${link}`;
+              `For more visit: ${SITE_URL}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 
 function copyWish(){
-  const link = buildShareLink();
   const txt = `${wishTitle()}\n\n${$('cardMsg').textContent}\n\n` +
               (state.from ? `With Best Wishes,\n${state.from}\n\n` : '') +
-              `For more visit ${link}`;
+              `For more visit: ${SITE_URL}`;
   copyText(txt).then(()=>toast('📋 Wish copied!')).catch(()=>toast('⚠️ Copy failed'));
 }
 
@@ -1514,20 +1517,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
   buildStyles();
   buildFormats();
 
-  /* default message */
   state.message = OCCASIONS.birthday.messages[0];
   $('msgInput').value = state.message;
   updateCharCount();
   renderCard();
   renderDecor();
 
-  /* ---- search ---- */
   $('searchInput').addEventListener('input', e=>{
     state.search = e.target.value;
     renderOccasions();
   });
 
-  /* ---- photo ---- */
   $('uploadArea').addEventListener('click', e=>{
     if(e.target.closest('#removePhotoBtn')) return;
     $('photoInput').click();
@@ -1547,7 +1547,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(f) handleFile(f);
   });
 
-  /* ---- name inputs (live) ---- */
   $('personName').addEventListener('input', e=>{
     state.name = e.target.value.trim();
     renderCard();
@@ -1557,14 +1556,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     renderCard();
   });
 
-  /* ---- message (live) ---- */
   $('msgInput').addEventListener('input', e=>{
     state.message = e.target.value;
     updateCharCount();
     renderCard();
   });
 
-  /* ---- shuffle ---- */
   let shuffleIdx = 0;
   $('shuffleBtn').addEventListener('click', ()=>{
     const list = OCCASIONS[state.occasion].messages;
@@ -1584,7 +1581,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     );
   });
 
-  /* ---- action buttons ---- */
   $('waBtn').addEventListener('click', shareWhatsApp);
   $('copyBtn').addEventListener('click', copyWish);
   $('dlBtn').addEventListener('click', downloadImage);
@@ -1592,14 +1588,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   $('copyLinkBtn').addEventListener('click', copyLink);
   $('resetBtn').addEventListener('click', resetAll);
 
-  /* ---- edit button jumps to editor (mobile) ---- */
   $('editBtn').addEventListener('click', ()=>{
     switchTab('edit');
     $('personName').focus({preventScroll:true});
     window.scrollTo({top:0, behavior:'smooth'});
   });
 
-  /* ---- mobile tabs ---- */
   function switchTab(tab){
     $('workspace').dataset.tab = tab;
     document.querySelectorAll('.mtab').forEach(b=>{
@@ -1613,7 +1607,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
 
-  /* ---- URL params ---- */
   loadFromURL();
 });
 </script>
