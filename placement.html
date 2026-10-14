@@ -30,15 +30,146 @@ tailwind.config = {
   ::-webkit-scrollbar-thumb { background:#94a3b8; border-radius:9999px; }
   .dark ::-webkit-scrollbar-thumb { background:#475569; }
   .tbl-head th { position:sticky; top:0; z-index:5; }
+  .perm-hidden { display:none !important; }
   @media print {
     .no-print { display:none !important; }
     body { background:#fff !important; color:#000 !important; }
     #view-registry, #view-branches { display:block !important; }
     .hidden-print { display:none !important; }
+    #loginScreen { display:none !important; }
   }
+  .login-bg {
+    background:
+      radial-gradient(circle at 15% 15%, rgba(2,132,199,0.35), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(217,119,6,0.30), transparent 45%),
+      linear-gradient(135deg, #0c4a6e 0%, #0f172a 50%, #1e1b4b 100%);
+  }
+  .login-grid::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events:none;
+  }
+  .role-chip { backdrop-filter: blur(8px); }
+  @keyframes loginFade { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: translateY(0); } }
+  .login-anim { animation: loginFade .45s ease-out both; }
+  @keyframes shake { 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-6px)} 40%,60%{transform:translateX(6px)} }
+  .shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97) both; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen" class="fixed inset-0 z-[100] login-bg login-grid flex items-center justify-center p-4 overflow-y-auto">
+  <div class="relative w-full max-w-md login-anim">
+    <!-- Logo Card -->
+    <div class="text-center mb-6">
+      <div class="inline-flex h-16 w-16 rounded-3xl bg-gradient-to-tr from-sky-600 via-sky-500 to-amber-500 items-center justify-center shadow-2xl shadow-sky-900/50 ring-2 ring-amber-400/60 mb-3">
+        <i data-lucide="shield-check" class="w-9 h-9 text-amber-100"></i>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">BEC Placement Intelligence Hub</h1>
+      <p class="text-xs text-sky-200/80 mt-1 font-medium">Basaveshwar Engineering College (Autonomous), Bagalkote</p>
+      <p class="text-[11px] text-amber-200/80 font-semibold uppercase tracking-widest mt-1.5">Department of Training &amp; Placement</p>
+    </div>
+
+    <!-- Login Card -->
+    <div id="loginCard" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-800 p-7">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Secure Sign In</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Authorised personnel only</p>
+        </div>
+        <div class="p-2 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400">
+          <i data-lucide="lock" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+        <div class="space-y-4">
+          <div>
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">Username / Email / Mobile</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+              <input id="loginUsername" type="text" required
+                placeholder="your@becbgk.edu or mobile"
+                class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 dark:text-white">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">Password</label>
+            <div class="relative">
+              <i data-lucide="key-round" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+              <input id="loginPassword" type="password" required
+                placeholder="••••••••"
+                class="w-full pl-10 pr-11 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 dark:text-white">
+              <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                <i id="pwEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <label class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 select-none">
+            <input id="loginRemember" type="checkbox" checked class="accent-sky-600 rounded">
+            Keep me signed in on this device
+          </label>
+        </div>
+
+        <!-- Error -->
+        <div id="loginError" class="hidden mt-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+          <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+          <span id="loginErrorText">Invalid credentials</span>
+        </div>
+
+        <button type="submit" id="loginBtn"
+          class="mt-5 w-full py-3 rounded-xl bg-gradient-to-r from-sky-700 via-sky-600 to-sky-700 hover:from-sky-600 hover:to-sky-600 text-white text-sm font-black shadow-lg shadow-sky-900/40 transition flex items-center justify-center gap-2">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span id="loginBtnText">Sign In</span>
+        </button>
+      </form>
+
+      <!-- Demo credentials -->
+      <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="toggleCredsHint()" class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1.5">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i>
+          <span id="credsToggleLabel">Show demo credentials</span>
+        </button>
+        <div id="credsHint" class="hidden mt-3 space-y-2 text-[11px]">
+          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">Admin</span>
+              <span class="font-mono text-slate-500 dark:text-slate-400">mmbbec@gmail.com</span>
+            </div>
+            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">mahadevmb</span></div>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300">Placement Officer</span>
+              <span class="font-mono text-slate-500 dark:text-slate-400">kambalimath15@gmail.com</span>
+            </div>
+            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">9880735779</span></div>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">Office Staff</span>
+              <span class="font-mono text-slate-500 dark:text-slate-400">9241060811</span>
+            </div>
+            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">9241060811</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center text-[10px] text-sky-200/60 mt-5">
+      © Basaveshwar Engineering College • Training &amp; Placement Cell • Authorised Access Only
+    </p>
+  </div>
+</div>
+
+<!-- ==================== APP ROOT (hidden until login) ==================== -->
+<div id="appRoot" class="hidden min-h-screen flex flex-col">
 
 <!-- ==================== HEADER ==================== -->
 <header class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm no-print">
@@ -66,16 +197,25 @@ tailwind.config = {
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
-        <button onclick="openDriveModal()" class="hidden md:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition">
+        <!-- User Badge -->
+        <div class="hidden md:flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+          <div id="userAvatar" class="h-9 w-9 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 text-white font-black text-sm flex items-center justify-center shadow-sm">--</div>
+          <div class="leading-tight">
+            <div id="userName" class="text-[11px] font-bold text-slate-800 dark:text-slate-100 max-w-[130px] truncate">—</div>
+            <div id="userRoleBadge" class="text-[9px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400">—</div>
+          </div>
+        </div>
+
+        <button data-perm="drives" onclick="openDriveModal()" class="hidden md:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition">
           <i data-lucide="plus-circle" class="w-4 h-4"></i><span>New Drive</span>
         </button>
-        <button onclick="openUploadModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 transition shadow-sm">
+        <button data-perm="upload" onclick="openUploadModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 transition shadow-sm">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i><span class="hidden sm:inline">Upload Sheet</span>
         </button>
-        <button onclick="exportRegistryPDF()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition">
+        <button data-perm="export" onclick="exportRegistryPDF()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition">
           <i data-lucide="file-text" class="w-4 h-4"></i><span class="hidden lg:inline">PDF</span>
         </button>
-        <button onclick="exportMasterCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+        <button data-perm="export" onclick="exportMasterCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
           <i data-lucide="download" class="w-4 h-4"></i><span class="hidden xl:inline">Master CSV</span>
         </button>
         <button onclick="window.print()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition border border-slate-200 dark:border-slate-700" title="Print">
@@ -83,6 +223,9 @@ tailwind.config = {
         </button>
         <button onclick="toggleDarkMode()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition border border-slate-200 dark:border-slate-700" title="Toggle theme">
           <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+        <button onclick="handleLogout()" class="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition border border-rose-200 dark:border-rose-900" title="Sign out">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
@@ -113,10 +256,10 @@ tailwind.config = {
 
 <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow space-y-6">
 
-  <!-- ==================== KPI CARDS ==================== -->
+  <!-- KPI CARDS -->
   <section id="kpiRow" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3"></section>
 
-  <!-- ==================== TAB 1: ANALYTICS ==================== -->
+  <!-- TAB 1: ANALYTICS -->
   <div id="view-analytics" class="space-y-6">
     <div class="p-4 bg-gradient-to-r from-sky-900 via-slate-900 to-indigo-950 rounded-2xl text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-3.5">
@@ -129,7 +272,7 @@ tailwind.config = {
       <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
         <button onclick="presetFilter('tier1_super')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-sm">Tier-1 Super Dream</button>
         <button onclick="presetFilter('mass_it')" class="px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-semibold text-xs transition border border-sky-500/50">Standard IT Drive</button>
-        <button onclick="exportAnalyticsPDF()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition border border-white/20 flex items-center gap-1.5">
+        <button data-perm="export" onclick="exportAnalyticsPDF()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition border border-white/20 flex items-center gap-1.5">
           <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF Report
         </button>
       </div>
@@ -177,7 +320,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ==================== TAB 2: COMPANY DRIVES ==================== -->
+  <!-- TAB 2: DRIVES -->
   <div id="view-drives" class="hidden space-y-5">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -189,10 +332,10 @@ tailwind.config = {
         </p>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="exportAllDrivesPDF()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition flex items-center gap-1.5">
+        <button data-perm="export" onclick="exportAllDrivesPDF()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition flex items-center gap-1.5">
           <i data-lucide="file-text" class="w-4 h-4"></i> All Drives PDF
         </button>
-        <button onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition flex items-center gap-2">
+        <button data-perm="drives" onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition flex items-center gap-2">
           <i data-lucide="plus-circle" class="w-4 h-4"></i> Create New Drive
         </button>
       </div>
@@ -200,7 +343,7 @@ tailwind.config = {
     <div id="driveCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
   </div>
 
-  <!-- ==================== TAB 3: SIMULATOR ==================== -->
+  <!-- TAB 3: SIMULATOR -->
   <div id="view-simulator" class="hidden space-y-6">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden">
       <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -211,13 +354,13 @@ tailwind.config = {
         </div>
         <div class="flex items-center gap-2 flex-wrap">
           <button onclick="resetSimulatorDefaults()" class="px-3 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 transition">Reset</button>
-          <button onclick="saveSimulatorAsDrive()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 flex items-center gap-2 transition">
+          <button data-perm="drives" onclick="saveSimulatorAsDrive()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 flex items-center gap-2 transition">
             <i data-lucide="save" class="w-4 h-4"></i> Save as Drive
           </button>
-          <button onclick="exportShortlistPDF()" class="px-4 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 flex items-center gap-2 transition">
+          <button data-perm="export" onclick="exportShortlistPDF()" class="px-4 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 flex items-center gap-2 transition">
             <i data-lucide="file-text" class="w-4 h-4"></i> PDF
           </button>
-          <button onclick="exportRecruiterShortlistCSV()" class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-2 transition">
+          <button data-perm="export" onclick="exportRecruiterShortlistCSV()" class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-2 transition">
             <i data-lucide="file-check-2" class="w-4 h-4"></i> Excel/CSV (<span id="btn-export-count">0</span>)
           </button>
         </div>
@@ -302,7 +445,7 @@ tailwind.config = {
           <button onclick="viewSimulatorInRegistry()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition flex items-center gap-1.5">
             <i data-lucide="eye" class="w-4 h-4"></i> View in Table
           </button>
-          <button onclick="exportRecruiterShortlistCSV()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+          <button data-perm="export" onclick="exportRecruiterShortlistCSV()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Download for Company
           </button>
         </div>
@@ -310,7 +453,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ==================== TAB 4: REGISTRY ==================== -->
+  <!-- TAB 4: REGISTRY -->
   <div id="view-registry" class="hidden space-y-4">
     <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 no-print">
       <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
@@ -341,42 +484,25 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- ADVANCED FILTERS -->
       <div id="advancedFilters" class="hidden pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-3">
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min CGPA</label>
-          <input type="number" id="filterMinCGPA" step="0.1" min="0" max="10" placeholder="5.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max CGPA</label>
-          <input type="number" id="filterMaxCGPA" step="0.1" min="0" max="10" placeholder="10.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 10th %</label>
-          <input type="number" id="filterMinTenth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 12th/Dip %</label>
-          <input type="number" id="filterMinTwelfth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max History BL</label>
-          <input type="number" id="filterMaxHistBL" step="1" min="0" placeholder="Any" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Native District</label>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min CGPA</label>
+          <input type="number" id="filterMinCGPA" step="0.1" min="0" max="10" placeholder="5.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max CGPA</label>
+          <input type="number" id="filterMaxCGPA" step="0.1" min="0" max="10" placeholder="10.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 10th %</label>
+          <input type="number" id="filterMinTenth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 12th/Dip %</label>
+          <input type="number" id="filterMinTwelfth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max History BL</label>
+          <input type="number" id="filterMaxHistBL" step="1" min="0" placeholder="Any" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Native District</label>
           <select id="filterRegNative" onchange="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
             <option value="ALL">All Districts</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Placement Status</label>
+          </select></div>
+        <div><label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Placement Status</label>
           <select id="filterRegPlaced" onchange="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-            <option value="ALL">All</option>
-            <option value="PLACED">Placed</option>
-            <option value="UNPLACED">Not Yet Placed</option>
-          </select>
-        </div>
+            <option value="ALL">All</option><option value="PLACED">Placed</option><option value="UNPLACED">Not Yet Placed</option>
+          </select></div>
       </div>
 
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
@@ -403,13 +529,12 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- BULK ACTION BAR -->
       <div id="bulkBar" class="hidden items-center justify-between gap-3 p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800">
         <span class="text-xs font-bold text-sky-800 dark:text-sky-300"><span id="bulkCount">0</span> student(s) selected</span>
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="exportSelectedCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100">Export CSV</button>
-          <button onclick="exportSelectedPDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500">Export PDF</button>
-          <button onclick="markSelectedPlaced()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">Mark Placed</button>
+          <button data-perm="export" onclick="exportSelectedCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100">Export CSV</button>
+          <button data-perm="export" onclick="exportSelectedPDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500">Export PDF</button>
+          <button data-perm="bulk" onclick="markSelectedPlaced()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">Mark Placed</button>
           <button onclick="clearSelection()" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">Clear</button>
         </div>
       </div>
@@ -454,7 +579,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ==================== TAB 5: BRANCHES ==================== -->
+  <!-- TAB 5: BRANCHES -->
   <div id="view-branches" class="hidden space-y-6">
     <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
@@ -462,7 +587,7 @@ tailwind.config = {
           <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Branch-Wise Placement Intelligence Matrix</h3>
           <p class="text-xs text-slate-500 dark:text-slate-400">Departmental breakdown of the registered cohort</p>
         </div>
-        <button onclick="exportBranchPDF()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 transition no-print">
+        <button data-perm="export" onclick="exportBranchPDF()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 transition no-print">
           <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
         </button>
       </div>
@@ -486,8 +611,9 @@ tailwind.config = {
     </div>
   </div>
 </main>
+</div><!-- /appRoot -->
 
-<!-- ==================== STUDENT PROFILE MODAL ==================== -->
+<!-- STUDENT PROFILE MODAL -->
 <div id="profileModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
   <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[90vh] overflow-y-auto">
     <button onclick="closeProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white transition"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -517,13 +643,13 @@ tailwind.config = {
       <div class="flex items-center justify-between py-1"><span class="text-slate-500">Placement Status:</span><span id="modal-placed" class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">—</span></div>
     </div>
     <div class="mt-6 flex justify-end gap-2">
-      <button onclick="exportSingleStudentPDF()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
+      <button data-perm="export" onclick="exportSingleStudentPDF()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
       <button onclick="closeProfileModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition">Close</button>
     </div>
   </div>
 </div>
 
-<!-- ==================== DRIVE MODAL ==================== -->
+<!-- DRIVE MODAL -->
 <div id="driveModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
   <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
     <button onclick="closeDriveModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -606,15 +732,15 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ==================== DRIVE DETAIL MODAL ==================== -->
+<!-- DRIVE DETAIL MODAL -->
 <div id="driveDetailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
   <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-6xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
     <button onclick="closeDriveDetail()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
     <div id="driveDetailHeader" class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800"></div>
     <div id="driveDetailCriteria" class="mb-4 flex flex-wrap gap-2 text-[11px]"></div>
     <div class="flex items-center justify-end gap-2 mb-3">
-      <button onclick="exportActiveDriveCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> CSV</button>
-      <button onclick="exportActiveDrivePDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500 flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
+      <button data-perm="export" onclick="exportActiveDriveCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> CSV</button>
+      <button data-perm="export" onclick="exportActiveDrivePDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500 flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
     </div>
     <div class="overflow-x-auto max-h-[52vh] border border-slate-200 dark:border-slate-800 rounded-xl">
       <table class="w-full text-left text-xs">
@@ -634,7 +760,7 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ==================== UPLOAD MODAL ==================== -->
+<!-- UPLOAD MODAL -->
 <div id="uploadModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
   <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
     <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -674,6 +800,131 @@ tailwind.config = {
 
 <!-- ==================== CORE ENGINE ==================== -->
 <script>
+/* =========================================================================
+   AUTHENTICATION & ROLE-BASED ACCESS CONTROL
+   ========================================================================= */
+const AUTH_KEY = 'bec_placement_hub_session';
+
+const USERS = [
+  { id:'admin',   username:'mmbbec@gmail.com',          password:'mahadevmb',   role:'admin',   name:'Mahadev M B',       title:'System Administrator' },
+  { id:'officer', username:'kambalimath15@gmail.com',   password:'9880735779',  role:'officer', name:'Kambalimath',       title:'Placement Officer' },
+  { id:'staff',   username:'9241060811',                password:'9241060811',  role:'staff',   name:'Placement Office',  title:'Office Staff' }
+];
+
+const ROLE_META = {
+  admin:   { label:'Administrator',    color:'purple',  perms:['view','export','simulator','upload','drives','bulk'] },
+  officer: { label:'Placement Officer', color:'sky',    perms:['view','export','simulator','upload','drives','bulk'] },
+  staff:   { label:'Office Staff',      color:'emerald', perms:['view','export','simulator'] }
+};
+
+let currentUser = null;
+
+function hasPerm(perm) {
+  if (!currentUser) return false;
+  return ROLE_META[currentUser.role].perms.includes(perm);
+}
+
+function applyPermissions() {
+  document.querySelectorAll('[data-perm]').forEach(el => {
+    el.classList.toggle('perm-hidden', !hasPerm(el.dataset.perm));
+  });
+  // Re-render drive cards so edit/delete buttons respect role
+  if (typeof renderDriveCards === 'function') renderDriveCards();
+  if (typeof renderStudentRegistryTable === 'function') renderStudentRegistryTable();
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('loginUsername').value.trim();
+  const p = document.getElementById('loginPassword').value;
+  const remember = document.getElementById('loginRemember').checked;
+
+  const user = USERS.find(x =>
+    (x.username.toLowerCase() === u.toLowerCase() || x.username === u) && x.password === p
+  );
+
+  if (!user) {
+    const card = document.getElementById('loginCard');
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    const err = document.getElementById('loginError');
+    err.classList.remove('hidden');
+    document.getElementById('loginErrorText').textContent = 'Invalid username or password. Please try again.';
+    lucide.createIcons();
+    return;
+  }
+
+  currentUser = { id:user.id, username:user.username, role:user.role, name:user.name, title:user.title, loginAt: new Date().toISOString() };
+  if (remember) {
+    try { localStorage.setItem(AUTH_KEY, JSON.stringify(currentUser)); } catch(e){}
+  } else {
+    try { sessionStorage.setItem(AUTH_KEY, JSON.stringify(currentUser)); } catch(e){}
+  }
+
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginForm').reset();
+  enterApp();
+}
+
+function enterApp() {
+  const login = document.getElementById('loginScreen');
+  const app = document.getElementById('appRoot');
+  login.classList.add('hidden');
+  app.classList.remove('hidden');
+
+  // Update user badge in header
+  const initials = currentUser.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('userName').textContent = currentUser.name;
+  const roleMeta = ROLE_META[currentUser.role];
+  const badge = document.getElementById('userRoleBadge');
+  badge.textContent = roleMeta.label;
+  badge.className = 'text-[9px] font-black uppercase tracking-wider text-' + roleMeta.color + '-600 dark:text-' + roleMeta.color + '-400';
+
+  applyPermissions();
+  lucide.createIcons();
+  showToast(`Welcome, ${currentUser.name} — signed in as ${roleMeta.label}.`);
+}
+
+function handleLogout() {
+  if (!confirm('Sign out of the Placement Intelligence Hub?')) return;
+  currentUser = null;
+  try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch(e){}
+  document.getElementById('appRoot').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginForm').reset();
+  lucide.createIcons();
+}
+
+function togglePasswordVisibility() {
+  const inp = document.getElementById('loginPassword');
+  const icon = document.getElementById('pwEyeIcon');
+  if (inp.type === 'password') { inp.type = 'text'; icon.setAttribute('data-lucide','eye-off'); }
+  else { inp.type = 'password'; icon.setAttribute('data-lucide','eye'); }
+  lucide.createIcons();
+}
+
+function toggleCredsHint() {
+  const hint = document.getElementById('credsHint');
+  const label = document.getElementById('credsToggleLabel');
+  hint.classList.toggle('hidden');
+  label.textContent = hint.classList.contains('hidden') ? 'Show demo credentials' : 'Hide demo credentials';
+}
+
+function checkExistingSession() {
+  try {
+    const raw = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.id && USERS.find(u => u.id === parsed.id)) {
+      currentUser = parsed;
+      enterApp();
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+
 /* =========================================================================
    CONSTANTS
    ========================================================================= */
@@ -809,34 +1060,39 @@ function loadState() {
 }
 
 /* =========================================================================
-   INIT
+   BOOT
    ========================================================================= */
 window.onload = function () {
+  // Data first (so app is ready when login completes)
   if (!loadState()) { masterStudents = generateBECDataset(); drives = []; }
   lucide.createIcons();
   buildStaticUI();
+
+  // Show login if no active session, else go straight in
+  if (!checkExistingSession()) {
+    lucide.createIcons();
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+
+  // Prime views (rendered behind login overlay)
   switchTab('analytics');
   refreshEverything();
   if (drives.length === 0) seedDemoDrive();
 };
 
 function buildStaticUI() {
-  // Simulator branch checkboxes
   const sc = document.getElementById('sim-branch-checkboxes');
   sc.innerHTML = ALL_BRANCHES.map(b => `
     <label class="flex items-center gap-1.5 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold cursor-pointer hover:border-sky-500 transition select-none">
       <input type="checkbox" value="${b}" checked onchange="runEligibilitySimulator()" class="branch-sim-check accent-sky-600 rounded"><span>${b}</span>
     </label>`).join('');
 
-  // Drive modal branch checkboxes
   document.getElementById('d-branches').innerHTML = ALL_BRANCHES.map(b => `
     <label class="flex items-center gap-1.5"><input type="checkbox" value="${b}" class="d-branch accent-sky-600" checked onchange="updateDriveLiveCount()"><span class="font-semibold">${b}</span></label>`).join('');
 
-  // Drive modal category checkboxes
   document.getElementById('d-categories').innerHTML = CATEGORIES.map(c => `
     <label class="flex items-center gap-2"><input type="checkbox" value="${c}" class="d-cat accent-sky-600" checked onchange="updateDriveLiveCount()"><span>${c}</span></label>`).join('');
 
-  // Live count listeners
   ['d-mincgpa','d-currbl','d-histbl','d-tenth','d-twelfth','d-includeplaced'].forEach(id => {
     document.getElementById(id).addEventListener('input', updateDriveLiveCount);
     document.getElementById(id).addEventListener('change', updateDriveLiveCount);
@@ -854,6 +1110,7 @@ function refreshEverything() {
   renderDriveCards();
   document.getElementById('registry-pill').textContent = masterStudents.length;
   document.getElementById('drives-pill').textContent = drives.length;
+  applyPermissions();
   lucide.createIcons();
 }
 
@@ -875,7 +1132,6 @@ function switchTab(tabId) {
   });
   lucide.createIcons();
 }
-function scrollToSimulator() { switchTab('simulator'); window.scrollTo({ top: 180, behavior:'smooth' }); }
 
 /* =========================================================================
    DARK MODE
@@ -900,7 +1156,6 @@ function renderKPIs() {
   const top      = masterStudents.reduce((m,s) => s.cgpa > m ? s.cgpa : m, 0);
   const topStu   = masterStudents.find(s => s.cgpa === top);
   const placed   = masterStudents.filter(s => s.placed).length;
-
   const pct = (v) => ((v / n) * 100).toFixed(1) + '%';
 
   const cards = [
@@ -925,7 +1180,6 @@ function renderKPIs() {
       <div class="absolute bottom-0 left-0 right-0 h-1 ${c.bar}"></div>
     </div>`).join('');
 
-  // Analytics callout
   const el = document.getElementById('analyticsCallout');
   if (el) el.textContent = `${zeroBL} of ${masterStudents.length} students (${pct(zeroBL)}) clear the standard zero-standing-arrear mandate. ${cleanH} hold a pristine first-attempt academic record.`;
 }
@@ -938,29 +1192,24 @@ function initAllCharts() {
   const gridColor = isDark ? '#334155' : '#f1f5f9';
   const textColor = isDark ? '#94a3b8' : '#64748b';
   const border = isDark ? '#0f172a' : '#ffffff';
-
   const destroy = (k) => { if (charts[k]) { charts[k].destroy(); charts[k] = null; } };
   const count = (fn) => masterStudents.filter(fn).length;
 
-  // 1. Branch distribution
   const present = BRANCH_TARGETS.filter(b => masterStudents.some(s => s.branch === b.code));
-  document.getElementById('branchCountBadge').textContent = present.length + ' Disciplines';
+  const bc = document.getElementById('branchCountBadge');
+  if (bc) bc.textContent = present.length + ' Disciplines';
   destroy('branches');
-  charts.branches = new Chart(document.getElementById('chartBranches'), {
+  const cB = document.getElementById('chartBranches');
+  if (cB) charts.branches = new Chart(cB, {
     type:'bar',
-    data:{
-      labels: present.map(b => b.code),
+    data:{ labels: present.map(b => b.code),
       datasets:[{ label:'Registered', data: present.map(b => count(s => s.branch === b.code)),
         backgroundColor:['#0284c7','#0369a1','#0ea5e9','#38bdf8','#6366f1','#8b5cf6','#d97706','#10b981','#64748b'],
-        borderRadius:6 }]
-    },
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ display:false } },
-      scales:{ x:{ grid:{ display:false }, ticks:{ color:textColor, font:{ family:'Plus Jakarta Sans', weight:'600' } } },
-               y:{ grid:{ color:gridColor }, ticks:{ color:textColor } } } }
+        borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ color:textColor } }, y:{ grid:{ color:gridColor }, ticks:{ color:textColor } } } }
   });
 
-  // 2. CGPA tiers
   const tiers = { '< 6.0':0, '6.0–6.99':0, '7.0–7.99':0, '8.0–8.99':0, '9.0+':0 };
   masterStudents.forEach(s => {
     if (s.cgpa < 6) tiers['< 6.0']++;
@@ -970,9 +1219,11 @@ function initAllCharts() {
     else tiers['9.0+']++;
   });
   const mean = (masterStudents.reduce((a,b) => a+b.cgpa, 0) / (masterStudents.length || 1)).toFixed(2);
-  document.getElementById('meanCgpaBadge').textContent = 'Mean: ' + mean;
+  const mcb = document.getElementById('meanCgpaBadge');
+  if (mcb) mcb.textContent = 'Mean: ' + mean;
   destroy('cgpa');
-  charts.cgpa = new Chart(document.getElementById('chartCGPATiers'), {
+  const cC = document.getElementById('chartCGPATiers');
+  if (cC) charts.cgpa = new Chart(cC, {
     type:'bar',
     data:{ labels:Object.keys(tiers), datasets:[{ data:Object.values(tiers),
       backgroundColor:['#ef4444','#f59e0b','#0284c7','#10b981','#8b5cf6'], borderRadius:6 }] },
@@ -980,22 +1231,24 @@ function initAllCharts() {
       scales:{ x:{ grid:{ display:false }, ticks:{ color:textColor } }, y:{ grid:{ color:gridColor }, ticks:{ color:textColor } } } }
   });
 
-  // 3. Gender
   const f = count(s => s.gender === 'Female'), m = count(s => s.gender === 'Male');
-  document.getElementById('genderSub').textContent = `Female ${f} (${((f/(masterStudents.length||1))*100).toFixed(1)}%) vs Male ${m}`;
+  const gs = document.getElementById('genderSub');
+  if (gs) gs.textContent = `Female ${f} (${((f/(masterStudents.length||1))*100).toFixed(1)}%) vs Male ${m}`;
   destroy('gender');
-  charts.gender = new Chart(document.getElementById('chartGenderRatio'), {
+  const cG = document.getElementById('chartGenderRatio');
+  if (cG) charts.gender = new Chart(cG, {
     type:'doughnut',
     data:{ labels:[`Female (${f})`,`Male (${m})`], datasets:[{ data:[f,m], backgroundColor:['#ec4899','#0284c7'], borderWidth:2, borderColor:border }] },
     options:{ responsive:true, maintainAspectRatio:false, cutout:'65%',
       plugins:{ legend:{ position:'bottom', labels:{ color:textColor, font:{ family:'Plus Jakarta Sans', size:11 } } } } }
   });
 
-  // 4. Category
   const catData = CATEGORIES.map(c => count(s => s.category === c));
-  document.getElementById('categorySub').textContent = CATEGORIES.map((c,i) => `${c}: ${catData[i]}`).join(' • ');
+  const cs = document.getElementById('categorySub');
+  if (cs) cs.textContent = CATEGORIES.map((c,i) => `${c}: ${catData[i]}`).join(' • ');
   destroy('category');
-  charts.category = new Chart(document.getElementById('chartCategory'), {
+  const cCat = document.getElementById('chartCategory');
+  if (cCat) charts.category = new Chart(cCat, {
     type:'pie',
     data:{ labels: CATEGORIES.map((c,i) => `${c} (${catData[i]})`),
       datasets:[{ data:catData, backgroundColor:['#f59e0b','#3b82f6','#10b981','#8b5cf6'], borderWidth:2, borderColor:border }] },
@@ -1003,14 +1256,15 @@ function initAllCharts() {
       plugins:{ legend:{ position:'bottom', labels:{ color:textColor, font:{ family:'Plus Jakarta Sans', size:11 } } } } }
   });
 
-  // 5. Backlogs
   const b0 = count(s => s.current_backlogs === 0);
   const b1 = count(s => s.current_backlogs === 1);
   const b2 = count(s => s.current_backlogs === 2);
   const b3 = count(s => s.current_backlogs >= 3);
-  document.getElementById('backlogSub').textContent = `${b0} clear • ${b1+b2+b3} with active backlogs`;
+  const bs = document.getElementById('backlogSub');
+  if (bs) bs.textContent = `${b0} clear • ${b1+b2+b3} with active backlogs`;
   destroy('backlogs');
-  charts.backlogs = new Chart(document.getElementById('chartBacklogs'), {
+  const cBl = document.getElementById('chartBacklogs');
+  if (cBl) charts.backlogs = new Chart(cBl, {
     type:'doughnut',
     data:{ labels:[`0 BL (${b0})`,`1 BL (${b1})`,`2 BL (${b2})`,`3+ BL (${b3})`],
       datasets:[{ data:[b0,b1,b2,b3], backgroundColor:['#10b981','#f59e0b','#f97316','#ef4444'], borderWidth:2, borderColor:border }] },
@@ -1061,7 +1315,6 @@ function runEligibilitySimulator() {
 
   const n = simulatorShortlist.length;
   const pct = ((n / (masterStudents.length || 1)) * 100).toFixed(1);
-
   document.getElementById('sim-eligible-count').textContent = n;
   document.getElementById('sim-total-count').textContent = masterStudents.length;
   document.getElementById('sim-eligible-pct').textContent = pct + '% Qualified';
@@ -1131,6 +1384,7 @@ function seedDemoDrive() {
 }
 
 function openDriveModal(editId) {
+  if (!hasPerm('drives')) { showToast("Your role does not permit creating/editing drives."); return; }
   const modal = document.getElementById('driveModal');
   document.getElementById('driveEditId').value = editId || '';
   document.getElementById('driveModalTitle').textContent = editId ? 'Edit Drive' : 'Create New Company Drive';
@@ -1224,6 +1478,7 @@ function updateDriveLiveCount() {
 }
 
 function saveDrive() {
+  if (!hasPerm('drives')) { showToast("Your role does not permit saving drives."); return; }
   const form = readDriveForm();
   if (!form.company) { showToast("Company name is required."); return; }
   if (form.criteria.branches.length === 0) { showToast("Select at least one branch."); return; }
@@ -1248,6 +1503,7 @@ function saveDrive() {
 }
 
 function saveSimulatorAsDrive() {
+  if (!hasPerm('drives')) { showToast("Your role does not permit creating drives."); return; }
   const c = getSimulatorCriteria();
   openDriveModal();
   document.getElementById('d-mincgpa').value = c.minCGPA;
@@ -1263,12 +1519,14 @@ function saveSimulatorAsDrive() {
 function renderDriveCards() {
   const wrap = document.getElementById('driveCards');
   if (!wrap) return;
+  const canEdit = hasPerm('drives');
+
   if (drives.length === 0) {
     wrap.innerHTML = `<div class="col-span-full bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-12 text-center">
       <i data-lucide="briefcase" class="w-10 h-10 mx-auto text-slate-300 mb-3"></i>
       <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">No drives created yet</p>
-      <p class="text-xs text-slate-400 mt-1 mb-4">Create your first company drive to generate an eligible-student shortlist instantly.</p>
-      <button onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950">Create New Drive</button>
+      <p class="text-xs text-slate-400 mt-1 mb-4">${canEdit ? 'Create your first company drive to generate an eligible-student shortlist instantly.' : 'Ask a Placement Officer or Administrator to create a drive.'}</p>
+      ${canEdit ? `<button onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950">Create New Drive</button>` : ''}
     </div>`;
     lucide.createIcons();
     return;
@@ -1298,7 +1556,7 @@ function renderDriveCards() {
         <div class="flex justify-between"><span>Drive Date:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${d.date || 'TBD'}</span></div>
         <div class="flex justify-between"><span>CTC:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${d.ctc ? d.ctc + ' LPA' : '—'}</span></div>
         <div class="flex justify-between"><span>Location:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${esc(d.location || '—')}</span></div>
-        <div class="flex justify-between"><span>Already placed in pool:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${placedInList}</span></div>
+        <div class="flex justify-between"><span>Placed in pool:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${placedInList}</span></div>
       </div>
 
       <div class="flex flex-wrap gap-1 mb-4 text-[10px]">
@@ -1313,8 +1571,9 @@ function renderDriveCards() {
         <button onclick="openDriveDetail('${d.id}')" class="flex-1 px-3 py-2 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-500 text-white transition flex items-center justify-center gap-1.5">
           <i data-lucide="eye" class="w-3.5 h-3.5"></i> Shortlist
         </button>
+        ${canEdit ? `
         <button onclick="openDriveModal('${d.id}')" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-        <button onclick="deleteDrive('${d.id}')" class="p-2 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+        <button onclick="deleteDrive('${d.id}')" class="p-2 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1322,6 +1581,7 @@ function renderDriveCards() {
 }
 
 function deleteDrive(id) {
+  if (!hasPerm('drives')) { showToast("Your role does not permit deleting drives."); return; }
   const d = drives.find(x => x.id === id);
   if (!d) return;
   if (!confirm(`Delete drive "${d.company}"? This cannot be undone.`)) return;
@@ -1337,6 +1597,7 @@ function openDriveDetail(id) {
   const d = drives.find(x => x.id === id);
   if (!d) return;
   const list = computeDriveShortlist(d.criteria);
+  const canEdit = hasPerm('drives');
 
   document.getElementById('driveDetailHeader').innerHTML = `
     <h3 class="text-xl font-black text-slate-900 dark:text-white">${esc(d.company)}</h3>
@@ -1369,7 +1630,7 @@ function openDriveDetail(id) {
           <td class="py-2 px-3">${s.category}</td>
           <td class="py-2 px-3 font-mono text-[11px]">${esc(s.phone)}</td>
           <td class="py-2 px-3 text-center">
-            <select onchange="setDriveStatus('${d.id}','${s.usn}',this.value)" class="text-[10px] font-bold rounded-lg px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <select onchange="setDriveStatus('${d.id}','${s.usn}',this.value)" ${canEdit ? '' : 'disabled'} class="text-[10px] font-bold rounded-lg px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-60">
               ${statusOptions.map(o => `<option ${o === st ? 'selected' : ''}>${o}</option>`).join('')}
             </select>
           </td>
@@ -1382,6 +1643,7 @@ function openDriveDetail(id) {
 }
 
 function setDriveStatus(driveId, usn, status) {
+  if (!hasPerm('drives')) { showToast("Your role does not permit changing drive statuses."); return; }
   const d = drives.find(x => x.id === driveId);
   if (!d) return;
   d.statuses[usn] = status;
@@ -1481,7 +1743,6 @@ function getFilteredRegistryData() {
   const gen = document.getElementById('filterRegGender').value;
   const nat = document.getElementById('filterRegNative').value;
   const plc = document.getElementById('filterRegPlaced').value;
-
   const minC = parseFloat(document.getElementById('filterMinCGPA').value);
   const maxC = parseFloat(document.getElementById('filterMaxCGPA').value);
   const minT = parseFloat(document.getElementById('filterMinTenth').value);
@@ -1499,18 +1760,15 @@ function getFilteredRegistryData() {
     if (nat !== 'ALL' && s.native !== nat) return false;
     if (plc === 'PLACED' && !s.placed) return false;
     if (plc === 'UNPLACED' && s.placed) return false;
-
     if (blF === '0' && s.current_backlogs !== 0) return false;
     if (blF === '1' && s.current_backlogs > 1) return false;
     if (blF === '2' && s.current_backlogs > 2) return false;
     if (blF === 'GT0' && s.current_backlogs === 0) return false;
-
     if (!isNaN(minC) && s.cgpa < minC) return false;
     if (!isNaN(maxC) && s.cgpa > maxC) return false;
     if (!isNaN(minT) && s.tenth_pct < minT) return false;
     if (!isNaN(minTw) && s.twelfth_pct < minTw) return false;
     if (!isNaN(maxH) && s.history_backlogs > maxH) return false;
-
     return true;
   }).sort((a, b) => {
     let va = a[currentSort.key], vb = b[currentSort.key];
@@ -1525,7 +1783,6 @@ function renderStudentRegistryTable() {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
-
   const start = (currentPage - 1) * pageSize;
   const pageData = data.slice(start, start + pageSize);
 
@@ -1536,7 +1793,6 @@ function renderStudentRegistryTable() {
   document.getElementById('btnPrevPage').disabled = currentPage <= 1;
   document.getElementById('btnNextPage').disabled = currentPage >= totalPages;
 
-  // Pagination number buttons
   const pb = document.getElementById('paginationButtons');
   let btns = '';
   const from = Math.max(1, currentPage - 2), to = Math.min(totalPages, currentPage + 2);
@@ -1554,6 +1810,7 @@ function renderStudentRegistryTable() {
     return;
   }
 
+  const canBulk = hasPerm('bulk');
   tbody.innerHTML = pageData.map((s, idx) => {
     let cgpaBadge;
     if (s.cgpa >= 8.5) cgpaBadge = `<span class="px-2 py-0.5 rounded font-mono font-black text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">${s.cgpa.toFixed(2)}</span>`;
@@ -1600,7 +1857,6 @@ function renderStudentRegistryTable() {
 
 function gotoPage(p) { currentPage = p; renderStudentRegistryTable(); }
 
-/* ---------- Bulk selection ---------- */
 function toggleSelect(id, checked) {
   if (checked) selectedIds.add(id); else selectedIds.delete(id);
   updateBulkBar();
@@ -1628,6 +1884,7 @@ function updateBulkBar() {
 function getSelectedStudents() { return masterStudents.filter(s => selectedIds.has(s._id)); }
 
 function markSelectedPlaced() {
+  if (!hasPerm('bulk')) { showToast("Your role does not permit bulk edits."); return; }
   const sel = getSelectedStudents();
   if (sel.length === 0) return;
   const company = prompt(`Mark ${sel.length} student(s) as PLACED.\n\nEnter company name:`);
@@ -1686,7 +1943,7 @@ function closeProfileModal() {
 }
 
 /* =========================================================================
-   PDF ENGINE  (jsPDF + AutoTable)
+   PDF ENGINE
    ========================================================================= */
 function buildPDF(opts) {
   const { jsPDF } = window.jspdf;
@@ -1694,7 +1951,6 @@ function buildPDF(opts) {
   const pw = doc.internal.pageSize.getWidth();
   const ph = doc.internal.pageSize.getHeight();
 
-  // Header band
   doc.setFillColor(12, 74, 110);
   doc.rect(0, 0, pw, 56, 'F');
   doc.setFillColor(217, 119, 6);
@@ -1709,19 +1965,20 @@ function buildPDF(opts) {
   doc.setFontSize(8);
   doc.text('Generated: ' + new Date().toLocaleString('en-IN'), pw - 28, 24, { align:'right' });
   if (opts.docLabel) doc.text(opts.docLabel, pw - 28, 40, { align:'right' });
+  if (currentUser) doc.text('By: ' + currentUser.name + ' (' + ROLE_META[currentUser.role].label + ')', pw - 28, 50, { align:'right' });
 
-  // Title
   doc.setTextColor(15, 23, 42);
   doc.setFont('helvetica','bold'); doc.setFontSize(12);
   doc.text(opts.title, 28, 82);
 
   doc.setFont('helvetica','normal'); doc.setFontSize(8);
   doc.setTextColor(100, 116, 139);
+  let startY = 92;
   if (opts.subtitle) {
     const lines = doc.splitTextToSize(opts.subtitle, pw - 56);
     doc.text(lines, 28, 96);
+    startY = 96 + (lines.length * 10) + 8;
   }
-  const startY = opts.subtitle ? 96 + (doc.splitTextToSize(opts.subtitle, pw - 56).length * 10) + 8 : 92;
 
   doc.autoTable({
     head: [opts.headers],
@@ -1755,6 +2012,7 @@ function studentRows(list) {
 }
 
 function exportRegistryPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const data = getFilteredRegistryData();
   if (data.length === 0) { showToast("No records to export."); return; }
   buildPDF({
@@ -1782,7 +2040,6 @@ function buildFilterSummary() {
   const minT = document.getElementById('filterMinTenth').value;
   const minTw = document.getElementById('filterMinTwelfth').value;
   const maxH = document.getElementById('filterMaxHistBL').value;
-
   if (q) bits.push(`Search: "${q}"`);
   if (b !== 'ALL') bits.push(`Branch: ${b}`);
   if (bl !== 'ALL') bits.push(`Current BL: ${bl}`);
@@ -1796,11 +2053,11 @@ function buildFilterSummary() {
   if (minTw) bits.push(`12th ≥ ${minTw}%`);
   if (maxH) bits.push(`History BL ≤ ${maxH}`);
   bits.push(`Sorted by ${currentSort.key} (${currentSort.asc ? 'asc' : 'desc'})`);
-
   return 'Filters applied → ' + (bits.length ? bits.join(' | ') : 'None (full cohort)');
 }
 
 function exportSelectedPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const sel = getSelectedStudents();
   if (sel.length === 0) { showToast("No students selected."); return; }
   buildPDF({
@@ -1815,6 +2072,7 @@ function exportSelectedPDF() {
 }
 
 function exportSingleStudentPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const s = masterStudents.find(x => x._id === activeStudentId);
   if (!s) return;
   buildPDF({
@@ -1841,6 +2099,7 @@ function exportSingleStudentPDF() {
 }
 
 function exportShortlistPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   if (simulatorShortlist.length === 0) { showToast("Shortlist is empty."); return; }
   const c = getSimulatorCriteria();
   buildPDF({
@@ -1855,6 +2114,7 @@ function exportShortlistPDF() {
 }
 
 function exportActiveDrivePDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const d = drives.find(x => x.id === activeDriveId);
   if (!d) { showToast("No active drive."); return; }
   const list = computeDriveShortlist(d.criteria);
@@ -1871,6 +2131,7 @@ function exportActiveDrivePDF() {
 }
 
 function exportActiveDriveCSV() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const d = drives.find(x => x.id === activeDriveId);
   if (!d) return;
   const list = computeDriveShortlist(d.criteria);
@@ -1881,6 +2142,7 @@ function exportActiveDriveCSV() {
 }
 
 function exportAllDrivesPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   if (drives.length === 0) { showToast("No drives to export."); return; }
   const rows = drives.map(d => {
     const list = computeDriveShortlist(d.criteria);
@@ -1901,6 +2163,7 @@ function exportAllDrivesPDF() {
 }
 
 function exportAnalyticsPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const n = masterStudents.length || 1;
   const zeroBL = masterStudents.filter(s => s.current_backlogs === 0).length;
   const cleanH = masterStudents.filter(s => s.history_backlogs === 0).length;
@@ -1943,15 +2206,13 @@ function exportAnalyticsPDF() {
   doc.text('Department of Training & Placement — Placement Readiness Report', 28, 40);
   doc.setFontSize(8);
   doc.text('Generated: ' + new Date().toLocaleString('en-IN'), pw - 28, 24, { align:'right' });
+  if (currentUser) doc.text('By: ' + currentUser.name + ' (' + ROLE_META[currentUser.role].label + ')', pw - 28, 40, { align:'right' });
 
   doc.setTextColor(15,23,42); doc.setFont('helvetica','bold'); doc.setFontSize(13);
   doc.text('Cohort Summary', 28, 88);
 
   doc.autoTable({
-    head: [['Metric', 'Value']],
-    body: summary,
-    startY: 98,
-    theme: 'striped',
+    head: [['Metric', 'Value']], body: summary, startY: 98, theme: 'striped',
     styles: { fontSize: 8.5, cellPadding: 5 },
     headStyles: { fillColor: [2,132,199], textColor: 255, fontStyle:'bold' },
     margin: { left: 28, right: 28 }
@@ -1963,9 +2224,7 @@ function exportAnalyticsPDF() {
 
   doc.autoTable({
     head: [['Code','Department','Registered','0 Curr BL','Eligibility %','Mean CGPA','F / M']],
-    body: branchRows,
-    startY: afterY + 10,
-    theme: 'grid',
+    body: branchRows, startY: afterY + 10, theme: 'grid',
     styles: { fontSize: 7.8, cellPadding: 4 },
     headStyles: { fillColor: [2,132,199], textColor: 255, fontStyle:'bold', halign:'center' },
     margin: { left: 28, right: 28 },
@@ -1982,6 +2241,7 @@ function exportAnalyticsPDF() {
 }
 
 function exportBranchPDF() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const rows = ALL_BRANCHES.filter(b => masterStudents.some(s => s.branch === b)).map(b => {
     const list = masterStudents.filter(s => s.branch === b);
     const z = list.filter(s => s.current_backlogs === 0).length;
@@ -2026,11 +2286,13 @@ function masterRow(s, i) {
 }
 
 function exportMasterCSV() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   downloadCSV(MASTER_HEADERS, masterStudents.map(masterRow), `BEC_Placement_Master_${masterStudents.length}_Students.csv`);
   showToast("Master CSV downloaded.");
 }
 
 function exportRecruiterShortlistCSV() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const list = simulatorShortlist.length > 0 ? simulatorShortlist : masterStudents;
   const headers = ['Sl.No','USN','Name','Branch','Gender','CGPA','Current_Backlogs','History_Backlogs','10th_Pct','12th_Pct','Category','Email','Phone','Native_Place','Drive_Status'];
   const rows = list.map((s, i) => [...masterRow(s, i).slice(0, 14), 'Eligible & Shortlisted']);
@@ -2039,6 +2301,7 @@ function exportRecruiterShortlistCSV() {
 }
 
 function exportSelectedCSV() {
+  if (!hasPerm('export')) { showToast("Your role does not permit exports."); return; }
   const sel = getSelectedStudents();
   if (sel.length === 0) { showToast("No students selected."); return; }
   downloadCSV(MASTER_HEADERS, sel.map(masterRow), `BEC_Selected_${sel.length}.csv`);
@@ -2091,7 +2354,10 @@ function renderBranchMatrix() {
 /* =========================================================================
    UPLOAD
    ========================================================================= */
-function openUploadModal() { const m = document.getElementById('uploadModal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+function openUploadModal() {
+  if (!hasPerm('upload')) { showToast("Your role does not permit uploading data."); return; }
+  const m = document.getElementById('uploadModal'); m.classList.remove('hidden'); m.classList.add('flex');
+}
 function closeUploadModal() { const m = document.getElementById('uploadModal'); m.classList.add('hidden'); m.classList.remove('flex'); }
 
 function handleFileDrop(e) {
@@ -2104,9 +2370,10 @@ function handleFileSelect(e) {
 }
 
 function parseUploadedFile(file) {
+  if (!hasPerm('upload')) { showToast("Your role does not permit uploads."); return; }
   const name = file.name.toLowerCase();
   if (name.endsWith('.csv')) {
-    Papa.parse(file, { header:true, skipEmptyLines:true, complete: r => processParsedRows(r.data) });
+    Papa.parse(file, { header:true, skipEmptyLines:true, complete: r => processParsedRows(r.data, file.name) });
   } else {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -2114,7 +2381,7 @@ function parseUploadedFile(file) {
       const wb = XLSX.read(data, { type:'array' });
       const ws = wb.Sheets[wb.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(ws, { defval:"" });
-      processParsedRows(json);
+      processParsedRows(json, file.name);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -2133,7 +2400,7 @@ function pick(row, keys, fallback) {
   return fallback;
 }
 
-function processParsedRows(rows) {
+function processParsedRows(rows, filename) {
   if (!rows || rows.length === 0) { showToast("Error: the file contains no rows."); return; }
 
   const imported = rows.map((r, i) => {
@@ -2153,15 +2420,10 @@ function processParsedRows(rows) {
     const native = String(pick(r, ['Native_Place','Native Place','Native','District','Hometown'], 'Bagalkote')).trim();
 
     return {
-      _id: 'S' + (i + 1),
-      slNo: i + 1,
-      usn, name, gender,
-      branch: ALL_BRANCHES.includes(branch) ? branch : branch,
-      category: CATEGORIES.includes(category) ? category : category,
-      cgpa, current_backlogs: currBL, history_backlogs: histBL,
+      _id: 'S' + (i + 1), slNo: i + 1, usn, name, gender, branch, category, cgpa,
+      current_backlogs: currBL, history_backlogs: histBL,
       tenth_pct: tenth, twelfth_pct: twelfth,
-      native, email, phone,
-      placed: false, company: '', ctc: ''
+      native, email, phone, placed: false, company: '', ctc: ''
     };
   });
 
@@ -2171,11 +2433,11 @@ function processParsedRows(rows) {
   saveState();
   closeUploadModal();
   refreshEverything();
-  showToast(`Loaded ${imported.length} students from "${file_placeholder_name}".`);
+  showToast(`Loaded ${imported.length} students from "${filename}".`);
 }
-let file_placeholder_name = 'uploaded sheet';
 
 function restoreOriginalDataset() {
+  if (!hasPerm('upload')) { showToast("Your role does not permit data management."); return; }
   masterStudents = generateBECDataset();
   drives = [];
   selectedIds.clear();
