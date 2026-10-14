@@ -86,7 +86,7 @@
   </div>
 </nav>
 
-<!-- ================= CODE ENTRY VIEW (only thing on screen) ================= -->
+<!-- ================= CODE ENTRY VIEW ================= -->
 <div id="codeView" class="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
   <div class="w-full max-w-[460px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up">
     <div class="p-8">
@@ -137,13 +137,11 @@
       </div>
     </div>
 
-    <!-- Class switcher pills (recent classes visited) -->
     <div id="recentClassesRow" class="mb-6 hidden">
       <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-2">Recent classes</div>
       <div id="recentClassesList" class="flex flex-wrap gap-2"></div>
     </div>
 
-    <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
         <div>
@@ -179,7 +177,6 @@
       </div>
     </div>
 
-    <!-- Main grid -->
     <div class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
 
       <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
@@ -223,9 +220,10 @@
       </div>
     </div>
 
+    <!-- FIX: footer text — no realtime channels used -->
     <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
       <i class="bi bi-lightning-charge-fill text-amber-500"></i>
-      Connected to Supabase • Real-time sync
+      Connected to Supabase • Live data
     </div>
   </div>
 </div>
@@ -308,7 +306,7 @@ function applyTheme(theme) {
   try { localStorage.setItem('student-theme', theme); } catch (e) {}
 }
 
-/* ==================== RECENT CLASSES (localStorage) ==================== */
+/* ==================== RECENT CLASSES ==================== */
 function loadRecent() {
   try {
     const raw = localStorage.getItem(RECENT_KEY);
@@ -352,7 +350,6 @@ async function loadClassByCode(rawCode) {
 
   state.loading = true;
   try {
-    // 1. Fetch class
     const { data: cls, error: cErr } = await db.from('classes')
       .select('*')
       .eq('class_code', code)
@@ -375,7 +372,6 @@ async function loadClassByCode(rawCode) {
     saveRecent(code);
     renderRecent();
 
-    // 2. Load posts + attendance in parallel
     const [postsRes, attRes] = await Promise.all([
       db.from('posts').select('*').eq('class_code', code).order('created_at', { ascending: false }),
       db.from('attendance').select('*').eq('class_code', code).order('created_at', { ascending: false })
