@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEC Placement & Eligibility Intelligence Hub | Basaveshwar Engineering College</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: { extend: {
+    fontFamily: { sans: ['"Plus Jakarta Sans"','sans-serif'], mono: ['"JetBrains Mono"','monospace'] },
+    colors: { bec: { 50:'#f0f7ff',100:'#e0effe',200:'#bae0fd',500:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e',gold:'#d97706' } }
+  }}
+}
+</script>
+<style>
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#94a3b8; border-radius:9999px; }
+  .dark ::-webkit-scrollbar-thumb { background:#475569; }
+  .tbl-head th { position:sticky; top:0; z-index:5; }
+  @media print {
+    .no-print { display:none !important; }
+    body { background:#fff !important; color:#000 !important; }
+    #view-registry, #view-branches { display:block !important; }
+    .hidden-print { display:none !important; }
+  }
+</style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+<!-- ==================== HEADER ==================== -->
+<header class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm no-print">
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20 gap-3">
+
+      <div class="flex items-center gap-3.5 min-w-0">
+        <div class="h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-tr from-sky-800 via-sky-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-sky-700/20 ring-2 ring-amber-400/50">
+          <i data-lucide="shield-check" class="w-7 h-7 text-amber-200"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] font-bold tracking-wider uppercase text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800/60">Estd. 1963 • Autonomous NAAC 'A'</span>
+            <span id="syncBadge" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Auto-saved locally
+            </span>
+          </div>
+          <h1 class="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-0.5 truncate">
+            Basaveshwar Engineering College (Autonomous), Bagalkote
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
+            Department of Training &amp; Placement • Registration, Drive Creation &amp; Eligibility Intelligence Hub
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="openDriveModal()" class="hidden md:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i><span>New Drive</span>
+        </button>
+        <button onclick="openUploadModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 transition shadow-sm">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i><span class="hidden sm:inline">Upload Sheet</span>
+        </button>
+        <button onclick="exportRegistryPDF()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition">
+          <i data-lucide="file-text" class="w-4 h-4"></i><span class="hidden lg:inline">PDF</span>
+        </button>
+        <button onclick="exportMasterCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <i data-lucide="download" class="w-4 h-4"></i><span class="hidden xl:inline">Master CSV</span>
+        </button>
+        <button onclick="window.print()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition border border-slate-200 dark:border-slate-700" title="Print">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+        </button>
+        <button onclick="toggleDarkMode()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition border border-slate-200 dark:border-slate-700" title="Toggle theme">
+          <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <div class="flex items-center space-x-1 border-t border-slate-200/80 dark:border-slate-800/80 py-2 text-xs sm:text-sm font-semibold overflow-x-auto">
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics &amp; Ratios
+      </button>
+      <button onclick="switchTab('drives')" id="nav-drives" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="briefcase" class="w-4 h-4"></i> Company Drives
+        <span id="drives-pill" class="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 font-mono font-bold">0</span>
+      </button>
+      <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="sliders" class="w-4 h-4"></i> Eligibility Simulator
+        <span id="simulator-pill-count" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold">0</span>
+      </button>
+      <button onclick="switchTab('registry')" id="nav-registry" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="users-2" class="w-4 h-4"></i> Student Registry
+        <span id="registry-pill" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-bold">0</span>
+      </button>
+      <button onclick="switchTab('branches')" id="nav-branches" class="nav-btn px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="network" class="w-4 h-4"></i> Department Breakdowns
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow space-y-6">
+
+  <!-- ==================== KPI CARDS ==================== -->
+  <section id="kpiRow" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3"></section>
+
+  <!-- ==================== TAB 1: ANALYTICS ==================== -->
+  <div id="view-analytics" class="space-y-6">
+    <div class="p-4 bg-gradient-to-r from-sky-900 via-slate-900 to-indigo-950 rounded-2xl text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md"><i data-lucide="award" class="w-6 h-6 text-amber-400"></i></div>
+        <div>
+          <h2 class="text-base font-bold text-white">Drive Readiness Assessment</h2>
+          <p id="analyticsCallout" class="text-xs text-sky-200 mt-0.5">Loading…</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+        <button onclick="presetFilter('tier1_super')" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-sm">Tier-1 Super Dream</button>
+        <button onclick="presetFilter('mass_it')" class="px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-semibold text-xs transition border border-sky-500/50">Standard IT Drive</button>
+        <button onclick="exportAnalyticsPDF()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition border border-white/20 flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF Report
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-sky-600"></i> Branch-Wise Registration Volume</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Total registered final-year candidates per department</p>
+          </div>
+          <span id="branchCountBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">—</span>
+        </div>
+        <div class="relative h-72 w-full"><canvas id="chartBranches"></canvas></div>
+      </div>
+      <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4 text-amber-500"></i> BE CGPA Tier Distribution</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Academic performance brackets across cohort</p>
+          </div>
+          <span id="meanCgpaBadge" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded">Mean: —</span>
+        </div>
+        <div class="relative h-72 w-full"><canvas id="chartCGPATiers"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Gender Balance</h3>
+        <p id="genderSub" class="text-xs text-slate-500 mb-3">—</p>
+        <div class="relative h-60 w-full"><canvas id="chartGenderRatio"></canvas></div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Social Category Breakdown</h3>
+        <p id="categorySub" class="text-xs text-slate-500 mb-3">—</p>
+        <div class="relative h-60 w-full"><canvas id="chartCategory"></canvas></div>
+      </div>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Arrear Profile</h3>
+        <p id="backlogSub" class="text-xs text-slate-500 mb-3">—</p>
+        <div class="relative h-60 w-full"><canvas id="chartBacklogs"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: COMPANY DRIVES ==================== -->
+  <div id="view-drives" class="hidden space-y-5">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="briefcase" class="w-5 h-5 text-amber-500"></i> Company Drive Manager
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Create a drive with its eligibility criteria — the eligible pool is computed live from your uploaded student data.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="exportAllDrivesPDF()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 transition flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> All Drives PDF
+        </button>
+        <button onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 transition flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Create New Drive
+        </button>
+      </div>
+    </div>
+    <div id="driveCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+  </div>
+
+  <!-- ==================== TAB 3: SIMULATOR ==================== -->
+  <div id="view-simulator" class="hidden space-y-6">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">Recruiter Drive Shortlisting Engine</span>
+          <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mt-1">Live Candidate Eligibility Simulator</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Tweak the criteria — the shortlist recalculates instantly across the whole registered cohort.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="resetSimulatorDefaults()" class="px-3 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 transition">Reset</button>
+          <button onclick="saveSimulatorAsDrive()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md shadow-amber-500/20 flex items-center gap-2 transition">
+            <i data-lucide="save" class="w-4 h-4"></i> Save as Drive
+          </button>
+          <button onclick="exportShortlistPDF()" class="px-4 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/20 flex items-center gap-2 transition">
+            <i data-lucide="file-text" class="w-4 h-4"></i> PDF
+          </button>
+          <button onclick="exportRecruiterShortlistCSV()" class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 flex items-center gap-2 transition">
+            <i data-lucide="file-check-2" class="w-4 h-4"></i> Excel/CSV (<span id="btn-export-count">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Min BE CGPA</label>
+            <span id="label-min-cgpa" class="text-sm font-black font-mono px-2 py-0.5 rounded bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">6.00</span>
+          </div>
+          <input type="range" id="sim-min-cgpa" min="5" max="9.5" step="0.25" value="6" oninput="runEligibilitySimulator()" class="w-full accent-sky-600 cursor-pointer">
+          <div class="flex justify-between text-[10px] text-slate-400 font-mono"><span>5.0</span><span>6.5</span><span>7.5</span><span>9.5</span></div>
+        </div>
+
+        <div class="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
+          <label class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">Max Current Backlogs</label>
+          <select id="sim-max-curr-backlog" onchange="runEligibilitySimulator()" class="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="0" selected>Strictly 0 (No Active Backlogs)</option>
+            <option value="1">Max 1 Active Backlog</option>
+            <option value="2">Max 2 Active Backlogs</option>
+            <option value="99">Any (Ignore)</option>
+          </select>
+          <p class="text-[11px] text-slate-500">Corporate norm: 0 standing arrears.</p>
+        </div>
+
+        <div class="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
+          <label class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">History Backlog Rule</label>
+          <select id="sim-max-hist-backlog" onchange="runEligibilitySimulator()" class="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="99" selected>Any History</option>
+            <option value="0">Strictly Clean History</option>
+            <option value="1">Max 1 Historical Backlog</option>
+            <option value="2">Max 2 Historical Backlogs</option>
+          </select>
+          <p class="text-[11px] text-slate-500">Used by core recruiters (Mercedes, L&amp;T, TI).</p>
+        </div>
+
+        <div class="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Min 10th / 12th %</label>
+            <span id="label-min-school" class="text-sm font-black font-mono px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">60%</span>
+          </div>
+          <input type="range" id="sim-min-school" min="50" max="90" step="5" value="60" oninput="runEligibilitySimulator()" class="w-full accent-amber-600 cursor-pointer">
+          <div class="flex justify-between text-[10px] text-slate-400 font-mono"><span>50%</span><span>60%</span><span>75%</span><span>90%</span></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <i data-lucide="check-square" class="w-4 h-4 text-sky-600"></i> Eligible Branches
+          </span>
+          <div class="flex items-center gap-2 text-xs flex-wrap">
+            <button onclick="selectAllBranches(true)" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold">All</button><span class="text-slate-300">|</span>
+            <button onclick="selectCircuitBranches()" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold">Circuit Only</button><span class="text-slate-300">|</span>
+            <button onclick="selectCoreBranches()" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold">Core Only</button><span class="text-slate-300">|</span>
+            <button onclick="selectAllBranches(false)" class="text-slate-500 hover:underline">Clear</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2" id="sim-branch-checkboxes"></div>
+      </div>
+
+      <div class="p-6 bg-gradient-to-r from-slate-900 to-sky-950 text-white flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="h-14 w-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300">
+            <i data-lucide="user-check-2" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-3xl font-black font-mono text-emerald-400" id="sim-eligible-count">0</span>
+              <span class="text-slate-400 text-sm font-medium">/ <span id="sim-total-count">0</span> Candidates</span>
+              <span id="sim-eligible-pct" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">0% Qualified</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              Avg shortlisted CGPA: <strong class="text-white font-mono" id="sim-shortlist-avg-cgpa">0.00</strong> •
+              Female share: <strong class="text-pink-300 font-mono" id="sim-shortlist-female">0%</strong> •
+              Already placed in pool: <strong class="text-amber-300 font-mono" id="sim-shortlist-placed">0</strong>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="viewSimulatorInRegistry()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition flex items-center gap-1.5">
+            <i data-lucide="eye" class="w-4 h-4"></i> View in Table
+          </button>
+          <button onclick="exportRecruiterShortlistCSV()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Download for Company
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 4: REGISTRY ==================== -->
+  <div id="view-registry" class="hidden space-y-4">
+    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 no-print">
+      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+        <div class="relative flex-1 min-w-[240px]">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+          <input type="text" id="registrySearch" placeholder="Search USN, Name, Email, Native Place, Company…" oninput="applyRegistryFilters()"
+            class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 dark:text-white">
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="filterRegBranch" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"></select>
+          <select id="filterRegBacklogs" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">All Current BL</option>
+            <option value="0">0 Current Backlogs</option>
+            <option value="1">≤ 1 Current Backlog</option>
+            <option value="2">≤ 2 Current Backlogs</option>
+            <option value="GT0">Has Active Backlogs</option>
+          </select>
+          <select id="filterRegCategory" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">All Categories</option><option>GM</option><option>OBC</option><option>SC</option><option>ST</option>
+          </select>
+          <select id="filterRegGender" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">All Genders</option><option>Female</option><option>Male</option>
+          </select>
+          <button onclick="toggleAdvancedFilters()" class="text-xs font-bold px-3 py-2 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 transition flex items-center gap-1.5">
+            <i data-lucide="filter" class="w-3.5 h-3.5"></i> More Filters
+          </button>
+          <button onclick="resetRegistryFilters()" class="text-xs font-semibold px-3 py-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition">Reset</button>
+        </div>
+      </div>
+
+      <!-- ADVANCED FILTERS -->
+      <div id="advancedFilters" class="hidden pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-3">
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min CGPA</label>
+          <input type="number" id="filterMinCGPA" step="0.1" min="0" max="10" placeholder="5.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max CGPA</label>
+          <input type="number" id="filterMaxCGPA" step="0.1" min="0" max="10" placeholder="10.0" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 10th %</label>
+          <input type="number" id="filterMinTenth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Min 12th/Dip %</label>
+          <input type="number" id="filterMinTwelfth" step="1" min="0" max="100" placeholder="60" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Max History BL</label>
+          <input type="number" id="filterMaxHistBL" step="1" min="0" placeholder="Any" oninput="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Native District</label>
+          <select id="filterRegNative" onchange="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">All Districts</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Placement Status</label>
+          <select id="filterRegPlaced" onchange="applyRegistryFilters()" class="w-full px-2.5 py-2 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="ALL">All</option>
+            <option value="PLACED">Placed</option>
+            <option value="UNPLACED">Not Yet Placed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <div class="text-slate-500 dark:text-slate-400">
+          Showing <strong id="regShowingCount" class="text-slate-800 dark:text-slate-200">0</strong> of
+          <strong id="regTotalCount" class="text-slate-800 dark:text-slate-200">0</strong> students
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-slate-500">Sort by</span>
+          <select id="regSortKey" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5">
+            <option value="cgpa">CGPA</option><option value="usn">USN</option><option value="name">Name</option>
+            <option value="branch">Branch</option><option value="current_backlogs">Current Backlogs</option>
+            <option value="history_backlogs">History Backlogs</option><option value="tenth_pct">10th %</option>
+            <option value="twelfth_pct">12th %</option><option value="category">Category</option><option value="native">Native</option>
+          </select>
+          <select id="regSortDir" onchange="applyRegistryFilters()" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5">
+            <option value="desc">High → Low / Z → A</option>
+            <option value="asc">Low → High / A → Z</option>
+          </select>
+          <select id="regPageSize" onchange="changePageSize(this.value)" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5">
+            <option value="25">25 / page</option><option value="50" selected>50 / page</option>
+            <option value="100">100 / page</option><option value="1000">All</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- BULK ACTION BAR -->
+      <div id="bulkBar" class="hidden items-center justify-between gap-3 p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800">
+        <span class="text-xs font-bold text-sky-800 dark:text-sky-300"><span id="bulkCount">0</span> student(s) selected</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="exportSelectedCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100">Export CSV</button>
+          <button onclick="exportSelectedPDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500">Export PDF</button>
+          <button onclick="markSelectedPlaced()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">Mark Placed</button>
+          <button onclick="clearSelection()" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto max-h-[70vh]">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="tbl-head">
+            <tr class="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-3 text-center w-10 no-print"><input type="checkbox" id="selectAllPage" onchange="toggleSelectAllPage(this.checked)" class="accent-sky-600 cursor-pointer"></th>
+              <th class="py-3 px-3 text-center w-12">#</th>
+              <th class="py-3 px-3 cursor-pointer hover:text-sky-600 whitespace-nowrap" onclick="sortRegistry('usn')">USN <span class="sort-ind" data-k="usn"></span></th>
+              <th class="py-3 px-4 cursor-pointer hover:text-sky-600" onclick="sortRegistry('name')">Student Name <span class="sort-ind" data-k="name"></span></th>
+              <th class="py-3 px-3 cursor-pointer hover:text-sky-600" onclick="sortRegistry('branch')">Dept <span class="sort-ind" data-k="branch"></span></th>
+              <th class="py-3 px-2 text-center">Gen</th>
+              <th class="py-3 px-3 text-center cursor-pointer hover:text-sky-600" onclick="sortRegistry('cgpa')">BE CGPA <span class="sort-ind" data-k="cgpa"></span></th>
+              <th class="py-3 px-2 text-center cursor-pointer hover:text-sky-600" title="Current active backlogs" onclick="sortRegistry('current_backlogs')">Curr BL <span class="sort-ind" data-k="current_backlogs"></span></th>
+              <th class="py-3 px-2 text-center cursor-pointer hover:text-sky-600" title="History backlogs" onclick="sortRegistry('history_backlogs')">Hist BL <span class="sort-ind" data-k="history_backlogs"></span></th>
+              <th class="py-3 px-3 text-right cursor-pointer hover:text-sky-600" onclick="sortRegistry('tenth_pct')">10th % <span class="sort-ind" data-k="tenth_pct"></span></th>
+              <th class="py-3 px-3 text-right cursor-pointer hover:text-sky-600" onclick="sortRegistry('twelfth_pct')">12th % <span class="sort-ind" data-k="twelfth_pct"></span></th>
+              <th class="py-3 px-3 cursor-pointer hover:text-sky-600" onclick="sortRegistry('category')">Category <span class="sort-ind" data-k="category"></span></th>
+              <th class="py-3 px-3 cursor-pointer hover:text-sky-600" onclick="sortRegistry('native')">Native <span class="sort-ind" data-k="native"></span></th>
+              <th class="py-3 px-3 text-center">Placement</th>
+              <th class="py-3 px-3 text-center no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/70 font-medium"></tbody>
+        </table>
+      </div>
+      <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs no-print">
+        <div class="text-slate-500 dark:text-slate-400">
+          Page <span id="regCurrentPage" class="font-bold text-slate-900 dark:text-white">1</span> of
+          <span id="regTotalPages" class="font-bold text-slate-900 dark:text-white">1</span>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="changePage(-1)" id="btnPrevPage" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold hover:bg-slate-100 disabled:opacity-40">Previous</button>
+          <div id="paginationButtons" class="hidden sm:flex items-center space-x-1"></div>
+          <button onclick="changePage(1)" id="btnNextPage" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold hover:bg-slate-100 disabled:opacity-40">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 5: BRANCHES ==================== -->
+  <div id="view-branches" class="hidden space-y-6">
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Branch-Wise Placement Intelligence Matrix</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Departmental breakdown of the registered cohort</p>
+        </div>
+        <button onclick="exportBranchPDF()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-2 transition no-print">
+          <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs md:text-sm">
+          <thead class="bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase text-[11px] border-b border-slate-200 dark:border-slate-700">
+            <tr>
+              <th class="py-3 px-4">Engineering Department</th>
+              <th class="py-3 px-3 text-center">Registered</th>
+              <th class="py-3 px-3 text-center">0 Current BL</th>
+              <th class="py-3 px-3 text-center">Eligibility %</th>
+              <th class="py-3 px-3 text-center">Clean History</th>
+              <th class="py-3 px-3 text-center">Mean CGPA</th>
+              <th class="py-3 px-3 text-center">Topper</th>
+              <th class="py-3 px-3 text-center">Gender (F/M)</th>
+            </tr>
+          </thead>
+          <tbody id="branchMatrixBody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== STUDENT PROFILE MODAL ==================== -->
+<div id="profileModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[90vh] overflow-y-auto">
+    <button onclick="closeProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <div class="flex items-start gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div id="modal-avatar" class="w-16 h-16 rounded-2xl bg-sky-600 text-white font-extrabold text-xl flex items-center justify-center shadow-md">--</div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="modal-dept-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">CSE</span>
+          <span id="modal-elig-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">Drive Eligible</span>
+        </div>
+        <h2 id="modal-name" class="text-xl font-black text-slate-900 dark:text-white mt-1">Student Full Name</h2>
+        <p id="modal-usn" class="text-xs font-mono font-semibold text-slate-500">—</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">BE Aggregate CGPA</span><span id="modal-cgpa" class="text-base font-black text-sky-600 dark:text-sky-400 font-mono">0.00</span></div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">Current Backlogs</span><span id="modal-curr-bl" class="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">0</span></div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">History Backlogs</span><span id="modal-hist-bl" class="text-base font-black text-indigo-600 dark:text-indigo-400 font-mono">0</span></div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">10th (SSLC)</span><span id="modal-10th" class="text-base font-bold font-mono">0.0%</span></div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">12th / Diploma</span><span id="modal-12th" class="text-base font-bold font-mono">0.0%</span></div>
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">Category</span><span id="modal-category" class="text-base font-bold">OBC</span></div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs">
+      <div class="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800/50"><span class="text-slate-500">Official Email:</span><span id="modal-email" class="font-mono font-medium"></span></div>
+      <div class="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800/50"><span class="text-slate-500">Mobile Contact:</span><span id="modal-phone" class="font-mono font-medium"></span></div>
+      <div class="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800/50"><span class="text-slate-500">Native Place:</span><span id="modal-native" class="font-semibold"></span></div>
+      <div class="flex items-center justify-between py-1"><span class="text-slate-500">Placement Status:</span><span id="modal-placed" class="px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">—</span></div>
+    </div>
+    <div class="mt-6 flex justify-end gap-2">
+      <button onclick="exportSingleStudentPDF()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
+      <button onclick="closeProfileModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold transition">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DRIVE MODAL ==================== -->
+<div id="driveModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
+    <button onclick="closeDriveModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <div class="flex items-center gap-3 mb-5">
+      <div class="p-3 bg-amber-50 dark:bg-amber-950 text-amber-600 rounded-2xl"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
+      <div>
+        <h3 id="driveModalTitle" class="text-lg font-extrabold text-slate-900 dark:text-white">Create New Company Drive</h3>
+        <p class="text-xs text-slate-500">Define the drive and its eligibility criteria — the shortlist computes automatically.</p>
+      </div>
+    </div>
+
+    <input type="hidden" id="driveEditId">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Company Name *</label>
+        <input id="d-company" type="text" placeholder="e.g. Mercedes-Benz R&D" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Role / Job Profile</label>
+        <input id="d-role" type="text" placeholder="e.g. Graduate Engineer Trainee" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Drive Date</label>
+        <input id="d-date" type="date" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">CTC (LPA)</label>
+        <input id="d-ctc" type="text" placeholder="e.g. 12.5" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Drive Type</label>
+        <select id="d-type" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <option>Super Dream</option><option>Dream</option><option selected>Standard</option><option>Internship</option><option>Core / PSU</option>
+        </select></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Job Location</label>
+        <input id="d-location" type="text" placeholder="e.g. Bengaluru" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Min CGPA</label>
+        <input id="d-mincgpa" type="number" step="0.1" value="6.0" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Max Current Backlogs</label>
+        <input id="d-currbl" type="number" min="0" value="0" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Max History Backlogs</label>
+        <input id="d-histbl" type="number" min="0" value="99" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Min 10th %</label>
+        <input id="d-tenth" type="number" value="60" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Min 12th / Diploma %</label>
+        <input id="d-twelfth" type="number" value="60" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></div>
+      <div><label class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Allow Already-Placed Students?</label>
+        <select id="d-includeplaced" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <option value="yes" selected>Yes — allow</option><option value="no">No — exclude placed</option>
+        </select></div>
+    </div>
+
+    <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+      <div>
+        <label class="font-bold uppercase text-slate-500 text-[10px] block mb-2">Eligible Branches</label>
+        <div id="d-branches" class="grid grid-cols-3 gap-1.5"></div>
+        <div class="flex gap-2 mt-2">
+          <button type="button" onclick="driveBranchAll(true)" class="text-sky-600 hover:underline font-semibold">All</button>
+          <button type="button" onclick="driveBranchCircuit()" class="text-sky-600 hover:underline font-semibold">Circuit</button>
+          <button type="button" onclick="driveBranchAll(false)" class="text-slate-500 hover:underline">Clear</button>
+        </div>
+      </div>
+      <div>
+        <label class="font-bold uppercase text-slate-500 text-[10px] block mb-2">Gender</label>
+        <div id="d-genders" class="space-y-1.5">
+          <label class="flex items-center gap-2"><input type="checkbox" value="Female" class="d-gender accent-sky-600" checked> Female</label>
+          <label class="flex items-center gap-2"><input type="checkbox" value="Male" class="d-gender accent-sky-600" checked> Male</label>
+        </div>
+        <label class="font-bold uppercase text-slate-500 text-[10px] block mb-2 mt-4">Category</label>
+        <div id="d-categories" class="grid grid-cols-2 gap-1.5"></div>
+      </div>
+      <div>
+        <label class="font-bold uppercase text-slate-500 text-[10px] block mb-2">Notes / Instructions</label>
+        <textarea id="d-notes" rows="6" placeholder="Bond period, service agreement, interview rounds…" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+      </div>
+    </div>
+
+    <div class="mt-5 p-3 rounded-xl bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800 flex items-center justify-between">
+      <span class="text-xs font-semibold text-sky-800 dark:text-sky-300">Live eligible count with these criteria:</span>
+      <span id="d-livecount" class="text-lg font-black font-mono text-sky-700 dark:text-sky-300">0</span>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-2">
+      <button onclick="closeDriveModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800">Cancel</button>
+      <button onclick="saveDrive()" class="px-5 py-2 text-xs font-black rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-md">Save Drive</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DRIVE DETAIL MODAL ==================== -->
+<div id="driveDetailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-6xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative max-h-[92vh] overflow-y-auto">
+    <button onclick="closeDriveDetail()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <div id="driveDetailHeader" class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800"></div>
+    <div id="driveDetailCriteria" class="mb-4 flex flex-wrap gap-2 text-[11px]"></div>
+    <div class="flex items-center justify-end gap-2 mb-3">
+      <button onclick="exportActiveDriveCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> CSV</button>
+      <button onclick="exportActiveDrivePDF()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-500 flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF</button>
+    </div>
+    <div class="overflow-x-auto max-h-[52vh] border border-slate-200 dark:border-slate-800 rounded-xl">
+      <table class="w-full text-left text-xs">
+        <thead class="tbl-head bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[10px]">
+          <tr>
+            <th class="py-2.5 px-3">#</th><th class="py-2.5 px-3">USN</th><th class="py-2.5 px-3">Name</th>
+            <th class="py-2.5 px-3">Dept</th><th class="py-2.5 px-3 text-center">CGPA</th>
+            <th class="py-2.5 px-3 text-center">Curr BL</th><th class="py-2.5 px-3 text-center">Hist BL</th>
+            <th class="py-2.5 px-3 text-center">10th</th><th class="py-2.5 px-3 text-center">12th</th>
+            <th class="py-2.5 px-3">Category</th><th class="py-2.5 px-3">Phone</th>
+            <th class="py-2.5 px-3 text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody id="driveDetailBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== UPLOAD MODAL ==================== -->
+<div id="uploadModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+    <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div class="flex items-center gap-3 mb-4">
+      <div class="p-3 bg-sky-50 dark:bg-sky-950 text-sky-600 rounded-2xl"><i data-lucide="upload-cloud" class="w-6 h-6"></i></div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Synchronize Placement Sheet</h3>
+        <p class="text-xs text-slate-500">Upload the official registration .xlsx / .xls / .csv</p>
+      </div>
+    </div>
+    <div id="dropZone" ondragover="event.preventDefault(); this.classList.add('border-sky-500');"
+      ondragleave="event.preventDefault(); this.classList.remove('border-sky-500');" ondrop="handleFileDrop(event)"
+      class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-800/40 hover:bg-sky-50/20 transition cursor-pointer"
+      onclick="document.getElementById('excelFileInput').click()">
+      <i data-lucide="file-spreadsheet" class="w-12 h-12 mx-auto text-sky-600 mb-2"></i>
+      <p class="text-sm font-semibold">Click to choose or drag &amp; drop</p>
+      <p class="text-xs text-slate-400 mt-1">Supports .xlsx, .xls, .csv</p>
+      <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileSelect(event)">
+    </div>
+    <div class="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+      <strong>Expected columns:</strong> USN, Name, Branch, Gender, CGPA, Current_Backlogs, History_Backlogs,
+      10th, 12th, Category, Email, Phone, Native_Place. Missing columns are auto-filled with defaults —
+      <em>please verify after upload.</em>
+    </div>
+    <div class="mt-5 flex items-center justify-between text-xs">
+      <button onclick="restoreOriginalDataset()" class="text-sky-600 dark:text-sky-400 font-semibold hover:underline">Regenerate sample dataset</button>
+      <button onclick="closeUploadModal()" class="px-4 py-2 font-semibold rounded-xl bg-slate-100 dark:bg-slate-800">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 right-6 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-semibold transform transition-all duration-300 translate-y-24 opacity-0 z-[60]">
+  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 dark:text-emerald-600"></i>
+  <span id="toast-text">Action succeeded</span>
+</div>
+
+<!-- ==================== CORE ENGINE ==================== -->
+<script>
+/* =========================================================================
+   CONSTANTS
+   ========================================================================= */
+const LS_KEY = 'bec_placement_hub_v2';
+const ALL_BRANCHES = ["CSE","ECE","ISE","Civil","Mech","EEE","AIML","BT","IPE"];
+const BRANCH_NAMES = {
+  CSE:"Computer Science & Engineering", ECE:"Electronics & Communication Eng",
+  ISE:"Information Science & Eng", Civil:"Civil Engineering",
+  Mech:"Mechanical Engineering", EEE:"Electrical & Electronics Eng",
+  AIML:"AI & Machine Learning", BT:"Biotechnology", IPE:"Industrial & Production Eng"
+};
+const CATEGORIES = ["GM","OBC","SC","ST"];
+const CIRCUIT = ["CSE","ISE","ECE","EEE","AIML"];
+const CORE = ["Mech","Civil","BT","IPE"];
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+let masterStudents = [];
+let drives = [];
+let currentSort = { key:'cgpa', asc:false };
+let currentPage = 1;
+let pageSize = 50;
+let selectedIds = new Set();
+let simulatorShortlist = [];
+let activeDriveId = null;
+let activeStudentId = null;
+let charts = {};
+
+/* =========================================================================
+   SAMPLE DATASET GENERATOR
+   ========================================================================= */
+const BRANCH_TARGETS = [
+  { code:"CSE",   count:131, prefix:"CS" },
+  { code:"ECE",   count:125, prefix:"EC" },
+  { code:"ISE",   count:121, prefix:"IS" },
+  { code:"Civil", count:75,  prefix:"CV" },
+  { code:"Mech",  count:63,  prefix:"ME" },
+  { code:"EEE",   count:61,  prefix:"EE" },
+  { code:"AIML",  count:56,  prefix:"AI" },
+  { code:"BT",    count:11,  prefix:"BT" },
+  { code:"IPE",   count:1,   prefix:"IP" }
+];
+const DISTRICTS = ["Bagalkote","Belagavi","Vijayapura","Dharwad","Hubballi","Gadag","Kalaburagi","Uttara Kannada","Bengaluru","Ballari","Davangere","Koppal"];
+const FN_F = ["Pooja","Aishwarya","Sneha","Ananya","Keerthi","Sahana","Spoorthi","Bhoomika","Deepa","Kavya","Sushma","Vaishnavi","Priyanka","Megha","Rakshitha","Soundarya"];
+const FN_M = ["Abhishek","Prajwal","Karthik","Rohan","Darshan","Sachin","Basavaraj","Mallikarjun","Vinayak","Naveen","Shashidhar","Pradeep","Chethan","Sanjay","Gururaj","Anand"];
+const LNS  = ["Patil","Kulkarni","Deshmukh","Hiremath","Shettar","Goudar","Nadagouda","Katti","Inamdar","Joshi","Hosamani","Angadi","Badiger","Hugar","Pujari","Kambale"];
+
+function generateBECDataset() {
+  const records = [];
+  let sl = 1;
+  const catPool = [...Array(392).fill("OBC"), ...Array(162).fill("GM"), ...Array(65).fill("SC"), ...Array(25).fill("ST")].sort(()=>Math.random()-0.5);
+  const genPool = [...Array(328).fill("Female"), ...Array(316).fill("Male")].sort(()=>Math.random()-0.5);
+  const cblPool = [...Array(552).fill(0), ...Array(48).fill(1), ...Array(26).fill(2), ...Array(12).fill(3), ...Array(6).fill(4)].sort(()=>Math.random()-0.5);
+  const hblPool = [...Array(387).fill(0), ...Array(135).fill(1), ...Array(75).fill(2), ...Array(32).fill(3), ...Array(15).fill(4)].sort(()=>Math.random()-0.5);
+
+  let p = 0;
+  BRANCH_TARGETS.forEach(b => {
+    for (let i = 1; i <= b.count; i++) {
+      const gender = genPool[p], category = catPool[p], currBL = cblPool[p];
+      let histBL = hblPool[p];
+      if (histBL < currBL) histBL = currBL;
+
+      const fn = gender === "Female"
+        ? FN_F[Math.floor(Math.random()*FN_F.length)]
+        : FN_M[Math.floor(Math.random()*FN_M.length)];
+      const name = fn + " " + LNS[Math.floor(Math.random()*LNS.length)];
+      const usn = "2BA21" + b.prefix + String(i).padStart(3,'0');
+      const native = DISTRICTS[Math.floor(Math.random()*DISTRICTS.length)];
+
+      let cgpa;
+      if (sl === 1) { cgpa = 9.56; }
+      else {
+        const u1 = Math.random(), u2 = Math.random();
+        const z = Math.sqrt(-2*Math.log(u1)) * Math.cos(2*Math.PI*u2);
+        let v = 7.23 + z*0.88;
+        if (v > 9.50) v = 9.42;
+        if (v < 5.20) v = 5.25;
+        cgpa = Number(v.toFixed(2));
+      }
+
+      records.push({
+        _id: 'S' + (sl),
+        slNo: sl++,
+        usn, name, gender, branch: b.code, category,
+        cgpa,
+        current_backlogs: currBL,
+        history_backlogs: histBL,
+        tenth_pct: Number((62 + Math.random()*34).toFixed(1)),
+        twelfth_pct: Number((58 + Math.random()*37).toFixed(1)),
+        native,
+        email: fn.toLowerCase() + "." + usn.toLowerCase() + "@becbgk.edu",
+        phone: "+91 " + Math.floor(9100000000 + Math.random()*899999999),
+        placed: false, company: "", ctc: ""
+      });
+      p++;
+    }
+  });
+  return records;
+}
+
+/* =========================================================================
+   PERSISTENCE
+   ========================================================================= */
+function saveState() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ students: masterStudents, drives }));
+    flashSyncBadge();
+  } catch(e) { console.warn("Storage full or blocked", e); }
+}
+let syncTimer = null;
+function flashSyncBadge() {
+  const b = document.getElementById('syncBadge');
+  if (!b) return;
+  b.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Saved just now';
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    b.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Auto-saved locally';
+  }, 2500);
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (parsed.students && parsed.students.length) {
+      masterStudents = parsed.students.map((s,i) => ({ ...s, _id: s._id || ('S'+(i+1)) }));
+      drives = parsed.drives || [];
+      return true;
+    }
+  } catch(e) { console.warn(e); }
+  return false;
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+window.onload = function () {
+  if (!loadState()) { masterStudents = generateBECDataset(); drives = []; }
+  lucide.createIcons();
+  buildStaticUI();
+  switchTab('analytics');
+  refreshEverything();
+  if (drives.length === 0) seedDemoDrive();
+};
+
+function buildStaticUI() {
+  // Simulator branch checkboxes
+  const sc = document.getElementById('sim-branch-checkboxes');
+  sc.innerHTML = ALL_BRANCHES.map(b => `
+    <label class="flex items-center gap-1.5 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold cursor-pointer hover:border-sky-500 transition select-none">
+      <input type="checkbox" value="${b}" checked onchange="runEligibilitySimulator()" class="branch-sim-check accent-sky-600 rounded"><span>${b}</span>
+    </label>`).join('');
+
+  // Drive modal branch checkboxes
+  document.getElementById('d-branches').innerHTML = ALL_BRANCHES.map(b => `
+    <label class="flex items-center gap-1.5"><input type="checkbox" value="${b}" class="d-branch accent-sky-600" checked onchange="updateDriveLiveCount()"><span class="font-semibold">${b}</span></label>`).join('');
+
+  // Drive modal category checkboxes
+  document.getElementById('d-categories').innerHTML = CATEGORIES.map(c => `
+    <label class="flex items-center gap-2"><input type="checkbox" value="${c}" class="d-cat accent-sky-600" checked onchange="updateDriveLiveCount()"><span>${c}</span></label>`).join('');
+
+  // Live count listeners
+  ['d-mincgpa','d-currbl','d-histbl','d-tenth','d-twelfth','d-includeplaced'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateDriveLiveCount);
+    document.getElementById(id).addEventListener('change', updateDriveLiveCount);
+  });
+  document.querySelectorAll('.d-gender').forEach(cb => cb.addEventListener('change', updateDriveLiveCount));
+}
+
+function refreshEverything() {
+  renderKPIs();
+  initAllCharts();
+  renderBranchMatrix();
+  renderRegistryFilterOptions();
+  runEligibilitySimulator();
+  renderStudentRegistryTable();
+  renderDriveCards();
+  document.getElementById('registry-pill').textContent = masterStudents.length;
+  document.getElementById('drives-pill').textContent = drives.length;
+  lucide.createIcons();
+}
+
+/* =========================================================================
+   TAB SYSTEM
+   ========================================================================= */
+function switchTab(tabId) {
+  ['analytics','drives','simulator','registry','branches'].forEach(t => {
+    const view = document.getElementById('view-' + t);
+    const nav  = document.getElementById('nav-' + t);
+    if (!view || !nav) return;
+    if (t === tabId) {
+      view.classList.remove('hidden');
+      nav.className = "nav-btn active px-4 py-2 rounded-lg text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/80 flex items-center gap-2 whitespace-nowrap transition font-bold";
+    } else {
+      view.classList.add('hidden');
+      nav.className = "nav-btn px-4 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2 whitespace-nowrap transition font-semibold";
+    }
+  });
+  lucide.createIcons();
+}
+function scrollToSimulator() { switchTab('simulator'); window.scrollTo({ top: 180, behavior:'smooth' }); }
+
+/* =========================================================================
+   DARK MODE
+   ========================================================================= */
+function toggleDarkMode() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+  lucide.createIcons();
+  initAllCharts();
+}
+
+/* =========================================================================
+   KPI CARDS
+   ========================================================================= */
+function renderKPIs() {
+  const n = masterStudents.length || 1;
+  const zeroBL   = masterStudents.filter(s => s.current_backlogs === 0).length;
+  const cleanH   = masterStudents.filter(s => s.history_backlogs === 0).length;
+  const females  = masterStudents.filter(s => s.gender === 'Female').length;
+  const males    = masterStudents.filter(s => s.gender === 'Male').length;
+  const mean     = masterStudents.reduce((a,b) => a + b.cgpa, 0) / n;
+  const top      = masterStudents.reduce((m,s) => s.cgpa > m ? s.cgpa : m, 0);
+  const topStu   = masterStudents.find(s => s.cgpa === top);
+  const placed   = masterStudents.filter(s => s.placed).length;
+
+  const pct = (v) => ((v / n) * 100).toFixed(1) + '%';
+
+  const cards = [
+    { label:'Registered', val: masterStudents.length, sub:`2024–25 Batch`, color:'sky', icon:'folder-check', bar:'bg-sky-600' },
+    { label:'0 Curr Backlog', val: zeroBL, sub:`${pct(zeroBL)} Drive Eligible`, color:'emerald', icon:'check-circle-2', bar:'bg-emerald-500' },
+    { label:'Clean History', val: cleanH, sub:`${pct(cleanH)} 0 History Arrears`, color:'indigo', icon:'badge-check', bar:'bg-indigo-500' },
+    { label:'Females', val: females, sub:`${pct(females)} Diversity Share`, color:'pink', icon:'user-check', bar:'bg-pink-500' },
+    { label:'Males', val: males, sub:`${pct(males)} Male Cadre`, color:'blue', icon:'user', bar:'bg-blue-500' },
+    { label:'Mean BE CGPA', val: mean.toFixed(2), sub:'Aggregate Sem 1–6', color:'amber', icon:'trending-up', bar:'bg-amber-500' },
+    { label:'Batch Topper', val: top.toFixed(2), sub: topStu ? `${topStu.branch} Dept Honor` : '—', color:'slate', icon:'crown', bar:'bg-gradient-to-r from-amber-400 to-rose-500' },
+    { label:'Placed', val: placed, sub:`${pct(placed)} Offer Rate`, color:'emerald', icon:'party-popper', bar:'bg-emerald-600' }
+  ];
+
+  document.getElementById('kpiRow').innerHTML = cards.map(c => `
+    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+      <div class="flex items-center justify-between text-slate-400 dark:text-slate-500 mb-1.5">
+        <span class="text-[11px] font-bold tracking-wider uppercase">${c.label}</span>
+        <i data-lucide="${c.icon}" class="w-4 h-4 text-${c.color}-500"></i>
+      </div>
+      <div class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">${c.val}</div>
+      <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate font-medium">${c.sub}</div>
+      <div class="absolute bottom-0 left-0 right-0 h-1 ${c.bar}"></div>
+    </div>`).join('');
+
+  // Analytics callout
+  const el = document.getElementById('analyticsCallout');
+  if (el) el.textContent = `${zeroBL} of ${masterStudents.length} students (${pct(zeroBL)}) clear the standard zero-standing-arrear mandate. ${cleanH} hold a pristine first-attempt academic record.`;
+}
+
+/* =========================================================================
+   CHARTS
+   ========================================================================= */
+function initAllCharts() {
+  const isDark = document.documentElement.classList.contains('dark');
+  const gridColor = isDark ? '#334155' : '#f1f5f9';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const border = isDark ? '#0f172a' : '#ffffff';
+
+  const destroy = (k) => { if (charts[k]) { charts[k].destroy(); charts[k] = null; } };
+  const count = (fn) => masterStudents.filter(fn).length;
+
+  // 1. Branch distribution
+  const present = BRANCH_TARGETS.filter(b => masterStudents.some(s => s.branch === b.code));
+  document.getElementById('branchCountBadge').textContent = present.length + ' Disciplines';
+  destroy('branches');
+  charts.branches = new Chart(document.getElementById('chartBranches'), {
+    type:'bar',
+    data:{
+      labels: present.map(b => b.code),
+      datasets:[{ label:'Registered', data: present.map(b => count(s => s.branch === b.code)),
+        backgroundColor:['#0284c7','#0369a1','#0ea5e9','#38bdf8','#6366f1','#8b5cf6','#d97706','#10b981','#64748b'],
+        borderRadius:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ color:textColor, font:{ family:'Plus Jakarta Sans', weight:'600' } } },
+               y:{ grid:{ color:gridColor }, ticks:{ color:textColor } } } }
+  });
+
+  // 2. CGPA tiers
+  const tiers = { '< 6.0':0, '6.0–6.99':0, '7.0–7.99':0, '8.0–8.99':0, '9.0+':0 };
+  masterStudents.forEach(s => {
+    if (s.cgpa < 6) tiers['< 6.0']++;
+    else if (s.cgpa < 7) tiers['6.0–6.99']++;
+    else if (s.cgpa < 8) tiers['7.0–7.99']++;
+    else if (s.cgpa < 9) tiers['8.0–8.99']++;
+    else tiers['9.0+']++;
+  });
+  const mean = (masterStudents.reduce((a,b) => a+b.cgpa, 0) / (masterStudents.length || 1)).toFixed(2);
+  document.getElementById('meanCgpaBadge').textContent = 'Mean: ' + mean;
+  destroy('cgpa');
+  charts.cgpa = new Chart(document.getElementById('chartCGPATiers'), {
+    type:'bar',
+    data:{ labels:Object.keys(tiers), datasets:[{ data:Object.values(tiers),
+      backgroundColor:['#ef4444','#f59e0b','#0284c7','#10b981','#8b5cf6'], borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ color:textColor } }, y:{ grid:{ color:gridColor }, ticks:{ color:textColor } } } }
+  });
+
+  // 3. Gender
+  const f = count(s => s.gender === 'Female'), m = count(s => s.gender === 'Male');
+  document.getElementById('genderSub').textContent = `Female ${f} (${((f/(masterStudents.length||1))*100).toFixed(1)}%) vs Male ${m}`;
+  destroy('gender');
+  charts.gender = new Chart(document.getElementById('chartGenderRatio'), {
+    type:'doughnut',
+    data:{ labels:[`Female (${f})`,`Male (${m})`], datasets:[{ data:[f,m], backgroundColor:['#ec4899','#0284c7'], borderWidth:2, borderColor:border }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins:{ legend:{ position:'bottom', labels:{ color:textColor, font:{ family:'Plus Jakarta Sans', size:11 } } } } }
+  });
+
+  // 4. Category
+  const catData = CATEGORIES.map(c => count(s => s.category === c));
+  document.getElementById('categorySub').textContent = CATEGORIES.map((c,i) => `${c}: ${catData[i]}`).join(' • ');
+  destroy('category');
+  charts.category = new Chart(document.getElementById('chartCategory'), {
+    type:'pie',
+    data:{ labels: CATEGORIES.map((c,i) => `${c} (${catData[i]})`),
+      datasets:[{ data:catData, backgroundColor:['#f59e0b','#3b82f6','#10b981','#8b5cf6'], borderWidth:2, borderColor:border }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ color:textColor, font:{ family:'Plus Jakarta Sans', size:11 } } } } }
+  });
+
+  // 5. Backlogs
+  const b0 = count(s => s.current_backlogs === 0);
+  const b1 = count(s => s.current_backlogs === 1);
+  const b2 = count(s => s.current_backlogs === 2);
+  const b3 = count(s => s.current_backlogs >= 3);
+  document.getElementById('backlogSub').textContent = `${b0} clear • ${b1+b2+b3} with active backlogs`;
+  destroy('backlogs');
+  charts.backlogs = new Chart(document.getElementById('chartBacklogs'), {
+    type:'doughnut',
+    data:{ labels:[`0 BL (${b0})`,`1 BL (${b1})`,`2 BL (${b2})`,`3+ BL (${b3})`],
+      datasets:[{ data:[b0,b1,b2,b3], backgroundColor:['#10b981','#f59e0b','#f97316','#ef4444'], borderWidth:2, borderColor:border }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins:{ legend:{ position:'bottom', labels:{ color:textColor, font:{ family:'Plus Jakarta Sans', size:10 } } } } }
+  });
+}
+
+/* =========================================================================
+   SIMULATOR
+   ========================================================================= */
+function selectAllBranches(v) { document.querySelectorAll('.branch-sim-check').forEach(cb => cb.checked = v); runEligibilitySimulator(); }
+function selectCircuitBranches() { document.querySelectorAll('.branch-sim-check').forEach(cb => cb.checked = CIRCUIT.includes(cb.value)); runEligibilitySimulator(); }
+function selectCoreBranches() { document.querySelectorAll('.branch-sim-check').forEach(cb => cb.checked = CORE.includes(cb.value)); runEligibilitySimulator(); }
+
+function getSimulatorCriteria() {
+  return {
+    minCGPA: parseFloat(document.getElementById('sim-min-cgpa').value),
+    maxCurrBL: parseInt(document.getElementById('sim-max-curr-backlog').value),
+    maxHistBL: parseInt(document.getElementById('sim-max-hist-backlog').value),
+    minSchool: parseFloat(document.getElementById('sim-min-school').value),
+    branches: Array.from(document.querySelectorAll('.branch-sim-check:checked')).map(cb => cb.value)
+  };
+}
+
+function resetSimulatorDefaults() {
+  document.getElementById('sim-min-cgpa').value = 6.0;
+  document.getElementById('sim-max-curr-backlog').value = "0";
+  document.getElementById('sim-max-hist-backlog').value = "99";
+  document.getElementById('sim-min-school').value = 60;
+  selectAllBranches(true);
+  showToast("Simulator reset to defaults.");
+}
+
+function runEligibilitySimulator() {
+  const c = getSimulatorCriteria();
+  document.getElementById('label-min-cgpa').textContent = c.minCGPA.toFixed(2);
+  document.getElementById('label-min-school').textContent = c.minSchool + '%';
+
+  simulatorShortlist = masterStudents.filter(s =>
+    c.branches.includes(s.branch) &&
+    s.cgpa >= c.minCGPA &&
+    s.current_backlogs <= c.maxCurrBL &&
+    s.history_backlogs <= c.maxHistBL &&
+    s.tenth_pct >= c.minSchool &&
+    s.twelfth_pct >= c.minSchool
+  );
+
+  const n = simulatorShortlist.length;
+  const pct = ((n / (masterStudents.length || 1)) * 100).toFixed(1);
+
+  document.getElementById('sim-eligible-count').textContent = n;
+  document.getElementById('sim-total-count').textContent = masterStudents.length;
+  document.getElementById('sim-eligible-pct').textContent = pct + '% Qualified';
+  document.getElementById('btn-export-count').textContent = n;
+  document.getElementById('simulator-pill-count').textContent = n;
+
+  if (n > 0) {
+    document.getElementById('sim-shortlist-avg-cgpa').textContent =
+      (simulatorShortlist.reduce((a,x) => a + x.cgpa, 0) / n).toFixed(2);
+    document.getElementById('sim-shortlist-female').textContent =
+      ((simulatorShortlist.filter(s => s.gender === 'Female').length / n) * 100).toFixed(1) + '%';
+    document.getElementById('sim-shortlist-placed').textContent =
+      simulatorShortlist.filter(s => s.placed).length;
+  } else {
+    document.getElementById('sim-shortlist-avg-cgpa').textContent = "0.00";
+    document.getElementById('sim-shortlist-female').textContent = "0%";
+    document.getElementById('sim-shortlist-placed').textContent = "0";
+  }
+  updateDriveLiveCount();
+}
+
+function presetFilter(type) {
+  if (type === 'tier1_super') {
+    document.getElementById('sim-min-cgpa').value = 8.0;
+    document.getElementById('sim-max-curr-backlog').value = "0";
+    document.getElementById('sim-max-hist-backlog').value = "0";
+    document.getElementById('sim-min-school').value = 70;
+    selectAllBranches(true);
+  } else {
+    document.getElementById('sim-min-cgpa').value = 6.0;
+    document.getElementById('sim-max-curr-backlog').value = "0";
+    document.getElementById('sim-max-hist-backlog').value = "99";
+    document.getElementById('sim-min-school').value = 60;
+    selectCircuitBranches();
+  }
+  runEligibilitySimulator();
+  switchTab('simulator');
+  showToast('Preset applied: ' + type.replace('_',' ').toUpperCase());
+}
+
+function viewSimulatorInRegistry() {
+  switchTab('registry');
+  resetRegistryFilters(true);
+  const c = getSimulatorCriteria();
+  document.getElementById('filterMinCGPA').value = c.minCGPA;
+  document.getElementById('filterMinTenth').value = c.minSchool;
+  document.getElementById('filterMinTwelfth').value = c.minSchool;
+  document.getElementById('filterRegBacklogs').value = c.maxCurrBL === 0 ? "0" : (c.maxCurrBL >= 2 ? "ALL" : String(c.maxCurrBL));
+  document.getElementById('advancedFilters').classList.remove('hidden');
+  applyRegistryFilters();
+}
+
+/* =========================================================================
+   DRIVE MANAGEMENT
+   ========================================================================= */
+function seedDemoDrive() {
+  drives.push({
+    id: 'DRV' + Date.now(),
+    company: 'Tier-1 IT Drive (Sample)',
+    role: 'Graduate Engineer Trainee',
+    date: '', ctc: '6.5', type: 'Standard', location: 'Bengaluru',
+    criteria: { minCGPA:6.0, maxCurrBL:0, maxHistBL:99, minTenth:60, minTwelfth:60,
+      branches:[...ALL_BRANCHES], genders:['Female','Male'], categories:[...CATEGORIES], includePlaced:true },
+    statuses: {}, notes: 'Sample drive — delete or edit as needed.', createdAt: new Date().toISOString()
+  });
+  saveState();
+}
+
+function openDriveModal(editId) {
+  const modal = document.getElementById('driveModal');
+  document.getElementById('driveEditId').value = editId || '';
+  document.getElementById('driveModalTitle').textContent = editId ? 'Edit Drive' : 'Create New Company Drive';
+
+  if (editId) {
+    const d = drives.find(x => x.id === editId);
+    if (d) {
+      document.getElementById('d-company').value = d.company || '';
+      document.getElementById('d-role').value = d.role || '';
+      document.getElementById('d-date').value = d.date || '';
+      document.getElementById('d-ctc').value = d.ctc || '';
+      document.getElementById('d-type').value = d.type || 'Standard';
+      document.getElementById('d-location').value = d.location || '';
+      document.getElementById('d-mincgpa').value = d.criteria.minCGPA;
+      document.getElementById('d-currbl').value = d.criteria.maxCurrBL;
+      document.getElementById('d-histbl').value = d.criteria.maxHistBL;
+      document.getElementById('d-tenth').value = d.criteria.minTenth;
+      document.getElementById('d-twelfth').value = d.criteria.minTwelfth;
+      document.getElementById('d-includeplaced').value = d.criteria.includePlaced ? 'yes' : 'no';
+      document.getElementById('d-notes').value = d.notes || '';
+      document.querySelectorAll('.d-branch').forEach(cb => cb.checked = d.criteria.branches.includes(cb.value));
+      document.querySelectorAll('.d-gender').forEach(cb => cb.checked = d.criteria.genders.includes(cb.value));
+      document.querySelectorAll('.d-cat').forEach(cb => cb.checked = d.criteria.categories.includes(cb.value));
+    }
+  } else {
+    ['d-company','d-role','d-date','d-ctc','d-location','d-notes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('d-type').value = 'Standard';
+    document.getElementById('d-mincgpa').value = 6.0;
+    document.getElementById('d-currbl').value = 0;
+    document.getElementById('d-histbl').value = 99;
+    document.getElementById('d-tenth').value = 60;
+    document.getElementById('d-twelfth').value = 60;
+    document.getElementById('d-includeplaced').value = 'yes';
+    document.querySelectorAll('.d-branch').forEach(cb => cb.checked = true);
+    document.querySelectorAll('.d-gender').forEach(cb => cb.checked = true);
+    document.querySelectorAll('.d-cat').forEach(cb => cb.checked = true);
+  }
+  updateDriveLiveCount();
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+  lucide.createIcons();
+}
+function closeDriveModal() {
+  const m = document.getElementById('driveModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+}
+function driveBranchAll(v) { document.querySelectorAll('.d-branch').forEach(cb => cb.checked = v); updateDriveLiveCount(); }
+function driveBranchCircuit() { document.querySelectorAll('.d-branch').forEach(cb => cb.checked = CIRCUIT.includes(cb.value)); updateDriveLiveCount(); }
+
+function readDriveForm() {
+  return {
+    company: document.getElementById('d-company').value.trim(),
+    role: document.getElementById('d-role').value.trim(),
+    date: document.getElementById('d-date').value,
+    ctc: document.getElementById('d-ctc').value.trim(),
+    type: document.getElementById('d-type').value,
+    location: document.getElementById('d-location').value.trim(),
+    notes: document.getElementById('d-notes').value.trim(),
+    criteria: {
+      minCGPA: parseFloat(document.getElementById('d-mincgpa').value) || 0,
+      maxCurrBL: parseInt(document.getElementById('d-currbl').value) || 0,
+      maxHistBL: parseInt(document.getElementById('d-histbl').value) || 0,
+      minTenth: parseFloat(document.getElementById('d-tenth').value) || 0,
+      minTwelfth: parseFloat(document.getElementById('d-twelfth').value) || 0,
+      branches: Array.from(document.querySelectorAll('.d-branch:checked')).map(cb => cb.value),
+      genders: Array.from(document.querySelectorAll('.d-gender:checked')).map(cb => cb.value),
+      categories: Array.from(document.querySelectorAll('.d-cat:checked')).map(cb => cb.value),
+      includePlaced: document.getElementById('d-includeplaced').value === 'yes'
+    }
+  };
+}
+
+function computeDriveShortlist(criteria) {
+  return masterStudents.filter(s =>
+    (criteria.branches.length === 0 || criteria.branches.includes(s.branch)) &&
+    (criteria.genders.length === 0 || criteria.genders.includes(s.gender)) &&
+    (criteria.categories.length === 0 || criteria.categories.includes(s.category)) &&
+    s.cgpa >= criteria.minCGPA &&
+    s.current_backlogs <= criteria.maxCurrBL &&
+    s.history_backlogs <= criteria.maxHistBL &&
+    s.tenth_pct >= criteria.minTenth &&
+    s.twelfth_pct >= criteria.minTwelfth &&
+    (criteria.includePlaced || !s.placed)
+  );
+}
+
+function updateDriveLiveCount() {
+  const el = document.getElementById('d-livecount');
+  if (!el || document.getElementById('driveModal').classList.contains('hidden')) return;
+  const form = readDriveForm();
+  el.textContent = computeDriveShortlist(form.criteria).length;
+}
+
+function saveDrive() {
+  const form = readDriveForm();
+  if (!form.company) { showToast("Company name is required."); return; }
+  if (form.criteria.branches.length === 0) { showToast("Select at least one branch."); return; }
+
+  const editId = document.getElementById('driveEditId').value;
+  if (editId) {
+    const d = drives.find(x => x.id === editId);
+    Object.assign(d, form);
+    showToast(`Drive "${d.company}" updated.`);
+  } else {
+    drives.push({
+      id: 'DRV' + Date.now() + Math.floor(Math.random()*1000),
+      ...form, statuses: {}, createdAt: new Date().toISOString()
+    });
+    showToast(`Drive "${form.company}" created.`);
+  }
+  saveState();
+  closeDriveModal();
+  renderDriveCards();
+  document.getElementById('drives-pill').textContent = drives.length;
+  switchTab('drives');
+}
+
+function saveSimulatorAsDrive() {
+  const c = getSimulatorCriteria();
+  openDriveModal();
+  document.getElementById('d-mincgpa').value = c.minCGPA;
+  document.getElementById('d-currbl').value = c.maxCurrBL;
+  document.getElementById('d-histbl').value = c.maxHistBL;
+  document.getElementById('d-tenth').value = c.minSchool;
+  document.getElementById('d-twelfth').value = c.minSchool;
+  document.querySelectorAll('.d-branch').forEach(cb => cb.checked = c.branches.includes(cb.value));
+  updateDriveLiveCount();
+  showToast("Criteria copied — fill in company details and save.");
+}
+
+function renderDriveCards() {
+  const wrap = document.getElementById('driveCards');
+  if (!wrap) return;
+  if (drives.length === 0) {
+    wrap.innerHTML = `<div class="col-span-full bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-12 text-center">
+      <i data-lucide="briefcase" class="w-10 h-10 mx-auto text-slate-300 mb-3"></i>
+      <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">No drives created yet</p>
+      <p class="text-xs text-slate-400 mt-1 mb-4">Create your first company drive to generate an eligible-student shortlist instantly.</p>
+      <button onclick="openDriveModal()" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950">Create New Drive</button>
+    </div>`;
+    lucide.createIcons();
+    return;
+  }
+
+  wrap.innerHTML = drives.map(d => {
+    const list = computeDriveShortlist(d.criteria);
+    const placedInList = list.filter(s => s.placed).length;
+    const typeColor = d.type === 'Super Dream' ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300'
+      : d.type === 'Dream' ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
+      : 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300';
+    return `
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col">
+      <div class="flex items-start justify-between gap-2 mb-3">
+        <div class="min-w-0">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${typeColor}">${d.type || 'Standard'}</span>
+          <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-1.5 truncate">${esc(d.company)}</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${esc(d.role || 'Role not specified')}</p>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">${list.length}</div>
+          <div class="text-[10px] uppercase font-bold text-slate-400">Eligible</div>
+        </div>
+      </div>
+
+      <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 mb-3">
+        <div class="flex justify-between"><span>Drive Date:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${d.date || 'TBD'}</span></div>
+        <div class="flex justify-between"><span>CTC:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${d.ctc ? d.ctc + ' LPA' : '—'}</span></div>
+        <div class="flex justify-between"><span>Location:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${esc(d.location || '—')}</span></div>
+        <div class="flex justify-between"><span>Already placed in pool:</span><span class="font-semibold text-slate-700 dark:text-slate-300">${placedInList}</span></div>
+      </div>
+
+      <div class="flex flex-wrap gap-1 mb-4 text-[10px]">
+        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">CGPA ≥ ${d.criteria.minCGPA}</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">Curr BL ≤ ${d.criteria.maxCurrBL}</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">Hist BL ≤ ${d.criteria.maxHistBL}</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">10th ≥ ${d.criteria.minTenth}%</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono">${d.criteria.branches.length} branches</span>
+      </div>
+
+      <div class="mt-auto flex items-center gap-2">
+        <button onclick="openDriveDetail('${d.id}')" class="flex-1 px-3 py-2 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-500 text-white transition flex items-center justify-center gap-1.5">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Shortlist
+        </button>
+        <button onclick="openDriveModal('${d.id}')" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+        <button onclick="deleteDrive('${d.id}')" class="p-2 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+}
+
+function deleteDrive(id) {
+  const d = drives.find(x => x.id === id);
+  if (!d) return;
+  if (!confirm(`Delete drive "${d.company}"? This cannot be undone.`)) return;
+  drives = drives.filter(x => x.id !== id);
+  saveState();
+  renderDriveCards();
+  document.getElementById('drives-pill').textContent = drives.length;
+  showToast("Drive deleted.");
+}
+
+function openDriveDetail(id) {
+  activeDriveId = id;
+  const d = drives.find(x => x.id === id);
+  if (!d) return;
+  const list = computeDriveShortlist(d.criteria);
+
+  document.getElementById('driveDetailHeader').innerHTML = `
+    <h3 class="text-xl font-black text-slate-900 dark:text-white">${esc(d.company)}</h3>
+    <p class="text-xs text-slate-500 mt-1">${esc(d.role || 'Role not specified')} • ${d.type || 'Standard'} • ${d.date || 'Date TBD'} • ${d.ctc ? d.ctc + ' LPA' : 'CTC TBD'} • ${esc(d.location || 'Location TBD')}</p>
+    <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-2">${list.length} eligible candidate(s)</p>`;
+
+  document.getElementById('driveDetailCriteria').innerHTML = [
+    `CGPA ≥ ${d.criteria.minCGPA}`, `Current BL ≤ ${d.criteria.maxCurrBL}`,
+    `History BL ≤ ${d.criteria.maxHistBL}`, `10th ≥ ${d.criteria.minTenth}%`,
+    `12th ≥ ${d.criteria.minTwelfth}%`, `Branches: ${d.criteria.branches.join(', ') || 'None'}`,
+    `Gender: ${d.criteria.genders.join(', ') || 'All'}`, `Category: ${d.criteria.categories.join(', ') || 'All'}`,
+    d.criteria.includePlaced ? 'Placed students allowed' : 'Placed students excluded'
+  ].map(t => `<span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 font-mono font-semibold text-slate-700 dark:text-slate-300">${esc(t)}</span>`).join('');
+
+  const statusOptions = ['Eligible','Applied','Shortlisted','Selected','Rejected','Not Interested'];
+  document.getElementById('driveDetailBody').innerHTML = list.length === 0
+    ? `<tr><td colspan="12" class="py-12 text-center text-slate-400">No students match this drive's criteria.</td></tr>`
+    : list.map((s, i) => {
+        const st = d.statuses[s.usn] || 'Eligible';
+        return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+          <td class="py-2 px-3 text-slate-400 font-mono text-[11px]">${i+1}</td>
+          <td class="py-2 px-3 font-mono font-bold text-sky-700 dark:text-sky-400">${esc(s.usn)}</td>
+          <td class="py-2 px-3 font-semibold">${esc(s.name)}</td>
+          <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800">${s.branch}</span></td>
+          <td class="py-2 px-3 text-center font-mono font-bold">${s.cgpa.toFixed(2)}</td>
+          <td class="py-2 px-3 text-center font-mono ${s.current_backlogs > 0 ? 'text-rose-600' : 'text-slate-400'}">${s.current_backlogs}</td>
+          <td class="py-2 px-3 text-center font-mono text-slate-500">${s.history_backlogs}</td>
+          <td class="py-2 px-3 text-center font-mono">${s.tenth_pct}%</td>
+          <td class="py-2 px-3 text-center font-mono">${s.twelfth_pct}%</td>
+          <td class="py-2 px-3">${s.category}</td>
+          <td class="py-2 px-3 font-mono text-[11px]">${esc(s.phone)}</td>
+          <td class="py-2 px-3 text-center">
+            <select onchange="setDriveStatus('${d.id}','${s.usn}',this.value)" class="text-[10px] font-bold rounded-lg px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              ${statusOptions.map(o => `<option ${o === st ? 'selected' : ''}>${o}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`;
+      }).join('');
+
+  const m = document.getElementById('driveDetailModal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+  lucide.createIcons();
+}
+
+function setDriveStatus(driveId, usn, status) {
+  const d = drives.find(x => x.id === driveId);
+  if (!d) return;
+  d.statuses[usn] = status;
+  if (status === 'Selected') {
+    const s = masterStudents.find(x => x.usn === usn);
+    if (s) { s.placed = true; s.company = d.company; s.ctc = d.ctc; }
+    renderKPIs();
+  }
+  saveState();
+  showToast(`${usn} marked as ${status}.`);
+}
+
+function closeDriveDetail() {
+  const m = document.getElementById('driveDetailModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+  activeDriveId = null;
+  renderDriveCards();
+  renderStudentRegistryTable();
+  renderKPIs();
+}
+
+/* =========================================================================
+   REGISTRY — FILTERS, SORT, PAGINATION
+   ========================================================================= */
+function renderRegistryFilterOptions() {
+  const branchSel = document.getElementById('filterRegBranch');
+  const cur = branchSel.value;
+  const present = ALL_BRANCHES.filter(b => masterStudents.some(s => s.branch === b));
+  branchSel.innerHTML = `<option value="ALL">All Branches (${present.length})</option>` +
+    present.map(b => `<option value="${b}">${b} (${masterStudents.filter(s => s.branch === b).length})</option>`).join('');
+  if (cur) branchSel.value = cur;
+
+  const nativeSel = document.getElementById('filterRegNative');
+  const curN = nativeSel.value;
+  const districts = [...new Set(masterStudents.map(s => s.native))].sort();
+  nativeSel.innerHTML = `<option value="ALL">All Districts</option>` +
+    districts.map(d => `<option value="${d}">${d} (${masterStudents.filter(s => s.native === d).length})</option>`).join('');
+  if (curN) nativeSel.value = curN;
+}
+
+function toggleAdvancedFilters() {
+  document.getElementById('advancedFilters').classList.toggle('hidden');
+}
+
+function resetRegistryFilters(silent) {
+  document.getElementById('registrySearch').value = '';
+  document.getElementById('filterRegBranch').value = 'ALL';
+  document.getElementById('filterRegBacklogs').value = 'ALL';
+  document.getElementById('filterRegCategory').value = 'ALL';
+  document.getElementById('filterRegGender').value = 'ALL';
+  document.getElementById('filterRegNative').value = 'ALL';
+  document.getElementById('filterRegPlaced').value = 'ALL';
+  document.getElementById('filterMinCGPA').value = '';
+  document.getElementById('filterMaxCGPA').value = '';
+  document.getElementById('filterMinTenth').value = '';
+  document.getElementById('filterMinTwelfth').value = '';
+  document.getElementById('filterMaxHistBL').value = '';
+  document.getElementById('regSortKey').value = 'cgpa';
+  document.getElementById('regSortDir').value = 'desc';
+  currentSort = { key:'cgpa', asc:false };
+  currentPage = 1;
+  if (!silent) { applyRegistryFilters(); showToast("Filters reset."); }
+}
+
+function applyRegistryFilters() {
+  currentSort.key = document.getElementById('regSortKey').value;
+  currentSort.asc = document.getElementById('regSortDir').value === 'asc';
+  currentPage = 1;
+  renderStudentRegistryTable();
+  updateSortIndicators();
+}
+
+function sortRegistry(key) {
+  if (currentSort.key === key) currentSort.asc = !currentSort.asc;
+  else { currentSort.key = key; currentSort.asc = false; }
+  document.getElementById('regSortKey').value = key;
+  document.getElementById('regSortDir').value = currentSort.asc ? 'asc' : 'desc';
+  renderStudentRegistryTable();
+  updateSortIndicators();
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('.sort-ind').forEach(el => {
+    el.textContent = el.dataset.k === currentSort.key ? (currentSort.asc ? '▲' : '▼') : '';
+    el.className = 'sort-ind text-[9px] ' + (el.dataset.k === currentSort.key ? 'text-sky-600' : 'text-slate-300');
+  });
+}
+
+function changePageSize(v) { pageSize = parseInt(v); currentPage = 1; renderStudentRegistryTable(); }
+function changePage(dir) { currentPage += dir; renderStudentRegistryTable(); }
+
+function getFilteredRegistryData() {
+  const q = (document.getElementById('registrySearch').value || '').toLowerCase().trim();
+  const branch = document.getElementById('filterRegBranch').value;
+  const blF = document.getElementById('filterRegBacklogs').value;
+  const cat = document.getElementById('filterRegCategory').value;
+  const gen = document.getElementById('filterRegGender').value;
+  const nat = document.getElementById('filterRegNative').value;
+  const plc = document.getElementById('filterRegPlaced').value;
+
+  const minC = parseFloat(document.getElementById('filterMinCGPA').value);
+  const maxC = parseFloat(document.getElementById('filterMaxCGPA').value);
+  const minT = parseFloat(document.getElementById('filterMinTenth').value);
+  const minTw = parseFloat(document.getElementById('filterMinTwelfth').value);
+  const maxH = parseFloat(document.getElementById('filterMaxHistBL').value);
+
+  return masterStudents.filter(s => {
+    if (q) {
+      const hay = (s.usn + ' ' + s.name + ' ' + s.email + ' ' + s.native + ' ' + (s.company || '') + ' ' + s.branch).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (branch !== 'ALL' && s.branch !== branch) return false;
+    if (cat !== 'ALL' && s.category !== cat) return false;
+    if (gen !== 'ALL' && s.gender !== gen) return false;
+    if (nat !== 'ALL' && s.native !== nat) return false;
+    if (plc === 'PLACED' && !s.placed) return false;
+    if (plc === 'UNPLACED' && s.placed) return false;
+
+    if (blF === '0' && s.current_backlogs !== 0) return false;
+    if (blF === '1' && s.current_backlogs > 1) return false;
+    if (blF === '2' && s.current_backlogs > 2) return false;
+    if (blF === 'GT0' && s.current_backlogs === 0) return false;
+
+    if (!isNaN(minC) && s.cgpa < minC) return false;
+    if (!isNaN(maxC) && s.cgpa > maxC) return false;
+    if (!isNaN(minT) && s.tenth_pct < minT) return false;
+    if (!isNaN(minTw) && s.twelfth_pct < minTw) return false;
+    if (!isNaN(maxH) && s.history_backlogs > maxH) return false;
+
+    return true;
+  }).sort((a, b) => {
+    let va = a[currentSort.key], vb = b[currentSort.key];
+    if (typeof va === 'string') return currentSort.asc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return currentSort.asc ? va - vb : vb - va;
+  });
+}
+
+function renderStudentRegistryTable() {
+  const data = getFilteredRegistryData();
+  const total = data.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const start = (currentPage - 1) * pageSize;
+  const pageData = data.slice(start, start + pageSize);
+
+  document.getElementById('regShowingCount').textContent = total === 0 ? 0 : (start + 1) + '–' + (start + pageData.length);
+  document.getElementById('regTotalCount').textContent = total;
+  document.getElementById('regCurrentPage').textContent = currentPage;
+  document.getElementById('regTotalPages').textContent = totalPages;
+  document.getElementById('btnPrevPage').disabled = currentPage <= 1;
+  document.getElementById('btnNextPage').disabled = currentPage >= totalPages;
+
+  // Pagination number buttons
+  const pb = document.getElementById('paginationButtons');
+  let btns = '';
+  const from = Math.max(1, currentPage - 2), to = Math.min(totalPages, currentPage + 2);
+  for (let i = from; i <= to; i++) {
+    btns += `<button onclick="gotoPage(${i})" class="px-2.5 py-1.5 rounded-lg border ${i === currentPage ? 'bg-sky-600 text-white border-sky-600' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'} font-semibold">${i}</button>`;
+  }
+  pb.innerHTML = btns;
+
+  const tbody = document.getElementById('studentTableBody');
+  if (pageData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="15" class="py-12 text-center text-slate-400">
+      <i data-lucide="user-x" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+      No students match the current filter criteria.</td></tr>`;
+    lucide.createIcons();
+    return;
+  }
+
+  tbody.innerHTML = pageData.map((s, idx) => {
+    let cgpaBadge;
+    if (s.cgpa >= 8.5) cgpaBadge = `<span class="px-2 py-0.5 rounded font-mono font-black text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">${s.cgpa.toFixed(2)}</span>`;
+    else if (s.cgpa >= 7.0) cgpaBadge = `<span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">${s.cgpa.toFixed(2)}</span>`;
+    else if (s.cgpa >= 6.0) cgpaBadge = `<span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">${s.cgpa.toFixed(2)}</span>`;
+    else cgpaBadge = `<span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300">${s.cgpa.toFixed(2)}</span>`;
+
+    const placePill = s.placed
+      ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800" title="${esc(s.company)}">Placed</span>`
+      : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">Open</span>`;
+
+    const checked = selectedIds.has(s._id) ? 'checked' : '';
+
+    return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+      <td class="py-2.5 px-3 text-center no-print"><input type="checkbox" ${checked} onchange="toggleSelect('${s._id}', this.checked)" class="row-check accent-sky-600 cursor-pointer"></td>
+      <td class="py-2.5 px-3 text-center text-slate-400 font-mono text-[11px]">${start + idx + 1}</td>
+      <td class="py-2.5 px-3 font-mono font-bold text-sky-700 dark:text-sky-400 text-xs whitespace-nowrap">${esc(s.usn)}</td>
+      <td class="py-2.5 px-4 font-semibold text-slate-900 dark:text-white">
+        ${esc(s.name)}
+        <div class="text-[10px] font-mono text-slate-400 truncate max-w-[220px]">${esc(s.email)}</div>
+      </td>
+      <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">${s.branch}</span></td>
+      <td class="py-2.5 px-2 text-center text-[11px] ${s.gender === 'Female' ? 'text-pink-600 dark:text-pink-400 font-bold' : 'text-slate-600 dark:text-slate-400'}">${s.gender === 'Female' ? 'F' : 'M'}</td>
+      <td class="py-2.5 px-3 text-center">${cgpaBadge}</td>
+      <td class="py-2.5 px-2 text-center font-mono font-bold ${s.current_backlogs > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400'}">${s.current_backlogs}</td>
+      <td class="py-2.5 px-2 text-center font-mono text-slate-500">${s.history_backlogs}</td>
+      <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-400">${s.tenth_pct}%</td>
+      <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-400">${s.twelfth_pct}%</td>
+      <td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-semibold text-xs">${s.category}</td>
+      <td class="py-2.5 px-3 text-slate-500 text-xs whitespace-nowrap">${esc(s.native)}</td>
+      <td class="py-2.5 px-3 text-center">${placePill}</td>
+      <td class="py-2.5 px-3 text-center no-print">
+        <button onclick="openProfileModal('${s._id}')" class="p-1 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-slate-800 transition" title="View profile">
+          <i data-lucide="eye" class="w-4 h-4"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  lucide.createIcons();
+  updateSortIndicators();
+  updateBulkBar();
+}
+
+function gotoPage(p) { currentPage = p; renderStudentRegistryTable(); }
+
+/* ---------- Bulk selection ---------- */
+function toggleSelect(id, checked) {
+  if (checked) selectedIds.add(id); else selectedIds.delete(id);
+  updateBulkBar();
+}
+function toggleSelectAllPage(checked) {
+  const data = getFilteredRegistryData();
+  const start = (currentPage - 1) * pageSize;
+  data.slice(start, start + pageSize).forEach(s => {
+    if (checked) selectedIds.add(s._id); else selectedIds.delete(s._id);
+  });
+  renderStudentRegistryTable();
+}
+function clearSelection() {
+  selectedIds.clear();
+  document.getElementById('selectAllPage').checked = false;
+  renderStudentRegistryTable();
+}
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  const n = selectedIds.size;
+  document.getElementById('bulkCount').textContent = n;
+  if (n > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); }
+  else { bar.classList.add('hidden'); bar.classList.remove('flex'); }
+}
+function getSelectedStudents() { return masterStudents.filter(s => selectedIds.has(s._id)); }
+
+function markSelectedPlaced() {
+  const sel = getSelectedStudents();
+  if (sel.length === 0) return;
+  const company = prompt(`Mark ${sel.length} student(s) as PLACED.\n\nEnter company name:`);
+  if (company === null) return;
+  const ctc = prompt("Enter CTC (LPA) — optional:", "") || "";
+  sel.forEach(s => { s.placed = true; s.company = company; s.ctc = ctc; });
+  saveState();
+  renderKPIs();
+  renderStudentRegistryTable();
+  showToast(`${sel.length} student(s) marked placed at ${company}.`);
+}
+
+/* =========================================================================
+   PROFILE MODAL
+   ========================================================================= */
+function openProfileModal(id) {
+  const s = masterStudents.find(x => x._id === id);
+  if (!s) return;
+  activeStudentId = id;
+  document.getElementById('modal-avatar').textContent = s.name.split(' ').map(n => n[0]).join('').slice(0,2);
+  document.getElementById('modal-name').textContent = s.name;
+  document.getElementById('modal-usn').textContent = `${s.usn} • ${s.gender} • BEC Bagalkote`;
+  document.getElementById('modal-dept-badge').textContent = s.branch;
+  document.getElementById('modal-cgpa').textContent = s.cgpa.toFixed(2);
+  document.getElementById('modal-curr-bl').textContent = s.current_backlogs;
+  document.getElementById('modal-hist-bl').textContent = s.history_backlogs;
+  document.getElementById('modal-10th').textContent = s.tenth_pct + '%';
+  document.getElementById('modal-12th').textContent = s.twelfth_pct + '%';
+  document.getElementById('modal-category').textContent = s.category;
+  document.getElementById('modal-email').textContent = s.email;
+  document.getElementById('modal-phone').textContent = s.phone;
+  document.getElementById('modal-native').textContent = s.native;
+  const pl = document.getElementById('modal-placed');
+  pl.textContent = s.placed ? `Placed — ${s.company || 'Company N/A'}${s.ctc ? ' (' + s.ctc + ' LPA)' : ''}` : 'Not yet placed';
+  pl.className = s.placed
+    ? 'px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]'
+    : 'px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-[11px]';
+
+  const eb = document.getElementById('modal-elig-badge');
+  if (s.current_backlogs === 0) {
+    eb.textContent = "Drive Eligible (0 BL)";
+    eb.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300";
+  } else {
+    eb.textContent = `${s.current_backlogs} Active Backlog(s)`;
+    eb.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300";
+  }
+
+  const m = document.getElementById('profileModal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+  lucide.createIcons();
+}
+function closeProfileModal() {
+  const m = document.getElementById('profileModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+  activeStudentId = null;
+}
+
+/* =========================================================================
+   PDF ENGINE  (jsPDF + AutoTable)
+   ========================================================================= */
+function buildPDF(opts) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: opts.orientation || 'landscape', unit:'pt', format:'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+
+  // Header band
+  doc.setFillColor(12, 74, 110);
+  doc.rect(0, 0, pw, 56, 'F');
+  doc.setFillColor(217, 119, 6);
+  doc.rect(0, 56, pw, 3, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text('BASAVESHWAR ENGINEERING COLLEGE (AUTONOMOUS), BAGALKOTE', 28, 24);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+  doc.text('Department of Training & Placement  •  Estd. 1963  •  NAAC "A"', 28, 40);
+
+  doc.setFontSize(8);
+  doc.text('Generated: ' + new Date().toLocaleString('en-IN'), pw - 28, 24, { align:'right' });
+  if (opts.docLabel) doc.text(opts.docLabel, pw - 28, 40, { align:'right' });
+
+  // Title
+  doc.setTextColor(15, 23, 42);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text(opts.title, 28, 82);
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(8);
+  doc.setTextColor(100, 116, 139);
+  if (opts.subtitle) {
+    const lines = doc.splitTextToSize(opts.subtitle, pw - 56);
+    doc.text(lines, 28, 96);
+  }
+  const startY = opts.subtitle ? 96 + (doc.splitTextToSize(opts.subtitle, pw - 56).length * 10) + 8 : 92;
+
+  doc.autoTable({
+    head: [opts.headers],
+    body: opts.rows,
+    startY: startY,
+    theme: 'grid',
+    styles: { fontSize: 7.2, cellPadding: 3.5, lineColor:[226,232,240], lineWidth:0.4, textColor:[30,41,59], overflow:'linebreak' },
+    headStyles: { fillColor:[2,132,199], textColor:255, fontSize:7.6, fontStyle:'bold', halign:'center', cellPadding:4 },
+    alternateRowStyles: { fillColor:[248,250,252] },
+    margin: { left: 24, right: 24, top: 70, bottom: 36 },
+    didDrawPage: function () {
+      const page = doc.internal.getNumberOfPages();
+      doc.setFontSize(7); doc.setTextColor(148, 163, 184);
+      doc.text('BEC Training & Placement Cell — Confidential. For internal & authorised recruiter use only.', 24, ph - 16);
+      doc.text('Page ' + page, pw - 24, ph - 16, { align:'right' });
+    }
+  });
+
+  doc.save(opts.filename);
+}
+
+const STUDENT_PDF_HEADERS = ['#','USN','Name','Dept','Gender','CGPA','Curr BL','Hist BL','10th %','12th %','Category','Native','Phone','Status'];
+
+function studentRows(list) {
+  return list.map((s, i) => [
+    i + 1, s.usn, s.name, s.branch, s.gender === 'Female' ? 'F' : 'M',
+    s.cgpa.toFixed(2), s.current_backlogs, s.history_backlogs,
+    s.tenth_pct, s.twelfth_pct, s.category, s.native, s.phone,
+    s.placed ? 'Placed (' + (s.company || '-') + ')' : 'Open'
+  ]);
+}
+
+function exportRegistryPDF() {
+  const data = getFilteredRegistryData();
+  if (data.length === 0) { showToast("No records to export."); return; }
+  buildPDF({
+    docLabel: 'Student Registry Export',
+    title: `Student Registry Directory — ${data.length} Candidate(s)`,
+    subtitle: buildFilterSummary(),
+    headers: STUDENT_PDF_HEADERS,
+    rows: studentRows(data),
+    filename: `BEC_Student_Registry_${data.length}.pdf`
+  });
+  showToast(`PDF generated for ${data.length} students.`);
+}
+
+function buildFilterSummary() {
+  const bits = [];
+  const q = document.getElementById('registrySearch').value.trim();
+  const b = document.getElementById('filterRegBranch').value;
+  const bl = document.getElementById('filterRegBacklogs').value;
+  const c = document.getElementById('filterRegCategory').value;
+  const g = document.getElementById('filterRegGender').value;
+  const n = document.getElementById('filterRegNative').value;
+  const p = document.getElementById('filterRegPlaced').value;
+  const minC = document.getElementById('filterMinCGPA').value;
+  const maxC = document.getElementById('filterMaxCGPA').value;
+  const minT = document.getElementById('filterMinTenth').value;
+  const minTw = document.getElementById('filterMinTwelfth').value;
+  const maxH = document.getElementById('filterMaxHistBL').value;
+
+  if (q) bits.push(`Search: "${q}"`);
+  if (b !== 'ALL') bits.push(`Branch: ${b}`);
+  if (bl !== 'ALL') bits.push(`Current BL: ${bl}`);
+  if (c !== 'ALL') bits.push(`Category: ${c}`);
+  if (g !== 'ALL') bits.push(`Gender: ${g}`);
+  if (n !== 'ALL') bits.push(`District: ${n}`);
+  if (p !== 'ALL') bits.push(`Placement: ${p}`);
+  if (minC) bits.push(`CGPA ≥ ${minC}`);
+  if (maxC) bits.push(`CGPA ≤ ${maxC}`);
+  if (minT) bits.push(`10th ≥ ${minT}%`);
+  if (minTw) bits.push(`12th ≥ ${minTw}%`);
+  if (maxH) bits.push(`History BL ≤ ${maxH}`);
+  bits.push(`Sorted by ${currentSort.key} (${currentSort.asc ? 'asc' : 'desc'})`);
+
+  return 'Filters applied → ' + (bits.length ? bits.join(' | ') : 'None (full cohort)');
+}
+
+function exportSelectedPDF() {
+  const sel = getSelectedStudents();
+  if (sel.length === 0) { showToast("No students selected."); return; }
+  buildPDF({
+    docLabel: 'Manual Selection Export',
+    title: `Selected Candidates — ${sel.length} Student(s)`,
+    subtitle: 'Manually selected from the Student Registry Directory.',
+    headers: STUDENT_PDF_HEADERS,
+    rows: studentRows(sel),
+    filename: `BEC_Selected_${sel.length}.pdf`
+  });
+  showToast(`PDF generated for ${sel.length} selected students.`);
+}
+
+function exportSingleStudentPDF() {
+  const s = masterStudents.find(x => x._id === activeStudentId);
+  if (!s) return;
+  buildPDF({
+    docLabel: 'Candidate Profile',
+    title: 'Candidate Profile — ' + s.name,
+    subtitle: `USN: ${s.usn}  |  Branch: ${s.branch}  |  Category: ${s.category}`,
+    orientation: 'portrait',
+    headers: ['Field', 'Detail'],
+    rows: [
+      ['Full Name', s.name], ['University Seat No.', s.usn], ['Branch / Department', BRANCH_NAMES[s.branch] || s.branch],
+      ['Gender', s.gender], ['Category', s.category],
+      ['BE Aggregate CGPA', s.cgpa.toFixed(2)],
+      ['Current Standing Backlogs', s.current_backlogs],
+      ['History Backlogs', s.history_backlogs],
+      ['10th (SSLC) %', s.tenth_pct + '%'],
+      ['12th / Diploma %', s.twelfth_pct + '%'],
+      ['Official Email', s.email], ['Mobile', s.phone], ['Native District', s.native],
+      ['Placement Status', s.placed ? `Placed — ${s.company || '-'} (${s.ctc || '-'} LPA)` : 'Not yet placed'],
+      ['Drive Eligibility', s.current_backlogs === 0 ? 'Eligible (0 current backlogs)' : 'Not eligible (' + s.current_backlogs + ' active backlog(s))']
+    ],
+    filename: `BEC_Profile_${s.usn}.pdf`
+  });
+  showToast("Candidate profile PDF generated.");
+}
+
+function exportShortlistPDF() {
+  if (simulatorShortlist.length === 0) { showToast("Shortlist is empty."); return; }
+  const c = getSimulatorCriteria();
+  buildPDF({
+    docLabel: 'Recruiter Shortlist',
+    title: `Eligible Candidate Shortlist — ${simulatorShortlist.length} Student(s)`,
+    subtitle: `Criteria → Min CGPA: ${c.minCGPA.toFixed(2)} | Max Current Backlogs: ${c.maxCurrBL} | Max History Backlogs: ${c.maxHistBL} | Min 10th & 12th: ${c.minSchool}% | Branches: ${c.branches.join(', ')}`,
+    headers: STUDENT_PDF_HEADERS,
+    rows: studentRows(simulatorShortlist),
+    filename: `BEC_Shortlist_${simulatorShortlist.length}_Candidates.pdf`
+  });
+  showToast(`Shortlist PDF generated (${simulatorShortlist.length} candidates).`);
+}
+
+function exportActiveDrivePDF() {
+  const d = drives.find(x => x.id === activeDriveId);
+  if (!d) { showToast("No active drive."); return; }
+  const list = computeDriveShortlist(d.criteria);
+  const headers = [...STUDENT_PDF_HEADERS, 'Drive Status'];
+  const rows = list.map((s, i) => [...studentRows([s])[0], d.statuses[s.usn] || 'Eligible']);
+  buildPDF({
+    docLabel: 'Company Drive Shortlist',
+    title: `${d.company} — Drive Shortlist (${list.length} Candidates)`,
+    subtitle: `Role: ${d.role || 'N/A'} | Type: ${d.type} | Date: ${d.date || 'TBD'} | CTC: ${d.ctc ? d.ctc + ' LPA' : 'N/A'} | Location: ${d.location || 'N/A'}\nCriteria → CGPA ≥ ${d.criteria.minCGPA} | Curr BL ≤ ${d.criteria.maxCurrBL} | Hist BL ≤ ${d.criteria.maxHistBL} | 10th ≥ ${d.criteria.minTenth}% | 12th ≥ ${d.criteria.minTwelfth}% | Branches: ${d.criteria.branches.join(', ')}`,
+    headers, rows,
+    filename: `BEC_Drive_${d.company.replace(/[^a-z0-9]/gi,'_')}_${list.length}.pdf`
+  });
+  showToast("Drive PDF generated.");
+}
+
+function exportActiveDriveCSV() {
+  const d = drives.find(x => x.id === activeDriveId);
+  if (!d) return;
+  const list = computeDriveShortlist(d.criteria);
+  const headers = ['Sl.No','USN','Name','Branch','Gender','CGPA','Current_BL','History_BL','10th','12th','Category','Email','Phone','Native','Drive_Status'];
+  const rows = list.map((s, i) => [i+1, s.usn, q(s.name), s.branch, s.gender, s.cgpa, s.current_backlogs, s.history_backlogs, s.tenth_pct, s.twelfth_pct, s.category, s.email, s.phone, q(s.native), d.statuses[s.usn] || 'Eligible']);
+  downloadCSV(headers, rows, `BEC_Drive_${d.company.replace(/[^a-z0-9]/gi,'_')}_${list.length}.csv`);
+  showToast("Drive CSV downloaded.");
+}
+
+function exportAllDrivesPDF() {
+  if (drives.length === 0) { showToast("No drives to export."); return; }
+  const rows = drives.map(d => {
+    const list = computeDriveShortlist(d.criteria);
+    return [d.company, d.role || '-', d.type || '-', d.date || 'TBD', d.ctc || '-', d.location || '-',
+      list.length, list.filter(s => s.placed).length,
+      `CGPA≥${d.criteria.minCGPA}, BL≤${d.criteria.maxCurrBL}`,
+      d.criteria.branches.join('/')];
+  });
+  buildPDF({
+    docLabel: 'Drive Master Report',
+    title: `Company Drives Master Report — ${drives.length} Drive(s)`,
+    subtitle: 'Summary of all drives created in the Placement Intelligence Hub.',
+    headers: ['Company','Role','Type','Date','CTC (LPA)','Location','Eligible','Already Placed','Key Criteria','Branches'],
+    rows,
+    filename: `BEC_All_Drives_${drives.length}.pdf`
+  });
+  showToast("All-drives PDF generated.");
+}
+
+function exportAnalyticsPDF() {
+  const n = masterStudents.length || 1;
+  const zeroBL = masterStudents.filter(s => s.current_backlogs === 0).length;
+  const cleanH = masterStudents.filter(s => s.history_backlogs === 0).length;
+  const f = masterStudents.filter(s => s.gender === 'Female').length;
+  const m = masterStudents.filter(s => s.gender === 'Male').length;
+  const mean = (masterStudents.reduce((a,b) => a+b.cgpa, 0) / n).toFixed(2);
+  const top = masterStudents.reduce((mx,s) => s.cgpa > mx ? s.cgpa : mx, 0);
+  const placed = masterStudents.filter(s => s.placed).length;
+
+  const summary = [
+    ['Total Registered Candidates', n],
+    ['Zero Current Backlogs (Drive Eligible)', `${zeroBL}  (${((zeroBL/n)*100).toFixed(1)}%)`],
+    ['Clean History (0 backlogs ever)', `${cleanH}  (${((cleanH/n)*100).toFixed(1)}%)`],
+    ['Female Candidates', `${f}  (${((f/n)*100).toFixed(1)}%)`],
+    ['Male Candidates', `${m}  (${((m/n)*100).toFixed(1)}%)`],
+    ['Mean BE CGPA (Sem 1–6)', mean],
+    ['Highest CGPA', top.toFixed(2)],
+    ['Students Placed (recorded)', `${placed}  (${((placed/n)*100).toFixed(1)}%)`],
+    ['Drives Created', drives.length]
+  ];
+
+  const branchRows = ALL_BRANCHES.filter(b => masterStudents.some(s => s.branch === b)).map(b => {
+    const list = masterStudents.filter(s => s.branch === b);
+    const z = list.filter(s => s.current_backlogs === 0).length;
+    return [b, BRANCH_NAMES[b], list.length, z, ((z/list.length)*100).toFixed(1) + '%',
+      (list.reduce((a,x) => a+x.cgpa, 0)/list.length).toFixed(2),
+      list.filter(s => s.gender === 'Female').length + ' / ' + list.filter(s => s.gender === 'Male').length];
+  });
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'pt', format:'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+
+  doc.setFillColor(12, 74, 110); doc.rect(0, 0, pw, 56, 'F');
+  doc.setFillColor(217, 119, 6); doc.rect(0, 56, pw, 3, 'F');
+  doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text('BASAVESHWAR ENGINEERING COLLEGE (AUTONOMOUS), BAGALKOTE', 28, 24);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+  doc.text('Department of Training & Placement — Placement Readiness Report', 28, 40);
+  doc.setFontSize(8);
+  doc.text('Generated: ' + new Date().toLocaleString('en-IN'), pw - 28, 24, { align:'right' });
+
+  doc.setTextColor(15,23,42); doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text('Cohort Summary', 28, 88);
+
+  doc.autoTable({
+    head: [['Metric', 'Value']],
+    body: summary,
+    startY: 98,
+    theme: 'striped',
+    styles: { fontSize: 8.5, cellPadding: 5 },
+    headStyles: { fillColor: [2,132,199], textColor: 255, fontStyle:'bold' },
+    margin: { left: 28, right: 28 }
+  });
+
+  const afterY = doc.lastAutoTable.finalY + 26;
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(15,23,42);
+  doc.text('Branch-Wise Breakdown', 28, afterY);
+
+  doc.autoTable({
+    head: [['Code','Department','Registered','0 Curr BL','Eligibility %','Mean CGPA','F / M']],
+    body: branchRows,
+    startY: afterY + 10,
+    theme: 'grid',
+    styles: { fontSize: 7.8, cellPadding: 4 },
+    headStyles: { fillColor: [2,132,199], textColor: 255, fontStyle:'bold', halign:'center' },
+    margin: { left: 28, right: 28 },
+    didDrawPage: function () {
+      const page = doc.internal.getNumberOfPages();
+      doc.setFontSize(7); doc.setTextColor(148,163,184);
+      doc.text('BEC Training & Placement Cell — Confidential', 28, ph - 16);
+      doc.text('Page ' + page, pw - 28, ph - 16, { align:'right' });
+    }
+  });
+
+  doc.save('BEC_Placement_Readiness_Report.pdf');
+  showToast("Analytics PDF report generated.");
+}
+
+function exportBranchPDF() {
+  const rows = ALL_BRANCHES.filter(b => masterStudents.some(s => s.branch === b)).map(b => {
+    const list = masterStudents.filter(s => s.branch === b);
+    const z = list.filter(s => s.current_backlogs === 0).length;
+    const cl = list.filter(s => s.history_backlogs === 0).length;
+    const topper = list.reduce((mx,s) => s.cgpa > mx ? s.cgpa : mx, 0);
+    return [BRANCH_NAMES[b], b, list.length, z, ((z/list.length)*100).toFixed(1) + '%', cl,
+      (list.reduce((a,x) => a+x.cgpa, 0)/list.length).toFixed(2), topper.toFixed(2),
+      list.filter(s => s.gender === 'Female').length + ' / ' + list.filter(s => s.gender === 'Male').length];
+  });
+  buildPDF({
+    docLabel: 'Department Matrix',
+    title: 'Branch-Wise Placement Intelligence Matrix',
+    subtitle: 'Departmental breakdown of the registered final-year cohort.',
+    headers: ['Department','Code','Registered','0 Curr BL','Eligibility %','Clean History','Mean CGPA','Topper','F / M'],
+    rows,
+    filename: 'BEC_Branch_Breakdown.pdf'
+  });
+  showToast("Branch breakdown PDF generated.");
+}
+
+/* =========================================================================
+   CSV EXPORT
+   ========================================================================= */
+function q(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+
+function downloadCSV(headers, rows, filename) {
+  const csv = [headers.join(','), ...rows.map(r => r.map(c => typeof c === 'string' && (c.startsWith('"') || c.includes(',')) ? c : q(c)).join(','))].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+const MASTER_HEADERS = ['Sl.No','USN','Name','Branch','Gender','CGPA','Current_Backlogs','History_Backlogs','10th_Pct','12th_Pct','Category','Email','Phone','Native_Place','Placed','Company','CTC_LPA'];
+
+function masterRow(s, i) {
+  return [i+1, s.usn, s.name, s.branch, s.gender, s.cgpa, s.current_backlogs, s.history_backlogs,
+    s.tenth_pct, s.twelfth_pct, s.category, s.email, s.phone, s.native,
+    s.placed ? 'YES' : 'NO', s.company || '', s.ctc || ''];
+}
+
+function exportMasterCSV() {
+  downloadCSV(MASTER_HEADERS, masterStudents.map(masterRow), `BEC_Placement_Master_${masterStudents.length}_Students.csv`);
+  showToast("Master CSV downloaded.");
+}
+
+function exportRecruiterShortlistCSV() {
+  const list = simulatorShortlist.length > 0 ? simulatorShortlist : masterStudents;
+  const headers = ['Sl.No','USN','Name','Branch','Gender','CGPA','Current_Backlogs','History_Backlogs','10th_Pct','12th_Pct','Category','Email','Phone','Native_Place','Drive_Status'];
+  const rows = list.map((s, i) => [...masterRow(s, i).slice(0, 14), 'Eligible & Shortlisted']);
+  downloadCSV(headers, rows, `BEC_Drive_Shortlist_${list.length}_Candidates.csv`);
+  showToast(`Exported ${list.length} shortlisted candidates.`);
+}
+
+function exportSelectedCSV() {
+  const sel = getSelectedStudents();
+  if (sel.length === 0) { showToast("No students selected."); return; }
+  downloadCSV(MASTER_HEADERS, sel.map(masterRow), `BEC_Selected_${sel.length}.csv`);
+  showToast(`${sel.length} students exported.`);
+}
+
+/* =========================================================================
+   BRANCH MATRIX
+   ========================================================================= */
+function renderBranchMatrix() {
+  const tbody = document.getElementById('branchMatrixBody');
+  if (!tbody) return;
+  const present = ALL_BRANCHES.filter(b => masterStudents.some(s => s.branch === b));
+
+  if (present.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">No data available.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = present.map(b => {
+    const list = masterStudents.filter(s => s.branch === b);
+    const c = list.length;
+    const z = list.filter(s => s.current_backlogs === 0).length;
+    const cl = list.filter(s => s.history_backlogs === 0).length;
+    const rate = ((z / c) * 100).toFixed(1);
+    const avg = (list.reduce((a, x) => a + x.cgpa, 0) / c).toFixed(2);
+    const top = list.reduce((mx, s) => s.cgpa > mx ? s.cgpa : mx, 0);
+    const f = list.filter(s => s.gender === 'Female').length;
+    const m = list.filter(s => s.gender === 'Male').length;
+    return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
+      <td class="py-3 px-4"><strong class="text-slate-900 dark:text-white">${BRANCH_NAMES[b] || b}</strong> <span class="text-xs text-slate-400 ml-1">(${b})</span></td>
+      <td class="py-3 px-3 text-center font-bold">${c}</td>
+      <td class="py-3 px-3 text-center font-bold text-emerald-600 dark:text-emerald-400">${z}</td>
+      <td class="py-3 px-3 text-center">
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-16 bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+            <div class="bg-sky-600 h-2 rounded-full" style="width:${rate}%"></div>
+          </div>
+          <span class="font-bold text-xs font-mono">${rate}%</span>
+        </div>
+      </td>
+      <td class="py-3 px-3 text-center font-bold text-indigo-600 dark:text-indigo-400">${cl}</td>
+      <td class="py-3 px-3 text-center font-bold font-mono text-sky-700 dark:text-sky-300">${avg}</td>
+      <td class="py-3 px-3 text-center font-bold font-mono text-amber-600 dark:text-amber-400">${top.toFixed(2)}</td>
+      <td class="py-3 px-3 text-center text-xs font-mono"><span class="text-pink-600 font-bold">${f} F</span> / <span class="text-blue-600 font-bold">${m} M</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* =========================================================================
+   UPLOAD
+   ========================================================================= */
+function openUploadModal() { const m = document.getElementById('uploadModal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeUploadModal() { const m = document.getElementById('uploadModal'); m.classList.add('hidden'); m.classList.remove('flex'); }
+
+function handleFileDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('border-sky-500');
+  if (e.dataTransfer.files.length) parseUploadedFile(e.dataTransfer.files[0]);
+}
+function handleFileSelect(e) {
+  if (e.target.files.length) parseUploadedFile(e.target.files[0]);
+}
+
+function parseUploadedFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.csv')) {
+    Papa.parse(file, { header:true, skipEmptyLines:true, complete: r => processParsedRows(r.data) });
+  } else {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type:'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(ws, { defval:"" });
+      processParsedRows(json);
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function pick(row, keys, fallback) {
+  for (const k of keys) {
+    if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
+  }
+  const lower = {};
+  Object.keys(row).forEach(k => lower[k.toLowerCase().trim()] = row[k]);
+  for (const k of keys) {
+    const lk = k.toLowerCase().trim();
+    if (lower[lk] !== undefined && String(lower[lk]).trim() !== '') return lower[lk];
+  }
+  return fallback;
+}
+
+function processParsedRows(rows) {
+  if (!rows || rows.length === 0) { showToast("Error: the file contains no rows."); return; }
+
+  const imported = rows.map((r, i) => {
+    const usn = String(pick(r, ['USN','usn','University Seat No','Seat No'], `2BA21GEN${String(i+1).padStart(3,'0')}`)).trim();
+    const name = String(pick(r, ['Name','Student Name','Candidate_Name','Student_Name','Full Name'], `Student ${i+1}`)).trim();
+    const branch = String(pick(r, ['Branch','Dept','Department','Course'], 'CSE')).trim();
+    const cgpa = parseFloat(pick(r, ['CGPA','BE CGPA','BE_CGPA','cgpa'], 7.0)) || 7.0;
+    const currBL = parseInt(pick(r, ['Current_Backlogs','Current Backlogs','Curr BL','Backlogs','Current_Backlog'], 0)) || 0;
+    const histBLRaw = parseInt(pick(r, ['History_Backlogs','History Backlogs','Hist BL','History_Backlog'], currBL));
+    const histBL = isNaN(histBLRaw) ? currBL : Math.max(histBLRaw, currBL);
+    const gender = String(pick(r, ['Gender','Sex'], Math.random() > 0.5 ? 'Female' : 'Male')).trim();
+    const tenth = parseFloat(pick(r, ['10th','10th %','10th_Pct','SSLC','SSLC %','Tenth'], 75)) || 75;
+    const twelfth = parseFloat(pick(r, ['12th','12th %','12th_Pct','PUC','PUC %','Diploma','Twelfth'], 75)) || 75;
+    const category = String(pick(r, ['Category','Caste Category','Reservation'], 'OBC')).trim();
+    const email = String(pick(r, ['Email','E-mail','Official Email','Email ID'], `${name.toLowerCase().replace(/\s+/g,'')}@becbgk.edu`)).trim();
+    const phone = String(pick(r, ['Phone','Mobile','Contact','Mobile No','Phone Number'], '+91 98000 00000')).trim();
+    const native = String(pick(r, ['Native_Place','Native Place','Native','District','Hometown'], 'Bagalkote')).trim();
+
+    return {
+      _id: 'S' + (i + 1),
+      slNo: i + 1,
+      usn, name, gender,
+      branch: ALL_BRANCHES.includes(branch) ? branch : branch,
+      category: CATEGORIES.includes(category) ? category : category,
+      cgpa, current_backlogs: currBL, history_backlogs: histBL,
+      tenth_pct: tenth, twelfth_pct: twelfth,
+      native, email, phone,
+      placed: false, company: '', ctc: ''
+    };
+  });
+
+  masterStudents = imported;
+  drives = [];
+  selectedIds.clear();
+  saveState();
+  closeUploadModal();
+  refreshEverything();
+  showToast(`Loaded ${imported.length} students from "${file_placeholder_name}".`);
+}
+let file_placeholder_name = 'uploaded sheet';
+
+function restoreOriginalDataset() {
+  masterStudents = generateBECDataset();
+  drives = [];
+  selectedIds.clear();
+  saveState();
+  closeUploadModal();
+  refreshEverything();
+  seedDemoDrive();
+  renderDriveCards();
+  document.getElementById('drives-pill').textContent = drives.length;
+  showToast("Sample dataset regenerated (644 students).");
+}
+
+/* =========================================================================
+   HELPERS
+   ========================================================================= */
+function esc(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  toast.classList.remove('translate-y-24','opacity-0');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.add('translate-y-24','opacity-0'), 3200);
+}
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeProfileModal(); closeUploadModal(); closeDriveModal(); closeDriveDetail(); }
+});
+</script>
+</body>
+</html>
