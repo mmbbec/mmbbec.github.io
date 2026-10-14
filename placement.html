@@ -120,36 +120,6 @@ tailwind.config = {
           <span id="loginBtnText">Sign In</span>
         </button>
       </form>
-
-      <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
-        <button onclick="toggleCredsHint()" class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1.5">
-          <i data-lucide="info" class="w-3.5 h-3.5"></i>
-          <span id="credsToggleLabel">Show demo credentials</span>
-        </button>
-        <div id="credsHint" class="hidden mt-3 space-y-2 text-[11px]">
-          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">Admin</span>
-              <span class="font-mono text-slate-500 dark:text-slate-400">mmbbec@gmail.com</span>
-            </div>
-            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">mahadevmb</span></div>
-          </div>
-          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300">Placement Officer</span>
-              <span class="font-mono text-slate-500 dark:text-slate-400">kambalimath15@gmail.com</span>
-            </div>
-            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">9880735779</span></div>
-          </div>
-          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">Office Staff</span>
-              <span class="font-mono text-slate-500 dark:text-slate-400">9241060811</span>
-            </div>
-            <div class="font-mono text-slate-400">pwd: <span class="text-slate-700 dark:text-slate-200">9241060811</span></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <p class="text-center text-[10px] text-sky-200/60 mt-5">
@@ -441,7 +411,6 @@ tailwind.config = {
   <!-- TAB 4: REGISTRY -->
   <div id="view-registry" class="hidden space-y-4">
 
-    <!-- PLACEMENT SUMMARY WIDGET -->
     <div id="placementSummary" class="bg-gradient-to-r from-emerald-900 via-slate-900 to-sky-950 rounded-2xl p-4 text-white shadow-md grid grid-cols-2 md:grid-cols-4 gap-3"></div>
 
     <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 no-print">
@@ -629,7 +598,6 @@ tailwind.config = {
       <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"><span class="text-slate-400 uppercase font-bold text-[10px] block">Category</span><span id="modal-category" class="text-base font-bold">OBC</span></div>
     </div>
 
-    <!-- Placement Detail Box (shows when placed) -->
     <div id="modal-placementBox" class="hidden mt-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
       <div class="flex items-center gap-2 mb-2">
         <i data-lucide="briefcase" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
@@ -969,12 +937,7 @@ function togglePasswordVisibility() {
   else { inp.type = 'password'; icon.setAttribute('data-lucide','eye'); }
   lucide.createIcons();
 }
-function toggleCredsHint() {
-  const hint = document.getElementById('credsHint');
-  const label = document.getElementById('credsToggleLabel');
-  hint.classList.toggle('hidden');
-  label.textContent = hint.classList.contains('hidden') ? 'Show demo credentials' : 'Hide demo credentials';
-}
+
 function checkExistingSession() {
   try {
     const raw = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
@@ -1013,8 +976,8 @@ let pageSize = 50;
 let selectedIds = new Set();
 let simulatorShortlist = [];
 let activeDriveId = null;
-let activeStudentId = null;            // for profile modal
-let currentPlacementStudentId = null;  // for placement modal (separate to avoid clash)
+let activeStudentId = null;
+let currentPlacementStudentId = null;
 let charts = {};
 
 /* =========================================================================
@@ -1795,7 +1758,6 @@ function savePlacement() {
   renderKPIs();
   renderPlacementSummary();
   renderStudentRegistryTable();
-  // Refresh profile modal if still open for same student
   if (activeStudentId === currentPlacementStudentId && !document.getElementById('profileModal').classList.contains('hidden')) {
     openProfileModal(currentPlacementStudentId);
   }
@@ -2149,7 +2111,6 @@ function openProfileModal(id) {
     ? 'px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]'
     : 'px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-[11px]';
 
-  // Placement detail box
   const pbox = document.getElementById('modal-placementBox');
   const pcontent = document.getElementById('modal-placementContent');
   if (s.placed) {
