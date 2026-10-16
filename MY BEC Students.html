@@ -220,7 +220,6 @@
       </div>
     </div>
 
-    <!-- FIX: footer text — no realtime channels used -->
     <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
       <i class="bi bi-lightning-charge-fill text-amber-500"></i>
       Connected to Supabase • Live data
@@ -322,19 +321,15 @@ function saveRecent(code) {
 
 /* ==================== NAV HELPERS ==================== */
 function showCodeView() {
-  $('dashView').classList.add('hidden');
-  $('codeView').classList.remove('hidden');
-  $('switchClassBtn').classList.add('hidden');
-  $('navBreadcrumb').classList.add('hidden');
+  $('dashView').classList.add('hidden');$('codeView').classList.remove('hidden');
+  $('switchClassBtn').classList.add('hidden');$('navBreadcrumb').classList.add('hidden');
   setTimeout(() => $('codeInput').focus(), 50);
 }
 
 function showDashView() {
   $('codeView').classList.add('hidden');
-  $('dashView').classList.remove('hidden');
-  $('switchClassBtn').classList.remove('hidden');
-  $('navBreadcrumb').classList.remove('hidden');
-  $('dashView').classList.remove('fade-up');
+  $('dashView').classList.remove('hidden');$('switchClassBtn').classList.remove('hidden');
+  $('navBreadcrumb').classList.remove('hidden');$('dashView').classList.remove('fade-up');
   void $('dashView').offsetWidth;
   $('dashView').classList.add('fade-up');
 }
@@ -366,7 +361,7 @@ async function loadClassByCode(rawCode) {
       branch: cls.branch,
       semester: cls.semester,
       division: cls.division,
-      createdAt: new Date(cls.created_at).toLocaleDateString()
+      createdAt: cls.created_at ? new Date(cls.created_at).toLocaleDateString() : '—'
     };
 
     saveRecent(code);
@@ -381,28 +376,31 @@ async function loadClassByCode(rawCode) {
 
     state.posts = (postsRes.data || []).map(p => ({
       id: p.id,
-      category: p.category,
-      title: p.title,
-      link: p.link,
-      description: p.description,
-      createdAt: new Date(p.created_at).toLocaleDateString()
+      category: p.category || 'General',
+      title: p.title || 'Untitled',
+      link: p.link || '',
+      description: p.description || '',
+      createdAt: p.created_at ? new Date(p.created_at).toLocaleDateString() : ''
     }));
 
     state.attendance = (attRes.data || []).map(a => ({
       id: a.id,
-      date: a.date,
-      topic: a.topic,
-      totalCount: a.total_count,
-      presentCount: a.present_count,
-      absentCount: a.absent_count,
-      absentRolls: a.absent_rolls,
-      remarks: a.remarks
+      date: a.date || '',
+      topic: a.topic || 'No topic',
+      totalCount: Number(a.total_count ?? a.totalCount ?? 60),
+      presentCount: Number(a.present_count ?? a.presentCount ?? 0),
+      absentCount: Number(a.absent_count ?? a.absentCount ?? 0),
+      absentRolls: a.absent_rolls ?? a.absentRolls ?? 'None',
+      remarks: a.remarks || ''
     }));
 
+    // Reset loading BEFORE calling render functions
+    state.loading = false;
     renderAll();
     showDashView();
     showToast(`Loaded ${code} — ${cls.subject}`, 'success');
   } catch (err) {
+    state.loading = false;
     showToast(err.message, 'error');
   } finally {
     state.loading = false;
@@ -431,8 +429,7 @@ function renderHeader() {
 function renderClassInfo() {
   const c = state.currentClass;
   const wrap = $('classInfoList');
-  if (!c) { wrap.innerHTML = ''; $('classCountPill').textContent = '—'; return; }
-  $('classCountPill').textContent = c.classCode;
+  if (!c) { wrap.innerHTML = ''; $('classCountPill').textContent = '—'; return; }$('classCountPill').textContent = c.classCode;
   wrap.innerHTML = `
     <div class="flex items-center justify-between"><span class="text-slate-500">Code</span><span class="mono font-medium">${escapeHtml(c.classCode)}</span></div>
     <div class="flex items-center justify-between"><span class="text-slate-500">Branch</span><span class="font-medium">${escapeHtml(c.branch || '—')}</span></div>
@@ -506,8 +503,7 @@ function categoryClass(cat) {
 }
 
 function renderPosts() {
-  const wrap = $('postsList');
-  $('postsCountPill').textContent = state.posts.length;
+  const wrap = $('postsList');$('postsCountPill').textContent = state.posts.length;
   if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
   if (!state.posts.length) {
     wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No materials yet</div>`;
@@ -529,8 +525,7 @@ function renderPosts() {
 }
 
 function renderAttendance() {
-  const wrap = $('attList');
-  $('attCountPill').textContent = state.attendance.length;
+  const wrap = $('attList');$('attCountPill').textContent = state.attendance.length;
   if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
   if (!state.attendance.length) {
     wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No attendance records yet</div>`;
@@ -562,21 +557,18 @@ function renderAttendance() {
 }
 
 /* ==================== EVENTS ==================== */
-$('codeContinueBtn').addEventListener('click', () => loadClassByCode($('codeInput').value));
-$('codeInput').addEventListener('keydown', (e) => {
+$('codeContinueBtn').addEventListener('click', () => loadClassByCode($('codeInput').value));$('codeInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') loadClassByCode($('codeInput').value);
 });
 $('codeInput').addEventListener('input', (e) => {
   e.target.value = e.target.value.toUpperCase();
 });
 
-$('switchClassBtn').addEventListener('click', () => {
-  $('codeInput').value = '';
+$('switchClassBtn').addEventListener('click', () => {$('codeInput').value = '';
   showCodeView();
 });
 
-$('joinAnotherBtn').addEventListener('click', () => {
-  $('codeInput').value = '';
+$('joinAnotherBtn').addEventListener('click', () => {$('codeInput').value = '';
   showCodeView();
 });
 
