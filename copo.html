@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CO–PO–PSO Attainment Calculator | NBA OBE</title>
+
+<!-- SheetJS for .xlsx / .csv reading -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- jsPDF + AutoTable for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+  /* ============ RESET & BASE ============ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0f2f57; --navy-2:#1e4d84; --navy-3:#2b6cb0;
+    --ink:#0f172a; --muted:#5a6b82; --line:#d9e2ec;
+    --bg:#eef2f7; --card:#ffffff; --accent:#0b6b3a;
+    --danger:#b42318; --warn:#b54708; --ok:#027a48;
+    --chip:#e8eef6; --shadow:0 1px 3px rgba(15,47,87,.06),0 8px 24px rgba(15,47,87,.06);
+  }
+  html,body{height:100%}
+  body{
+    font-family:"Inter","Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+    font-size:14px;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ============ HEADER ============ */
+  .app-header{
+    background:linear-gradient(120deg,var(--navy) 0%,var(--navy-2) 60%,var(--navy-3) 100%);
+    color:#fff; padding:18px 26px; border-radius:0 0 14px 14px;
+    box-shadow:0 6px 24px rgba(15,47,87,.25);
+  }
+  .app-header .inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;
+    align-items:center;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:16px}
+  .brand-mark{
+    width:46px;height:46px;border-radius:12px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    display:grid;place-items:center;font-weight:800;font-size:18px;letter-spacing:.5px;
+  }
+  .brand-text h1{font-size:20px;font-weight:700;letter-spacing:.2px}
+  .brand-text p{font-size:12.5px;opacity:.82;margin-top:2px}
+  .author-chip{
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    padding:8px 16px;border-radius:999px;font-size:12px;text-align:right;
+    white-space:nowrap;
+  }
+  .author-chip strong{display:block;font-size:13px;font-weight:600}
+  .author-chip span{opacity:.8;font-size:11px;letter-spacing:.3px;text-transform:uppercase}
+  /* ============ CONTAINER ============ */
+  .wrap{max-width:1280px;margin:0 auto;padding:22px 22px 60px}
+  /* ============ CARDS ============ */
+  .card{
+    background:var(--card); border-radius:12px; padding:20px 22px;
+    box-shadow:var(--shadow); border:1px solid #e6ecf4;
+    margin-bottom:20px; position:relative;
+  }
+  .card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;
+    padding-bottom:12px;border-bottom:1px solid #eef2f7;flex-wrap:wrap}
+  .card-head h2{font-size:16px;font-weight:700;color:var(--navy)}
+  .step-badge{
+    background:var(--navy);color:#fff;font-size:11px;font-weight:700;
+    padding:2px 10px;border-radius:999px;letter-spacing:.5px;line-height:20px;
+  }
+  .card-sub{color:var(--muted);font-size:12.5px;margin:-6px 0 14px}
+  /* ============ FORM ============ */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 18px}
+  .field label{display:block;font-size:12px;font-weight:600;color:#33465c;
+    margin-bottom:5px;letter-spacing:.2px;text-transform:uppercase}
+  .field input,.field select{
+    width:100%;padding:9px 11px;border:1.5px solid #c9d6e3;border-radius:8px;
+    font-size:13.5px;background:#fbfdff;transition:.15s;font-family:inherit;color:var(--ink);
+  }
+  .field input:focus,.field select:focus{
+    outline:none;border-color:var(--navy-3);background:#fff;
+    box-shadow:0 0 0 3px rgba(43,108,176,.12);
+  }
+  .field .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  /* ============ TABS ============ */
+  .tabs{display:flex;gap:4px;border-bottom:2px solid #e6ecf4;margin-bottom:16px}
+  .tab{
+    background:none;border:none;padding:10px 18px;font-size:13px;font-weight:600;
+    color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:.15s;font-family:inherit;
+  }
+  .tab.active{color:var(--navy-3);border-bottom-color:var(--navy-3)}
+  .tab:hover{color:var(--navy)}
+  /* ============ DROP ZONE ============ */
+  .dropzone{
+    border:2px dashed #b9c9db;border-radius:12px;padding:28px 20px;text-align:center;
+    background:#f7fafd;transition:.15s;cursor:pointer;
+  }
+  .dropzone:hover,.dropzone.drag{border-color:var(--navy-3);background:#eef6ff}
+  .dropzone .icon{font-size:34px;margin-bottom:8px}
+  .dropzone p{font-size:13px;color:var(--muted)}
+  .dropzone strong{color:var(--navy);font-weight:600}
+  .dropzone input[type=file]{display:none}
+  /* ============ TEXTAREA ============ */
+  textarea.paste{
+    width:100%;min-height:130px;padding:12px 14px;border:1.5px solid #c9d6e3;
+    border-radius:10px;font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:12.5px;background:#fbfdff;resize:vertical;line-height:1.6;color:var(--ink);
+  }
+  textarea.paste:focus{outline:none;border-color:var(--navy-3);background:#fff;
+    box-shadow:0 0 0 3px rgba(43,108,176,.12)}
+  /* ============ BUTTONS ============ */
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+    border:none;border-radius:8px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:.15s;font-family:inherit;line-height:1.2;
+  }
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover:not(:disabled){background:#0a2240}
+  .btn-blue{background:var(--navy-3);color:#fff}
+  .btn-blue:hover:not(:disabled){background:#1f5a99}
+  .btn-green{background:var(--accent);color:#fff}
+  .btn-green:hover:not(:disabled){background:#075a30}
+  .btn-outline{background:#fff;color:var(--navy);border:1.5px solid #c9d6e3}
+  .btn-outline:hover:not(:disabled){border-color:var(--navy-3);background:#f4f9ff}
+  .btn-danger{background:#fff;color:var(--danger);border:1.5px solid #f0c4c0}
+  .btn-danger:hover:not(:disabled){background:#fef2f2}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  /* ============ TABLES ============ */
+  .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #e6ecf4;background:#fff}
+  table.data{width:100%;border-collapse:collapse;font-size:12.5px;min-width:600px}
+  table.data thead th{
+    background:var(--navy);color:#fff;font-weight:600;font-size:11.5px;
+    padding:9px 8px;text-align:center;letter-spacing:.3px;
+    border-right:1px solid rgba(255,255,255,.08);position:sticky;top:0;
+  }
+  table.data thead th:last-child{border-right:none}
+  table.data tbody td{
+    padding:8px 8px;text-align:center;border-bottom:1px solid #eef2f7;
+    border-right:1px solid #f4f7fb;
+  }
+  table.data tbody td:last-child{border-right:none}
+  table.data tbody tr:hover td{background:#f7fbff}
+  table.data tbody tr:nth-child(even) td{background:#fbfdff}
+  table.data tbody tr:nth-child(even):hover td{background:#f3f9ff}
+  table.data input[type=number]{
+    width:64px;padding:5px 6px;text-align:center;border:1.5px solid #c9d6e3;
+    border-radius:6px;font-size:12.5px;font-weight:600;font-family:inherit;color:var(--ink);
+  }
+  table.data input[type=number]:focus{outline:none;border-color:var(--navy-3)}
+  table.data input[type=number].matrix-input{width:40px;padding:4px 2px;font-size:12px}
+  .row-label{font-weight:700;color:var(--navy);background:#f4f8fd !important}
+  /* ============ BADGES ============ */
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;
+    font-size:11px;font-weight:700;letter-spacing:.2px}
+  .badge-ok{background:#d1fae5;color:#065f46}
+  .badge-no{background:#fee4e2;color:#991b1b}
+  .badge-na{background:#eef2f7;color:#5a6b82}
+  /* ============ DASHBOARD ============ */
+  .dash-label{font-size:12px;font-weight:700;color:var(--navy);
+    text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px}
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+  .metric{
+    background:linear-gradient(160deg,#fff,#f4f8fd);
+    border:1.5px solid #d5e2ef;border-radius:10px;padding:9px 6px;text-align:center;
+    transition:.15s;
+  }
+  .metric:hover{border-color:var(--navy-3);transform:translateY(-1px)}
+  .metric h4{font-size:11px;color:#4a6180;font-weight:700;letter-spacing:.3px;margin-bottom:2px}
+  .metric .v{font-size:17px;font-weight:800;color:var(--navy)}
+  .metric .v small{font-size:9.5px;color:#8195ad;font-weight:500}
+  .metric.ok{border-color:#a7e3c3;background:linear-gradient(160deg,#f0fdf6,#e2f7ec)}
+  .metric.ok .v{color:var(--ok)}
+  .metric.no{border-color:#f5c2bd;background:linear-gradient(160deg,#fff7f6,#fee9e7)}
+  .metric.no .v{color:var(--danger)}
+  /* ============ PREVIEW CHIPS ============ */
+  .chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .chip{background:var(--chip);color:var(--navy);padding:5px 12px;border-radius:999px;
+    font-size:12px;font-weight:600}
+  .chip b{color:var(--navy-3)}
+  /* ============ RESULT BOX ============ */
+  .result-panel{background:#f7fafd;border:1px solid #e0eaf4;border-radius:10px;
+    padding:14px 16px;margin-top:16px}
+  .result-panel h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
+  .result-panel .formula{font-size:12.5px;color:#33465c;line-height:1.7}
+  .result-panel .formula code{background:#e8eef6;padding:1px 6px;border-radius:4px;
+    font-family:ui-monospace,monospace;font-size:11.5px;color:var(--navy)}
+  /* ============ SIGNATURES ============ */
+  .sigs{display:flex;justify-content:space-between;gap:30px;
+    margin-top:36px;padding:20px 30px 8px;flex-wrap:wrap}
+  .sig{flex:1;min-width:200px;text-align:center}
+  .sig .line{border-top:1.5px solid var(--ink);margin-bottom:6px;height:0}
+  .sig .role{font-size:12.5px;font-weight:700;color:var(--navy)}
+  .sig .name{font-size:11.5px;color:var(--muted);margin-top:2px}
+  /* ============ ALERT ============ */
+  .alert{padding:11px 14px;border-radius:8px;font-size:13px;font-weight:500;
+    margin-bottom:14px;display:none;align-items:center;gap:8px}
+  .alert.show{display:flex}
+  .alert.ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+  .alert.err{background:#fee4e2;color:#991b1b;border:1px solid #fecaca}
+  .alert.warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+  /* ============ HIDDEN ============ */
+  .hidden{display:none !important}
+  /* ============ PRINT ============ */
+  @media print{
+    body{background:#fff;font-size:10pt;padding:0}
+    .no-print,.btn,.btn-row,.tabs,.dropzone,.app-header .author-chip{display:none !important}
+    .app-header{background:#fff !important;color:#000 !important;
+      box-shadow:none;border-radius:0;padding:0 0 8px;border-bottom:2px solid #000}
+    .app-header .brand-mark{background:#000;color:#fff}
+    .brand-text h1{color:#000}
+    .brand-text p{color:#333}
+    .wrap{padding:10px 0}
+    .card{box-shadow:none;border:1px solid #bbb;page-break-inside:avoid;margin-bottom:10px}
+    .card-head{border-bottom:1px solid #bbb}
+    table.data thead th{background:#e6eef6 !important;color:#000 !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .metric{background:#fff !important;border:1px solid #bbb}
+    .result-panel{background:#f7fafd !important;border:1px solid #bbb;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .badge{border:1px solid #bbb;background:#fff !important;color:#000 !important}
+  }
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:640px){
+    .app-header{padding:14px 16px}
+    .brand-text h1{font-size:16px}
+    .brand-text p{font-size:11px}
+    .wrap{padding:14px 12px 40px}
+    .card{padding:16px 14px}
+    .sigs{flex-direction:column;gap:24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="app-header">
+  <div class="inner">
+    <div class="brand">
+      <div class="brand-mark">BEC</div>
+      <div class="brand-text">
+        <h1>NBA OBE — CO–PO–PSO Attainment Calculator</h1>
+        <p>Outcome-Based Education Automation • Paste or upload marks → compute → export</p>
+      </div>
+    </div>
+    <div class="author-chip">
+      <span>Developed by</span>
+      <strong>Dr. M. M. Biradar</strong>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ ALERT ============ -->
+  <div id="alert" class="alert"></div>
+
+  <!-- ============ CARD 1: COURSE CONFIGURATION ============ -->
+  <section class="card">
+    <div class="card-head">
+      <span class="step-badge">STEP 1</span>
+      <h2>Course &amp; Configuration</h2>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Academic Year</label>
+        <input id="academicYear" value="2025-26" />
+      </div>
+      <div class="field">
+        <label>Course Code</label>
+        <input id="courseCode" value="BMAS101C" />
+      </div>
+      <div class="field">
+        <label>Course Name</label>
+        <input id="courseName" value="Engineering Mathematics-I" />
+      </div>
+      <div class="field">
+        <label>Department</label>
+        <input id="department" value="Department of Mathematics" />
+      </div>
+      <div class="field">
+        <label>Semester</label>
+        <input id="semester" value="I" />
+      </div>
+      <div class="field">
+        <label>Division</label>
+        <input id="division" value="A" />
+      </div>
+      <div class="field">
+        <label>Faculty Name</label>
+        <input id="faculty" value="Dr. M. M. Biradar" />
+      </div>
+      <div class="field">
+        <label>Number of COs</label>
+        <select id="coCount" onchange="rebuildInputs()">
+          <option>3</option><option>4</option><option selected>5</option>
+          <option>6</option><option>7</option><option>8</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Max Marks / CO</label>
+        <input id="maxMarks" type="number" value="10" min="1" />
+        <div class="hint">Used to compute the threshold mark per CO</div>
+      </div>
+      <div class="field">
+        <label>Student Threshold (%)</label>
+        <input id="studentThreshold" type="number" value="60" min="0" max="100" />
+        <div class="hint">A student "attains" a CO if mark ≥ this % of max</div>
+      </div>
+      <div class="field">
+        <label>CIE Weight %</label>
+        <input id="cieWeight" type="number" value="50" min="0" max="100" />
+      </div>
+      <div class="field">
+        <label>SEE Weight %</label>
+        <input id="seeWeight" type="number" value="50" min="0" max="100" />
+      </div>
+      <div class="field">
+        <label>Attainment Target (0–3)</label>
+        <input id="target" type="number" value="2.00" step="0.01" min="0" max="3" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CARD 2: STUDENT DATA INPUT ============ -->
+  <section class="card">
+    <div class="card-head">
+      <span class="step-badge">STEP 2</span>
+      <h2>Student Marks — Paste or Upload</h2>
+    </div>
+    <p class="card-sub">
+      Column order must be: <b>USN | Student Name | CO1 | CO2 | … | CO<sub>n</sub></b>.
+      CIE percentages will be computed automatically.
+    </p>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-paste" onclick="switchTab('paste')">📋 Paste from Excel</button>
+      <button class="tab" id="tab-file" onclick="switchTab('file')">📁 Upload File (.xlsx / .csv)</button>
+    </div>
+
+    <!-- Paste panel -->
+    <div id="panel-paste">
+      <textarea class="paste" id="pasteBox"
+        placeholder="2BA22CS001&#9;Rahul Sharma&#9;8&#9;7&#9;9&#9;8&#9;7
+2BA22CS002&#9;Pooja Patil&#9;9&#9;8&#9;10&#9;9&#9;8"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="parsePastedData()">⚡ Parse Data</button>
+        <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
+      </div>
+    </div>
+
+    <!-- File panel -->
+    <div id="panel-file" class="hidden">
+      <div class="dropzone" id="dropzone">
+        <div class="icon">📊</div>
+        <p><strong>Click to select</strong> or drag &amp; drop an .xlsx / .xls / .csv file</p>
+        <p style="font-size:11.5px;margin-top:6px">First row may be a header — it will be skipped automatically</p>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div id="previewWrap" class="hidden" style="margin-top:18px">
+      <div class="chip-row">
+        <div class="chip">Students: <b id="chipStudents">0</b></div>
+        <div class="chip">COs detected: <b id="chipCOs">0</b></div>
+        <div class="chip">Threshold: <b id="chipThreshold">—</b></div>
+      </div>
+      <div class="table-wrap" style="max-height:340px;overflow-y:auto">
+        <table class="data" id="previewTable">
+          <thead id="previewHead"></thead>
+          <tbody id="previewBody"></tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="computeFromData()">✅ Compute CIE % from Data</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CARD 3: CO ATTAINMENT ============ -->
+  <section class="card">
+    <div class="card-head">
+      <span class="step-badge">STEP 3</span>
+      <h2>CO Attainment Computation</h2>
+    </div>
+    <p class="card-sub">
+      CIE % is auto-filled from student data. Edit SEE % (or any cell) as needed. Weights come from Step 1.
+    </p>
+
+    <div class="table-wrap">
+      <table class="data" id="coTable">
+        <thead>
+          <tr>
+            <th>CO</th>
+            <th>CIE %&gt;Target</th>
+            <th>CIE Level</th>
+            <th>SEE %&gt;Target</th>
+            <th>SEE Level</th>
+            <th>Direct CO</th>
+            <th>Indirect<br><small>(0–3)</small></th>
+            <th>Final CO<br><small>(0–3)</small></th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="coBody"></tbody>
+      </table>
+    </div>
+
+    <div class="result-panel">
+      <h3>📐 Weighting &amp; Formula Reference</h3>
+      <div class="formula" id="formulaBox"></div>
+    </div>
+  </section>
+
+  <!-- ============ CARD 4: ARTICULATION MATRICES ============ -->
+  <section class="card">
+    <div class="card-head">
+      <span class="step-badge">STEP 4</span>
+      <h2>Articulation Matrices — CO ⇄ PO &amp; CO ⇄ PSO</h2>
+    </div>
+    <p class="card-sub">
+      Correlation scale: <b>3</b> = High &nbsp;•&nbsp; <b>2</b> = Medium &nbsp;•&nbsp;
+      <b>1</b> = Low &nbsp;•&nbsp; <b>0</b> = None
+    </p>
+
+    <div class="table-wrap" style="margin-bottom:14px">
+      <table class="data" id="poMatrix">
+        <thead id="poMatrixHead"></thead>
+        <tbody id="poMatrixBody"></tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap" style="max-width:520px">
+      <table class="data" id="psoMatrix">
+        <thead>
+          <tr><th>CO / PSO</th><th>PSO1</th><th>PSO2</th><th>PSO3</th></tr>
+        </thead>
+        <tbody id="psoMatrixBody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="resetMatrices()">↺ Reset Matrices to 0</button>
+    </div>
+  </section>
+
+  <!-- ============ CARD 5: RESULTS ============ -->
+  <section class="card">
+    <div class="card-head">
+      <span class="step-badge">STEP 5</span>
+      <h2>Attainment Summary &amp; Export</h2>
+    </div>
+
+    <div class="btn-row no-print" style="margin-bottom:16px">
+      <button class="btn btn-primary" onclick="calculateAll()">🧮 Recalculate</button>
+      <button class="btn btn-green" onclick="exportExcel()">📊 Export Excel</button>
+      <button class="btn btn-blue" onclick="exportPDF()">📄 Export PDF</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+
+    <div id="dashCO"></div>
+    <div id="dashPO"></div>
+    <div id="dashPSO"></div>
+
+    <div class="result-panel" style="margin-top:18px">
+      <h3>🧮 PO / PSO Attainment Formula</h3>
+      <div class="formula">
+        <b>Attainment</b> = Σ(CO Attained<sub>i</sub> × Matrix<sub>i</sub>) ÷
+        (Average Matrix × Number of COs)<br>
+        All COs are included in the denominator — including zero-correlation entries.
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <h3>📋 Calculation Audit — PO / PSO</h3>
+      <div class="table-wrap" style="margin-top:8px;border:none">
+        <table class="data" id="auditTable">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Σ(CO×Matrix)</th>
+              <th>Avg Matrix</th>
+              <th>No. of COs</th>
+              <th>Denominator</th>
+              <th>Attainment</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="sigs">
+      <div class="sig">
+        <div class="line"></div>
+        <div class="role">Course Instructor / Faculty</div>
+        <div class="name" id="sigFaculty">—</div>
+      </div>
+      <div class="sig">
+        <div class="line"></div>
+        <div class="role">Head of the Department</div>
+        <div class="name" id="sigDept">—</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ====================================================================
+   STATE
+   ==================================================================== */
+const STATE = {
+  students: [],          // [{usn, name, marks:[n1,n2,...]}]
+  coCount: 5,
+  ciePcts: [],           // CIE % of students above threshold, per CO
+  seePcts: [],           // SEE % (manual)
+  indirect: [],          // Indirect scores (manual)
+  finalCO: [],           // Final CO attainment 0–3
+  poResults: [],
+  psoResults: [],
+};
+
+const PO_COUNT  = 12;
+const PSO_COUNT = 3;
+
+/* ====================================================================
+   UTILITIES
+   ==================================================================== */
+const $  = (id) => document.getElementById(id);
+const num = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+
+function showAlert(msg, type = 'ok') {
+  const el = $('alert');
+  el.className = 'alert ' + type + ' show';
+  el.textContent = msg;
+  clearTimeout(showAlert._t);
+  showAlert._t = setTimeout(() => el.classList.remove('show'), 6000);
+}
+
+function getLevel(pct) {
+  if (pct >= 70) return 3;
+  if (pct >= 60) return 2;
+  if (pct >= 50) return 1;
+  return 0;
+}
+
+function statusOf(score, target) {
+  if (score <= 0) return '—';
+  return score >= target ? 'ATTAINED' : 'NOT ATTAINED';
+}
+
+function badgeFor(status) {
+  if (status === 'ATTAINED') return '<span class="badge badge-ok">ATTAINED</span>';
+  if (status === 'NOT ATTAINED') return '<span class="badge badge-no">NOT ATTAINED</span>';
+  return '<span class="badge badge-na">—</span>';
+}
+
+/* ====================================================================
+   TAB SWITCH
+   ==================================================================== */
+function switchTab(which) {
+  $('tab-paste').classList.toggle('active', which === 'paste');
+  $('tab-file').classList.toggle('active', which === 'file');
+  $('panel-paste').classList.toggle('hidden', which !== 'paste');
+  $('panel-file').classList.toggle('hidden', which !== 'file');
+}
+
+/* ====================================================================
+   DATA PARSING
+   ==================================================================== */
+function parsePastedData() {
+  const raw = $('pasteBox').value.trim();
+  if (!raw) return showAlert('Please paste some data first.', 'err');
+
+  const lines = raw.split(/\r?\n/).filter(l => l.trim());
+  const students = [];
+  let coCountDetected = 0;
+
+  lines.forEach((line, i) => {
+    const cells = line.split(/\t/).map(s => s.trim());
+    if (cells.length < 3) return;                 // need USN + Name + at least 1 CO
+    // skip header row
+    if (i === 0 && /usn|student|name|roll/i.test(cells[0])) return;
+
+    const usn  = cells[0];
+    const name = cells[1];
+    const marks = cells.slice(2).map(v => num(v));
+    coCountDetected = Math.max(coCountDetected, marks.length);
+    students.push({ usn, name, marks });
+  });
+
+  if (!students.length) return showAlert('No valid student rows detected. Use tab-separated columns.', 'err');
+
+  // Pad all rows to the same CO width
+  students.forEach(s => {
+    while (s.marks.length < coCountDetected) s.marks.push(0);
+  });
+
+  STATE.students = students;
+  // sync CO count dropdown
+  if (coCountDetected >= 3 && coCountDetected <= 8) {
+    $('coCount').value = String(coCountDetected);
+  }
+  $('coCount').dispatchEvent(new Event('change'));
+
+  renderPreview();
+  showAlert(`Parsed ${students.length} student rows across ${coCountDetected} COs.`, 'ok');
+}
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, { type: 'array' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      const students = [];
+      let coCountDetected = 0;
+      let start = 0;
+      if (rows[0] && /usn|student|name|roll/i.test(String(rows[0][0] || ''))) start = 1;
+
+      for (let i = start; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r || !r[0]) continue;
+        const usn  = String(r[0]).trim();
+        const name = String(r[1] || '').trim();
+        const marks = r.slice(2).map(v => num(v));
+        if (!usn || marks.length === 0) continue;
+        coCountDetected = Math.max(coCountDetected, marks.length);
+        students.push({ usn, name, marks });
+      }
+      if (!students.length) return showAlert('No student rows found in file.', 'err');
+      students.forEach(s => { while (s.marks.length < coCountDetected) s.marks.push(0); });
+
+      STATE.students = students;
+      if (coCountDetected >= 3 && coCountDetected <= 8) $('coCount').value = String(coCountDetected);
+      $('coCount').dispatchEvent(new Event('change'));
+
+      renderPreview();
+      showAlert(`Loaded ${students.length} students from "${file.name}".`, 'ok');
+    } catch (err) {
+      console.error(err);
+      showAlert('Could not read file: ' + err.message, 'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ====================================================================
+   PREVIEW TABLE
+   ==================================================================== */
+function renderPreview() {
+  const nCO = Math.max(...STATE.students.map(s => s.marks.length), 0);
+  if (!nCO) { $('previewWrap').classList.add('hidden'); return; }
+
+  $('previewWrap').classList.remove('hidden');
+  $('chipStudents').textContent = STATE.students.length;
+  $('chipCOs').textContent      = nCO;
+  $('chipThreshold').textContent = $('studentThreshold').value + '%';
+
+  let head = '<tr><th>#</th><th>USN</th><th>Name</th>';
+  for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
+  head += '</tr>';
+  $('previewHead').innerHTML = head;
+
+  let body = '';
+  STATE.students.forEach((s, i) => {
+    body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td><td style="text-align:left">${s.name}</td>`;
+    for (let c = 0; c < nCO; c++) body += `<td>${s.marks[c] ?? 0}</td>`;
+    body += '</tr>';
+  });
+  $('previewBody').innerHTML = body;
+}
+
+/* ====================================================================
+   BUILD / REBUILD INPUT TABLES
+   ==================================================================== */
+function rebuildInputs() {
+  STATE.coCount = parseInt($('coCount').value, 10) || 4;
+
+  // resize arrays
+  for (let i = 0; i < STATE.coCount; i++) {
+    if (STATE.seePcts[i]   == null) STATE.seePcts[i]   = 0;
+    if (STATE.indirect[i]  == null) STATE.indirect[i]  = 0;
+    if (STATE.ciePcts[i]   == null) STATE.ciePcts[i]   = 0;
+  }
+
+  // ---- CO input table ----
+  let coBody = '';
+  for (let i = 0; i < STATE.coCount; i++) {
+    coBody += `
+      <tr>
+        <td class="row-label">CO${i + 1}</td>
+        <td id="cieDisp_${i}">0.0%</td>
+        <td id="cieLvl_${i}">0</td>
+        <td><input type="number" id="see_${i}" value="${STATE.seePcts[i]}" min="0" max="100" step="0.1"></td>
+        <td id="seeLvl_${i}">0</td>
+        <td id="direct_${i}">0.00</td>
+        <td><input type="number" id="ind_${i}" value="${STATE.indirect[i]}" min="0" max="3" step="0.01" class="matrix-input" style="width:60px"></td>
+        <td id="final_${i}" style="font-weight:800;color:#0f2f57">0.00</td>
+        <td id="status_${i}">—</td>
+      </tr>`;
+  }
+  $('coBody').innerHTML = coBody;
+
+  ['see_', 'ind_'].forEach(prefix => {
+    for (let i = 0; i < STATE.coCount; i++) {
+      $((prefix + i)).addEventListener('input', () => {
+        STATE.seePcts[i]  = num($(prefix + i).value);
+        STATE.indirect[i] = num($('ind_' + i).value);
+        calculateAll();
+      });
+    }
+  });
+
+  // ---- PO matrix ----
+  let poHead = '<tr><th>CO / PO</th>';
+  for (let p = 1; p <= PO_COUNT; p++) poHead += `<th>PO${p}</th>`;
+  poHead += '</tr>';
+  $('poMatrixHead').innerHTML = poHead;
+
+  let poBody = '';
+  for (let c = 0; c < STATE.coCount; c++) {
+    poBody += `<tr><td class="row-label">CO${c + 1}</td>`;
+    for (let p = 0; p < PO_COUNT; p++) {
+      poBody += `<td><input type="number" class="matrix-input" min="0" max="3"
+        id="m_co${c}_po${p}" value="0"></td>`;
+    }
+    poBody += '</tr>';
+  }
+  $('poMatrixBody').innerHTML = poBody;
+
+  // ---- PSO matrix ----
+  let psoBody = '';
+  for (let c = 0; c < STATE.coCount; c++) {
+    psoBody += `<tr><td class="row-label">CO${c + 1}</td>`;
+    for (let p = 0; p < PSO_COUNT; p++) {
+      psoBody += `<td><input type="number" class="matrix-input" min="0" max="3"
+        id="m_co${c}_pso${p}" value="0"></td>`;
+    }
+    psoBody += '</tr>';
+  }
+  $('psoMatrixBody').innerHTML = psoBody;
+
+  // bind matrix inputs
+  document.querySelectorAll('#poMatrixBody input, #psoMatrixBody input')
+    .forEach(inp => inp.addEventListener('input', calculateAll));
+
+  // re-apply computed CIE values
+  computeFromData(true);
+  calculateAll();
+}
+
+function resetMatrices() {
+  document.querySelectorAll('#poMatrixBody input, #psoMatrixBody input')
+    .forEach(inp => { inp.value = 0; });
+  calculateAll();
+  showAlert('All matrix correlations reset to 0.', 'warn');
+}
+
+function clearAll() {
+  STATE.students = [];
+  STATE.ciePcts = [];
+  $('pasteBox').value = '';
+  $('fileInput').value = '';
+  $('previewWrap').classList.add('hidden');
+  computeFromData(true);
+  calculateAll();
+  showAlert('Cleared student data and CIE percentages.', 'warn');
+}
+
+/* ====================================================================
+   COMPUTE CIE % FROM STUDENT DATA
+   ==================================================================== */
+function computeFromData(silent = false) {
+  const maxMarks = num($('maxMarks').value) || 10;
+  const thrPct   = num($('studentThreshold').value) || 60;
+  const threshold = maxMarks * thrPct / 100;
+
+  const nCO = Math.max(...STATE.students.map(s => s.marks.length), STATE.coCount);
+  const ciePcts = [];
+  for (let c = 0; c < STATE.coCount; c++) {
+    if (!STATE.students.length) { ciePcts[c] = 0; continue; }
+    let above = 0, total = 0;
+    STATE.students.forEach(s => {
+      if (s.marks[c] != null) {
+        total++;
+        if (num(s.marks[c]) >= threshold) above++;
+      }
+    });
+    ciePcts[c] = total ? (above / total) * 100 : 0;
+  }
+  STATE.ciePcts = ciePcts;
+
+  // Update visible CIE cells
+  for (let i = 0; i < STATE.coCount; i++) {
+    const elPct = $('cieDisp_' + i);
+    if (elPct) elPct.textContent = ciePcts[i].toFixed(1) + '%';
+  }
+  $('chipThreshold').textContent = thrPct + '%';
+
+  if (!silent) calculateAll();
+  return ciePcts;
+}
+
+/* ====================================================================
+   MAIN CALCULATION
+   ==================================================================== */
+function calculateAll() {
+  const coCount = STATE.coCount;
+  let cieW = num($('cieWeight').value) / 100;
+  let seeW = num($('seeWeight').value) / 100;
+  const sumW = cieW + seeW;
+  if (sumW > 0) { cieW /= sumW; seeW /= sumW; } else { cieW = 0.5; seeW = 0.5; }
+  const target = num($('target').value) || 2.00;
+
+  // fill signature names
+  $('sigFaculty').textContent = $('faculty').value || '—';
+  $('sigDept').textContent    = $('department').value || '—';
+
+  // ---- per-CO ----
+  const finalCO = [];
+  let sumFinal = 0;
+  for (let i = 0; i < coCount; i++) {
+    const ciePct = STATE.ciePcts[i] || 0;
+    const cieLvl = getLevel(ciePct);
+    const seePct = STATE.seePcts[i] || 0;
+    const seeLvl = getLevel(seePct);
+    const direct = cieLvl * cieW + seeLvl * seeW;
+    const ind    = STATE.indirect[i] || 0;
+    const final  = direct + ind;   // indirect score already 0–3 scale
+    finalCO[i]   = final;
+    sumFinal    += final;
+
+    // update row
+    const setTxt = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+    setTxt('cieLvl_' + i, cieLvl);
+    setTxt('seeLvl_' + i, seeLvl);
+    setTxt('direct_' + i, direct.toFixed(2));
+    setTxt('final_'  + i, final.toFixed(2));
+    const st = statusOf(final, target);
+    setTxt('status_' + i, st);
+  }
+  const avgCO = coCount ? sumFinal / coCount : 0;
+  STATE.finalCO = finalCO;
+
+  // ---- PO / PSO ----
+  const poResults = [], psoResults = [];
+  for (let p = 0; p < PO_COUNT; p++) {
+    const matrix = [];
+    for (let c = 0; c < coCount; c++) {
+      const el = $('m_co' + c + '_po' + p);
+      matrix.push(el ? num(el.value) : 0);
+    }
+    poResults.push(programAttainment(finalCO, matrix, coCount, target));
+  }
+  for (let p = 0; p < PSO_COUNT; p++) {
+    const matrix = [];
+    for (let c = 0; c < coCount; c++) {
+      const el = $('m_co' + c + '_pso' + p);
+      matrix.push(el ? num(el.value) : 0);
+    }
+    psoResults.push(programAttainment(finalCO, matrix, coCount, target));
+  }
+  STATE.poResults  = poResults;
+  STATE.psoResults = psoResults;
+  STATE.avgCO      = avgCO;
+  STATE.target     = target;
+  STATE.cieW = cieW; STATE.seeW = seeW;
+  STATE.useIndirect = false; // indirect handled per-CO as additive
+
+  // ---- dashboards & audit ----
+  renderDashboards();
+  renderAudit();
+  renderFormula(cieW, seeW, target);
+}
+
+function programAttainment(coValues, matrix, coCount, target) {
+  let numerator = 0, matrixSum = 0;
+  for (let c = 0; c < coCount; c++) {
+    numerator += coValues[c] * matrix[c];
+    matrixSum += matrix[c];
+  }
+  const avgMatrix = coCount ? matrixSum / coCount : 0;
+  const denominator = avgMatrix * coCount;
+  const att = denominator > 0 ? numerator / denominator : 0;
+  return {
+    att,
+    numerator,
+    matrixSum,
+    avgMatrix,
+    denominator,
+    status: att > 0 ? statusOf(att, target) : '—',
+  };
+}
+
+/* ====================================================================
+   DASHBOARDS
+   ==================================================================== */
+function renderDashboards() {
+  const target = STATE.target || 2.0;
+
+  // CO
+  let html = '<div class="dash-label">Course Outcomes (CO)</div><div class="dash-grid">';
+  STATE.finalCO.forEach((v, i) => {
+    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
+    html += `<div class="metric ${cls}"><h4>CO${i + 1}</h4>
+      <div class="v">${v.toFixed(2)}<small>/3.0</small></div></div>`;
+  });
+  html += '</div>';
+  $('dashCO').innerHTML = html;
+
+  // PO
+  html = '<div class="dash-label">Program Outcomes (PO)</div><div class="dash-grid">';
+  STATE.poResults.forEach((r, i) => {
+    const v   = r.att;
+    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
+    html += `<div class="metric ${cls}"><h4>PO${i + 1}</h4>
+      <div class="v">${v > 0 ? v.toFixed(2) : '—'}<small>/3.0</small></div></div>`;
+  });
+  html += '</div>';
+  $('dashPO').innerHTML = html;
+
+  // PSO
+  html = '<div class="dash-label">Program Specific Outcomes (PSO)</div><div class="dash-grid">';
+  STATE.psoResults.forEach((r, i) => {
+    const v   = r.att;
+    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
+    html += `<div class="metric ${cls}"><h4>PSO${i + 1}</h4>
+      <div class="v">${v > 0 ? v.toFixed(2) : '—'}<small>/3.0</small></div></div>`;
+  });
+  html += '</div>';
+  $('dashPSO').innerHTML = html;
+}
+
+function renderAudit() {
+  let body = '';
+  const push = (label, r) => {
+    body += `<tr>
+      <td class="row-label">${label}</td>
+      <td>${r.numerator.toFixed(2)}</td>
+      <td>${r.avgMatrix.toFixed(2)}</td>
+      <td>${STATE.coCount}</td>
+      <td>${r.denominator.toFixed(2)}</td>
+      <td><b>${r.att > 0 ? r.att.toFixed(2) : '—'}</b></td>
+      <td>${badgeFor(r.status)}</td>
+    </tr>`;
+  };
+  STATE.poResults.forEach((r, i)  => push('PO'  + (i + 1), r));
+  STATE.psoResults.forEach((r, i) => push('PSO' + (i + 1), r));
+  $('auditBody').innerHTML = body || '<tr><td colspan="7" style="padding:14px;color:#889">No results yet.</td></tr>';
+}
+
+function renderFormula(cieW, seeW, target) {
+  $('formulaBox').innerHTML = `
+    <b>CIE weight</b> = ${(cieW * 100).toFixed(0)}% &nbsp;|&nbsp;
+    <b>SEE weight</b> = ${(seeW * 100).toFixed(0)}% &nbsp;|&nbsp;
+    <b>Target</b> = ${target.toFixed(2)} / 3.00<br>
+    <code>Direct CO = (CIE Level × ${(cieW * 100).toFixed(0)}%) + (SEE Level × ${(seeW * 100).toFixed(0)}%)</code><br>
+    <code>Final CO = Direct CO + Indirect (0–3)</code><br>
+    <b>Level scale</b> (students % above threshold):
+    ≥70% → 3 &nbsp;•&nbsp; 60–69% → 2 &nbsp;•&nbsp; 50–59% → 1 &nbsp;•&nbsp; &lt;50% → 0
+  `;
+}
+
+/* ====================================================================
+   EXCEL EXPORT
+   ==================================================================== */
+function exportExcel() {
+  calculateAll();
+  const courseCode = $('courseCode').value || 'COURSE';
+  const ay         = $('academicYear').value || '2025-26';
+
+  const wb = XLSX.utils.book_new();
+
+  // ---- Sheet 1: CO detail ----
+  const coRows = [
+    ['CO Attainment Detail'],
+    ['Course', courseCode, 'Academic Year', ay, 'Target', STATE.target],
+    [],
+    ['CO', 'CIE %', 'CIE Level', 'SEE %', 'SEE Level', 'Direct', 'Indirect', 'Final', 'Status'],
+  ];
+  for (let i = 0; i < STATE.coCount; i++) {
+    coRows.push([
+      'CO' + (i + 1),
+      STATE.ciePcts[i].toFixed(1),
+      getLevel(STATE.ciePcts[i]),
+      STATE.seePcts[i].toFixed(1),
+      getLevel(STATE.seePcts[i]),
+      (getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW).toFixed(2),
+      STATE.indirect[i].toFixed(2),
+      STATE.finalCO[i].toFixed(2),
+      statusOf(STATE.finalCO[i], STATE.target),
+    ]);
+  }
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(coRows), 'CO_Attainment');
+
+  // ---- Sheet 2: PO / PSO results ----
+  const poRows = [
+    ['PO / PSO Attainment'],
+    [],
+    ['Metric', 'Σ(CO×Matrix)', 'Avg Matrix', 'No. COs', 'Denominator', 'Attainment', 'Status'],
+  ];
+  STATE.poResults.forEach((r, i) =>
+    poRows.push(['PO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2),
+      STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2), r.status]));
+  STATE.psoResults.forEach((r, i) =>
+    poRows.push(['PSO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2),
+      STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2), r.status]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(poRows), 'PO_PSO');
+
+  // ---- Sheet 3: Matrices ----
+  const mHead = ['CO', ...Array.from({ length: PO_COUNT }, (_, i) => 'PO' + (i + 1)),
+                        ...Array.from({ length: PSO_COUNT }, (_, i) => 'PSO' + (i + 1))];
+  const mRows = [mHead];
+  for (let c = 0; c < STATE.coCount; c++) {
+    const row = ['CO' + (c + 1)];
+    for (let p = 0; p < PO_COUNT; p++)  row.push(num($('m_co' + c + '_po' + p).value));
+    for (let p = 0; p < PSO_COUNT; p++) row.push(num($('m_co' + c + '_pso' + p).value));
+    mRows.push(row);
+  }
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mRows), 'Matrices');
+
+  XLSX.writeFile(wb, `Attainment_${courseCode}_${ay}.xlsx`);
+  showAlert('Excel workbook downloaded.', 'ok');
+}
+
+/* ====================================================================
+   PDF EXPORT (single landscape page)
+   ==================================================================== */
+function exportPDF() {
+  try {
+    calculateAll();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    const college = 'Basaveshwar Engineering College';
+    const dept    = $('department').value || '';
+    const course  = $('courseCode').value || '';
+    const cName   = $('courseName').value || '';
+    const ay      = $('academicYear').value || '';
+    const sem     = $('semester').value || '';
+    const div     = $('division').value || '';
+    const staff   = $('faculty').value || '';
+
+    // ---- Header ----
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text(college.toUpperCase(), 148.5, 12, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(dept.toUpperCase(), 148.5, 17, { align: 'center' });
+    doc.setDrawColor(15, 47, 87);
+    doc.setFillColor(232, 238, 246);
+    doc.rect(55, 20, 187, 6, 'FD');
+    doc.setFontSize(8.5);
+    doc.text('COURSE & PROGRAM OUTCOME (CO–PO–PSO) ATTAINMENT REPORT', 148.5, 24, { align: 'center' });
+
+    const baseStyle = {
+      theme: 'grid',
+      styles: { fontSize: 6.8, cellPadding: 0.8, halign: 'center', valign: 'middle',
+                lineColor: [140, 150, 165], lineWidth: 0.1, textColor: [15, 23, 42] },
+      headStyles: { fillColor: [232, 238, 246], textColor: [15, 47, 87], fontStyle: 'bold',
+                    lineColor: [120, 140, 165], lineWidth: 0.15 },
+    };
+
+    let y = 30;
+
+    // ---- Meta table ----
+    doc.autoTable({
+      ...baseStyle,
+      startY: y,
+      margin: { left: 10, right: 10 },
+      head: [['Academic Year', 'Course Code', 'Course Title', 'Sem / Div', 'Faculty', 'Target']],
+      body: [[ay, course, cName, `Sem ${sem} / Div ${div}`, staff, STATE.target.toFixed(2) + ' / 3.00']],
+      styles: { ...baseStyle.styles, fontSize: 7.2 },
+    });
+    y = doc.lastAutoTable.finalY + 4;
+
+    // ---- CO table ----
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    doc.text('1. COURSE OUTCOME (CO) ATTAINMENT', 10, y); y += 2;
+    const coBody = STATE.finalCO.map((_, i) => [
+      'CO' + (i + 1),
+      STATE.ciePcts[i].toFixed(1) + '%', getLevel(STATE.ciePcts[i]),
+      STATE.seePcts[i].toFixed(1) + '%', getLevel(STATE.seePcts[i]),
+      (getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW).toFixed(2),
+      STATE.indirect[i].toFixed(2),
+      STATE.finalCO[i].toFixed(2),
+      statusOf(STATE.finalCO[i], STATE.target),
+    ]);
+    doc.autoTable({
+      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
+      head: [['CO', 'CIE %', 'Lvl', 'SEE %', 'Lvl', 'Direct', 'Indirect', 'Final', 'Status']],
+      body: coBody,
+    });
+    y = doc.lastAutoTable.finalY + 4;
+
+    // ---- Matrices side-by-side ----
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    doc.text('2. CO–PO & CO–PSO ARTICULATION MATRICES', 10, y); y += 2;
+
+    const poHead = ['CO', ...Array.from({ length: PO_COUNT }, (_, i) => 'P' + (i + 1))];
+    const poBody = [];
+    for (let c = 0; c < STATE.coCount; c++) {
+      const row = ['CO' + (c + 1)];
+      for (let p = 0; p < PO_COUNT; p++) row.push(num($('m_co' + c + '_po' + p).value));
+      poBody.push(row);
+    }
+    doc.autoTable({
+      ...baseStyle, startY: y, margin: { left: 10 }, tableWidth: 200,
+      head: [poHead], body: poBody,
+    });
+    const poEndY = doc.lastAutoTable.finalY;
+
+    const psoBody = [];
+    for (let c = 0; c < STATE.coCount; c++) {
+      const row = ['CO' + (c + 1)];
+      for (let p = 0; p < PSO_COUNT; p++) row.push(num($('m_co' + c + '_pso' + p).value));
+      psoBody.push(row);
+    }
+    doc.autoTable({
+      ...baseStyle, startY: y, margin: { left: 216 }, tableWidth: 69,
+      head: [['CO', 'PSO1', 'PSO2', 'PSO3']], body: psoBody,
+    });
+    y = Math.max(poEndY, doc.lastAutoTable.finalY) + 4;
+
+    // ---- PO/PSO summary ----
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    doc.text('3. PO & PSO ATTAINMENT', 10, y); y += 2;
+    const head = ['Metric', ...Array.from({ length: PO_COUNT }, (_, i) => 'PO' + (i + 1)),
+                            ...Array.from({ length: PSO_COUNT }, (_, i) => 'PSO' + (i + 1))];
+    const attRow    = ['Attainment'];
+    const statusRow = ['Status'];
+    STATE.poResults.forEach(r  => { attRow.push(r.att > 0 ? r.att.toFixed(2) : '—'); statusRow.push(r.status); });
+    STATE.psoResults.forEach(r => { attRow.push(r.att > 0 ? r.att.toFixed(2) : '—'); statusRow.push(r.status); });
+    doc.autoTable({
+      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
+      head: [head], body: [attRow, statusRow],
+      styles: { ...baseStyle.styles, fontSize: 6.2 },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 24 } },
+    });
+    y = doc.lastAutoTable.finalY + 3;
+
+    // ---- Audit ----
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+    doc.text('4. CALCULATION AUDIT', 10, y); y += 2;
+    const auditBody = [];
+    STATE.poResults.forEach((r, i)  => auditBody.push(['PO'  + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2), STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2)]));
+    STATE.psoResults.forEach((r, i) => auditBody.push(['PSO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2), STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2)]));
+    doc.autoTable({
+      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
+      head: [['Metric', 'Σ(CO×Matrix)', 'Avg Matrix', 'No. COs', 'Denominator', 'Attainment']],
+      body: auditBody,
+      styles: { ...baseStyle.styles, fontSize: 5.8, cellPadding: 0.5 },
+    });
+    y = doc.lastAutoTable.finalY + 3;
+
+    // ---- Formula footer ----
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(6.3);
+    const note = `Scale: ≥70%→3, 60–69%→2, 50–59%→1, <50%→0 | ` +
+      `Direct = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%) | ` +
+      `PO/PSO = Σ(CO×Matrix) / (Avg Matrix × No. of COs) | Target ≥ ${STATE.target.toFixed(2)}`;
+    doc.text(note, 10, y);
+
+    // ---- Signatures ----
+    const sigY = 197;
+    doc.setDrawColor(0); doc.setLineWidth(0.25);
+    doc.line(28, sigY, 95, sigY);
+    doc.line(202, sigY, 269, sigY);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(15, 47, 87);
+    doc.text(staff, 61.5, sigY + 4, { align: 'center' });
+    doc.text('Head of the Department', 235.5, sigY + 4, { align: 'center' });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(80, 90, 105);
+    doc.text('Course Instructor / Faculty', 61.5, sigY + 7.5, { align: 'center' });
+    doc.text(dept, 235.5, sigY + 7.5, { align: 'center' });
+
+    // ---- Footer line ----
+    const now = new Date();
+    doc.setFontSize(5.8); doc.setTextColor(120, 130, 145);
+    doc.text(`Generated: ${now.toLocaleString()}  |  ${college}  |  Autonomous Institution`,
+      148.5, 208, { align: 'center' });
+
+    doc.save(`CO_PO_PSO_${course}_${ay}.pdf`);
+    showAlert('PDF report downloaded.', 'ok');
+  } catch (e) {
+    console.error(e);
+    showAlert('PDF export failed: ' + e.message, 'err');
+  }
+}
+
+/* ====================================================================
+   BOOT
+   ==================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  // file dropzone
+  const dz = $('dropzone');
+  const fi = $('fileInput');
+  dz.addEventListener('click', () => fi.click());
+  dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', (e) => {
+    e.preventDefault(); dz.classList.remove('drag');
+    handleFile(e.dataTransfer.files[0]);
+  });
+  fi.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+  // build everything
+  rebuildInputs();
+});
+</script>
+</body>
+</html>
