@@ -1,341 +1,600 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Dr. Mahadev Biradar | Resource Hub</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-dark: #172554;
-            --primary-light: #eff6ff;
-            --accent: #2563eb;
-            --surface: #ffffff;
-            --background: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dr. Mahadev Biradar | Web Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #1e3a8a;
+        --primary-dark: #172554;
+        --primary-light: #eff6ff;
+        --accent: #2563eb;
+        --surface: #ffffff;
+        --background: #f6f8fc;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e5eaf3;
+        --radius-lg: 20px;
+        --radius-md: 14px;
+        --shadow-sm: 0 1px 2px rgba(15, 23, 42, .06);
+        --shadow-md: 0 10px 26px -12px rgba(15, 23, 42, .25);
+        --shadow-lg: 0 24px 48px -24px rgba(15, 23, 42, .35);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            background-color: var(--background);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    html { scroll-behavior: smooth; }
 
-        /* ─── Top Navigation Bar ─── */
-        header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: white;
-            padding: 28px 24px;
-            box-shadow: var(--shadow-md);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
+    body {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        background-color: var(--background);
+        color: var(--text-main);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+    /* Soft decorative background */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(720px 420px at 8% -12%, #dbeafe 0%, transparent 62%),
+            radial-gradient(620px 420px at 102% -6%, #ede9fe 0%, transparent 58%),
+            radial-gradient(760px 520px at 50% 112%, #e0f2fe 0%, transparent 60%);
+        pointer-events: none;
+    }
 
-        .header-title h1 {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    /* ─── Header ─── */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(255, 255, 255, .78);
+        backdrop-filter: blur(16px) saturate(160%);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        border-bottom: 1px solid var(--border);
+    }
 
-        .header-title p {
-            font-size: 13px;
-            color: #cbd5e1;
-            margin-top: 3px;
-            font-weight: 500;
-        }
+    .header-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px 24px 14px;
+    }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
+    .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
 
-        .btn-nav {
-            padding: 8px 18px;
-            border-radius: 9999px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
 
-        .btn-nav-light {
-            background: rgba(255, 255, 255, 0.12);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-        }
+    .brand-mark {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #fff;
+        background: linear-gradient(135deg, #3b82f6, #1e3a8a 55%, #312e81);
+        box-shadow: 0 8px 18px -8px rgba(30, 58, 138, .8), inset 0 0 0 1px rgba(255, 255, 255, .25);
+    }
 
-        .btn-nav-light:hover {
-            background: rgba(255, 255, 255, 0.24);
-        }
+    .brand-text h1 {
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
 
-        .btn-nav-profile {
-            background: #ffffff;
-            color: var(--primary-dark);
-            border: 1px solid #ffffff;
-            box-shadow: var(--shadow-sm);
-        }
+    .brand-text p {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-top: 2px;
+        letter-spacing: .02em;
+    }
 
-        .btn-nav-profile:hover {
-            background: #f1f5f9;
-            transform: translateY(-1px);
-        }
+    .header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
 
-        /* ─── Main Content Canvas ─── */
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 36px auto;
-            padding: 0 24px;
-            width: 100%;
-        }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: 9999px;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .18s ease;
+        white-space: nowrap;
+    }
 
-        .section-header {
-            margin-bottom: 24px;
-        }
+    .btn-solid {
+        background: linear-gradient(135deg, #2563eb, #1e3a8a);
+        color: #fff;
+        box-shadow: 0 8px 18px -10px rgba(37, 99, 235, .9);
+    }
 
-        .section-header h2 {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-            color: var(--text-main);
-        }
+    .btn-solid:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 22px -10px rgba(37, 99, 235, 1);
+    }
 
-        .section-header p {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+    .btn-ghost {
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+    }
 
-        /* ─── Profile Link Sections ─── */
-        .profile-sections-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+    .btn-ghost:hover {
+        background: var(--primary-light);
+        border-color: #bfdbfe;
+        transform: translateY(-1px);
+    }
 
-        .profile-section-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow-sm);
-            transition: box-shadow 0.2s ease;
-        }
+    /* ─── Search (Chrome-style) ─── */
+    .search-wrap {
+        position: relative;
+        max-width: 620px;
+        margin: 14px auto 0;
+    }
 
-        .profile-section-card:hover {
-            box-shadow: var(--shadow-md);
-        }
+    .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+        opacity: .55;
+        pointer-events: none;
+    }
 
-        .profile-section-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--primary-light);
-            width: 100%;
-        }
+    #appSearch {
+        width: 100%;
+        padding: 13px 46px 13px 46px;
+        border-radius: 9999px;
+        border: 1px solid var(--border);
+        background: #fff;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-main);
+        box-shadow: var(--shadow-sm);
+        outline: none;
+        transition: all .18s ease;
+    }
 
-        .profile-buttons-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 14px;
-        }
+    #appSearch::placeholder { color: #94a3b8; font-weight: 500; }
 
-        .profile-btn {
-            padding: 14px 18px;
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border);
-            background: #ffffff;
-            color: var(--text-main);
-        }
+    #appSearch:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, .12), var(--shadow-md);
+    }
 
-        .profile-btn-icon {
-            font-size: 20px;
-            line-height: 1;
-        }
+    .search-clear {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 26px;
+        height: 26px;
+        border: none;
+        border-radius: 50%;
+        background: #eef2f9;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: all .15s ease;
+    }
 
-        .profile-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent);
-            box-shadow: var(--shadow-md);
-            color: var(--accent);
-        }
+    .search-clear:hover { background: #e2e8f0; color: var(--text-main); }
 
-        .profile-btn-highlight {
-            background: var(--primary-light);
-            border-color: #bfdbfe;
-            color: var(--primary);
-        }
+    /* ─── Main ─── */
+    main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 30px 24px 60px;
+    }
 
-        .profile-btn-highlight:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #ffffff;
-        }
+    .app-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px 20px 16px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow .2s ease;
+    }
 
-        /* ─── Responsive Media Queries ─── */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+    .app-section:hover { box-shadow: var(--shadow-md); }
 
-            .header-actions {
-                width: 100%;
-            }
+    .section-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-            .btn-nav {
-                flex: 1;
-                justify-content: center;
-            }
+    .section-emoji {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+        background: var(--primary-light);
+        border: 1px solid #dbeafe;
+    }
 
-            .profile-buttons-group {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    .section-head h2 {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .section-count {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        background: #f1f5f9;
+        border-radius: 9999px;
+        padding: 3px 10px;
+    }
+
+    /* ─── App grid (Chrome-like) ─── */
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+        gap: 4px;
+        padding-top: 12px;
+    }
+
+    .app-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 9px;
+        padding: 16px 8px 13px;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        color: var(--text-main);
+        transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+        text-align: center;
+    }
+
+    .app-tile:hover {
+        background: var(--primary-light);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 22px -16px rgba(30, 58, 138, .55);
+    }
+
+    .app-tile:active { transform: translateY(-1px) scale(.985); }
+
+    .tile-icon {
+        width: 56px;
+        height: 56px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 25px;
+        line-height: 1;
+        background: linear-gradient(140deg, var(--g1), var(--g2));
+        box-shadow: 0 8px 18px -10px var(--g2), inset 0 0 0 1px rgba(255, 255, 255, .28);
+        transition: transform .18s ease;
+    }
+
+    .app-tile:hover .tile-icon { transform: scale(1.07); }
+
+    .tile-name {
+        font-size: 12.5px;
+        font-weight: 600;
+        line-height: 1.32;
+        letter-spacing: -0.005em;
+        color: #1e293b;
+        max-width: 100%;
+    }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+        background: var(--surface);
+        border: 1px dashed #cbd5e1;
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+
+    .empty-state span { font-size: 34px; display: block; margin-bottom: 10px; }
+    .empty-state strong { display: block; color: var(--text-main); font-size: 15px; margin-bottom: 4px; }
+    .empty-state small { font-size: 13px; }
+
+    .is-hidden { display: none !important; }
+
+    footer {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-muted);
+        padding: 0 24px 34px;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+        .header-inner { padding: 14px 16px 12px; }
+        .brand-text h1 { font-size: 15px; }
+        .header-actions { width: 100%; }
+        .btn { flex: 1; justify-content: center; }
+        main { padding: 22px 14px 50px; }
+        .app-section { padding: 16px 12px 12px; }
+        .app-grid { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+        .tile-icon { width: 48px; height: 48px; font-size: 21px; }
+        .tile-name { font-size: 11.5px; }
+    }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="header-container">
-            <div class="header-title">
-                <h1>Dr. Mahadev Biradar</h1>
-                <p>Academic & Administrative Resource Portal</p>
+<header>
+    <div class="header-inner">
+        <div class="header-top">
+            <div class="brand">
+                <div class="brand-mark">MB</div>
+                <div class="brand-text">
+                    <h1>Dr. Mahadev Biradar</h1>
+                    <p>Web Applications</p>
+                </div>
             </div>
             <div class="header-actions">
-                <a href="index.html" class="btn-nav btn-nav-profile">
-                    <span>👤</span> View Profile
-                </a>
-                <a href="index.html" class="btn-nav btn-nav-light">
-                    <span>←</span> Return Home
-                </a>
+                <a href="index.html" class="btn btn-solid"><span>👤</span> View Profile</a>
+                <a href="index.html" class="btn btn-ghost"><span>←</span> Return Home</a>
             </div>
         </div>
-    </header>
 
-    <main class="dashboard-container">
-        <div class="section-header">
-            <h2>Quick Portals & Utilities</h2>
-            <p>Access tools, portals, and materials curated for students, faculty, and research.</p>
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input id="appSearch" type="text" placeholder="Search apps…  (press / )" autocomplete="off" aria-label="Search applications">
+            <button id="clearBtn" class="search-clear" type="button" aria-label="Clear search" hidden>✕</button>
         </div>
+    </div>
+</header>
 
-        <div class="profile-sections-grid">
-            <section class="profile-section-card">
-                <div class="profile-section-label">
-                    <span>🎓</span> Student Resources
-                </div>
-                <div class="profile-buttons-group">
-                    <a href="MY BEC Students.html" class="profile-btn">
-                        <span class="profile-btn-icon">👤</span>
-                        <span>Student Registration</span>
-                    </a>
-                    <a href="free-tools.html" class="profile-btn profile-btn-highlight">
-                        <span class="profile-btn-icon">🛠️</span>
-                        <span>Free Academic Tools</span>
-                    </a>
-                    <a href="calculator.html" class="profile-btn profile-btn-highlight">
-                        <span class="profile-btn-icon">🧮</span>
-                        <span>Scientific Calculator</span>
-                    </a>
-                    <a href="bec.html" class="profile-btn">
-                        <span class="profile-btn-icon">📚</span>
-                        <span>BEC Syllabus</span>
-                    </a>
-                </div>
-            </section>
+<main>
 
-            <section class="profile-section-card">
-                <div class="profile-section-label">
-                    <span>👨‍🏫</span> Faculty Utilities
-                </div>
-                <div class="profile-buttons-group">
-                    <a href="co po calculator.html" class="profile-btn profile-btn-highlight" target="_blank">
-                        <span class="profile-btn-icon">📊</span>
-                        <span>CO–PO Calculator</span>
-                    </a>
-                        <a href="teacher.html" class="profile-btn">
-                        <span class="profile-btn-icon">👤</span>
-                        <span>Faculty Registration</span>
-                    </a>
-                </div>
-            </section>
-
-            <section class="profile-section-card">
-                <div class="profile-section-label">
-                    <span>🧑‍💻</span> Portals & Initiatives
-                </div>
-                <div class="profile-buttons-group">
-                     <a href="placement.html" class="profile-btn">
-                        <span class="profile-btn-icon">🎨</span>
-                        <span>BEC Placement</span>
-                    <a href="Rashmi Web Studio.html" class="profile-btn">
-                        <span class="profile-btn-icon">🎨</span>
-                        <span>Rashmi Web Studio</span>
-                        <a href="Kite-Zerodha-30min-Ce.html" class="profile-btn">
-                        <span class="profile-btn-icon">🎨</span>
-                        <span>Kite</span>
-                        <a href="teggi.html" class="profile-btn">
-                        <span class="profile-btn-icon">🎨</span>
-                        <span>BEC-BIPS</span>
-                      <div class="profile-buttons-group">
-                    <a href="raita.html" class="profile-btn">
-                        <span class="profile-btn-icon">🎨</span>
-                        <span>ರೈತ</span>
-                    </a>
-                </div>
-            </section>
+    <!-- ─── Student Resources ─── -->
+    <section class="app-section">
+        <div class="section-head">
+            <div class="section-emoji">🎓</div>
+            <h2>Student Resources</h2>
+            <span class="section-count">4 apps</span>
         </div>
-    </main>
+        <div class="app-grid">
+
+            <a class="app-tile" href="MY BEC Students.html" data-name="Student Registration" data-keywords="student registration my bec students">
+                <span class="tile-icon" style="--g1:#60a5fa; --g2:#4f46e5">👤</span>
+                <span class="tile-name">Student Registration</span>
+            </a>
+
+            <a class="app-tile" href="free-tools.html" data-name="Free Academic Tools" data-keywords="free academic tools utilities">
+                <span class="tile-icon" style="--g1:#fbbf24; --g2:#f97316">🛠️</span>
+                <span class="tile-name">Free Academic Tools</span>
+            </a>
+
+            <a class="app-tile" href="calculator.html" data-name="Scientific Calculator" data-keywords="scientific calculator math">
+                <span class="tile-icon" style="--g1:#34d399; --g2:#059669">🧮</span>
+                <span class="tile-name">Scientific Calculator</span>
+            </a>
+
+            <a class="app-tile" href="bec.html" data-name="BEC Syllabus" data-keywords="bec syllabus subjects">
+                <span class="tile-icon" style="--g1:#a78bfa; --g2:#7c3aed">📚</span>
+                <span class="tile-name">BEC Syllabus</span>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- ─── Faculty Utilities ─── -->
+    <section class="app-section">
+        <div class="section-head">
+            <div class="section-emoji">👨‍🏫</div>
+            <h2>Faculty Utilities</h2>
+            <span class="section-count">2 apps</span>
+        </div>
+        <div class="app-grid">
+
+            <a class="app-tile" href="co po calculator.html" target="_blank" data-name="CO–PO Calculator" data-keywords="co po calculator attainment faculty">
+                <span class="tile-icon" style="--g1:#38bdf8; --g2:#2563eb">📊</span>
+                <span class="tile-name">CO–PO Calculator</span>
+            </a>
+
+            <a class="app-tile" href="teacher.html" data-name="Faculty Registration" data-keywords="faculty teacher registration staff">
+                <span class="tile-icon" style="--g1:#2dd4bf; --g2:#0d9488">👤</span>
+                <span class="tile-name">Faculty Registration</span>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- ─── Portals & Initiatives ─── -->
+    <section class="app-section">
+        <div class="section-head">
+            <div class="section-emoji">🧑‍💻</div>
+            <h2>Portals &amp; Initiatives</h2>
+            <span class="section-count">16 apps</span>
+        </div>
+        <div class="app-grid">
+
+            <a class="app-tile" href="placement.html" data-name="BEC Placement" data-keywords="bec placement jobs career">
+                <span class="tile-icon" style="--g1:#fb7185; --g2:#db2777">💼</span>
+                <span class="tile-name">BEC Placement</span>
+            </a>
+
+            <a class="app-tile" href="Rashmi Web Studio.html" data-name="Rashmi Web Studio" data-keywords="rashmi web studio design">
+                <span class="tile-icon" style="--g1:#e879f9; --g2:#9333ea">🎨</span>
+                <span class="tile-name">Rashmi Web Studio</span>
+            </a>
+
+            <a class="app-tile" href="Kite-Zerodha-30min-Ce.html" data-name="Kite" data-keywords="kite zerodha trading 30 minutes">
+                <span class="tile-icon" style="--g1:#fb923c; --g2:#dc2626">📈</span>
+                <span class="tile-name">Kite</span>
+            </a>
+
+            <a class="app-tile" href="teggi.html" data-name="BEC-BIPS" data-keywords="bec bips teggi">
+                <span class="tile-icon" style="--g1:#818cf8; --g2:#4338ca">🏫</span>
+                <span class="tile-name">BEC-BIPS</span>
+            </a>
+
+            <a class="app-tile" href="raita.html" data-name="ರೈತ" data-keywords="raita raitha farmer kannada agriculture">
+                <span class="tile-icon" style="--g1:#4ade80; --g2:#15803d">🌾</span>
+                <span class="tile-name">ರೈತ</span>
+            </a>
+
+            <a class="app-tile" href="Resume.html" data-name="Resume Builder" data-keywords="resume builder cv">
+                <span class="tile-icon" style="--g1:#22d3ee; --g2:#0891b2">📄</span>
+                <span class="tile-name">Resume Builder</span>
+            </a>
+
+            <a class="app-tile" href="wish.html" data-name="Wish Craft" data-keywords="wish craft wishes greeting">
+                <span class="tile-icon" style="--g1:#f472b6; --g2:#e11d48">🎁</span>
+                <span class="tile-name">Wish Craft</span>
+            </a>
+
+            <a class="app-tile" href="copo.html" data-name="BEC COPO" data-keywords="bec copo co po">
+                <span class="tile-icon" style="--g1:#60a5fa; --g2:#1d4ed8">📋</span>
+                <span class="tile-name">BEC COPO</span>
+            </a>
+
+            <a class="app-tile" href="magic square.html" data-name="Magic Square" data-keywords="magic square puzzle numbers">
+                <span class="tile-icon" style="--g1:#c084fc; --g2:#6d28d9">✨</span>
+                <span class="tile-name">Magic Square</span>
+            </a>
+
+            <a class="app-tile" href="gate.html" data-name="GATE Mathematics" data-keywords="gate mathematics maths exam">
+                <span class="tile-icon" style="--g1:#94a3b8; --g2:#1e293b">➗</span>
+                <span class="tile-name">GATE Mathematics</span>
+            </a>
+
+            <a class="app-tile" href="gate civil.html" data-name="GATE Civil" data-keywords="gate civil engineering exam">
+                <span class="tile-icon" style="--g1:#fbbf24; --g2:#b45309">🏗️</span>
+                <span class="tile-name">GATE Civil</span>
+            </a>
+
+            <a class="app-tile" href="rutu.html" data-name="10th CBSE" data-keywords="10th tenth cbse class 10">
+                <span class="tile-icon" style="--g1:#2dd4bf; --g2:#047857">📘</span>
+                <span class="tile-name">10th CBSE</span>
+            </a>
+
+            <a class="app-tile" href="laddu.html" data-name="5th &amp; 7th CBSE" data-keywords="5th 7th fifth seventh cbse class">
+                <span class="tile-icon" style="--g1:#a3e635; --g2:#16a34a">📗</span>
+                <span class="tile-name">5th &amp; 7th CBSE</span>
+            </a>
+
+            <a class="app-tile" href="first sem.html" data-name="Engineering Mathematics-I" data-keywords="engineering mathematics first sem 1st semester">
+                <span class="tile-icon" style="--g1:#3b82f6; --g2:#1e40af">📐</span>
+                <span class="tile-name">Engineering Mathematics-I</span>
+            </a>
+
+            <a class="app-tile" href="third sem.html" data-name="Statistics and Probability" data-keywords="statistics probability stastics third sem 3rd semester">
+                <span class="tile-icon" style="--g1:#a78bfa; --g2:#4f46e5">🎲</span>
+                <span class="tile-name">Statistics and Probability</span>
+            </a>
+
+            <a class="app-tile" href="blood donar.html" data-name="YRC Blood Donar List" data-keywords="yrc blood donor donar list red cross">
+                <span class="tile-icon" style="--g1:#f87171; --g2:#b91c1c">🩸</span>
+                <span class="tile-name">YRC Blood Donar List</span>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- ─── Empty state ─── -->
+    <div id="empty" class="empty-state is-hidden">
+        <span>🔎</span>
+        <strong>No applications found</strong>
+        <small>Try a different name — e.g. “calculator”, “gate”, “resume”.</small>
+    </div>
+
+</main>
+
+<footer>© Dr. Mahadev Biradar — Academic &amp; Administrative Resource Portal</footer>
+
+<script>
+    const searchInput = document.getElementById('appSearch');
+    const clearBtn    = document.getElementById('clearBtn');
+    const sections    = Array.from(document.querySelectorAll('.app-section'));
+    const emptyState  = document.getElementById('empty');
+
+    function filterApps() {
+        const query = searchInput.value.trim().toLowerCase();
+        clearBtn.hidden = query.length === 0;
+
+        let totalVisible = 0;
+
+        sections.forEach(section => {
+            let visibleInSection = 0;
+
+            section.querySelectorAll('.app-tile').forEach(tile => {
+                const haystack = (tile.dataset.name + ' ' + tile.dataset.keywords).toLowerCase();
+                const matches  = !query || haystack.includes(query);
+                tile.classList.toggle('is-hidden', !matches);
+                if (matches) visibleInSection++;
+            });
+
+            section.classList.toggle('is-hidden', visibleInSection === 0);
+            totalVisible += visibleInSection;
+        });
+
+        emptyState.classList.toggle('is-hidden', totalVisible > 0);
+    }
+
+    searchInput.addEventListener('input', filterApps);
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        filterApps();
+        searchInput.focus();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            filterApps();
+            searchInput.blur();
+        }
+    });
+</script>
 
 </body>
 </html>
