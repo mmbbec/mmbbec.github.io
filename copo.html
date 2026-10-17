@@ -125,6 +125,7 @@
     border-right:1px solid rgba(255,255,255,.08);position:sticky;top:0;
   }
   table.data thead th:last-child{border-right:none}
+  table.data thead tr.sub-head th{background:var(--navy-2);font-size:11px;padding:5px 6px}
   table.data tbody td{
     padding:8px 8px;text-align:center;border-bottom:1px solid #eef2f7;
     border-right:1px solid #f4f7fb;
@@ -235,7 +236,7 @@
 
   <div id="alert" class="alert"></div>
 
-  <!-- ============ STEP 1: COURSE CONFIGURATION ============ -->
+  <!-- ============ STEP 1 ============ -->
   <section class="card">
     <div class="card-head">
       <span class="step-badge">STEP 1</span>
@@ -278,24 +279,29 @@
         </select>
       </div>
       <div class="field">
-        <label>Max Marks / CO</label>
+        <label>Max CIE Marks / CO</label>
         <input id="maxMarks" type="number" value="10" min="1" />
-        <div class="hint">Used in <b>CO-wise</b> entry mode only</div>
+        <div class="hint">CIE threshold per CO</div>
+      </div>
+      <div class="field">
+        <label>Max SEE Marks / CO</label>
+        <input id="maxSeeMarks" type="number" value="20" min="1" />
+        <div class="hint">SEE threshold per CO (when SEE marks are pasted)</div>
       </div>
       <div class="field">
         <label>Final CIE Max Marks</label>
         <input id="cieMaxMarks" type="number" value="50" min="1" />
-        <div class="hint">Used in <b>Final CIE + SEE</b> entry mode</div>
+        <div class="hint">Used in <b>Final CIE + SEE</b> mode</div>
       </div>
       <div class="field">
         <label>Final SEE Max Marks</label>
         <input id="seeMaxMarks" type="number" value="100" min="1" />
-        <div class="hint">Used in <b>Final CIE + SEE</b> entry mode</div>
+        <div class="hint">Used in <b>Final CIE + SEE</b> mode</div>
       </div>
       <div class="field">
         <label>Student Threshold (%)</label>
         <input id="studentThreshold" type="number" value="60" min="0" max="100" />
-        <div class="hint">Student attains a CO if mark ≥ this % of max</div>
+        <div class="hint">Student attains if mark ≥ this % of max</div>
       </div>
       <div class="field">
         <label>CIE Weight %</label>
@@ -324,23 +330,33 @@
     </div>
   </section>
 
-  <!-- ============ STEP 2: STUDENT DATA ============ -->
+  <!-- ============ STEP 2 ============ -->
   <section class="card">
     <div class="card-head">
       <span class="step-badge">STEP 2</span>
       <h2>Student Marks — Paste or Upload</h2>
     </div>
 
-    <!-- Entry Mode selector -->
     <div class="grid" style="margin-bottom:14px">
-      <div class="field" style="grid-column:1 / -1">
+      <div class="field">
         <label>Entry Mode</label>
         <select id="entryMode" onchange="onEntryModeChange()">
-          <option value="cowise" selected>CO-wise marks (auto CIE % per CO)</option>
-          <option value="final">Final CIE + SEE totals (course-level %)</option>
+          <option value="cowise" selected>CO-wise marks</option>
+          <option value="final">Final CIE + SEE totals</option>
         </select>
         <div class="hint" id="entryModeHint">
           Paste <b>USN | CO1 | CO2 | …</b> — CIE % is computed per CO.
+        </div>
+      </div>
+
+      <div class="field" id="seePasteField">
+        <label>Paste includes SEE marks?</label>
+        <select id="seeInPaste" onchange="onSeePasteChange()">
+          <option value="no" selected>No — CIE only</option>
+          <option value="yes">Yes — CIE and SEE columns</option>
+        </select>
+        <div class="hint" id="seePasteHint">
+          SEE % will be entered manually in Step 3.
         </div>
       </div>
     </div>
@@ -390,12 +406,12 @@
         </table>
       </div>
       <div class="btn-row">
-        <button class="btn btn-green" onclick="computeFromData()">✅ Compute CIE % from Data</button>
+        <button class="btn btn-green" onclick="computeFromData()">✅ Compute % from Data</button>
       </div>
     </div>
   </section>
 
-  <!-- ============ STEP 3: CO ATTAINMENT ============ -->
+  <!-- ============ STEP 3 ============ -->
   <section class="card">
     <div class="card-head">
       <span class="step-badge">STEP 3</span>
@@ -430,7 +446,7 @@
     </div>
   </section>
 
-  <!-- ============ STEP 4: MATRICES ============ -->
+  <!-- ============ STEP 4 ============ -->
   <section class="card">
     <div class="card-head">
       <span class="step-badge">STEP 4</span>
@@ -462,7 +478,7 @@
     </div>
   </section>
 
-  <!-- ============ STEP 5: RESULTS ============ -->
+  <!-- ============ STEP 5 ============ -->
   <section class="card">
     <div class="card-head">
       <span class="step-badge">STEP 5</span>
@@ -539,8 +555,7 @@ const STATE = {
   psoResults: [],
   indirectOn: false,
   entryMode: 'cowise',
-  courseCiePct: 0,
-  courseSeePct: 0,
+  seeInPaste: false,
   target: 2.0,
   cieW: 0.5, seeW: 0.5,
 };
@@ -583,42 +598,86 @@ function badgeFor(status) {
 }
 
 /* ====================================================================
-   ENTRY MODE
+   PASTE UI TEXT
+   ==================================================================== */
+function updatePasteUI() {
+  const mode = STATE.entryMode;
+  const see  = STATE.seeInPaste && mode === 'cowise';
+  const box = $('pasteBox');
+  const cardSub = $('cardSub');
+  const entryHint = $('entryModeHint');
+  const fileHint = $('fileHint');
+  const seeHint = $('seePasteHint');
+
+  if (seeHint) {
+    seeHint.innerHTML = see
+      ? 'Format: <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b>'
+      : 'SEE % will be entered manually in Step 3.';
+    seeHint.className = see ? 'hint on' : 'hint';
+  }
+
+  if (mode === 'final') {
+    box.placeholder = '2BA22CS001\t42\t78\n2BA22CS002\t45\t82';
+    cardSub.innerHTML = 'Column order: <b>USN | Final CIE | SEE</b>. ' +
+      'CIE and SEE max marks are taken from Step 1. Course-level % above threshold is computed for each.';
+    entryHint.innerHTML = 'Paste <b>USN | Final CIE | SEE</b> — one CIE % and one SEE % for the whole course.';
+    fileHint.textContent = 'Format: USN | Final CIE | SEE (header row is skipped automatically)';
+  } else if (see) {
+    box.placeholder = '2BA22CS001\t8\t7\t9\t8\t7\t16\t15\t18\t17\t14\n' +
+                      '2BA22CS002\t9\t8\t10\t9\t8\t18\t17\t19\t18\t16';
+    cardSub.innerHTML = 'Column order: <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b>. ' +
+      'Both CIE % and SEE % are computed per CO using the max marks from Step 1.';
+    entryHint.innerHTML = 'Paste <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b> — both %s are computed per CO.';
+    fileHint.textContent = 'Format: USN | CIE CO1..COn | SEE CO1..COn (header row is skipped automatically)';
+  } else {
+    box.placeholder = '2BA22CS001\t8\t7\t9\t8\t7\n2BA22CS002\t9\t8\t10\t9\t8';
+    cardSub.innerHTML = 'Column order: <b>USN | CO1 | CO2 | … | CO<sub>n</sub></b>. ' +
+      'Student names are <b>not</b> required. CIE percentages are computed automatically. ' +
+      'SEE % can be entered manually in Step 3 — or enable <b>“Paste includes SEE marks”</b> above.';
+    entryHint.innerHTML = 'Paste <b>USN | CO1 | CO2 | …</b> — CIE % is computed per CO.';
+    fileHint.textContent = 'Format: USN | CO1 | CO2 | … (header row is skipped automatically)';
+  }
+}
+
+/* ====================================================================
+   ENTRY / SEE-TOGGLE HANDLERS
    ==================================================================== */
 function onEntryModeChange() {
   const newMode = $('entryMode').value;
   if (newMode === STATE.entryMode) return;
   STATE.entryMode = newMode;
 
-  // Reset student data when switching modes (incompatible structures)
   STATE.students = [];
   STATE.ciePcts  = [];
   STATE.seePcts  = [];
-  STATE.courseCiePct = 0;
-  STATE.courseSeePct = 0;
+  $('pasteBox').value = '';
+  $('fileInput').value = '';
+  $('previewWrap').classList.add('hidden');
 
-  const box = $('pasteBox');
-  const cardSub = $('cardSub');
-  const entryHint = $('entryModeHint');
-  const fileHint = $('fileHint');
-
+  // SEE toggle only applies to CO-wise mode
+  $('seePasteField').classList.toggle('hidden', newMode !== 'cowise');
   if (newMode === 'final') {
-    box.placeholder = '2BA22CS001\t42\t78\n2BA22CS002\t45\t82\n\nFormat: USN | Final CIE | SEE';
-    cardSub.innerHTML = 'Column order: <b>USN | Final CIE | SEE</b>. ' +
-      'CIE and SEE max marks are taken from Step 1. Course-level % above threshold is computed for each.';
-    entryHint.innerHTML = 'Paste <b>USN | Final CIE | SEE</b> — one CIE % and one SEE % for the whole course (applied to all COs, editable per CO).';
-    fileHint.textContent = 'Format: USN | Final CIE | SEE (header row is skipped automatically)';
-  } else {
-    box.placeholder = '2BA22CS001\t8\t7\t9\t8\t7\n2BA22CS002\t9\t8\t10\t9\t8';
-    cardSub.innerHTML = 'Column order: <b>USN | CO1 | CO2 | … | CO<sub>n</sub></b>. ' +
-      'Student names are <b>not</b> required. CIE percentages are computed automatically.';
-    entryHint.innerHTML = 'Paste <b>USN | CO1 | CO2 | …</b> — CIE % is computed per CO.';
-    fileHint.textContent = 'Format: USN | CO1 | CO2 | … (header row is skipped automatically)';
+    $('seeInPaste').value = 'no';
+    STATE.seeInPaste = false;
   }
 
-  $('previewWrap').classList.add('hidden');
+  updatePasteUI();
   rebuildInputs();
   showAlert('Entry mode changed — previous student data cleared.', 'warn');
+}
+
+function onSeePasteChange() {
+  STATE.seeInPaste = $('seeInPaste').value === 'yes';
+  STATE.students = [];
+  STATE.ciePcts  = [];
+  STATE.seePcts  = [];
+  $('pasteBox').value = '';
+  $('fileInput').value = '';
+  $('previewWrap').classList.add('hidden');
+  updatePasteUI();
+  computeFromData(true);
+  calculateAll();
+  showAlert('Paste format updated — previous student data cleared.', 'warn');
 }
 
 /* ====================================================================
@@ -649,7 +708,6 @@ function applyIndirectMode(skipWeightReset) {
       el.value = on ? (STATE.indirect[i] || 0) : 0;
     }
   }
-
   calculateAll();
 }
 
@@ -664,7 +722,7 @@ function switchTab(which) {
 }
 
 /* ====================================================================
-   DATA PARSING
+   PARSING
    ==================================================================== */
 function parsePastedData() {
   const raw = $('pasteBox').value.trim();
@@ -673,6 +731,7 @@ function parsePastedData() {
   const lines = raw.split(/\r?\n/).filter(l => l.trim());
   const students = [];
   const isFinal = STATE.entryMode === 'final';
+  const withSee = !isFinal && STATE.seeInPaste;
   let coCountDetected = 0;
 
   lines.forEach((line, i) => {
@@ -687,6 +746,17 @@ function parsePastedData() {
     if (isFinal) {
       if (cells.length < 3) return;
       students.push({ usn, cie: num(cells[1]), see: num(cells[2]) });
+    } else if (withSee) {
+      const total = cells.length - 1;
+      if (total < 2 || total % 2 !== 0) {
+        // Odd number of mark columns — can't split
+        return;
+      }
+      const half = total / 2;
+      const cieMarks = cells.slice(1, 1 + half).map(v => num(v));
+      const seeMarks = cells.slice(1 + half).map(v => num(v));
+      coCountDetected = Math.max(coCountDetected, half);
+      students.push({ usn, marks: cieMarks, seeMarks });
     } else {
       const marks = cells.slice(1).map(v => num(v));
       coCountDetected = Math.max(coCountDetected, marks.length);
@@ -697,13 +767,20 @@ function parsePastedData() {
   if (!students.length) {
     return showAlert(
       isFinal ? 'No valid rows. Use: USN | Final CIE | SEE'
-              : 'No valid rows. Use: USN | CO1 | CO2 | …',
+      : withSee ? 'No valid rows. Use: USN | CIE CO1..COn | SEE CO1..COn (equal CIE & SEE column counts required)'
+      : 'No valid rows. Use: USN | CO1 | CO2 | …',
       'err'
     );
   }
 
   if (!isFinal) {
-    students.forEach(s => { while (s.marks.length < coCountDetected) s.marks.push(0); });
+    students.forEach(s => {
+      while (s.marks.length < coCountDetected) s.marks.push(0);
+      if (withSee) {
+        if (!s.seeMarks) s.seeMarks = [];
+        while (s.seeMarks.length < coCountDetected) s.seeMarks.push(0);
+      }
+    });
     if (coCountDetected >= 3 && coCountDetected <= 8) {
       $('coCount').value = String(coCountDetected);
     }
@@ -728,6 +805,7 @@ function handleFile(file) {
 
       const students = [];
       const isFinal = STATE.entryMode === 'final';
+      const withSee = !isFinal && STATE.seeInPaste;
       let coCountDetected = 0;
       let start = 0;
       if (rows[0] && /usn|student|name|roll|^co|^cie|^see/i.test(String(rows[0][0] || ''))) start = 1;
@@ -741,6 +819,14 @@ function handleFile(file) {
         if (isFinal) {
           if (r.length < 3) continue;
           students.push({ usn, cie: num(r[1]), see: num(r[2]) });
+        } else if (withSee) {
+          const total = r.length - 1;
+          if (total < 2 || total % 2 !== 0) continue;
+          const half = total / 2;
+          const cieMarks = r.slice(1, 1 + half).map(v => num(v));
+          const seeMarks = r.slice(1 + half).map(v => num(v));
+          coCountDetected = Math.max(coCountDetected, half);
+          students.push({ usn, marks: cieMarks, seeMarks });
         } else {
           const marks = r.slice(1).map(v => num(v));
           if (marks.length === 0) continue;
@@ -752,7 +838,13 @@ function handleFile(file) {
       if (!students.length) return showAlert('No student rows found in file.', 'err');
 
       if (!isFinal) {
-        students.forEach(s => { while (s.marks.length < coCountDetected) s.marks.push(0); });
+        students.forEach(s => {
+          while (s.marks.length < coCountDetected) s.marks.push(0);
+          if (withSee) {
+            if (!s.seeMarks) s.seeMarks = [];
+            while (s.seeMarks.length < coCountDetected) s.seeMarks.push(0);
+          }
+        });
         if (coCountDetected >= 3 && coCountDetected <= 8) $('coCount').value = String(coCountDetected);
         $('coCount').dispatchEvent(new Event('change'));
       }
@@ -770,7 +862,7 @@ function handleFile(file) {
 }
 
 /* ====================================================================
-   PREVIEW TABLE
+   PREVIEW
    ==================================================================== */
 function renderPreview() {
   if (!STATE.students.length) { $('previewWrap').classList.add('hidden'); return; }
@@ -788,9 +880,31 @@ function renderPreview() {
         <td>${s.cie ?? 0}</td><td>${s.see ?? 0}</td></tr>`;
     });
     $('previewBody').innerHTML = body;
+    return;
+  }
+
+  const nCO = Math.max(...STATE.students.map(s => s.marks.length), 0);
+  $('chipCOs').textContent = nCO;
+  const withSee = STATE.seeInPaste;
+
+  if (withSee) {
+    let head = `<tr><th rowspan="2">#</th><th rowspan="2">USN</th>` +
+               `<th colspan="${nCO}">CIE Marks</th>` +
+               `<th colspan="${nCO}">SEE Marks</th></tr><tr class="sub-head">`;
+    for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
+    for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
+    head += '</tr>';
+    $('previewHead').innerHTML = head;
+
+    let body = '';
+    STATE.students.forEach((s, i) => {
+      body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td>`;
+      for (let c = 0; c < nCO; c++) body += `<td>${s.marks[c] ?? 0}</td>`;
+      for (let c = 0; c < nCO; c++) body += `<td>${(s.seeMarks && s.seeMarks[c]) ?? 0}</td>`;
+      body += '</tr>';
+    });
+    $('previewBody').innerHTML = body;
   } else {
-    const nCO = Math.max(...STATE.students.map(s => s.marks.length), 0);
-    $('chipCOs').textContent = nCO;
     let head = '<tr><th>#</th><th>USN</th>';
     for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
     head += '</tr>';
@@ -806,7 +920,7 @@ function renderPreview() {
 }
 
 /* ====================================================================
-   BUILD / REBUILD TABLES
+   BUILD TABLES
    ==================================================================== */
 function rebuildInputs() {
   STATE.coCount = parseInt($('coCount').value, 10) || 4;
@@ -817,7 +931,6 @@ function rebuildInputs() {
     if (STATE.ciePcts[i]   == null) STATE.ciePcts[i]   = 0;
   }
 
-  // ---- CO input table ----
   let coBody = '';
   for (let i = 0; i < STATE.coCount; i++) {
     coBody += `
@@ -838,7 +951,6 @@ function rebuildInputs() {
   }
   $('coBody').innerHTML = coBody;
 
-  // bind input events
   for (let i = 0; i < STATE.coCount; i++) {
     $('cie_' + i).addEventListener('input', () => {
       STATE.ciePcts[i] = num($('cie_' + i).value);
@@ -854,7 +966,6 @@ function rebuildInputs() {
     });
   }
 
-  // ---- PO matrix ----
   let poHead = '<tr><th>CO / PO</th>';
   for (let p = 1; p <= PO_COUNT; p++) poHead += `<th>PO${p}</th>`;
   poHead += '</tr>';
@@ -871,7 +982,6 @@ function rebuildInputs() {
   }
   $('poMatrixBody').innerHTML = poBody;
 
-  // ---- PSO matrix ----
   let psoBody = '';
   for (let c = 0; c < STATE.coCount; c++) {
     psoBody += `<tr><td class="row-label">CO${c + 1}</td>`;
@@ -901,22 +1011,22 @@ function resetMatrices() {
 function clearAll() {
   STATE.students = [];
   STATE.ciePcts = [];
+  STATE.seePcts = [];
   $('pasteBox').value = '';
   $('fileInput').value = '';
   $('previewWrap').classList.add('hidden');
   computeFromData(true);
   calculateAll();
-  showAlert('Cleared student data and CIE percentages.', 'warn');
+  showAlert('Cleared student data and percentages.', 'warn');
 }
 
 /* ====================================================================
-   COMPUTE CIE % FROM STUDENT DATA
+   COMPUTE PERCENTAGES FROM DATA
    ==================================================================== */
 function computeFromData(silent = false) {
   const thrPct = num($('studentThreshold').value) || 60;
 
   if (STATE.entryMode === 'final') {
-    /* ---- Final CIE + SEE mode: course-level %s ---- */
     const cieMax = num($('cieMaxMarks').value) || 50;
     const seeMax = num($('seeMaxMarks').value) || 100;
     const cieThr = cieMax * thrPct / 100;
@@ -930,36 +1040,46 @@ function computeFromData(silent = false) {
         if (num(s.see) >= seeThr) seeAbove++;
       }
     });
-
     const ciePct = total ? (cieAbove / total) * 100 : 0;
     const seePct = total ? (seeAbove / total) * 100 : 0;
-
-    STATE.courseCiePct = ciePct;
-    STATE.courseSeePct = seePct;
 
     for (let i = 0; i < STATE.coCount; i++) {
       STATE.ciePcts[i] = ciePct;
       STATE.seePcts[i] = seePct;
     }
   } else {
-    /* ---- CO-wise mode: per-CO CIE % ---- */
-    const maxMarks = num($('maxMarks').value) || 10;
-    const threshold = maxMarks * thrPct / 100;
+    /* CO-wise: per-CO CIE % and (if pasted) SEE % */
+    const maxCie = num($('maxMarks').value)    || 10;
+    const maxSee = num($('maxSeeMarks').value) || 20;
+    const cieThr = maxCie * thrPct / 100;
+    const seeThr = maxSee * thrPct / 100;
+    const withSee = STATE.seeInPaste;
 
     for (let c = 0; c < STATE.coCount; c++) {
-      if (!STATE.students.length) { STATE.ciePcts[c] = 0; continue; }
-      let above = 0, total = 0;
+      if (!STATE.students.length) {
+        STATE.ciePcts[c] = 0;
+        if (withSee) STATE.seePcts[c] = 0;
+        continue;
+      }
+      let cieAbove = 0, cieTotal = 0, seeAbove = 0, seeTotal = 0;
       STATE.students.forEach(s => {
         if (s.marks[c] != null) {
-          total++;
-          if (num(s.marks[c]) >= threshold) above++;
+          cieTotal++;
+          if (num(s.marks[c]) >= cieThr) cieAbove++;
+        }
+        if (withSee && s.seeMarks && s.seeMarks[c] != null) {
+          seeTotal++;
+          if (num(s.seeMarks[c]) >= seeThr) seeAbove++;
         }
       });
-      STATE.ciePcts[c] = total ? (above / total) * 100 : 0;
+      STATE.ciePcts[c] = cieTotal ? (cieAbove / cieTotal) * 100 : 0;
+      if (withSee) {
+        STATE.seePcts[c] = seeTotal ? (seeAbove / seeTotal) * 100 : 0;
+      }
     }
   }
 
-  // Update the visible input cells
+  // Refresh visible inputs
   for (let i = 0; i < STATE.coCount; i++) {
     const elCie = $('cie_' + i);
     if (elCie) elCie.value = STATE.ciePcts[i].toFixed(1);
@@ -993,11 +1113,8 @@ function calculateAll() {
   const finalCO = [];
   let sumFinal = 0;
   for (let i = 0; i < coCount; i++) {
-    const ciePct = STATE.ciePcts[i] || 0;
-    const cieLvl = getLevel(ciePct);
-    const seePct = STATE.seePcts[i] || 0;
-    const seeLvl = getLevel(seePct);
-
+    const cieLvl = getLevel(STATE.ciePcts[i] || 0);
+    const seeLvl = getLevel(STATE.seePcts[i] || 0);
     const direct = cieLvl * cieW + seeLvl * seeW;
     const ind    = indirectOn ? (STATE.indirect[i] || 0) : 0;
     const final  = indirectOn
@@ -1061,7 +1178,7 @@ function programAttainment(coValues, matrix, coCount, target) {
 }
 
 /* ====================================================================
-   DASHBOARDS
+   DASHBOARDS / AUDIT / FORMULA
    ==================================================================== */
 function renderDashboards() {
   const target = STATE.target || 2.0;
@@ -1117,18 +1234,21 @@ function renderAudit() {
 function renderFormula(cieW, seeW, target) {
   const on = STATE.indirectOn;
   const modeLine = on
-    ? `<b>Mode</b> = Indirect <span style="color:#0b6b3a">INCLUDED</span> →
-       <code>Direct 80% + Indirect 20%</code> &nbsp;(80 : 20)`
-    : `<b>Mode</b> = Indirect <span style="color:#b42318">NOT USED</span> →
-       <code>CIE 50% + SEE 50%</code> &nbsp;(50 : 50)`;
+    ? `<b>Mode</b> = Indirect <span style="color:#0b6b3a">INCLUDED</span> → <code>Direct 80% + Indirect 20%</code>`
+    : `<b>Mode</b> = Indirect <span style="color:#b42318">NOT USED</span> → <code>CIE 50% + SEE 50%</code>`;
 
   const finalLine = on
     ? `<code>Final CO = (Direct CO × 80%) + (Indirect × 20%)</code>`
     : `<code>Final CO = Direct CO</code>`;
 
-  const entryLine = STATE.entryMode === 'final'
-    ? `<b>Entry</b> = Final CIE + SEE (course-level %) · CIE max = ${$('cieMaxMarks').value}, SEE max = ${$('seeMaxMarks').value}`
-    : `<b>Entry</b> = CO-wise marks · Max marks / CO = ${$('maxMarks').value}`;
+  let entryLine;
+  if (STATE.entryMode === 'final') {
+    entryLine = `<b>Entry</b> = Final CIE + SEE · CIE max = ${$('cieMaxMarks').value}, SEE max = ${$('seeMaxMarks').value}`;
+  } else if (STATE.seeInPaste) {
+    entryLine = `<b>Entry</b> = CO-wise with pasted SEE · CIE max/CO = ${$('maxMarks').value}, SEE max/CO = ${$('maxSeeMarks').value}`;
+  } else {
+    entryLine = `<b>Entry</b> = CO-wise CIE only · CIE max/CO = ${$('maxMarks').value} · SEE % entered manually`;
+  }
 
   $('formulaBox').innerHTML = `
     ${entryLine}<br>
@@ -1156,7 +1276,8 @@ function exportExcel() {
   const coRows = [
     ['CO Attainment Detail'],
     ['Course', courseCode, 'Academic Year', ay, 'Target', STATE.target],
-    ['Entry Mode', STATE.entryMode === 'final' ? 'Final CIE + SEE' : 'CO-wise marks'],
+    ['Entry Mode', STATE.entryMode === 'final' ? 'Final CIE + SEE'
+                  : STATE.seeInPaste ? 'CO-wise (CIE + SEE)' : 'CO-wise (CIE only)'],
     ['Mode', STATE.indirectOn ? 'Indirect included — 80 : 20 (Direct : Indirect)'
                               : 'Direct only — 50 : 50 (CIE : SEE)'],
     [],
@@ -1250,7 +1371,8 @@ function exportPDF() {
       body: [[ay, course, cName, `Sem ${sem} / Div ${div}`, staff,
               STATE.target.toFixed(2) + ' / 3.00',
               STATE.indirectOn ? 'Indirect 80 : 20' : 'Direct 50 : 50',
-              STATE.entryMode === 'final' ? 'Final CIE + SEE' : 'CO-wise']],
+              STATE.entryMode === 'final' ? 'Final CIE + SEE'
+                : STATE.seeInPaste ? 'CO-wise CIE + SEE' : 'CO-wise CIE']],
       styles: { ...baseStyle.styles, fontSize: 7.2 },
     });
     y = doc.lastAutoTable.finalY + 4;
@@ -1379,7 +1501,21 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   fi.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
+  // live recompute listeners
+  ['maxMarks', 'maxSeeMarks', 'studentThreshold', 'cieMaxMarks', 'seeMaxMarks'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('input', () => {
+      if (STATE.students.length) computeFromData(false);
+      else calculateAll();
+    });
+  });
+  ['cieWeight', 'seeWeight', 'target'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('input', calculateAll);
+  });
+
   rebuildInputs();
+  updatePasteUI();
 });
 </script>
 </body>
