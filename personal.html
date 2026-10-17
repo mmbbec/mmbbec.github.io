@@ -1,521 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dr. Mahadev Biradar | Web Application Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary: #1e3a8a;
-        --primary-light: #eff6ff;
-        --accent: #2563eb;
-        --bg: #f8fafc;
-        --surface: #ffffff;
-        --text: #0f172a;
-        --text-muted: #64748b;
-        --border: #e2e8f0;
-        --radius: 16px;
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .07), 0 2px 4px -2px rgba(0, 0, 0, .05);
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr. Mahadev Biradar | Web Application Hub</title>
+    
+    <!-- Preconnect & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --radius: 14px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+            --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            --hero-bg: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+            --tag-bg: #f1f5f9;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+        /* ─── Dark Mode Color Overrides ─── */
+        [data-theme="dark"] {
+            --primary: #60a5fa;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --bg: #0b0f19;
+            --surface: #131b2e;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+            --border-hover: #334155;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5);
+            --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.3);
+            --hero-bg: linear-gradient(180deg, #0f172a 0%, #0b0f19 100%);
+            --tag-bg: #1e293b;
+        }
 
-    body {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
-    }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
 
-    /* ─── Header ─── */
-    .site-header {
-        background: #fff;
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
-    }
+        html { 
+            scroll-behavior: smooth; 
+        }
 
-    .header-container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 24px;
-        height: 68px;
-        display: flex;
-        align-items: center;
-        gap: 24px;
-    }
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: var(--text);
-        flex-shrink: 0;
-    }
+        /* ─── Header ─── */
+        .site-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
 
-    .logo-mark {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #2563eb, #1e3a8a);
-        color: #fff;
-        display: grid;
-        place-items: center;
-        font-weight: 800;
-        font-size: 16px;
-        letter-spacing: -0.02em;
-        box-shadow: 0 4px 6px -2px rgba(37, 99, 235, .4);
-    }
-
-    .logo-text strong {
-        display: block;
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-    }
-
-    .logo-text small {
-        display: block;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--text-muted);
-        letter-spacing: 0.02em;
-        text-transform: uppercase;
-    }
-
-    .header-search {
-        flex: 1;
-        max-width: 480px;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    .header-search input {
-        width: 100%;
-        height: 42px;
-        padding: 0 40px 0 44px;
-        border-radius: 9999px;
-        border: 1px solid var(--border);
-        background: #f8fafc;
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text);
-        outline: none;
-        transition: all .2s ease;
-    }
-
-    .header-search input:focus {
-        background: #fff;
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
-    }
-
-    .search-icon-svg {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 18px;
-        height: 18px;
-        color: #94a3b8;
-        pointer-events: none;
-    }
-
-    .clear-search {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 28px;
-        height: 28px;
-        border: none;
-        border-radius: 50%;
-        background: #e2e8f0;
-        color: #475569;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        display: grid;
-        place-items: center;
-        transition: background .15s;
-    }
-
-    .clear-search:hover { background: #cbd5e1; }
-    .clear-search.hidden { display: none; }
-
-    .header-actions {
-        display: flex;
-        gap: 8px;
-        flex-shrink: 0;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 9px 18px;
-        border-radius: 9999px;
-        font-size: 13px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all .2s ease;
-        white-space: nowrap;
-        border: 1px solid transparent;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #2563eb, #1e3a8a);
-        color: #fff;
-        box-shadow: 0 4px 10px -4px rgba(37, 99, 235, .6);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px -4px rgba(37, 99, 235, .8);
-    }
-
-    .btn-outline {
-        background: #fff;
-        color: var(--text);
-        border-color: var(--border);
-    }
-
-    .btn-outline:hover {
-        background: var(--primary-light);
-        border-color: #bfdbfe;
-        color: var(--primary);
-    }
-
-    /* ─── Hero ─── */
-    .hero {
-        background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
-        padding: 48px 24px 40px;
-        text-align: center;
-    }
-
-    .hero-content {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .hero h1 {
-        font-size: 36px;
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        line-height: 1.2;
-        color: var(--text);
-        margin-bottom: 12px;
-    }
-
-    .hero p {
-        font-size: 16px;
-        color: var(--text-muted);
-        line-height: 1.6;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .hero-stats {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin-top: 28px;
-    }
-
-    .stat-item { text-align: center; }
-
-    .stat-number {
-        display: block;
-        font-size: 24px;
-        font-weight: 800;
-        color: var(--primary);
-        letter-spacing: -0.02em;
-    }
-
-    .stat-label {
-        display: block;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-top: 2px;
-    }
-
-    /* ─── Main Content ─── */
-    .main-content {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 32px 24px 80px;
-    }
-
-    .filter-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 32px;
-    }
-
-    .filter-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 18px;
-        border-radius: 9999px;
-        border: 1px solid var(--border);
-        background: #fff;
-        color: var(--text);
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all .2s ease;
-    }
-
-    .filter-btn:hover {
-        border-color: #bfdbfe;
-        background: var(--primary-light);
-    }
-
-    .filter-btn.active {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: #fff;
-    }
-
-    .filter-btn .count {
-        font-size: 11px;
-        font-weight: 700;
-        background: #f1f5f9;
-        color: var(--text-muted);
-        padding: 2px 8px;
-        border-radius: 9999px;
-        line-height: 1.4;
-    }
-
-    .filter-btn.active .count {
-        background: rgba(255, 255, 255, .2);
-        color: #fff;
-    }
-
-    /* ─── Sections ─── */
-    .app-section {
-        margin-bottom: 40px;
-    }
-
-    .app-section.hidden { display: none; }
-
-    .section-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-
-    .section-header h2 {
-        font-size: 20px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: var(--text);
-        position: relative;
-        padding-left: 14px;
-    }
-
-    .section-header h2::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 20px;
-        border-radius: 2px;
-        background: var(--accent);
-    }
-
-    .section-badge {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--text-muted);
-        background: #f1f5f9;
-        padding: 4px 10px;
-        border-radius: 9999px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-
-    /* ─── App Grid & Cards ─── */
-    .app-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 16px;
-    }
-
-    .app-card {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 16px 20px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        text-decoration: none;
-        color: inherit;
-        transition: all .2s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .app-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        border-color: #bfdbfe;
-    }
-
-    .app-card.hidden { display: none; }
-
-    .app-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        font-size: 18px;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(135deg, var(--bg1), var(--bg2));
-        flex-shrink: 0;
-        box-shadow: 0 4px 8px -4px var(--bg2);
-    }
-
-    .app-info { flex: 1; min-width: 0; }
-
-    .app-name {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text);
-        line-height: 1.3;
-        margin-bottom: 2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .app-desc {
-        font-size: 13px;
-        color: var(--text-muted);
-        line-height: 1.4;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .app-arrow {
-        font-size: 18px;
-        color: #94a3b8;
-        transition: transform .2s ease, color .2s ease;
-        flex-shrink: 0;
-    }
-
-    .app-card:hover .app-arrow {
-        transform: translateX(4px);
-        color: var(--accent);
-    }
-
-    /* ─── No Results ─── */
-    .no-results {
-        text-align: center;
-        padding: 64px 24px;
-        background: #fff;
-        border: 2px dashed var(--border);
-        border-radius: var(--radius);
-        color: var(--text-muted);
-    }
-
-    .no-results span {
-        font-size: 40px;
-        display: block;
-        margin-bottom: 12px;
-    }
-
-    .no-results strong {
-        display: block;
-        font-size: 18px;
-        color: var(--text);
-        margin-bottom: 6px;
-    }
-
-    .no-results small { font-size: 14px; }
-    .no-results.hidden { display: none; }
-
-    /* ─── Footer ─── */
-    .site-footer {
-        text-align: center;
-        padding: 32px 24px;
-        font-size: 13px;
-        color: var(--text-muted);
-        border-top: 1px solid var(--border);
-        background: #fff;
-    }
-
-    /* ─── Responsive ─── */
-    @media (max-width: 1024px) {
-        .header-container { gap: 16px; }
-        .header-search { max-width: 320px; }
-    }
-
-    @media (max-width: 768px) {
         .header-container {
-            flex-wrap: wrap;
-            height: auto;
-            padding: 12px 16px;
-            gap: 12px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
-        .header-search {
-            order: 3;
-            width: 100%;
-            max-width: none;
-            margin: 0;
-        }
-        .header-actions { margin-left: auto; }
-        .hero h1 { font-size: 28px; }
-        .hero-stats { gap: 24px; }
-        .app-grid { grid-template-columns: 1fr; }
-        .filter-bar {
-            overflow-x: auto;
-            flex-wrap: nowrap;
-            padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .filter-btn { flex-shrink: 0; }
-    }
 
-    @media (max-width: 480px) {
-        .logo-text strong { font-size: 14px; }
-        .logo-text small { font-size: 10px; }
-        .logo-mark { width: 36px; height: 36px; font-size: 14px; }
-        .hero { padding: 32px 16px 28px; }
-        .hero h1 { font-size: 24px; }
-        .hero p { font-size: 14px; }
-        .stat-number { font-size: 20px; }
-        .header-actions .btn { padding: 7px 14px; font-size: 12px; }
-        .main-content { padding: 24px 16px 60px; }
-        .app-card { padding: 14px 16px; }
-        .app-icon { width: 42px; height: 42px; font-size: 16px; }
-        .app-name { font-size: 15px; }
-        .app-desc { font-size: 12px; }
-    }
-</style>
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            flex-shrink: 0;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: #ffffff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: -0.02em;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .logo-text strong {
+            display: block;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .logo-text small {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 480px;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 100%;
+            height: 44px;
+            padding: 0 42px 0 44px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-search input:focus {
+            background: var(--surface);
+            border-color: var(--accent);
+            box-shadow: var(--focus-ring);
+        }
+
+        .search-icon-svg {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background 0.15s ease;
+        }
+
+        .clear-search:hover { background: var(--border-hover); }
+        .clear-search.hidden { display: none; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ─── Dark Mode Toggle Button ─── */
+        .theme-toggle-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--border-hover);
+        }
+
+        .theme-toggle-btn svg {
+            width: 19px;
+            height: 19px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .theme-toggle-btn:hover svg {
+            transform: rotate(15deg);
+        }
+
+        [data-theme="dark"] .icon-moon { display: none; }
+        [data-theme="light"] .icon-sun { display: none; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: #ffffff;
+            box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px -2px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            border-color: #bfdbfe;
+            color: var(--accent);
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            background: var(--hero-bg);
+            padding: 56px 24px 44px;
+            text-align: center;
+            transition: background 0.25s ease;
+        }
+
+        .hero-content {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0 auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 32px;
+        }
+
+        .stat-item { text-align: center; }
+
+        .stat-number {
+            display: block;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        /* ─── Main Content ─── */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 36px 24px 80px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 36px;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--border-hover);
+            background: var(--primary-light);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .filter-btn .count {
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--tag-bg);
+            color: var(--text-muted);
+            padding: 2px 7px;
+            border-radius: 9999px;
+            line-height: 1.4;
+        }
+
+        .filter-btn.active .count {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        /* ─── Sections ─── */
+        .app-section {
+            margin-bottom: 44px;
+        }
+
+        .app-section.hidden { display: none; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            position: relative;
+            padding-left: 14px;
+        }
+
+        .section-header h2::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 18px;
+            border-radius: 2px;
+            background: var(--accent);
+        }
+
+        .section-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--tag-bg);
+            padding: 3px 9px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* ─── App Grid & Cards ─── */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 16px;
+        }
+
+        .app-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent);
+        }
+
+        .app-card:focus-visible {
+            outline: none;
+            box-shadow: var(--focus-ring);
+            border-color: var(--accent);
+        }
+
+        .app-card.hidden { display: none; }
+
+        .app-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--bg1), var(--bg2));
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px -2px var(--bg2);
+            user-select: none;
+        }
+
+        .app-info { 
+            flex: 1; 
+            min-width: 0; 
+        }
+
+        .app-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-arrow {
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease, color 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .app-card:hover .app-arrow {
+            transform: translateX(4px);
+            color: var(--accent);
+        }
+
+        /* ─── No Results ─── */
+        .no-results {
+            text-align: center;
+            padding: 56px 24px;
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            color: var(--text-muted);
+        }
+
+        .no-results span {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .no-results strong {
+            display: block;
+            font-size: 18px;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .no-results small { 
+            font-size: 14px; 
+        }
+
+        .no-results.hidden { display: none; }
+
+        /* ─── Footer ─── */
+        .site-footer {
+            text-align: center;
+            padding: 32px 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            margin-top: auto;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        /* ─── Responsive Adjustments ─── */
+        @media (max-width: 900px) {
+            .header-container { 
+                flex-wrap: wrap; 
+                height: auto; 
+                padding: 12px 20px; 
+                gap: 12px; 
+            }
+            .header-search { 
+                order: 3; 
+                width: 100%; 
+                max-width: none; 
+            }
+            .header-actions { 
+                margin-left: auto; 
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero { padding: 36px 16px 28px; }
+            .hero h1 { font-size: 26px; }
+            .hero-stats { gap: 24px; }
+            .app-grid { grid-template-columns: 1fr; }
+            .filter-bar {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 6px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .filter-btn { flex-shrink: 0; }
+        }
+    </style>
+
+    <!-- Theme Initialization Script (Prevents White Flashes on Load) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
 </head>
 <body>
 
@@ -530,16 +613,27 @@
         </a>
 
         <div class="header-search">
-            <svg class="search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg class="search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
-            <input id="globalSearch" type="text" placeholder="Search all applications…" autocomplete="off" aria-label="Search applications">
+            <input id="globalSearch" type="search" placeholder="Search applications (Press '/' to focus)..." autocomplete="off" aria-label="Search applications">
             <button id="clearSearch" class="clear-search hidden" type="button" aria-label="Clear search">✕</button>
         </div>
 
         <div class="header-actions">
-            <a href="index.html" class="btn btn-outline">View Profile</a>
-            <a href="index.html" class="btn btn-primary">Return Home</a>
+            <!-- Dark / Light Theme Toggle -->
+            <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="Toggle Dark Mode" title="Toggle theme">
+                <!-- Moon Icon (Visible in Light Mode) -->
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <!-- Sun Icon (Visible in Dark Mode) -->
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
+            <a href="index.html" class="btn btn-outline">Profile</a>
+            <a href="index.html" class="btn btn-primary">Home</a>
         </div>
     </div>
 </header>
@@ -547,14 +641,14 @@
 <section class="hero">
     <div class="hero-content">
         <h1>All Your Applications. One Dashboard.</h1>
-        <p>Access student resources, faculty utilities, and portals from a single, unified hub — designed to streamline your digital workflow.</p>
+        <p>Access student resources, departmental portals, and educational utilities from a single, unified interface.</p>
         <div class="hero-stats">
             <div class="stat-item">
-                <span class="stat-number">22</span>
+                <span class="stat-number" id="statAppsCount">0</span>
                 <span class="stat-label">Applications</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number">3</span>
+                <span class="stat-number" id="statCategoriesCount">0</span>
                 <span class="stat-label">Categories</span>
             </div>
             <div class="stat-item">
@@ -567,136 +661,137 @@
 
 <main class="main-content">
 
-    <div class="filter-bar">
-        <button class="filter-btn active" data-filter="all">All Apps <span class="count">22</span></button>
-        <button class="filter-btn" data-filter="student">Student <span class="count">4</span></button>
-        <button class="filter-btn" data-filter="faculty">Faculty <span class="count">2</span></button>
-        <button class="filter-btn" data-filter="portal">Portals <span class="count">16</span></button>
+    <!-- Category Filter Controls -->
+    <div class="filter-bar" role="toolbar" aria-label="Category Filters">
+        <button class="filter-btn active" data-filter="all">All Apps <span class="count">0</span></button>
+        <button class="filter-btn" data-filter="student">Student <span class="count">0</span></button>
+        <button class="filter-btn" data-filter="faculty">Faculty <span class="count">0</span></button>
+        <button class="filter-btn" data-filter="portal">Portals <span class="count">0</span></button>
     </div>
 
     <!-- ─── Student Resources ─── -->
     <section class="app-section" data-category="student">
         <div class="section-header">
             <h2>Student Resources</h2>
-            <span class="section-badge">4 apps</span>
+            <span class="section-badge">0 apps</span>
         </div>
         <div class="app-grid">
- <a href="Resume.html" class="app-card" data-name="Resume Builder" data-desc="Create professional resumes." data-keywords="resume builder cv">
-                <div class="app-icon" style="--bg1:#14b8a6; --bg2:#0f766e;">RB</div>
+            <a href="Resume.html" class="app-card" data-name="Resume Builder" data-desc="Create professional resumes." data-keywords="resume builder cv format jobs">
+                <div class="app-icon" style="--bg1:#14b8a6; --bg2:#0f766e;" role="img" aria-label="Resume Builder Icon">RB</div>
                 <div class="app-info">
                     <div class="app-name">Resume Builder</div>
                     <div class="app-desc">Create professional resumes.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="wish.html" class="app-card" data-name="Wish Craft" data-desc="Greeting and wish generator." data-keywords="wish craft wishes greeting">
-                <div class="app-icon" style="--bg1:#ec4899; --bg2:#be185d;">WC</div>
+            <a href="wish.html" class="app-card" data-name="Wish Craft" data-desc="Greeting and wish generator." data-keywords="wish craft wishes greeting cards">
+                <div class="app-icon" style="--bg1:#ec4899; --bg2:#be185d;" role="img" aria-label="Wish Craft Icon">WC</div>
                 <div class="app-info">
                     <div class="app-name">Wish Craft</div>
                     <div class="app-desc">Greeting and wish generator.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="MY BEC Students.html" class="app-card" data-name="Student Registration" data-desc="Enroll and manage student profiles." data-keywords="student registration my bec students">
-                <div class="app-icon" style="--bg1:#60a5fa; --bg2:#4f46e5;">SR</div>
+            <a href="MY BEC Students.html" class="app-card" data-name="Student Registration" data-desc="Enroll and manage student profiles." data-keywords="student registration my bec students attendance enroll">
+                <div class="app-icon" style="--bg1:#60a5fa; --bg2:#4f46e5;" role="img" aria-label="Student Registration Icon">SR</div>
                 <div class="app-info">
                     <div class="app-name">Student Registration</div>
                     <div class="app-desc">Enroll and manage student profiles.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="free-tools.html" class="app-card" data-name="Free Academic Tools" data-desc="Utility tools for students and faculty." data-keywords="free academic tools utilities">
-                <div class="app-icon" style="--bg1:#f59e0b; --bg2:#b45309;">FA</div>
+            <a href="free-tools.html" class="app-card" data-name="Free Academic Tools" data-desc="Utility tools for students and faculty." data-keywords="free academic tools utilities calculations math">
+                <div class="app-icon" style="--bg1:#f59e0b; --bg2:#b45309;" role="img" aria-label="Academic Tools Icon">FA</div>
                 <div class="app-info">
                     <div class="app-name">Free Academic Tools</div>
                     <div class="app-desc">Utility tools for students and faculty.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="calculator.html" class="app-card" data-name="Scientific Calculator" data-desc="Advanced calculations on the go." data-keywords="scientific calculator math">
-                <div class="app-icon" style="--bg1:#3b82f6; --bg2:#1d4ed8;">SC</div>
+            <a href="calculator.html" class="app-card" data-name="Scientific Calculator" data-desc="Advanced calculations on the go." data-keywords="scientific calculator math trigonometry algebra numbers">
+                <div class="app-icon" style="--bg1:#3b82f6; --bg2:#1d4ed8;" role="img" aria-label="Calculator Icon">SC</div>
                 <div class="app-info">
                     <div class="app-name">Scientific Calculator</div>
                     <div class="app-desc">Advanced calculations on the go.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
- <a href="magic square.html" class="app-card" data-name="Magic Square" data-desc="Interactive number puzzle." data-keywords="magic square puzzle numbers">
-                <div class="app-icon" style="--bg1:#8b5cf6; --bg2:#5b21b6;">MS</div>
+
+            <a href="magic square.html" class="app-card" data-name="Magic Square" data-desc="Interactive number puzzle." data-keywords="magic square puzzle numbers algorithms recreational mathematics">
+                <div class="app-icon" style="--bg1:#8b5cf6; --bg2:#5b21b6;" role="img" aria-label="Magic Square Icon">MS</div>
                 <div class="app-info">
                     <div class="app-name">Magic Square</div>
                     <div class="app-desc">Interactive number puzzle.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="gate.html" class="app-card" data-name="GATE Mathematics" data-desc="Exam preparation resources." data-keywords="gate mathematics maths exam">
-                <div class="app-icon" style="--bg1:#64748b; --bg2:#1e293b;">GM</div>
+            <a href="gate.html" class="app-card" data-name="GATE Mathematics" data-desc="Exam preparation resources." data-keywords="gate mathematics maths engineering exams syllabus questions">
+                <div class="app-icon" style="--bg1:#64748b; --bg2:#1e293b;" role="img" aria-label="GATE Mathematics Icon">GM</div>
                 <div class="app-info">
                     <div class="app-name">GATE Mathematics</div>
                     <div class="app-desc">Exam preparation resources.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="gate civil.html" class="app-card" data-name="GATE Civil" data-desc="Civil engineering exam prep." data-keywords="gate civil engineering exam">
-                <div class="app-icon" style="--bg1:#f59e0b; --bg2:#b45309;">GC</div>
+            <a href="gate civil.html" class="app-card" data-name="GATE Civil" data-desc="Civil engineering exam prep." data-keywords="gate civil engineering exam preparation question bank">
+                <div class="app-icon" style="--bg1:#f59e0b; --bg2:#b45309;" role="img" aria-label="GATE Civil Icon">GC</div>
                 <div class="app-info">
                     <div class="app-name">GATE Civil</div>
                     <div class="app-desc">Civil engineering exam prep.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="rutu.html" class="app-card" data-name="10th CBSE" data-desc="Class 10 study materials." data-keywords="10th tenth cbse class 10">
-                <div class="app-icon" style="--bg1:#06b6d4; --bg2:#0e7490;">10</div>
+            <a href="rutu.html" class="app-card" data-name="10th CBSE" data-desc="Class 10 study materials." data-keywords="10th tenth cbse class 10 school science math">
+                <div class="app-icon" style="--bg1:#06b6d4; --bg2:#0e7490;" role="img" aria-label="10th CBSE Icon">10</div>
                 <div class="app-info">
                     <div class="app-name">10th CBSE</div>
                     <div class="app-desc">Class 10 study materials.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="laddu.html" class="app-card" data-name="5th &amp; 7th CBSE" data-desc="Middle school resources." data-keywords="5th 7th fifth seventh cbse class">
-                <div class="app-icon" style="--bg1:#84cc16; --bg2:#4d7c0f;">5C</div>
+            <a href="laddu.html" class="app-card" data-name="5th &amp; 7th CBSE" data-desc="Middle school resources." data-keywords="5th 7th fifth seventh cbse school foundation">
+                <div class="app-icon" style="--bg1:#84cc16; --bg2:#4d7c0f;" role="img" aria-label="5th and 7th CBSE Icon">5C</div>
                 <div class="app-info">
                     <div class="app-name">5th &amp; 7th CBSE</div>
                     <div class="app-desc">Middle school resources.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="first sem.html" class="app-card" data-name="Engineering Mathematics-I" data-desc="First semester mathematics." data-keywords="engineering mathematics first sem 1st semester">
-                <div class="app-icon" style="--bg1:#2563eb; --bg2:#1e3a8a;">EM</div>
+            <a href="first sem.html" class="app-card" data-name="Engineering Mathematics-I" data-desc="First semester mathematics." data-keywords="engineering mathematics first sem 1st semester calculus linear algebra">
+                <div class="app-icon" style="--bg1:#2563eb; --bg2:#1e3a8a;" role="img" aria-label="Engineering Maths Icon">EM</div>
                 <div class="app-info">
                     <div class="app-name">Engineering Mathematics-I</div>
                     <div class="app-desc">First semester mathematics.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="third sem.html" class="app-card" data-name="Statistics and Probability" data-desc="Third semester statistics." data-keywords="statistics probability stastics third sem 3rd semester">
-                <div class="app-icon" style="--bg1:#a78bfa; --bg2:#4f46e5;">SP</div>
+            <a href="third sem.html" class="app-card" data-name="Statistics and Probability" data-desc="Third semester statistics." data-keywords="statistics probability third sem 3rd semester data distributions">
+                <div class="app-icon" style="--bg1:#a78bfa; --bg2:#4f46e5;" role="img" aria-label="Statistics Icon">SP</div>
                 <div class="app-info">
                     <div class="app-name">Statistics and Probability</div>
                     <div class="app-desc">Third semester statistics.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="bec.html" class="app-card" data-name="BEC Syllabus" data-desc="Course structure and subject details." data-keywords="bec syllabus subjects">
-                <div class="app-icon" style="--bg1:#8b5cf6; --bg2:#6d28d9;">BS</div>
+            <a href="bec.html" class="app-card" data-name="BEC Syllabus" data-desc="Course structure and subject details." data-keywords="bec syllabus subjects curriculum modules bagalkote">
+                <div class="app-icon" style="--bg1:#8b5cf6; --bg2:#6d28d9;" role="img" aria-label="BEC Syllabus Icon">BS</div>
                 <div class="app-info">
                     <div class="app-name">BEC Syllabus</div>
                     <div class="app-desc">Course structure and subject details.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
-
         </div>
     </section>
 
@@ -704,36 +799,35 @@
     <section class="app-section" data-category="faculty">
         <div class="section-header">
             <h2>Faculty Utilities</h2>
-            <span class="section-badge">2 apps</span>
+            <span class="section-badge">0 apps</span>
         </div>
         <div class="app-grid">
-
-            <a href="co po calculator.html" target="_blank" class="app-card" data-name="CO–PO Calculator" data-desc="Attainment calculation for faculty." data-keywords="co po calculator attainment faculty">
-                <div class="app-icon" style="--bg1:#0ea5e9; --bg2:#0369a1;">CP</div>
+            <a href="co po calculator.html" class="app-card" data-name="CO–PO Calculator" data-desc="Attainment calculation for faculty." data-keywords="co po calculator attainment nba accreditation evaluation">
+                <div class="app-icon" style="--bg1:#0ea5e9; --bg2:#0369a1;" role="img" aria-label="CO PO Calculator Icon">CP</div>
                 <div class="app-info">
                     <div class="app-name">CO–PO Calculator</div>
                     <div class="app-desc">Attainment calculation for faculty.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="teacher.html" class="app-card" data-name="Faculty Registration" data-desc="Onboard faculty members." data-keywords="faculty teacher registration staff">
-                <div class="app-icon" style="--bg1:#10b981; --bg2:#047857;">FR</div>
+            <a href="teacher.html" class="app-card" data-name="Faculty Registration" data-desc="Onboard faculty members." data-keywords="faculty teacher registration staff portal onboarding">
+                <div class="app-icon" style="--bg1:#10b981; --bg2:#047857;" role="img" aria-label="Faculty Registration Icon">FR</div>
                 <div class="app-info">
                     <div class="app-name">Faculty Registration</div>
                     <div class="app-desc">Onboard faculty members.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
-             <a href="copo.html" class="app-card" data-name="BEC COPO" data-desc="CO-PO mapping tool." data-keywords="bec copo co po">
-                <div class="app-icon" style="--bg1:#3b82f6; --bg2:#1e40af;">BC</div>
+
+            <a href="copo.html" class="app-card" data-name="BEC COPO" data-desc="CO-PO mapping tool." data-keywords="bec copo co po mapping matrix course outcomes">
+                <div class="app-icon" style="--bg1:#3b82f6; --bg2:#1e40af;" role="img" aria-label="BEC COPO Icon">BC</div>
                 <div class="app-info">
                     <div class="app-name">BEC COPO</div>
                     <div class="app-desc">CO-PO mapping tool.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
-
         </div>
     </section>
 
@@ -741,169 +835,225 @@
     <section class="app-section" data-category="portal">
         <div class="section-header">
             <h2>Portals &amp; Initiatives</h2>
-            <span class="section-badge">16 apps</span>
+            <span class="section-badge">0 apps</span>
         </div>
         <div class="app-grid">
-
-            <a href="placement.html" class="app-card" data-name="BEC Placement" data-desc="Career opportunities and placement drives." data-keywords="bec placement jobs career">
-                <div class="app-icon" style="--bg1:#f43f5e; --bg2:#be123c;">BP</div>
+            <a href="placement.html" class="app-card" data-name="BEC Placement" data-desc="Career opportunities and placement drives." data-keywords="bec placement jobs career recruitment drives training">
+                <div class="app-icon" style="--bg1:#f43f5e; --bg2:#be123c;" role="img" aria-label="BEC Placement Icon">BP</div>
                 <div class="app-info">
                     <div class="app-name">BEC Placement</div>
                     <div class="app-desc">Career opportunities and placement drives.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="Rashmi Web Studio.html" class="app-card" data-name="Rashmi Web Studio" data-desc="Design and development services." data-keywords="rashmi web studio design">
-                <div class="app-icon" style="--bg1:#a855f7; --bg2:#7e22ce;">RW</div>
+            <a href="Rashmi Web Studio.html" class="app-card" data-name="Rashmi Web Studio" data-desc="Design and development services." data-keywords="rashmi web studio design development applications solutions">
+                <div class="app-icon" style="--bg1:#a855f7; --bg2:#7e22ce;" role="img" aria-label="Rashmi Studio Icon">RW</div>
                 <div class="app-info">
                     <div class="app-name">Rashmi Web Studio</div>
                     <div class="app-desc">Design and development services.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="Kite-Zerodha-30min-Ce.html" class="app-card" data-name="Kite" data-desc="Trading platform guide." data-keywords="kite zerodha trading 30 minutes">
-                <div class="app-icon" style="--bg1:#f97316; --bg2:#c2410c;">K</div>
+            <a href="Kite-Zerodha-30min-Ce.html" class="app-card" data-name="Kite" data-desc="Trading platform guide." data-keywords="kite zerodha trading stocks finance technical analysis">
+                <div class="app-icon" style="--bg1:#f97316; --bg2:#c2410c;" role="img" aria-label="Kite Guide Icon">K</div>
                 <div class="app-info">
                     <div class="app-name">Kite</div>
                     <div class="app-desc">Trading platform guide.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="teggi.html" class="app-card" data-name="BEC-BIPS" data-desc="Institutional portal and resources." data-keywords="bec bips teggi">
-                <div class="app-icon" style="--bg1:#6366f1; --bg2:#4338ca;">BB</div>
+            <a href="teggi.html" class="app-card" data-name="BEC-BIPS" data-desc="Institutional portal and resources." data-keywords="bec bips teggi pharmacy institute administration">
+                <div class="app-icon" style="--bg1:#6366f1; --bg2:#4338ca;" role="img" aria-label="BEC BIPS Icon">BB</div>
                 <div class="app-info">
                     <div class="app-name">BEC-BIPS</div>
                     <div class="app-desc">Institutional portal and resources.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-            <a href="raita.html" class="app-card" data-name="ರೈತ" data-desc="Farmer resources in Kannada." data-keywords="raita raitha farmer kannada agriculture">
-                <div class="app-icon" style="--bg1:#22c55e; --bg2:#15803d;">ರ</div>
+            <a href="raita.html" class="app-card" data-name="ರೈತ" data-desc="Farmer resources in Kannada." data-keywords="raita raitha farmer kannada agriculture kisan crops">
+                <div class="app-icon" style="--bg1:#22c55e; --bg2:#15803d;" role="img" aria-label="Raita Kannada Portal Icon">ರ</div>
                 <div class="app-info">
                     <div class="app-name">ರೈತ</div>
                     <div class="app-desc">Farmer resources in Kannada.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
 
-           
-           
-
-           
-            <a href="blood donar.html" class="app-card" data-name="YRC Blood Donar List" data-desc="Blood donor directory." data-keywords="yrc blood donor donar list red cross">
-                <div class="app-icon" style="--bg1:#ef4444; --bg2:#b91c1c;">YB</div>
+            <a href="blood donar.html" class="app-card" data-name="YRC Blood Donor List" data-desc="Blood donor directory." data-keywords="yrc blood donor donar list red cross bagalkote youth camp emergency">
+                <div class="app-icon" style="--bg1:#ef4444; --bg2:#b91c1c;" role="img" aria-label="Blood Donor Icon">YB</div>
                 <div class="app-info">
-                    <div class="app-name">YRC Blood Donar List</div>
+                    <div class="app-name">YRC Blood Donor List</div>
                     <div class="app-desc">Blood donor directory.</div>
                 </div>
-                <div class="app-arrow">→</div>
+                <div class="app-arrow" aria-hidden="true">→</div>
             </a>
-
         </div>
     </section>
 
-    <!-- ─── No Results ─── -->
-    <div id="noResults" class="no-results hidden">
-        <span>🔍</span>
+    <!-- ─── Empty Search State ─── -->
+    <div id="noResults" class="no-results hidden" aria-live="polite">
+        <span aria-hidden="true">🔍</span>
         <strong>No applications found</strong>
-        <small>Try a different search term or change the category filter.</small>
+        <small>Try a different keyword or reset the category filter.</small>
     </div>
 
 </main>
 
 <footer class="site-footer">
-    © Dr. Mahadev Biradar — Academic &amp; Administrative Resource Portal
+    &copy; Dr. Mahadev Biradar &bull; Academic &amp; Administrative Resource Hub
 </footer>
 
 <script>
-    const searchInput = document.getElementById('globalSearch');
-    const clearBtn = document.getElementById('clearSearch');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const sections = document.querySelectorAll('.app-section');
-    const noResults = document.getElementById('noResults');
-    let activeFilter = 'all';
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('globalSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const sections = document.querySelectorAll('.app-section');
+        const noResults = document.getElementById('noResults');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        let activeFilter = 'all';
 
-    function updateClearButton() {
-        if (searchInput.value.length > 0) {
-            clearBtn.classList.remove('hidden');
-        } else {
-            clearBtn.classList.add('hidden');
+        // ─── Dark Mode Toggle Handler ───
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const targetTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
         }
-    }
 
-    function applyFilters() {
-        const query = searchInput.value.trim().toLowerCase();
-        let anyVisible = false;
+        themeToggleBtn.addEventListener('click', toggleTheme);
 
-        sections.forEach(section => {
-            const sectionCategory = section.dataset.category;
-            const sectionMatchesFilter = (activeFilter === 'all' || sectionCategory === activeFilter);
+        // ─── 1. Calculate and sync real card counts on boot ───
+        function syncAppCounts() {
+            let totalApps = 0;
+            const categoryCounts = {};
 
-            if (!sectionMatchesFilter) {
-                section.classList.add('hidden');
-                return;
-            }
+            sections.forEach(section => {
+                const cat = section.dataset.category;
+                const count = section.querySelectorAll('.app-card').length;
+                categoryCounts[cat] = count;
+                totalApps += count;
 
-            const cards = section.querySelectorAll('.app-card');
-            let visibleCards = 0;
+                // Update section pill badge
+                const badge = section.querySelector('.section-badge');
+                if (badge) badge.textContent = `${count} apps`;
+            });
 
-            cards.forEach(card => {
-                const name = card.dataset.name.toLowerCase();
-                const desc = card.dataset.desc.toLowerCase();
-                const keywords = card.dataset.keywords ? card.dataset.keywords.toLowerCase() : '';
-                const matchesSearch = !query || name.includes(query) || desc.includes(query) || keywords.includes(query);
+            // Update Header Stats
+            const statApps = document.getElementById('statAppsCount');
+            const statCats = document.getElementById('statCategoriesCount');
+            if (statApps) statApps.textContent = totalApps;
+            if (statCats) statCats.textContent = sections.length;
 
-                if (matchesSearch) {
-                    card.classList.remove('hidden');
-                    visibleCards++;
+            // Update Filter Bar Badges
+            filterBtns.forEach(btn => {
+                const filter = btn.dataset.filter;
+                const countEl = btn.querySelector('.count');
+                if (!countEl) return;
+                
+                if (filter === 'all') {
+                    countEl.textContent = totalApps;
+                } else if (categoryCounts[filter] !== undefined) {
+                    countEl.textContent = categoryCounts[filter];
+                }
+            });
+        }
+
+        // ─── 2. Clear button toggle ───
+        function updateClearButton() {
+            clearBtn.classList.toggle('hidden', searchInput.value.length === 0);
+        }
+
+        // ─── 3. Search and Category Filter Handler ───
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            let totalVisible = 0;
+
+            sections.forEach(section => {
+                const sectionCategory = section.dataset.category;
+                const matchesCategory = (activeFilter === 'all' || sectionCategory === activeFilter);
+
+                if (!matchesCategory) {
+                    section.classList.add('hidden');
+                    return;
+                }
+
+                const cards = section.querySelectorAll('.app-card');
+                let visibleCardsInSection = 0;
+
+                cards.forEach(card => {
+                    const name = (card.dataset.name || '').toLowerCase();
+                    const desc = (card.dataset.desc || '').toLowerCase();
+                    const keywords = (card.dataset.keywords || '').toLowerCase();
+
+                    const matchesSearch = !query || 
+                        name.includes(query) || 
+                        desc.includes(query) || 
+                        keywords.includes(query);
+
+                    if (matchesSearch) {
+                        card.classList.remove('hidden');
+                        visibleCardsInSection++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                if (visibleCardsInSection > 0) {
+                    section.classList.remove('hidden');
+                    totalVisible += visibleCardsInSection;
                 } else {
-                    card.classList.add('hidden');
+                    section.classList.add('hidden');
                 }
             });
 
-            if (visibleCards > 0) {
-                section.classList.remove('hidden');
-                anyVisible = true;
-            } else {
-                section.classList.add('hidden');
+            noResults.classList.toggle('hidden', totalVisible > 0);
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', () => {
+            updateClearButton();
+            applyFilters();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            updateClearButton();
+            applyFilters();
+            searchInput.focus();
+        });
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                applyFilters();
+            });
+        });
+
+        // Quick Keyboard shortcut: '/' to focus search, 'Esc' to clear
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.value = '';
+                updateClearButton();
+                applyFilters();
+                searchInput.blur();
             }
         });
 
-        if (anyVisible) {
-            noResults.classList.add('hidden');
-        } else {
-            noResults.classList.remove('hidden');
-        }
-    }
-
-    searchInput.addEventListener('input', () => {
+        // Initialize state
+        syncAppCounts();
         updateClearButton();
         applyFilters();
     });
-
-    clearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        updateClearButton();
-        applyFilters();
-        searchInput.focus();
-    });
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            activeFilter = btn.dataset.filter;
-            applyFilters();
-        });
-    });
-
-    // Initialise
-    applyFilters();
-    updateClearButton();
 </script>
 
 </body>
