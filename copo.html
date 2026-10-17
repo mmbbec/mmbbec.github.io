@@ -79,7 +79,9 @@
     outline:none;border-color:var(--navy-3);background:#fff;
     box-shadow:0 0 0 3px rgba(43,108,176,.12);
   }
+  .field input:disabled{background:#eef2f7;color:#8496ab;cursor:not-allowed}
   .field .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  .field .hint.on{color:var(--accent);font-weight:600}
   /* ============ TABS ============ */
   .tabs{display:flex;gap:4px;border-bottom:2px solid #e6ecf4;margin-bottom:16px}
   .tab{
@@ -148,6 +150,7 @@
   }
   table.data input[type=number]:focus{outline:none;border-color:var(--navy-3)}
   table.data input[type=number].matrix-input{width:40px;padding:4px 2px;font-size:12px}
+  table.data input[type=number]:disabled{background:#eef2f7;color:#9aabbd;border-color:#dbe4ee}
   .row-label{font-weight:700;color:var(--navy);background:#f4f8fd !important}
   /* ============ BADGES ============ */
   .badge{display:inline-block;padding:3px 9px;border-radius:999px;
@@ -314,6 +317,20 @@
         <label>SEE Weight %</label>
         <input id="seeWeight" type="number" value="50" min="0" max="100" />
       </div>
+
+      <!-- ===== NEW: INDIRECT ATTAINMENT TOGGLE ===== -->
+      <div class="field">
+        <label>Indirect Attainment</label>
+        <select id="indirectMode" onchange="applyIndirectMode(false)">
+          <option value="no" selected>No — 50 : 50 (CIE : SEE)</option>
+          <option value="yes">Yes — 80 : 20 (Direct : Indirect)</option>
+        </select>
+        <div class="hint" id="indirectHint">
+          Weighting: CIE 50% + SEE 50% &nbsp;→&nbsp; (50 : 50)
+        </div>
+      </div>
+      <!-- =========================================== -->
+
       <div class="field">
         <label>Attainment Target (0–3)</label>
         <input id="target" type="number" value="2.00" step="0.01" min="0" max="3" />
@@ -328,8 +345,8 @@
       <h2>Student Marks — Paste or Upload</h2>
     </div>
     <p class="card-sub">
-      Column order must be: <b>USN | Student Name | CO1 | CO2 | … | CO<sub>n</sub></b>.
-      CIE percentages will be computed automatically.
+      Column order must be: <b>USN | CO1 | CO2 | … | CO<sub>n</sub></b>.
+      Student names are <b>not</b> required. CIE percentages are computed automatically.
     </p>
 
     <div class="tabs">
@@ -340,8 +357,8 @@
     <!-- Paste panel -->
     <div id="panel-paste">
       <textarea class="paste" id="pasteBox"
-        placeholder="2BA22CS001&#9;Rahul Sharma&#9;8&#9;7&#9;9&#9;8&#9;7
-2BA22CS002&#9;Pooja Patil&#9;9&#9;8&#9;10&#9;9&#9;8"></textarea>
+        placeholder="2BA22CS001&#9;8&#9;7&#9;9&#9;8&#9;7
+2BA22CS002&#9;9&#9;8&#9;10&#9;9&#9;8"></textarea>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="parsePastedData()">⚡ Parse Data</button>
         <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
@@ -353,7 +370,7 @@
       <div class="dropzone" id="dropzone">
         <div class="icon">📊</div>
         <p><strong>Click to select</strong> or drag &amp; drop an .xlsx / .xls / .csv file</p>
-        <p style="font-size:11.5px;margin-top:6px">First row may be a header — it will be skipped automatically</p>
+        <p style="font-size:11.5px;margin-top:6px">Format: USN | CO1 | CO2 | … (header row is skipped automatically)</p>
         <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
       </div>
       <div class="btn-row">
@@ -515,7 +532,7 @@
    STATE
    ==================================================================== */
 const STATE = {
-  students: [],          // [{usn, name, marks:[n1,n2,...]}]
+  students: [],          // [{usn, marks:[n1,n2,...]}]
   coCount: 5,
   ciePcts: [],           // CIE % of students above threshold, per CO
   seePcts: [],           // SEE % (manual)
@@ -523,10 +540,17 @@ const STATE = {
   finalCO: [],           // Final CO attainment 0–3
   poResults: [],
   psoResults: [],
+  indirectOn: false,     // NEW — indirect attainment enabled?
+  target: 2.0,
+  cieW: 0.5, seeW: 0.5,
 };
 
 const PO_COUNT  = 12;
 const PSO_COUNT = 3;
+
+/* Indirect split when enabled: Direct 80% + Indirect 20% */
+const DIRECT_SHARE   = 0.80;
+const INDIRECT_SHARE = 0.20;
 
 /* ====================================================================
    UTILITIES
@@ -561,6 +585,40 @@ function badgeFor(status) {
 }
 
 /* ====================================================================
+   INDIRECT MODE TOGGLE  (NEW)
+   ==================================================================== */
+function applyIndirectMode(skipWeightReset) {
+  const on = $('indirectMode').value === 'yes';
+  STATE.indirectOn = on;
+
+  // When indirect is OFF the standard 50 : 50 (CIE : SEE) split is restored
+  if (!on && skipWeightReset !== true) {
+    $('cieWeight').value = 50;
+    $('seeWeight').value = 50;
+  }
+
+  const hint = $('indirectHint');
+  if (on) {
+    hint.textContent = 'Weighting: Direct 80% + Indirect 20%  →  (80 : 20)';
+    hint.className = 'hint on';
+  } else {
+    hint.textContent = 'Weighting: CIE 50% + SEE 50%  →  (50 : 50) · indirect not used';
+    hint.className = 'hint';
+  }
+
+  // enable / disable the indirect input cells
+  for (let i = 0; i < STATE.coCount; i++) {
+    const el = $('ind_' + i);
+    if (el) {
+      el.disabled = !on;
+      el.value = on ? (STATE.indirect[i] || 0) : 0;
+    }
+  }
+
+  calculateAll();
+}
+
+/* ====================================================================
    TAB SWITCH
    ==================================================================== */
 function switchTab(which) {
@@ -571,7 +629,7 @@ function switchTab(which) {
 }
 
 /* ====================================================================
-   DATA PARSING
+   DATA PARSING  —  USN | CO1 | CO2 | ...   (no student name)
    ==================================================================== */
 function parsePastedData() {
   const raw = $('pasteBox').value.trim();
@@ -582,19 +640,20 @@ function parsePastedData() {
   let coCountDetected = 0;
 
   lines.forEach((line, i) => {
-    const cells = line.split(/\t/).map(s => s.trim());
-    if (cells.length < 3) return;                 // need USN + Name + at least 1 CO
+    const cells = (line.includes('\t') ? line.split(/\t/) : line.split(','))
+                    .map(s => s.trim());
+    if (cells.length < 2) return;                 // need USN + at least 1 CO
     // skip header row
-    if (i === 0 && /usn|student|name|roll/i.test(cells[0])) return;
+    if (i === 0 && /usn|student|name|roll|^co/i.test(cells[0])) return;
 
-    const usn  = cells[0];
-    const name = cells[1];
-    const marks = cells.slice(2).map(v => num(v));
+    const usn   = cells[0];
+    const marks = cells.slice(1).map(v => num(v));
+    if (!usn) return;
     coCountDetected = Math.max(coCountDetected, marks.length);
-    students.push({ usn, name, marks });
+    students.push({ usn, marks });
   });
 
-  if (!students.length) return showAlert('No valid student rows detected. Use tab-separated columns.', 'err');
+  if (!students.length) return showAlert('No valid student rows detected. Use: USN | CO1 | CO2 | …', 'err');
 
   // Pad all rows to the same CO width
   students.forEach(s => {
@@ -625,17 +684,16 @@ function handleFile(file) {
       const students = [];
       let coCountDetected = 0;
       let start = 0;
-      if (rows[0] && /usn|student|name|roll/i.test(String(rows[0][0] || ''))) start = 1;
+      if (rows[0] && /usn|student|name|roll|^co/i.test(String(rows[0][0] || ''))) start = 1;
 
       for (let i = start; i < rows.length; i++) {
         const r = rows[i];
         if (!r || !r[0]) continue;
-        const usn  = String(r[0]).trim();
-        const name = String(r[1] || '').trim();
-        const marks = r.slice(2).map(v => num(v));
+        const usn   = String(r[0]).trim();
+        const marks = r.slice(1).map(v => num(v));   // no name column
         if (!usn || marks.length === 0) continue;
         coCountDetected = Math.max(coCountDetected, marks.length);
-        students.push({ usn, name, marks });
+        students.push({ usn, marks });
       }
       if (!students.length) return showAlert('No student rows found in file.', 'err');
       students.forEach(s => { while (s.marks.length < coCountDetected) s.marks.push(0); });
@@ -655,7 +713,7 @@ function handleFile(file) {
 }
 
 /* ====================================================================
-   PREVIEW TABLE
+   PREVIEW TABLE  (no Name column)
    ==================================================================== */
 function renderPreview() {
   const nCO = Math.max(...STATE.students.map(s => s.marks.length), 0);
@@ -666,14 +724,14 @@ function renderPreview() {
   $('chipCOs').textContent      = nCO;
   $('chipThreshold').textContent = $('studentThreshold').value + '%';
 
-  let head = '<tr><th>#</th><th>USN</th><th>Name</th>';
+  let head = '<tr><th>#</th><th>USN</th>';
   for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
   head += '</tr>';
   $('previewHead').innerHTML = head;
 
   let body = '';
   STATE.students.forEach((s, i) => {
-    body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td><td style="text-align:left">${s.name}</td>`;
+    body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td>`;
     for (let c = 0; c < nCO; c++) body += `<td>${s.marks[c] ?? 0}</td>`;
     body += '</tr>';
   });
@@ -714,7 +772,7 @@ function rebuildInputs() {
   ['see_', 'ind_'].forEach(prefix => {
     for (let i = 0; i < STATE.coCount; i++) {
       $((prefix + i)).addEventListener('input', () => {
-        STATE.seePcts[i]  = num($(prefix + i).value);
+        STATE.seePcts[i]  = num($('see_' + i).value);
         STATE.indirect[i] = num($('ind_' + i).value);
         calculateAll();
       });
@@ -754,8 +812,9 @@ function rebuildInputs() {
   document.querySelectorAll('#poMatrixBody input, #psoMatrixBody input')
     .forEach(inp => inp.addEventListener('input', calculateAll));
 
-  // re-apply computed CIE values
+  // re-apply computed CIE values + indirect mode state
   computeFromData(true);
+  applyIndirectMode(true);
   calculateAll();
 }
 
@@ -785,7 +844,6 @@ function computeFromData(silent = false) {
   const thrPct   = num($('studentThreshold').value) || 60;
   const threshold = maxMarks * thrPct / 100;
 
-  const nCO = Math.max(...STATE.students.map(s => s.marks.length), STATE.coCount);
   const ciePcts = [];
   for (let c = 0; c < STATE.coCount; c++) {
     if (!STATE.students.length) { ciePcts[c] = 0; continue; }
@@ -816,6 +874,9 @@ function computeFromData(silent = false) {
    ==================================================================== */
 function calculateAll() {
   const coCount = STATE.coCount;
+  const indirectOn = $('indirectMode').value === 'yes';
+  STATE.indirectOn = indirectOn;
+
   let cieW = num($('cieWeight').value) / 100;
   let seeW = num($('seeWeight').value) / 100;
   const sumW = cieW + seeW;
@@ -834,20 +895,24 @@ function calculateAll() {
     const cieLvl = getLevel(ciePct);
     const seePct = STATE.seePcts[i] || 0;
     const seeLvl = getLevel(seePct);
-    const direct = cieLvl * cieW + seeLvl * seeW;
-    const ind    = STATE.indirect[i] || 0;
-    const final  = direct + ind;   // indirect score already 0–3 scale
-    finalCO[i]   = final;
-    sumFinal    += final;
 
-    // update row
+    const direct = cieLvl * cieW + seeLvl * seeW;
+    const ind    = indirectOn ? (STATE.indirect[i] || 0) : 0;
+
+    // 80 : 20 when indirect is ON, plain direct when OFF
+    const final  = indirectOn
+      ? (direct * DIRECT_SHARE + ind * INDIRECT_SHARE)
+      : direct;
+
+    finalCO[i] = final;
+    sumFinal  += final;
+
     const setTxt = (id, v) => { const el = $(id); if (el) el.textContent = v; };
     setTxt('cieLvl_' + i, cieLvl);
     setTxt('seeLvl_' + i, seeLvl);
     setTxt('direct_' + i, direct.toFixed(2));
     setTxt('final_'  + i, final.toFixed(2));
-    const st = statusOf(final, target);
-    setTxt('status_' + i, st);
+    setTxt('status_' + i, statusOf(final, target));
   }
   const avgCO = coCount ? sumFinal / coCount : 0;
   STATE.finalCO = finalCO;
@@ -875,7 +940,6 @@ function calculateAll() {
   STATE.avgCO      = avgCO;
   STATE.target     = target;
   STATE.cieW = cieW; STATE.seeW = seeW;
-  STATE.useIndirect = false; // indirect handled per-CO as additive
 
   // ---- dashboards & audit ----
   renderDashboards();
@@ -960,12 +1024,24 @@ function renderAudit() {
 }
 
 function renderFormula(cieW, seeW, target) {
+  const on = STATE.indirectOn;
+  const modeLine = on
+    ? `<b>Mode</b> = Indirect <span style="color:#0b6b3a">INCLUDED</span> →
+       <code>Direct 80% + Indirect 20%</code> &nbsp;(80 : 20)`
+    : `<b>Mode</b> = Indirect <span style="color:#b42318">NOT USED</span> →
+       <code>CIE 50% + SEE 50%</code> &nbsp;(50 : 50)`;
+
+  const finalLine = on
+    ? `<code>Final CO = (Direct CO × 80%) + (Indirect × 20%)</code>`
+    : `<code>Final CO = Direct CO</code>`;
+
   $('formulaBox').innerHTML = `
+    ${modeLine}<br>
     <b>CIE weight</b> = ${(cieW * 100).toFixed(0)}% &nbsp;|&nbsp;
     <b>SEE weight</b> = ${(seeW * 100).toFixed(0)}% &nbsp;|&nbsp;
     <b>Target</b> = ${target.toFixed(2)} / 3.00<br>
     <code>Direct CO = (CIE Level × ${(cieW * 100).toFixed(0)}%) + (SEE Level × ${(seeW * 100).toFixed(0)}%)</code><br>
-    <code>Final CO = Direct CO + Indirect (0–3)</code><br>
+    ${finalLine}<br>
     <b>Level scale</b> (students % above threshold):
     ≥70% → 3 &nbsp;•&nbsp; 60–69% → 2 &nbsp;•&nbsp; 50–59% → 1 &nbsp;•&nbsp; &lt;50% → 0
   `;
@@ -985,18 +1061,21 @@ function exportExcel() {
   const coRows = [
     ['CO Attainment Detail'],
     ['Course', courseCode, 'Academic Year', ay, 'Target', STATE.target],
+    ['Mode', STATE.indirectOn ? 'Indirect included — 80 : 20 (Direct : Indirect)'
+                              : 'Direct only — 50 : 50 (CIE : SEE)'],
     [],
     ['CO', 'CIE %', 'CIE Level', 'SEE %', 'SEE Level', 'Direct', 'Indirect', 'Final', 'Status'],
   ];
   for (let i = 0; i < STATE.coCount; i++) {
+    const direct = getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW;
     coRows.push([
       'CO' + (i + 1),
       STATE.ciePcts[i].toFixed(1),
       getLevel(STATE.ciePcts[i]),
       STATE.seePcts[i].toFixed(1),
       getLevel(STATE.seePcts[i]),
-      (getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW).toFixed(2),
-      STATE.indirect[i].toFixed(2),
+      direct.toFixed(2),
+      STATE.indirectOn ? STATE.indirect[i].toFixed(2) : '0.00',
       STATE.finalCO[i].toFixed(2),
       statusOf(STATE.finalCO[i], STATE.target),
     ]);
@@ -1078,8 +1157,10 @@ function exportPDF() {
       ...baseStyle,
       startY: y,
       margin: { left: 10, right: 10 },
-      head: [['Academic Year', 'Course Code', 'Course Title', 'Sem / Div', 'Faculty', 'Target']],
-      body: [[ay, course, cName, `Sem ${sem} / Div ${div}`, staff, STATE.target.toFixed(2) + ' / 3.00']],
+      head: [['Academic Year', 'Course Code', 'Course Title', 'Sem / Div', 'Faculty', 'Target', 'Mode']],
+      body: [[ay, course, cName, `Sem ${sem} / Div ${div}`, staff,
+              STATE.target.toFixed(2) + ' / 3.00',
+              STATE.indirectOn ? 'Indirect 80 : 20' : 'Direct 50 : 50']],
       styles: { ...baseStyle.styles, fontSize: 7.2 },
     });
     y = doc.lastAutoTable.finalY + 4;
@@ -1092,7 +1173,7 @@ function exportPDF() {
       STATE.ciePcts[i].toFixed(1) + '%', getLevel(STATE.ciePcts[i]),
       STATE.seePcts[i].toFixed(1) + '%', getLevel(STATE.seePcts[i]),
       (getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW).toFixed(2),
-      STATE.indirect[i].toFixed(2),
+      STATE.indirectOn ? STATE.indirect[i].toFixed(2) : '—',
       STATE.finalCO[i].toFixed(2),
       statusOf(STATE.finalCO[i], STATE.target),
     ]);
@@ -1165,8 +1246,12 @@ function exportPDF() {
 
     // ---- Formula footer ----
     doc.setFont('helvetica', 'italic'); doc.setFontSize(6.3);
-    const note = `Scale: ≥70%→3, 60–69%→2, 50–59%→1, <50%→0 | ` +
-      `Direct = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%) | ` +
+    const note =
+      (STATE.indirectOn
+        ? `Direct CO = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%) | ` +
+          `Final CO = (Direct × 80%) + (Indirect × 20%)  [80 : 20] | `
+        : `Final CO = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%)  [50 : 50] | `) +
+      `Scale: ≥70%→3, 60–69%→2, 50–59%→1, <50%→0 | ` +
       `PO/PSO = Σ(CO×Matrix) / (Avg Matrix × No. of COs) | Target ≥ ${STATE.target.toFixed(2)}`;
     doc.text(note, 10, y);
 
