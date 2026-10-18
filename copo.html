@@ -3,1520 +3,1153 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CO–PO–PSO Attainment Calculator | NBA OBE</title>
+<title>NBA Course File & Attainment Generator</title>
 
-<!-- SheetJS for .xlsx / .csv reading -->
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- jsPDF + AutoTable for PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --navy:#0f2f57; --navy-2:#1e4d84; --navy-3:#2b6cb0;
-    --ink:#0f172a; --muted:#5a6b82; --line:#d9e2ec;
-    --bg:#eef2f7; --card:#ffffff; --accent:#0b6b3a;
-    --danger:#b42318; --warn:#b54708; --ok:#027a48;
-    --chip:#e8eef6; --shadow:0 1px 3px rgba(15,47,87,.06),0 8px 24px rgba(15,47,87,.06);
-  }
-  html,body{height:100%}
-  body{
-    font-family:"Inter","Segoe UI",Roboto,Arial,sans-serif;
-    background:var(--bg); color:var(--ink); line-height:1.5;
-    font-size:14px; -webkit-font-smoothing:antialiased;
-  }
-  .app-header{
-    background:linear-gradient(120deg,var(--navy) 0%,var(--navy-2) 60%,var(--navy-3) 100%);
-    color:#fff; padding:18px 26px; border-radius:0 0 14px 14px;
-    box-shadow:0 6px 24px rgba(15,47,87,.25);
-  }
-  .app-header .inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;
-    align-items:center;gap:20px;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:16px}
-  .brand-mark{
-    width:46px;height:46px;border-radius:12px;
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
-    display:grid;place-items:center;font-weight:800;font-size:18px;letter-spacing:.5px;
-  }
-  .brand-text h1{font-size:20px;font-weight:700;letter-spacing:.2px}
-  .brand-text p{font-size:12.5px;opacity:.82;margin-top:2px}
-  .author-chip{
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
-    padding:8px 16px;border-radius:999px;font-size:12px;text-align:right;
-    white-space:nowrap;
-  }
-  .author-chip strong{display:block;font-size:13px;font-weight:600}
-  .author-chip span{opacity:.8;font-size:11px;letter-spacing:.3px;text-transform:uppercase}
-  .wrap{max-width:1280px;margin:0 auto;padding:22px 22px 60px}
-  .card{
-    background:var(--card); border-radius:12px; padding:20px 22px;
-    box-shadow:var(--shadow); border:1px solid #e6ecf4;
-    margin-bottom:20px; position:relative;
-  }
-  .card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;
-    padding-bottom:12px;border-bottom:1px solid #eef2f7;flex-wrap:wrap}
-  .card-head h2{font-size:16px;font-weight:700;color:var(--navy)}
-  .step-badge{
-    background:var(--navy);color:#fff;font-size:11px;font-weight:700;
-    padding:2px 10px;border-radius:999px;letter-spacing:.5px;line-height:20px;
-  }
-  .card-sub{color:var(--muted);font-size:12.5px;margin:-6px 0 14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 18px}
-  .field label{display:block;font-size:12px;font-weight:600;color:#33465c;
-    margin-bottom:5px;letter-spacing:.2px;text-transform:uppercase}
-  .field input,.field select{
-    width:100%;padding:9px 11px;border:1.5px solid #c9d6e3;border-radius:8px;
-    font-size:13.5px;background:#fbfdff;transition:.15s;font-family:inherit;color:var(--ink);
-  }
-  .field input:focus,.field select:focus{
-    outline:none;border-color:var(--navy-3);background:#fff;
-    box-shadow:0 0 0 3px rgba(43,108,176,.12);
-  }
-  .field input:disabled{background:#eef2f7;color:#8496ab;cursor:not-allowed}
-  .field .hint{font-size:11px;color:var(--muted);margin-top:4px}
-  .field .hint.on{color:var(--accent);font-weight:600}
-  .tabs{display:flex;gap:4px;border-bottom:2px solid #e6ecf4;margin-bottom:16px}
-  .tab{
-    background:none;border:none;padding:10px 18px;font-size:13px;font-weight:600;
-    color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
-    margin-bottom:-2px;transition:.15s;font-family:inherit;
-  }
-  .tab.active{color:var(--navy-3);border-bottom-color:var(--navy-3)}
-  .tab:hover{color:var(--navy)}
-  .dropzone{
-    border:2px dashed #b9c9db;border-radius:12px;padding:28px 20px;text-align:center;
-    background:#f7fafd;transition:.15s;cursor:pointer;
-  }
-  .dropzone:hover,.dropzone.drag{border-color:var(--navy-3);background:#eef6ff}
-  .dropzone .icon{font-size:34px;margin-bottom:8px}
-  .dropzone p{font-size:13px;color:var(--muted)}
-  .dropzone strong{color:var(--navy);font-weight:600}
-  .dropzone input[type=file]{display:none}
-  textarea.paste{
-    width:100%;min-height:130px;padding:12px 14px;border:1.5px solid #c9d6e3;
-    border-radius:10px;font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
-    font-size:12.5px;background:#fbfdff;resize:vertical;line-height:1.6;color:var(--ink);
-  }
-  textarea.paste:focus{outline:none;border-color:var(--navy-3);background:#fff;
-    box-shadow:0 0 0 3px rgba(43,108,176,.12)}
-  .btn{
-    display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
-    border:none;border-radius:8px;font-size:13px;font-weight:600;
-    cursor:pointer;transition:.15s;font-family:inherit;line-height:1.2;
-  }
-  .btn:disabled{opacity:.55;cursor:not-allowed}
-  .btn-primary{background:var(--navy);color:#fff}
-  .btn-primary:hover:not(:disabled){background:#0a2240}
-  .btn-blue{background:var(--navy-3);color:#fff}
-  .btn-blue:hover:not(:disabled){background:#1f5a99}
-  .btn-green{background:var(--accent);color:#fff}
-  .btn-green:hover:not(:disabled){background:#075a30}
-  .btn-outline{background:#fff;color:var(--navy);border:1.5px solid #c9d6e3}
-  .btn-outline:hover:not(:disabled){border-color:var(--navy-3);background:#f4f9ff}
-  .btn-danger{background:#fff;color:var(--danger);border:1.5px solid #f0c4c0}
-  .btn-danger:hover:not(:disabled){background:#fef2f2}
-  .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-  .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #e6ecf4;background:#fff}
-  table.data{width:100%;border-collapse:collapse;font-size:12.5px;min-width:600px}
-  table.data thead th{
-    background:var(--navy);color:#fff;font-weight:600;font-size:11.5px;
-    padding:9px 8px;text-align:center;letter-spacing:.3px;
-    border-right:1px solid rgba(255,255,255,.08);position:sticky;top:0;
-  }
-  table.data thead th:last-child{border-right:none}
-  table.data thead tr.sub-head th{background:var(--navy-2);font-size:11px;padding:5px 6px}
-  table.data tbody td{
-    padding:8px 8px;text-align:center;border-bottom:1px solid #eef2f7;
-    border-right:1px solid #f4f7fb;
-  }
-  table.data tbody td:last-child{border-right:none}
-  table.data tbody tr:hover td{background:#f7fbff}
-  table.data tbody tr:nth-child(even) td{background:#fbfdff}
-  table.data tbody tr:nth-child(even):hover td{background:#f3f9ff}
-  table.data input[type=number]{
-    width:64px;padding:5px 6px;text-align:center;border:1.5px solid #c9d6e3;
-    border-radius:6px;font-size:12.5px;font-weight:600;font-family:inherit;color:var(--ink);
-  }
-  table.data input[type=number]:focus{outline:none;border-color:var(--navy-3)}
-  table.data input[type=number].matrix-input{width:40px;padding:4px 2px;font-size:12px}
-  table.data input[type=number]:disabled{background:#eef2f7;color:#9aabbd;border-color:#dbe4ee}
-  .row-label{font-weight:700;color:var(--navy);background:#f4f8fd !important}
-  .badge{display:inline-block;padding:3px 9px;border-radius:999px;
-    font-size:11px;font-weight:700;letter-spacing:.2px}
-  .badge-ok{background:#d1fae5;color:#065f46}
-  .badge-no{background:#fee4e2;color:#991b1b}
-  .badge-na{background:#eef2f7;color:#5a6b82}
-  .dash-label{font-size:12px;font-weight:700;color:var(--navy);
-    text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px}
-  .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
-  .metric{
-    background:linear-gradient(160deg,#fff,#f4f8fd);
-    border:1.5px solid #d5e2ef;border-radius:10px;padding:9px 6px;text-align:center;
-    transition:.15s;
-  }
-  .metric:hover{border-color:var(--navy-3);transform:translateY(-1px)}
-  .metric h4{font-size:11px;color:#4a6180;font-weight:700;letter-spacing:.3px;margin-bottom:2px}
-  .metric .v{font-size:17px;font-weight:800;color:var(--navy)}
-  .metric .v small{font-size:9.5px;color:#8195ad;font-weight:500}
-  .metric.ok{border-color:#a7e3c3;background:linear-gradient(160deg,#f0fdf6,#e2f7ec)}
-  .metric.ok .v{color:var(--ok)}
-  .metric.no{border-color:#f5c2bd;background:linear-gradient(160deg,#fff7f6,#fee9e7)}
-  .metric.no .v{color:var(--danger)}
-  .chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .chip{background:var(--chip);color:var(--navy);padding:5px 12px;border-radius:999px;
-    font-size:12px;font-weight:600}
-  .chip b{color:var(--navy-3)}
-  .result-panel{background:#f7fafd;border:1px solid #e0eaf4;border-radius:10px;
-    padding:14px 16px;margin-top:16px}
-  .result-panel h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
-  .result-panel .formula{font-size:12.5px;color:#33465c;line-height:1.7}
-  .result-panel .formula code{background:#e8eef6;padding:1px 6px;border-radius:4px;
-    font-family:ui-monospace,monospace;font-size:11.5px;color:var(--navy)}
-  .sigs{display:flex;justify-content:space-between;gap:30px;
-    margin-top:36px;padding:20px 30px 8px;flex-wrap:wrap}
-  .sig{flex:1;min-width:200px;text-align:center}
-  .sig .line{border-top:1.5px solid var(--ink);margin-bottom:6px;height:0}
-  .sig .role{font-size:12.5px;font-weight:700;color:var(--navy)}
-  .sig .name{font-size:11.5px;color:var(--muted);margin-top:2px}
-  .alert{padding:11px 14px;border-radius:8px;font-size:13px;font-weight:500;
-    margin-bottom:14px;display:none;align-items:center;gap:8px}
-  .alert.show{display:flex}
-  .alert.ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
-  .alert.err{background:#fee4e2;color:#991b1b;border:1px solid #fecaca}
-  .alert.warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
-  .hidden{display:none !important}
-  @media print{
-    body{background:#fff;font-size:10pt;padding:0}
-    .no-print,.btn,.btn-row,.tabs,.dropzone,.app-header .author-chip{display:none !important}
-    .app-header{background:#fff !important;color:#000 !important;
-      box-shadow:none;border-radius:0;padding:0 0 8px;border-bottom:2px solid #000}
-    .app-header .brand-mark{background:#000;color:#fff}
-    .brand-text h1{color:#000}
-    .brand-text p{color:#333}
-    .wrap{padding:10px 0}
-    .card{box-shadow:none;border:1px solid #bbb;page-break-inside:avoid;margin-bottom:10px}
-    .card-head{border-bottom:1px solid #bbb}
-    table.data thead th{background:#e6eef6 !important;color:#000 !important;
-      -webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .metric{background:#fff !important;border:1px solid #bbb}
-    .result-panel{background:#f7fafd !important;border:1px solid #bbb;
-      -webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .badge{border:1px solid #bbb;background:#fff !important;color:#000 !important}
-  }
-  @media (max-width:640px){
-    .app-header{padding:14px 16px}
-    .brand-text h1{font-size:16px}
-    .brand-text p{font-size:11px}
-    .wrap{padding:14px 12px 40px}
-    .card{padding:16px 14px}
-    .sigs{flex-direction:column;gap:24px}
-  }
+    @media print {
+        body { background: white; color: black; }
+        .no-print { display: none !important; }
+        .print-break { page-break-before: always; }
+        .tab-content { display: block !important; }
+        input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; }
+        table { width: 100% !important; border-collapse: collapse !important; }
+        th, td { border: 1px solid #333 !important; padding: 5px !important; font-size: 10px !important; }
+        .print-approval { display: grid !important; }
+    }
+    .print-approval { display: none; }
+    input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+    .kpi-card { transition: transform .15s ease, box-shadow .15s ease; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(0,0,0,.15); }
 </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-<header class="app-header">
-  <div class="inner">
-    <div class="brand">
-      <div class="brand-mark">BEC</div>
-      <div class="brand-text">
-        <h1>NBA OBE — CO–PO–PSO Attainment Calculator</h1>
-        <p>Outcome-Based Education Automation • Paste or upload marks → compute → export</p>
-      </div>
-    </div>
-    <div class="author-chip">
-      <span>Developed by</span>
-      <strong>Dr. M. M. Biradar</strong>
-    </div>
-  </div>
-</header>
-
-<main class="wrap">
-
-  <div id="alert" class="alert"></div>
-
-  <!-- ============ STEP 1 ============ -->
-  <section class="card">
-    <div class="card-head">
-      <span class="step-badge">STEP 1</span>
-      <h2>Course &amp; Configuration</h2>
-    </div>
-    <div class="grid">
-      <div class="field">
-        <label>Academic Year</label>
-        <input id="academicYear" value="2025-26" />
-      </div>
-      <div class="field">
-        <label>Course Code</label>
-        <input id="courseCode" value="BMAS101C" />
-      </div>
-      <div class="field">
-        <label>Course Name</label>
-        <input id="courseName" value="Engineering Mathematics-I" />
-      </div>
-      <div class="field">
-        <label>Department</label>
-        <input id="department" value="Department of Mathematics" />
-      </div>
-      <div class="field">
-        <label>Semester</label>
-        <input id="semester" value="I" />
-      </div>
-      <div class="field">
-        <label>Division</label>
-        <input id="division" value="A" />
-      </div>
-      <div class="field">
-        <label>Faculty Name</label>
-        <input id="faculty" value="Dr. M. M. Biradar" />
-      </div>
-      <div class="field">
-        <label>Number of COs</label>
-        <select id="coCount" onchange="rebuildInputs()">
-          <option>3</option><option>4</option><option selected>5</option>
-          <option>6</option><option>7</option><option>8</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Max CIE Marks / CO</label>
-        <input id="maxMarks" type="number" value="10" min="1" />
-        <div class="hint">CIE threshold per CO</div>
-      </div>
-      <div class="field">
-        <label>Max SEE Marks / CO</label>
-        <input id="maxSeeMarks" type="number" value="20" min="1" />
-        <div class="hint">SEE threshold per CO (when SEE marks are pasted)</div>
-      </div>
-      <div class="field">
-        <label>Final CIE Max Marks</label>
-        <input id="cieMaxMarks" type="number" value="50" min="1" />
-        <div class="hint">Used in <b>Final CIE + SEE</b> mode</div>
-      </div>
-      <div class="field">
-        <label>Final SEE Max Marks</label>
-        <input id="seeMaxMarks" type="number" value="100" min="1" />
-        <div class="hint">Used in <b>Final CIE + SEE</b> mode</div>
-      </div>
-      <div class="field">
-        <label>Student Threshold (%)</label>
-        <input id="studentThreshold" type="number" value="60" min="0" max="100" />
-        <div class="hint">Student attains if mark ≥ this % of max</div>
-      </div>
-      <div class="field">
-        <label>CIE Weight %</label>
-        <input id="cieWeight" type="number" value="50" min="0" max="100" />
-      </div>
-      <div class="field">
-        <label>SEE Weight %</label>
-        <input id="seeWeight" type="number" value="50" min="0" max="100" />
-      </div>
-
-      <div class="field">
-        <label>Indirect Attainment</label>
-        <select id="indirectMode" onchange="applyIndirectMode(false)">
-          <option value="no" selected>No — 50 : 50 (CIE : SEE)</option>
-          <option value="yes">Yes — 80 : 20 (Direct : Indirect)</option>
-        </select>
-        <div class="hint" id="indirectHint">
-          Weighting: CIE 50% + SEE 50% &nbsp;→&nbsp; (50 : 50)
+    <!-- ===== HEADER ===== -->
+    <header class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-violet-900 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-xl">🎓</div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide">NBA Course File & Attainment Generator</h1>
+                    <p class="text-[11px] text-indigo-200 mt-0.5">
+                        <span class="inline-flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>Outcome-Based Education Dashboard</span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 text-sm items-center">
+                <button onclick="saveDraft()" class="bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-1.5 rounded transition font-medium backdrop-blur-sm">💾 Save</button>
+                <button onclick="exportJSON()" class="bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-1.5 rounded transition font-medium backdrop-blur-sm">⬇️ Export</button>
+                <label class="bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-1.5 rounded transition font-medium cursor-pointer backdrop-blur-sm">
+                    ⬆️ Import <input type="file" accept=".json" class="hidden" onchange="importJSON(event)">
+                </label>
+                <button onclick="resetToSample()" class="bg-amber-500/90 hover:bg-amber-500 px-3 py-1.5 rounded transition font-medium">↺ Sample</button>
+                <button onclick="exportCompletePDF()" class="bg-emerald-500 hover:bg-emerald-400 px-4 py-1.5 rounded transition font-bold shadow-lg">📄 Generate PDF</button>
+            </div>
         </div>
-      </div>
+    </header>
 
-      <div class="field">
-        <label>Attainment Target (0–3)</label>
-        <input id="target" type="number" value="2.00" step="0.01" min="0" max="3" />
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ STEP 2 ============ -->
-  <section class="card">
-    <div class="card-head">
-      <span class="step-badge">STEP 2</span>
-      <h2>Student Marks — Paste or Upload</h2>
-    </div>
-
-    <div class="grid" style="margin-bottom:14px">
-      <div class="field">
-        <label>Entry Mode</label>
-        <select id="entryMode" onchange="onEntryModeChange()">
-          <option value="cowise" selected>CO-wise marks</option>
-          <option value="final">Final CIE + SEE totals</option>
-        </select>
-        <div class="hint" id="entryModeHint">
-          Paste <b>USN | CO1 | CO2 | …</b> — CIE % is computed per CO.
+    <!-- ===== TABS ===== -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm no-print sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-4 text-xs font-semibold">
+            <button onclick="switchTab('info')" id="btn-info" class="tab-btn py-3 border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap">1. Dashboard</button>
+            <button onclick="switchTab('syllabus')" id="btn-syllabus" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">2. Syllabus & Refs</button>
+            <button onclick="switchTab('copo')" id="btn-copo" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">3. CO-PO Matrix</button>
+            <button onclick="switchTab('marks')" id="btn-marks" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">4. CIE & SEE Marks</button>
+            <button onclick="switchTab('attainment')" id="btn-attainment" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">5. CO Attainment</button>
+            <button onclick="switchTab('lessons')" id="btn-lessons" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">6. Lesson Plan</button>
+            <button onclick="switchTab('timetable')" id="btn-timetable" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">7. Timetable</button>
+            <button onclick="switchTab('evidence')" id="btn-evidence" class="tab-btn py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap">8. Evidence Register</button>
         </div>
-      </div>
+    </nav>
 
-      <div class="field" id="seePasteField">
-        <label>Paste includes SEE marks?</label>
-        <select id="seeInPaste" onchange="onSeePasteChange()">
-          <option value="no" selected>No — CIE only</option>
-          <option value="yes">Yes — CIE and SEE columns</option>
-        </select>
-        <div class="hint" id="seePasteHint">
-          SEE % will be entered manually in Step 3.
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ===== TAB 1: DASHBOARD + INFO ===== -->
+        <section id="tab-info" class="tab-content space-y-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="kpiCards"></div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 pb-2 border-b flex items-center gap-2">🏛️ Institution Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div><label class="block font-semibold text-slate-600 mb-1">College / Institution Name</label><input type="text" id="collegeName" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Affiliated University / Board</label><input type="text" id="university" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 pb-2 border-b">📖 Subject / Course Details</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div><label class="block font-semibold text-slate-600 mb-1">Academic Year</label><input type="text" id="acadYear" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Semester</label><select id="semester" class="w-full border rounded-lg p-2 bg-white focus:ring-2 focus:ring-indigo-300 outline-none"><option>Odd Semester</option><option>Even Semester</option></select></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Program / Branch</label><input type="text" id="programName" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Course Code & Title</label><input type="text" id="courseTitle" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Curriculum Regulation</label><input type="text" id="regulation" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Course Credits (L-T-P-C)</label><input type="text" id="credits" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    
+                    <div><label class="block font-semibold text-slate-600 mb-1">Target Threshold (%)</label><input type="number" id="threshold" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">CIE Weight (%)</label><input type="number" id="cieWeight" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">SEE Weight (%)</label><input type="number" id="seeWeight" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    
+                    <div class="bg-indigo-50/70 border border-indigo-100 p-2.5 rounded-lg">
+                        <label class="block font-bold text-indigo-900 mb-1">CIE Max Marks / CO</label>
+                        <input type="number" min="1" id="maxCie" class="w-full border border-indigo-200 rounded-lg p-2 bg-white font-semibold text-indigo-700 focus:ring-2 focus:ring-indigo-400 outline-none">
+                        <span class="text-[10px] text-indigo-500 mt-0.5 block">Denominator for CIE pass threshold</span>
+                    </div>
+                    <div class="bg-emerald-50/70 border border-emerald-100 p-2.5 rounded-lg">
+                        <label class="block font-bold text-emerald-900 mb-1">SEE Max Marks / CO</label>
+                        <input type="number" min="1" id="maxSee" class="w-full border border-emerald-200 rounded-lg p-2 bg-white font-semibold text-emerald-700 focus:ring-2 focus:ring-emerald-400 outline-none">
+                        <span class="text-[10px] text-emerald-500 mt-0.5 block">Denominator for SEE pass threshold</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 pb-2 border-b">👨‍🏫 Staff / Faculty Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div><label class="block font-semibold text-slate-600 mb-1">Faculty Name</label><input type="text" id="facultyName" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Designation</label><input type="text" id="facultyDesignation" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Employee ID</label><input type="text" id="facultyId" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Department</label><input type="text" id="facultyDept" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Email</label><input type="email" id="facultyEmail" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Specialization</label><input type="text" id="facultySpecialization" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b">
+                    <h2 class="text-base font-bold text-slate-900">Course Outcomes (COs)</h2>
+                    <button onclick="addCO()" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 font-medium no-print">+ Add CO</button>
+                </div>
+                <div class="space-y-3 text-xs" id="coListContainer"></div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 2 ===== -->
+        <section id="tab-syllabus" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-base font-bold text-slate-900 mb-2 pb-2 border-b">Course Prerequisites & Objectives</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div><label class="block font-semibold text-slate-600 mb-1">Prerequisites</label><textarea id="prerequisites" class="w-full h-24 border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></textarea></div>
+                    <div><label class="block font-semibold text-slate-600 mb-1">Course Objectives</label><textarea id="courseObjectives" class="w-full h-24 border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none"></textarea></div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-2 pb-2 border-b">Textbooks & References</h2>
+                <textarea id="textbooks" class="w-full h-28 border rounded-lg p-2 text-xs focus:ring-2 focus:ring-indigo-300 outline-none"></textarea>
+            </div>
+        </section>
+
+        <!-- ===== TAB 3 ===== -->
+        <section id="tab-copo" class="tab-content hidden space-y-6">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex justify-between items-center no-print">
+                <p class="text-xs text-blue-700">Scale: 1 (Low), 2 (Medium), 3 (High), or 0 for no relation. Values are clamped to 0–3.</p>
+                <button onclick="resetMatrix()" class="text-xs bg-white border border-blue-300 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 font-medium">Reset Matrix</button>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <table class="w-full text-center text-xs border-collapse" id="copoTable"></table>
+            </div>
+        </section>
+
+        <!-- ===== TAB 4 ===== -->
+        <section id="tab-marks" class="tab-content hidden space-y-6">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 no-print">
+                <p class="text-xs text-blue-700">Paste tab-separated: <code>USN | CIE CO1..COn | SEE CO1..COn</code> or upload Excel/CSV.</p>
+                <div class="flex gap-2">
+                    <label class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium cursor-pointer">
+                        📁 Upload Excel <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)">
+                    </label>
+                    <button onclick="addStudentRow()" class="text-xs bg-slate-700 text-white px-3 py-1.5 rounded-lg hover:bg-slate-600 font-medium">+ Add Student</button>
+                    <button onclick="clearStudents()" class="text-xs bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-500 font-medium">🗑 Clear All</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-sm font-bold text-slate-900 mb-2">Paste Marks from Excel</h2>
+                <textarea id="pasteArea" placeholder="2026CSE01&#9;8&#9;7&#9;9&#9;8&#9;7&#9;16&#9;15&#9;18&#9;17&#9;14" class="w-full h-24 border rounded-lg p-2 text-xs font-mono mb-3 focus:ring-2 focus:ring-indigo-300 outline-none"></textarea>
+                <button onclick="parsePastedMarks()" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-xs font-medium hover:bg-indigo-700">Parse & Load Marks</button>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <h2 class="text-base font-bold text-slate-900 mb-4">Student Assessment Records <span id="studentCount" class="text-sm font-normal text-slate-500"></span></h2>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead><tr class="bg-slate-100 border-b text-slate-700" id="marksHead"></tr></thead>
+                    <tbody id="marksBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== TAB 5 ===== -->
+        <section id="tab-attainment" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-2 pb-2 border-b">Indirect Attainment (Exit Survey)</h2>
+                <p class="text-xs text-slate-500 mb-3">Mean indirect survey score per CO (1–3 scale).</p>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs" id="indirectInputs"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-2 pb-2 border-b">CO Attainment Summary</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 border-b">
+                                <th class="p-2 border">Course Outcome</th>
+                                <th class="p-2 border" id="cieColHead">CIE Direct (3.0)</th>
+                                <th class="p-2 border" id="seeColHead">SEE Direct (3.0)</th>
+                                <th class="p-2 border">Combined Direct</th>
+                                <th class="p-2 border">Indirect Survey</th>
+                                <th class="p-2 border">Final Attainment</th>
+                                <th class="p-2 border">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attainmentBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-2 pb-2 border-b">Program Outcomes (PO) & PSO Attainment Summary</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center text-xs border-collapse">
+                        <thead><tr class="bg-slate-100 border-b" id="poSummaryHead"></tr></thead>
+                        <tbody><tr id="poSummaryRow" class="border-b"></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 6: LESSON PLAN ===== -->
+        <section id="tab-lessons" class="tab-content hidden space-y-6">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 no-print">
+                <p class="text-xs text-blue-700">Manage lecture delivery schedules and target COs.</p>
+                <div class="flex gap-2">
+                    <button onclick="toggleLessonPaste()" id="btnLessonPaste" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 font-medium">📋 Paste Lesson Plan</button>
+                    <button onclick="addLessonRow()" class="text-xs bg-slate-700 text-white px-3 py-1.5 rounded-lg hover:bg-slate-600 font-medium">+ Add Lecture</button>
+                    <button onclick="clearLessons()" class="text-xs bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-500 font-medium">🗑 Clear All</button>
+                </div>
+            </div>
+
+            <div id="lessonPasteBox" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hidden">
+                <div class="flex justify-between items-center mb-2 pb-2 border-b">
+                    <h2 class="text-sm font-bold text-slate-900">Paste Lesson Plan</h2>
+                    <button onclick="toggleLessonPaste()" class="text-xs text-slate-500 hover:text-slate-800">✕ Close</button>
+                </div>
+                <p class="text-[11px] text-slate-500 mb-2">
+                    Tab-separated columns: <code>Lec# &nbsp; Unit# &nbsp; Topic &nbsp; PlannedDate &nbsp; ActualDate &nbsp; Method &nbsp; CO</code>
+                </p>
+                <textarea id="lessonPasteArea" placeholder="1&#9;1&#9;Introduction to Algorithms&#9;2026-02-02&#9;2026-02-02&#9;Chalk &amp; Talk&#9;CO1&#10;2&#9;1&#9;Recurrence Relations&#9;2026-02-04&#9;2026-02-04&#9;Chalk &amp; Talk&#9;CO1" class="w-full h-32 border rounded-lg p-2 text-xs font-mono mb-3 focus:ring-2 focus:ring-indigo-300 outline-none"></textarea>
+                <div class="flex gap-2">
+                    <button onclick="parsePastedLessons()" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-xs font-medium hover:bg-indigo-700">Parse & Load Lessons</button>
+                    <button onclick="appendPastedLessons()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-medium hover:bg-emerald-500">Append to Existing</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <h2 class="text-base font-bold text-slate-900 mb-4">Lecture Delivery Schedule</h2>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 border-b text-slate-700">
+                            <th class="p-2 border">Lec #</th><th class="p-2 border">Unit #</th><th class="p-2 border">Topics</th>
+                            <th class="p-2 border">Planned</th><th class="p-2 border">Actual</th><th class="p-2 border">Method</th>
+                            <th class="p-2 border">Target CO</th><th class="p-2 border no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lessonBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== TAB 7 ===== -->
+        <section id="tab-timetable" class="tab-content hidden space-y-6">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex justify-between items-center no-print">
+                <p class="text-xs text-blue-700">Class & Faculty Timetable Schedule.</p>
+                <button onclick="addTimetableRow()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium">+ Add Slot</button>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <h2 class="text-base font-bold text-slate-900 mb-4">Class Timetable</h2>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 border-b text-slate-700">
+                            <th class="p-2 border">Day</th><th class="p-2 border">Time Slot</th><th class="p-2 border">Course / Subject</th>
+                            <th class="p-2 border">Room / Lab</th><th class="p-2 border no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== TAB 8 ===== -->
+        <section id="tab-evidence" class="tab-content hidden space-y-6">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex justify-between items-center no-print">
+                <p class="text-xs text-blue-700">Catalog course file artifacts and assessment proofs.</p>
+                <button onclick="addEvidenceRow()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium">+ Add Item</button>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                <h2 class="text-base font-bold text-slate-900 mb-4">Evidence Register</h2>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 border-b text-slate-700">
+                            <th class="p-2 border">Item #</th><th class="p-2 border">Description</th><th class="p-2 border">Type</th>
+                            <th class="p-2 border">Link / Path</th><th class="p-2 border no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evidenceBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="print-approval mt-16 pt-8 border-t-2 border-slate-800 grid-cols-3 gap-8 text-center text-xs">
+            <div><p class="font-bold mb-16">Prepared By</p><p class="border-t border-slate-600 pt-1">Faculty Signature & Date</p></div>
+            <div><p class="font-bold mb-16">Verified By</p><p class="border-t border-slate-600 pt-1">HOD / Department NBA Coordinator</p></div>
+            <div><p class="font-bold mb-16">Approved By</p><p class="border-t border-slate-600 pt-1">IQAC Coordinator / Principal</p></div>
         </div>
-      </div>
-    </div>
+    </main>
 
-    <p class="card-sub" id="cardSub">
-      Column order: <b>USN | CO1 | CO2 | … | CO<sub>n</sub></b>.
-      Student names are <b>not</b> required. CIE percentages are computed automatically.
-    </p>
-
-    <div class="tabs">
-      <button class="tab active" id="tab-paste" onclick="switchTab('paste')">📋 Paste from Excel</button>
-      <button class="tab" id="tab-file" onclick="switchTab('file')">📁 Upload File (.xlsx / .csv)</button>
-    </div>
-
-    <div id="panel-paste">
-      <textarea class="paste" id="pasteBox"
-        placeholder="2BA22CS001&#9;8&#9;7&#9;9&#9;8&#9;7
-2BA22CS002&#9;9&#9;8&#9;10&#9;9&#9;8"></textarea>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="parsePastedData()">⚡ Parse Data</button>
-        <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
-      </div>
-    </div>
-
-    <div id="panel-file" class="hidden">
-      <div class="dropzone" id="dropzone">
-        <div class="icon">📊</div>
-        <p><strong>Click to select</strong> or drag &amp; drop an .xlsx / .xls / .csv file</p>
-        <p style="font-size:11.5px;margin-top:6px" id="fileHint">Format: USN | CO1 | CO2 | … (header row is skipped automatically)</p>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="clearAll()">✕ Clear</button>
-      </div>
-    </div>
-
-    <div id="previewWrap" class="hidden" style="margin-top:18px">
-      <div class="chip-row">
-        <div class="chip">Students: <b id="chipStudents">0</b></div>
-        <div class="chip">COs detected: <b id="chipCOs">0</b></div>
-        <div class="chip">Threshold: <b id="chipThreshold">—</b></div>
-      </div>
-      <div class="table-wrap" style="max-height:340px;overflow-y:auto">
-        <table class="data" id="previewTable">
-          <thead id="previewHead"></thead>
-          <tbody id="previewBody"></tbody>
-        </table>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-green" onclick="computeFromData()">✅ Compute % from Data</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ STEP 3 ============ -->
-  <section class="card">
-    <div class="card-head">
-      <span class="step-badge">STEP 3</span>
-      <h2>CO Attainment Computation</h2>
-    </div>
-    <p class="card-sub">
-      CIE % and SEE % are auto-filled from student data. You can still edit any cell.
-    </p>
-
-    <div class="table-wrap">
-      <table class="data" id="coTable">
-        <thead>
-          <tr>
-            <th>CO</th>
-            <th>CIE %&gt;Target</th>
-            <th>CIE Level</th>
-            <th>SEE %&gt;Target</th>
-            <th>SEE Level</th>
-            <th>Direct CO</th>
-            <th>Indirect<br><small>(0–3)</small></th>
-            <th>Final CO<br><small>(0–3)</small></th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="coBody"></tbody>
-      </table>
-    </div>
-
-    <div class="result-panel">
-      <h3>📐 Weighting &amp; Formula Reference</h3>
-      <div class="formula" id="formulaBox"></div>
-    </div>
-  </section>
-
-  <!-- ============ STEP 4 ============ -->
-  <section class="card">
-    <div class="card-head">
-      <span class="step-badge">STEP 4</span>
-      <h2>Articulation Matrices — CO ⇄ PO &amp; CO ⇄ PSO</h2>
-    </div>
-    <p class="card-sub">
-      Correlation scale: <b>3</b> = High &nbsp;•&nbsp; <b>2</b> = Medium &nbsp;•&nbsp;
-      <b>1</b> = Low &nbsp;•&nbsp; <b>0</b> = None
-    </p>
-
-    <div class="table-wrap" style="margin-bottom:14px">
-      <table class="data" id="poMatrix">
-        <thead id="poMatrixHead"></thead>
-        <tbody id="poMatrixBody"></tbody>
-      </table>
-    </div>
-
-    <div class="table-wrap" style="max-width:520px">
-      <table class="data" id="psoMatrix">
-        <thead>
-          <tr><th>CO / PSO</th><th>PSO1</th><th>PSO2</th><th>PSO3</th></tr>
-        </thead>
-        <tbody id="psoMatrixBody"></tbody>
-      </table>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-outline" onclick="resetMatrices()">↺ Reset Matrices to 0</button>
-    </div>
-  </section>
-
-  <!-- ============ STEP 5 ============ -->
-  <section class="card">
-    <div class="card-head">
-      <span class="step-badge">STEP 5</span>
-      <h2>Attainment Summary &amp; Export</h2>
-    </div>
-
-    <div class="btn-row no-print" style="margin-bottom:16px">
-      <button class="btn btn-primary" onclick="calculateAll()">🧮 Recalculate</button>
-      <button class="btn btn-green" onclick="exportExcel()">📊 Export Excel</button>
-      <button class="btn btn-blue" onclick="exportPDF()">📄 Export PDF</button>
-      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
-    </div>
-
-    <div id="dashCO"></div>
-    <div id="dashPO"></div>
-    <div id="dashPSO"></div>
-
-    <div class="result-panel" style="margin-top:18px">
-      <h3>🧮 PO / PSO Attainment Formula</h3>
-      <div class="formula">
-        <b>Attainment</b> = Σ(CO Attained<sub>i</sub> × Matrix<sub>i</sub>) ÷
-        (Average Matrix × Number of COs)<br>
-        All COs are included in the denominator — including zero-correlation entries.
-      </div>
-    </div>
-
-    <div class="result-panel">
-      <h3>📋 Calculation Audit — PO / PSO</h3>
-      <div class="table-wrap" style="margin-top:8px;border:none">
-        <table class="data" id="auditTable">
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>Σ(CO×Matrix)</th>
-              <th>Avg Matrix</th>
-              <th>No. of COs</th>
-              <th>Denominator</th>
-              <th>Attainment</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="auditBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="sigs">
-      <div class="sig">
-        <div class="line"></div>
-        <div class="role">Course Instructor / Faculty</div>
-        <div class="name" id="sigFaculty">—</div>
-      </div>
-      <div class="sig">
-        <div class="line"></div>
-        <div class="role">Head of the Department</div>
-        <div class="name" id="sigDept">—</div>
-      </div>
-    </div>
-  </section>
-</main>
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center text-xs text-slate-500 no-print">
+        <div class="font-semibold text-slate-700">NBA Course File & Attainment Generator</div>
+        <div class="mt-0.5">Outcome-Based Education Accreditation Dashboard</div>
+    </footer>
 
 <script>
-/* ====================================================================
-   STATE
-   ==================================================================== */
-const STATE = {
-  students: [],
-  coCount: 5,
-  ciePcts: [],
-  seePcts: [],
-  indirect: [],
-  finalCO: [],
-  poResults: [],
-  psoResults: [],
-  indirectOn: false,
-  entryMode: 'cowise',
-  seeInPaste: false,
-  target: 2.0,
-  cieW: 0.5, seeW: 0.5,
+/* ---------- DEFAULT DATA ---------- */
+const DEFAULT_DATA = {
+    info: {
+        collegeName: "Basaveshwar Engineering College, Bagalkote",
+        university: "Visvesvaraya Technological University, Belagavi",
+        acadYear: "2025-2026", semester: "Even Semester",
+        courseTitle: "CS301 - Design and Analysis of Algorithms",
+        programName: "B.E. Computer Science and Engineering",
+        regulation: "Regulation 2021 (CBCS)", credits: "3 - 0 - 0 - 3",
+        threshold: 60, cieWeight: 50, seeWeight: 50,
+        maxCie: 10, maxSee: 20,
+        facultyName: "Faculty In-Charge", facultyDesignation: "Associate Professor",
+        facultyId: "FAC-1042", facultyDept: "Computer Science and Engineering",
+        facultyEmail: "faculty@becbgk.edu",
+        facultySpecialization: "Algorithms, Theory of Computation",
+        prerequisites: "Data Structures, Discrete Mathematical Structures, Programming in C/Python",
+        courseObjectives: "1. Introduce paradigms of algorithm design.\n2. Teach asymptotic analysis and recurrence relations.\n3. Cover graph and optimization models for engineering problems.\n4. Develop the ability to classify problems into complexity classes.",
+        textbooks: "1. Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein, \"Introduction to Algorithms\", MIT Press, 3rd Edition.\n2. Ellis Horowitz, Sartaj Sahni, and Sanguthevar Rajasekaran, \"Fundamentals of Computer Algorithms\", Universities Press.\n3. Jon Kleinberg and Éva Tardos, \"Algorithm Design\", Pearson Education."
+    },
+    cos: [
+        { id: "CO1", text: "Analyze asymptotic growth of functions and solve recurrence relations." },
+        { id: "CO2", text: "Apply divide-and-conquer and greedy paradigms to solve engineering problems." },
+        { id: "CO3", text: "Design optimization models using dynamic programming principles." },
+        { id: "CO4", text: "Utilize graph algorithms for network routing and connectivity applications." },
+        { id: "CO5", text: "Classify problems into complexity classes P, NP, and NP-Complete." }
+    ],
+    copoMatrix: [
+        [3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 1],
+        [3, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 2, 3, 2, 1],
+        [3, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 2, 2],
+        [3, 3, 2, 2, 1, 0, 0, 0, 0, 0, 0, 2, 2, 3, 1],
+        [2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 1]
+    ],
+    indirect: [2.5, 2.4, 2.3, 2.5, 2.2],
+    students: [
+        { usn: "2026CSE01", cie: [9, 9, 10, 9, 9], see: [19, 18, 20, 19, 18] },
+        { usn: "2026CSE02", cie: [8, 9, 8, 9, 8], see: [17, 18, 17, 18, 17] },
+        { usn: "2026CSE03", cie: [10, 9, 9, 10, 9], see: [20, 19, 19, 20, 18] },
+        { usn: "2026CSE04", cie: [7, 8, 7, 8, 7], see: [15, 16, 15, 16, 14] },
+        { usn: "2026CSE05", cie: [6, 7, 6, 7, 6], see: [14, 15, 14, 15, 13] },
+        { usn: "2026CSE06", cie: [8, 8, 9, 8, 8], see: [17, 17, 18, 17, 16] },
+        { usn: "2026CSE07", cie: [5, 6, 5, 6, 5], see: [12, 13, 12, 13, 11] },
+        { usn: "2026CSE08", cie: [9, 8, 9, 9, 8], see: [18, 17, 19, 18, 17] },
+        { usn: "2026CSE09", cie: [7, 7, 8, 7, 7], see: [15, 15, 16, 15, 14] },
+        { usn: "2026CSE10", cie: [4, 5, 4, 5, 4], see: [10, 11, 10, 11, 9] }
+    ],
+    lessons: [
+        { lec: 1, unit: 1, topic: "Introduction to Algorithms & Asymptotic Notations", planned: "2026-02-02", actual: "2026-02-02", method: "Chalk & Talk", co: "CO1" },
+        { lec: 2, unit: 1, topic: "Recurrence Relations – Substitution & Master Method", planned: "2026-02-04", actual: "2026-02-04", method: "Chalk & Talk", co: "CO1" },
+        { lec: 3, unit: 2, topic: "Divide and Conquer – Merge Sort", planned: "2026-02-06", actual: "2026-02-06", method: "Demonstration", co: "CO2" },
+        { lec: 4, unit: 2, topic: "Quick Sort, Strassen's Matrix Multiplication", planned: "2026-02-09", actual: "2026-02-09", method: "Chalk & Talk", co: "CO2" },
+        { lec: 5, unit: 2, topic: "Greedy Method – Knapsack, Huffman Coding", planned: "2026-02-11", actual: "2026-02-11", method: "Problem Solving", co: "CO2" }
+    ],
+    timetable: [
+        { day: "Monday", time: "09:30 AM - 10:30 AM", subject: "CS301 (DAA)", room: "LH-102" },
+        { day: "Tuesday", time: "10:30 AM - 11:30 AM", subject: "CS301 (DAA)", room: "LH-102" },
+        { day: "Wednesday", time: "11:30 AM - 01:30 PM", subject: "CS301 Lab (DAA)", room: "CL-04" },
+        { day: "Thursday", time: "09:30 AM - 10:30 AM", subject: "CS301 (DAA)", room: "LH-102" },
+        { day: "Friday", time: "02:00 PM - 03:00 PM", subject: "CS301 (DAA)", room: "LH-102" }
+    ],
+    evidence: [
+        { id: "EV1", title: "Approved Syllabus & Scheme", type: "PDF", link: "./docs/syllabus.pdf" },
+        { id: "EV2", title: "Course Handout to Students", type: "PDF", link: "./docs/handout.pdf" },
+        { id: "EV3", title: "Lesson Plan & Coverage Record", type: "XLSX", link: "./docs/lesson_plan.xlsx" },
+        { id: "EV4", title: "Question Papers (CIE 1, CIE 2, SEE)", type: "PDF", link: "./docs/question_papers.pdf" },
+        { id: "EV5", title: "Student CIE & SEE Marksheets", type: "XLSX", link: "./docs/marks.xlsx" }
+    ]
 };
 
-const PO_COUNT  = 12;
-const PSO_COUNT = 3;
-const DIRECT_SHARE   = 0.80;
-const INDIRECT_SHARE = 0.20;
+const poHeaders = ["PO1","PO2","PO3","PO4","PO5","PO6","PO7","PO8","PO9","PO10","PO11","PO12","PSO1","PSO2","PSO3"];
+const INFO_IDS = ['collegeName','university','acadYear','semester','programName','courseTitle','regulation','credits',
+                  'threshold','cieWeight','seeWeight','maxCie','maxSee','facultyName','facultyDesignation','facultyId',
+                  'facultyDept','facultyEmail','facultySpecialization','prerequisites','courseObjectives','textbooks'];
 
-/* ====================================================================
-   UTILITIES
-   ==================================================================== */
-const $  = (id) => document.getElementById(id);
-const num = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-function showAlert(msg, type = 'ok') {
-  const el = $('alert');
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-  clearTimeout(showAlert._t);
-  showAlert._t = setTimeout(() => el.classList.remove('show'), 6000);
+const esc = s => String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const num = (v, d=0) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
+
+function deepMerge(base, over) {
+    if (Array.isArray(over)) return over;
+    if (typeof over !== 'object' || over === null) return over;
+    const out = Array.isArray(base) ? [] : Object.assign({}, base);
+    for (const k in over) out[k] = (k in base) ? deepMerge(base[k], over[k]) : over[k];
+    return out;
 }
 
-function getLevel(pct) {
-  if (pct >= 70) return 3;
-  if (pct >= 60) return 2;
-  if (pct >= 50) return 1;
-  return 0;
-}
+window.addEventListener('DOMContentLoaded', () => { loadDraft(); renderAll(); bindInfoFields(); });
 
-function statusOf(score, target) {
-  if (score <= 0) return '—';
-  return score >= target ? 'ATTAINED' : 'NOT ATTAINED';
-}
-
-function badgeFor(status) {
-  if (status === 'ATTAINED') return '<span class="badge badge-ok">ATTAINED</span>';
-  if (status === 'NOT ATTAINED') return '<span class="badge badge-no">NOT ATTAINED</span>';
-  return '<span class="badge badge-na">—</span>';
-}
-
-/* ====================================================================
-   PASTE UI TEXT
-   ==================================================================== */
-function updatePasteUI() {
-  const mode = STATE.entryMode;
-  const see  = STATE.seeInPaste && mode === 'cowise';
-  const box = $('pasteBox');
-  const cardSub = $('cardSub');
-  const entryHint = $('entryModeHint');
-  const fileHint = $('fileHint');
-  const seeHint = $('seePasteHint');
-
-  if (seeHint) {
-    seeHint.innerHTML = see
-      ? 'Format: <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b>'
-      : 'SEE % will be entered manually in Step 3.';
-    seeHint.className = see ? 'hint on' : 'hint';
-  }
-
-  if (mode === 'final') {
-    box.placeholder = '2BA22CS001\t42\t78\n2BA22CS002\t45\t82';
-    cardSub.innerHTML = 'Column order: <b>USN | Final CIE | SEE</b>. ' +
-      'CIE and SEE max marks are taken from Step 1. Course-level % above threshold is computed for each.';
-    entryHint.innerHTML = 'Paste <b>USN | Final CIE | SEE</b> — one CIE % and one SEE % for the whole course.';
-    fileHint.textContent = 'Format: USN | Final CIE | SEE (header row is skipped automatically)';
-  } else if (see) {
-    box.placeholder = '2BA22CS001\t8\t7\t9\t8\t7\t16\t15\t18\t17\t14\n' +
-                      '2BA22CS002\t9\t8\t10\t9\t8\t18\t17\t19\t18\t16';
-    cardSub.innerHTML = 'Column order: <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b>. ' +
-      'Both CIE % and SEE % are computed per CO using the max marks from Step 1.';
-    entryHint.innerHTML = 'Paste <b>USN | CIE CO1..CO<sub>n</sub> | SEE CO1..CO<sub>n</sub></b> — both %s are computed per CO.';
-    fileHint.textContent = 'Format: USN | CIE CO1..COn | SEE CO1..COn (header row is skipped automatically)';
-  } else {
-    box.placeholder = '2BA22CS001\t8\t7\t9\t8\t7\n2BA22CS002\t9\t8\t10\t9\t8';
-    cardSub.innerHTML = 'Column order: <b>USN | CO1 | CO2 | … | CO<sub>n</sub></b>. ' +
-      'Student names are <b>not</b> required. CIE percentages are computed automatically. ' +
-      'SEE % can be entered manually in Step 3 — or enable <b>“Paste includes SEE marks”</b> above.';
-    entryHint.innerHTML = 'Paste <b>USN | CO1 | CO2 | …</b> — CIE % is computed per CO.';
-    fileHint.textContent = 'Format: USN | CO1 | CO2 | … (header row is skipped automatically)';
-  }
-}
-
-/* ====================================================================
-   ENTRY / SEE-TOGGLE HANDLERS
-   ==================================================================== */
-function onEntryModeChange() {
-  const newMode = $('entryMode').value;
-  if (newMode === STATE.entryMode) return;
-  STATE.entryMode = newMode;
-
-  STATE.students = [];
-  STATE.ciePcts  = [];
-  STATE.seePcts  = [];
-  $('pasteBox').value = '';
-  $('fileInput').value = '';
-  $('previewWrap').classList.add('hidden');
-
-  // SEE toggle only applies to CO-wise mode
-  $('seePasteField').classList.toggle('hidden', newMode !== 'cowise');
-  if (newMode === 'final') {
-    $('seeInPaste').value = 'no';
-    STATE.seeInPaste = false;
-  }
-
-  updatePasteUI();
-  rebuildInputs();
-  showAlert('Entry mode changed — previous student data cleared.', 'warn');
-}
-
-function onSeePasteChange() {
-  STATE.seeInPaste = $('seeInPaste').value === 'yes';
-  STATE.students = [];
-  STATE.ciePcts  = [];
-  STATE.seePcts  = [];
-  $('pasteBox').value = '';
-  $('fileInput').value = '';
-  $('previewWrap').classList.add('hidden');
-  updatePasteUI();
-  computeFromData(true);
-  calculateAll();
-  showAlert('Paste format updated — previous student data cleared.', 'warn');
-}
-
-/* ====================================================================
-   INDIRECT MODE
-   ==================================================================== */
-function applyIndirectMode(skipWeightReset) {
-  const on = $('indirectMode').value === 'yes';
-  STATE.indirectOn = on;
-
-  if (!on && skipWeightReset !== true) {
-    $('cieWeight').value = 50;
-    $('seeWeight').value = 50;
-  }
-
-  const hint = $('indirectHint');
-  if (on) {
-    hint.textContent = 'Weighting: Direct 80% + Indirect 20%  →  (80 : 20)';
-    hint.className = 'hint on';
-  } else {
-    hint.textContent = 'Weighting: CIE 50% + SEE 50%  →  (50 : 50) · indirect not used';
-    hint.className = 'hint';
-  }
-
-  for (let i = 0; i < STATE.coCount; i++) {
-    const el = $('ind_' + i);
-    if (el) {
-      el.disabled = !on;
-      el.value = on ? (STATE.indirect[i] || 0) : 0;
-    }
-  }
-  calculateAll();
-}
-
-/* ====================================================================
-   TAB SWITCH
-   ==================================================================== */
-function switchTab(which) {
-  $('tab-paste').classList.toggle('active', which === 'paste');
-  $('tab-file').classList.toggle('active', which === 'file');
-  $('panel-paste').classList.toggle('hidden', which !== 'paste');
-  $('panel-file').classList.toggle('hidden', which !== 'file');
-}
-
-/* ====================================================================
-   PARSING
-   ==================================================================== */
-function parsePastedData() {
-  const raw = $('pasteBox').value.trim();
-  if (!raw) return showAlert('Please paste some data first.', 'err');
-
-  const lines = raw.split(/\r?\n/).filter(l => l.trim());
-  const students = [];
-  const isFinal = STATE.entryMode === 'final';
-  const withSee = !isFinal && STATE.seeInPaste;
-  let coCountDetected = 0;
-
-  lines.forEach((line, i) => {
-    const cells = (line.includes('\t') ? line.split(/\t/) : line.split(','))
-                    .map(s => s.trim());
-    if (cells.length < 2) return;
-    if (i === 0 && /usn|student|name|roll|^co|^cie|^see/i.test(cells[0])) return;
-
-    const usn = cells[0];
-    if (!usn) return;
-
-    if (isFinal) {
-      if (cells.length < 3) return;
-      students.push({ usn, cie: num(cells[1]), see: num(cells[2]) });
-    } else if (withSee) {
-      const total = cells.length - 1;
-      if (total < 2 || total % 2 !== 0) {
-        // Odd number of mark columns — can't split
-        return;
-      }
-      const half = total / 2;
-      const cieMarks = cells.slice(1, 1 + half).map(v => num(v));
-      const seeMarks = cells.slice(1 + half).map(v => num(v));
-      coCountDetected = Math.max(coCountDetected, half);
-      students.push({ usn, marks: cieMarks, seeMarks });
-    } else {
-      const marks = cells.slice(1).map(v => num(v));
-      coCountDetected = Math.max(coCountDetected, marks.length);
-      students.push({ usn, marks });
-    }
-  });
-
-  if (!students.length) {
-    return showAlert(
-      isFinal ? 'No valid rows. Use: USN | Final CIE | SEE'
-      : withSee ? 'No valid rows. Use: USN | CIE CO1..COn | SEE CO1..COn (equal CIE & SEE column counts required)'
-      : 'No valid rows. Use: USN | CO1 | CO2 | …',
-      'err'
-    );
-  }
-
-  if (!isFinal) {
-    students.forEach(s => {
-      while (s.marks.length < coCountDetected) s.marks.push(0);
-      if (withSee) {
-        if (!s.seeMarks) s.seeMarks = [];
-        while (s.seeMarks.length < coCountDetected) s.seeMarks.push(0);
-      }
+function bindInfoFields() {
+    INFO_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const sync = () => { 
+            appData.info[id] = (id === 'maxCie' || id === 'maxSee' || id === 'threshold' || id === 'cieWeight' || id === 'seeWeight')
+                ? num(el.value, (id === 'maxCie' ? 10 : (id === 'maxSee' ? 20 : 50)))
+                : el.value;
+            renderKPI(); 
+            if (!document.getElementById('tab-marks').classList.contains('hidden')) renderMarksTableHeaders();
+            if (!document.getElementById('tab-attainment').classList.contains('hidden')) renderAttainment();
+        };
+        el.addEventListener('input', sync);
+        el.addEventListener('change', sync);
     });
-    if (coCountDetected >= 3 && coCountDetected <= 8) {
-      $('coCount').value = String(coCountDetected);
-    }
-    $('coCount').dispatchEvent(new Event('change'));
-  }
-
-  STATE.students = students;
-  renderPreview();
-  computeFromData(false);
-  showAlert(`Parsed ${students.length} student rows.`, 'ok');
 }
 
-function handleFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const wb   = XLSX.read(data, { type: 'array' });
-      const ws   = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('border-indigo-600','text-indigo-600');
+        el.classList.add('border-transparent','text-slate-500');
+    });
+    document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+    const btn = document.getElementById(`btn-${tabId}`);
+    btn.classList.add('border-indigo-600','text-indigo-600');
+    btn.classList.remove('border-transparent','text-slate-500');
+    if (tabId === 'attainment') renderAttainment();
+    if (tabId === 'marks') renderMarksTableHeaders();
+    if (tabId === 'info') { renderKPI(); renderAll(); }
+}
 
-      const students = [];
-      const isFinal = STATE.entryMode === 'final';
-      const withSee = !isFinal && STATE.seeInPaste;
-      let coCountDetected = 0;
-      let start = 0;
-      if (rows[0] && /usn|student|name|roll|^co|^cie|^see/i.test(String(rows[0][0] || ''))) start = 1;
+/* ---------- KPI DASHBOARD ---------- */
+function renderKPI() {
+    const att = computeAttainment();
+    const totalStudents = appData.students.length;
+    const totalCOs = appData.cos.length;
+    const attainedCOs = att.levels.filter(r => r.final >= 2.0).length;
+    const poMapped = att.poValues.filter(v => v > 0).length;
+    const poAttained = att.poValues.filter(v => v >= 2.0).length;
+    const avgCO = att.levels.length ? (att.levels.reduce((a,r)=>a+r.final,0) / att.levels.length) : 0;
+    const coPct = totalCOs ? Math.round((attainedCOs/totalCOs)*100) : 0;
 
-      for (let i = start; i < rows.length; i++) {
-        const r = rows[i];
-        if (!r || !r[0]) continue;
-        const usn = String(r[0]).trim();
-        if (!usn) continue;
+    const cards = [
+        { label: 'Students', value: totalStudents, sub: 'Enrolled', color: 'from-blue-500 to-blue-600', icon: '👥' },
+        { label: 'Course Outcomes', value: totalCOs, sub: `${attainedCOs} attained`, color: 'from-indigo-500 to-indigo-600', icon: '🎯' },
+        { label: 'CO Attainment', value: `${coPct}%`, sub: `avg ${avgCO.toFixed(2)}`, color: coPct >= 80 ? 'from-emerald-500 to-emerald-600' : 'from-amber-500 to-amber-600', icon: '📈' },
+        { label: 'POs Attained', value: `${poAttained}/${poMapped}`, sub: 'of mapped', color: 'from-violet-500 to-violet-600', icon: '🏆' },
+        { label: 'Lessons', value: appData.lessons.length, sub: `${appData.evidence.length} evidence files`, color: 'from-cyan-500 to-cyan-600', icon: '📅' },
+        { label: 'Course', value: (appData.info.courseTitle.match(/^[A-Z0-9]+/i)||['—'])[0], sub: appData.info.acadYear || '', color: 'from-rose-500 to-rose-600', icon: '📘' }
+    ];
 
-        if (isFinal) {
-          if (r.length < 3) continue;
-          students.push({ usn, cie: num(r[1]), see: num(r[2]) });
-        } else if (withSee) {
-          const total = r.length - 1;
-          if (total < 2 || total % 2 !== 0) continue;
-          const half = total / 2;
-          const cieMarks = r.slice(1, 1 + half).map(v => num(v));
-          const seeMarks = r.slice(1 + half).map(v => num(v));
-          coCountDetected = Math.max(coCountDetected, half);
-          students.push({ usn, marks: cieMarks, seeMarks });
-        } else {
-          const marks = r.slice(1).map(v => num(v));
-          if (marks.length === 0) continue;
-          coCountDetected = Math.max(coCountDetected, marks.length);
-          students.push({ usn, marks });
-        }
-      }
+    document.getElementById('kpiCards').innerHTML = cards.map(c => `
+        <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <div class="flex items-start justify-between mb-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br ${c.color} text-white flex items-center justify-center text-base">${c.icon}</div>
+            </div>
+            <div class="text-2xl font-bold text-slate-900 leading-tight">${esc(c.value)}</div>
+            <div class="text-[11px] font-semibold text-slate-600 mt-0.5">${esc(c.label)}</div>
+            <div class="text-[10px] text-slate-400">${esc(c.sub)}</div>
+        </div>
+    `).join('');
+}
 
-      if (!students.length) return showAlert('No student rows found in file.', 'err');
+function renderMarksTableHeaders() {
+    const curMaxCie = num(appData.info.maxCie, 10);
+    const curMaxSee = num(appData.info.maxSee, 20);
 
-      if (!isFinal) {
-        students.forEach(s => {
-          while (s.marks.length < coCountDetected) s.marks.push(0);
-          if (withSee) {
-            if (!s.seeMarks) s.seeMarks = [];
-            while (s.seeMarks.length < coCountDetected) s.seeMarks.push(0);
-          }
+    let mh = `<th class="p-2 border">#</th><th class="p-2 border">USN</th>`;
+    appData.cos.forEach(co => mh += `<th class="p-2 border bg-blue-50">CIE ${esc(co.id)} <span class="text-[9px] font-normal text-indigo-700 block">(max ${curMaxCie})</span></th>`);
+    appData.cos.forEach(co => mh += `<th class="p-2 border bg-emerald-50">SEE ${esc(co.id)} <span class="text-[9px] font-normal text-emerald-700 block">(max ${curMaxSee})</span></th>`);
+    mh += `<th class="p-2 border no-print">Action</th>`;
+    document.getElementById('marksHead').innerHTML = mh;
+}
+
+/* ---------- MAIN RENDER ---------- */
+function renderAll() {
+    INFO_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = appData.info[id] != null ? appData.info[id] : '';
+    });
+
+    document.getElementById('coListContainer').innerHTML = appData.cos.map((co, idx) => `
+        <div class="flex items-center gap-3">
+            <span class="font-bold text-xs w-12">${esc(co.id)}</span>
+            <input type="text" value="${esc(co.text)}" onchange="updateCO(${idx}, this.value)" class="flex-grow border rounded-lg p-2 text-xs focus:ring-2 focus:ring-indigo-300 outline-none">
+            <button onclick="removeCO(${idx})" class="text-red-500 font-bold px-2 no-print" title="Remove">×</button>
+        </div>`).join('');
+
+    let h = `<thead><tr class="bg-slate-100 border-b"><th class="p-2 border">CO / PO</th>`;
+    poHeaders.forEach(p => h += `<th class="p-2 border">${p}</th>`);
+    h += `</tr></thead><tbody>`;
+    appData.cos.forEach((co, r) => {
+        h += `<tr class="border-b"><td class="p-2 font-bold bg-slate-50 border">${esc(co.id)}</td>`;
+        poHeaders.forEach((_, c) => {
+            const v = (appData.copoMatrix[r] && appData.copoMatrix[r][c] != null) ? appData.copoMatrix[r][c] : 0;
+            h += `<td class="p-1 border"><input type="number" min="0" max="3" value="${v}"
+                onchange="setMatrix(${r},${c},this.value)" class="w-10 text-center border rounded p-1 text-xs"></td>`;
         });
-        if (coCountDetected >= 3 && coCountDetected <= 8) $('coCount').value = String(coCountDetected);
-        $('coCount').dispatchEvent(new Event('change'));
-      }
+        h += `</tr>`;
+    });
+    document.getElementById('copoTable').innerHTML = h + `</tbody>`;
 
-      STATE.students = students;
-      renderPreview();
-      computeFromData(false);
-      showAlert(`Loaded ${students.length} students from "${file.name}".`, 'ok');
-    } catch (err) {
-      console.error(err);
-      showAlert('Could not read file: ' + err.message, 'err');
+    renderMarksTableHeaders();
+
+    document.getElementById('marksBody').innerHTML = appData.students.map((st, s) => `
+        <tr class="border-b hover:bg-slate-50">
+            <td class="p-2 border text-center text-slate-500">${s+1}</td>
+            <td class="p-2 border"><input type="text" value="${esc(st.usn)}" onchange="appData.students[${s}].usn=this.value" class="w-28 border rounded p-1 text-xs font-semibold"></td>
+            ${appData.cos.map((_, c) => `<td class="p-1 border"><input type="number" min="0" value="${st.cie[c]||0}" onchange="appData.students[${s}].cie[${c}]=num(this.value)" class="w-12 text-center border rounded p-1 text-xs"></td>`).join('')}
+            ${appData.cos.map((_, c) => `<td class="p-1 border"><input type="number" min="0" value="${st.see[c]||0}" onchange="appData.students[${s}].see[${c}]=num(this.value)" class="w-12 text-center border rounded p-1 text-xs"></td>`).join('')}
+            <td class="p-2 border no-print text-center"><button onclick="removeStudent(${s})" class="text-red-500 font-bold">×</button></td>
+        </tr>`).join('');
+    document.getElementById('studentCount').textContent = `(${appData.students.length} students)`;
+
+    document.getElementById('lessonBody').innerHTML = appData.lessons.map((l, i) => `
+        <tr class="border-b hover:bg-slate-50">
+            <td class="p-1 border"><input type="number" value="${l.lec}" onchange="appData.lessons[${i}].lec=num(this.value,1)" class="w-12 text-center border rounded p-1"></td>
+            <td class="p-1 border"><input type="number" value="${l.unit}" onchange="appData.lessons[${i}].unit=num(this.value,1)" class="w-12 text-center border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(l.topic)}" onchange="appData.lessons[${i}].topic=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><input type="date" value="${esc(l.planned)}" onchange="appData.lessons[${i}].planned=this.value" class="border rounded p-1"></td>
+            <td class="p-1 border"><input type="date" value="${esc(l.actual)}" onchange="appData.lessons[${i}].actual=this.value" class="border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(l.method)}" onchange="appData.lessons[${i}].method=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><select onchange="appData.lessons[${i}].co=this.value" class="border rounded p-1 bg-white">
+                ${appData.cos.map(co => `<option value="${esc(co.id)}" ${l.co===co.id?'selected':''}>${esc(co.id)}</option>`).join('')}
+            </select></td>
+            <td class="p-1 border no-print text-center"><button onclick="appData.lessons.splice(${i},1);renderAll();" class="text-red-500 font-bold">×</button></td>
+        </tr>`).join('');
+
+    document.getElementById('timetableBody').innerHTML = appData.timetable.map((t, i) => `
+        <tr class="border-b hover:bg-slate-50">
+            <td class="p-1 border"><input type="text" value="${esc(t.day)}" onchange="appData.timetable[${i}].day=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(t.time)}" onchange="appData.timetable[${i}].time=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(t.subject)}" onchange="appData.timetable[${i}].subject=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(t.room)}" onchange="appData.timetable[${i}].room=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border no-print text-center"><button onclick="appData.timetable.splice(${i},1);renderAll();" class="text-red-500 font-bold">×</button></td>
+        </tr>`).join('');
+
+    document.getElementById('evidenceBody').innerHTML = appData.evidence.map((e, i) => `
+        <tr class="border-b hover:bg-slate-50">
+            <td class="p-1 border"><input type="text" value="${esc(e.id)}" onchange="appData.evidence[${i}].id=this.value" class="w-16 text-center border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(e.title)}" onchange="appData.evidence[${i}].title=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(e.type)}" onchange="appData.evidence[${i}].type=this.value" class="w-20 border rounded p-1"></td>
+            <td class="p-1 border"><input type="text" value="${esc(e.link)}" onchange="appData.evidence[${i}].link=this.value" class="w-full border rounded p-1"></td>
+            <td class="p-1 border no-print text-center"><button onclick="appData.evidence.splice(${i},1);renderAll();" class="text-red-500 font-bold">×</button></td>
+        </tr>`).join('');
+
+    document.getElementById('indirectInputs').innerHTML = appData.cos.map((co, i) => `
+        <div>
+            <label class="block font-semibold text-slate-600 mb-1">${esc(co.id)}</label>
+            <input type="number" step="0.01" min="0" max="3" value="${appData.indirect[i] != null ? appData.indirect[i] : 2.5}"
+                onchange="appData.indirect[${i}]=Math.max(0,Math.min(3,num(this.value,2.5))); renderKPI();" class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-300 outline-none">
+        </div>`).join('');
+
+    renderKPI();
+}
+
+function updateCO(idx, val) { appData.cos[idx].text = val; }
+function addCO() {
+    const n = appData.cos.length + 1;
+    appData.cos.push({ id: `CO${n}`, text: 'Enter new course outcome statement...' });
+    appData.copoMatrix.push(Array(poHeaders.length).fill(0));
+    appData.indirect.push(2.5);
+    appData.students.forEach(s => { s.cie.push(0); s.see.push(0); });
+    renderAll();
+}
+function removeCO(idx) {
+    if (appData.cos.length <= 1) return alert('At least one CO is required.');
+    if (!confirm(`Delete ${appData.cos[idx].id}?`)) return;
+    appData.cos.splice(idx, 1);
+    appData.copoMatrix.splice(idx, 1);
+    appData.indirect.splice(idx, 1);
+    appData.students.forEach(s => { s.cie.splice(idx, 1); s.see.splice(idx, 1); });
+    appData.cos.forEach((co, i) => co.id = `CO${i+1}`);
+    renderAll();
+}
+function setMatrix(r, c, v) {
+    const n = Math.max(0, Math.min(3, parseInt(v) || 0));
+    if (!appData.copoMatrix[r]) appData.copoMatrix[r] = Array(poHeaders.length).fill(0);
+    appData.copoMatrix[r][c] = n;
+    renderKPI();
+}
+function resetMatrix() {
+    if (!confirm('Reset all CO-PO mappings to 0?')) return;
+    appData.copoMatrix = appData.cos.map(() => Array(poHeaders.length).fill(0));
+    renderAll();
+}
+function addStudentRow() {
+    const n = appData.students.length + 1;
+    appData.students.push({
+        usn: `2026CSE${String(n).padStart(2,'0')}`,
+        cie: Array(appData.cos.length).fill(0),
+        see: Array(appData.cos.length).fill(0)
+    });
+    renderAll();
+}
+function removeStudent(idx) { appData.students.splice(idx, 1); renderAll(); }
+function clearStudents() { if (confirm('Remove all student records?')) { appData.students = []; renderAll(); } }
+function addLessonRow() {
+    appData.lessons.push({
+        lec: appData.lessons.length+1, unit: 1, topic: "New Topic",
+        planned: "2026-03-01", actual: "2026-03-01",
+        method: "Chalk & Talk", co: appData.cos[0]?.id || "CO1"
+    });
+    renderAll();
+}
+function clearLessons() {
+    if (!confirm('Remove all lesson plan entries?')) return;
+    appData.lessons = []; renderAll();
+}
+function toggleLessonPaste() {
+    const box = document.getElementById('lessonPasteBox');
+    box.classList.toggle('hidden');
+    if (!box.classList.contains('hidden')) {
+        document.getElementById('lessonPasteArea').focus();
     }
-  };
-  reader.readAsArrayBuffer(file);
+}
+function addTimetableRow() { appData.timetable.push({ day: "Tuesday", time: "10:30 AM - 11:30 AM", subject: "CS301", room: "LH-102" }); renderAll(); }
+function addEvidenceRow() { appData.evidence.push({ id: `EV${appData.evidence.length+1}`, title: "Artifact", type: "PDF", link: "./docs/file.pdf" }); renderAll(); }
+
+/* ---------- LESSON PASTE ---------- */
+function parseLessonPasteRows() {
+    const raw = document.getElementById('lessonPasteArea').value.trim();
+    if (!raw) { alert('Nothing pasted.'); return null; }
+    const rows = [];
+    raw.split('\n').forEach(line => {
+        const c = line.split('\t').map(s => s.trim());
+        let parts = c.length >= 2 ? c : line.split(/\s{2,}/).map(s => s.trim());
+        if (parts.length < 3) return;
+        const lec = num(parts[0], 0);
+        const unit = num(parts[1], 0);
+        if (!lec || !unit) return;
+        rows.push({
+            lec: lec,
+            unit: unit,
+            topic: parts[2] || '',
+            planned: parts[3] || '',
+            actual: parts[4] || '',
+            method: parts[5] || 'Chalk & Talk',
+            co: parts[6] || (appData.cos[0]?.id || 'CO1')
+        });
+    });
+    return rows;
+}
+function parsePastedLessons() {
+    const rows = parseLessonPasteRows();
+    if (!rows) return;
+    if (!rows.length) return alert('No valid rows found. Expected: Lec# · Unit# · Topic · Planned · Actual · Method · CO');
+    if (!confirm(`Replace current lesson plan with ${rows.length} new rows?`)) return;
+    appData.lessons = rows;
+    renderAll();
+    document.getElementById('lessonPasteBox').classList.add('hidden');
+    document.getElementById('lessonPasteArea').value = '';
+    alert(`Loaded ${rows.length} lesson entries.`);
+}
+function appendPastedLessons() {
+    const rows = parseLessonPasteRows();
+    if (!rows) return;
+    if (!rows.length) return alert('No valid rows found.');
+    appData.lessons = appData.lessons.concat(rows);
+    renderAll();
+    document.getElementById('lessonPasteBox').classList.add('hidden');
+    document.getElementById('lessonPasteArea').value = '';
+    alert(`Appended ${rows.length} lesson entries.`);
 }
 
-/* ====================================================================
-   PREVIEW
-   ==================================================================== */
-function renderPreview() {
-  if (!STATE.students.length) { $('previewWrap').classList.add('hidden'); return; }
-  $('previewWrap').classList.remove('hidden');
-  $('chipStudents').textContent = STATE.students.length;
-  $('chipThreshold').textContent = $('studentThreshold').value + '%';
-
-  if (STATE.entryMode === 'final') {
-    $('chipCOs').textContent = '—';
-    $('previewHead').innerHTML =
-      '<tr><th>#</th><th>USN</th><th>Final CIE</th><th>SEE</th></tr>';
-    let body = '';
-    STATE.students.forEach((s, i) => {
-      body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td>
-        <td>${s.cie ?? 0}</td><td>${s.see ?? 0}</td></tr>`;
-    });
-    $('previewBody').innerHTML = body;
-    return;
-  }
-
-  const nCO = Math.max(...STATE.students.map(s => s.marks.length), 0);
-  $('chipCOs').textContent = nCO;
-  const withSee = STATE.seeInPaste;
-
-  if (withSee) {
-    let head = `<tr><th rowspan="2">#</th><th rowspan="2">USN</th>` +
-               `<th colspan="${nCO}">CIE Marks</th>` +
-               `<th colspan="${nCO}">SEE Marks</th></tr><tr class="sub-head">`;
-    for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
-    for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
-    head += '</tr>';
-    $('previewHead').innerHTML = head;
-
-    let body = '';
-    STATE.students.forEach((s, i) => {
-      body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td>`;
-      for (let c = 0; c < nCO; c++) body += `<td>${s.marks[c] ?? 0}</td>`;
-      for (let c = 0; c < nCO; c++) body += `<td>${(s.seeMarks && s.seeMarks[c]) ?? 0}</td>`;
-      body += '</tr>';
-    });
-    $('previewBody').innerHTML = body;
-  } else {
-    let head = '<tr><th>#</th><th>USN</th>';
-    for (let c = 1; c <= nCO; c++) head += `<th>CO${c}</th>`;
-    head += '</tr>';
-    $('previewHead').innerHTML = head;
-    let body = '';
-    STATE.students.forEach((s, i) => {
-      body += `<tr><td>${i + 1}</td><td><b>${s.usn}</b></td>`;
-      for (let c = 0; c < nCO; c++) body += `<td>${s.marks[c] ?? 0}</td>`;
-      body += '</tr>';
-    });
-    $('previewBody').innerHTML = body;
-  }
+/* ---------- EXCEL UPLOAD ---------- */
+function handleExcelUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        try {
+            const wb = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+            const n = appData.cos.length;
+            const parsed = rows.filter(r => r && r[0] && !isNaN(parseFloat(r[1]))).map(r => ({
+                usn: String(r[0]).trim(),
+                cie: Array.from({length: n}, (_, i) => num(r[1+i])),
+                see: Array.from({length: n}, (_, i) => num(r[1+n+i]))
+            }));
+            if (!parsed.length) return alert('No valid rows. Expected: USN | CIE CO1..COn | SEE CO1..COn');
+            appData.students = parsed; renderAll();
+            alert(`Loaded ${parsed.length} student records from ${file.name}.`);
+        } catch (err) { console.error(err); alert('Failed: ' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+    e.target.value = '';
 }
 
-/* ====================================================================
-   BUILD TABLES
-   ==================================================================== */
-function rebuildInputs() {
-  STATE.coCount = parseInt($('coCount').value, 10) || 4;
-
-  for (let i = 0; i < STATE.coCount; i++) {
-    if (STATE.seePcts[i]   == null) STATE.seePcts[i]   = 0;
-    if (STATE.indirect[i]  == null) STATE.indirect[i]  = 0;
-    if (STATE.ciePcts[i]   == null) STATE.ciePcts[i]   = 0;
-  }
-
-  let coBody = '';
-  for (let i = 0; i < STATE.coCount; i++) {
-    coBody += `
-      <tr>
-        <td class="row-label">CO${i + 1}</td>
-        <td><input type="number" id="cie_${i}" value="${STATE.ciePcts[i].toFixed(1)}"
-              min="0" max="100" step="0.1" class="matrix-input" style="width:60px"></td>
-        <td id="cieLvl_${i}">0</td>
-        <td><input type="number" id="see_${i}" value="${STATE.seePcts[i].toFixed(1)}"
-              min="0" max="100" step="0.1" class="matrix-input" style="width:60px"></td>
-        <td id="seeLvl_${i}">0</td>
-        <td id="direct_${i}">0.00</td>
-        <td><input type="number" id="ind_${i}" value="${STATE.indirect[i]}"
-              min="0" max="3" step="0.01" class="matrix-input" style="width:60px"></td>
-        <td id="final_${i}" style="font-weight:800;color:#0f2f57">0.00</td>
-        <td id="status_${i}">—</td>
-      </tr>`;
-  }
-  $('coBody').innerHTML = coBody;
-
-  for (let i = 0; i < STATE.coCount; i++) {
-    $('cie_' + i).addEventListener('input', () => {
-      STATE.ciePcts[i] = num($('cie_' + i).value);
-      calculateAll();
-    });
-    $('see_' + i).addEventListener('input', () => {
-      STATE.seePcts[i] = num($('see_' + i).value);
-      calculateAll();
-    });
-    $('ind_' + i).addEventListener('input', () => {
-      STATE.indirect[i] = num($('ind_' + i).value);
-      calculateAll();
-    });
-  }
-
-  let poHead = '<tr><th>CO / PO</th>';
-  for (let p = 1; p <= PO_COUNT; p++) poHead += `<th>PO${p}</th>`;
-  poHead += '</tr>';
-  $('poMatrixHead').innerHTML = poHead;
-
-  let poBody = '';
-  for (let c = 0; c < STATE.coCount; c++) {
-    poBody += `<tr><td class="row-label">CO${c + 1}</td>`;
-    for (let p = 0; p < PO_COUNT; p++) {
-      poBody += `<td><input type="number" class="matrix-input" min="0" max="3"
-        id="m_co${c}_po${p}" value="0"></td>`;
-    }
-    poBody += '</tr>';
-  }
-  $('poMatrixBody').innerHTML = poBody;
-
-  let psoBody = '';
-  for (let c = 0; c < STATE.coCount; c++) {
-    psoBody += `<tr><td class="row-label">CO${c + 1}</td>`;
-    for (let p = 0; p < PSO_COUNT; p++) {
-      psoBody += `<td><input type="number" class="matrix-input" min="0" max="3"
-        id="m_co${c}_pso${p}" value="0"></td>`;
-    }
-    psoBody += '</tr>';
-  }
-  $('psoMatrixBody').innerHTML = psoBody;
-
-  document.querySelectorAll('#poMatrixBody input, #psoMatrixBody input')
-    .forEach(inp => inp.addEventListener('input', calculateAll));
-
-  computeFromData(true);
-  applyIndirectMode(true);
-  calculateAll();
-}
-
-function resetMatrices() {
-  document.querySelectorAll('#poMatrixBody input, #psoMatrixBody input')
-    .forEach(inp => { inp.value = 0; });
-  calculateAll();
-  showAlert('All matrix correlations reset to 0.', 'warn');
-}
-
-function clearAll() {
-  STATE.students = [];
-  STATE.ciePcts = [];
-  STATE.seePcts = [];
-  $('pasteBox').value = '';
-  $('fileInput').value = '';
-  $('previewWrap').classList.add('hidden');
-  computeFromData(true);
-  calculateAll();
-  showAlert('Cleared student data and percentages.', 'warn');
-}
-
-/* ====================================================================
-   COMPUTE PERCENTAGES FROM DATA
-   ==================================================================== */
-function computeFromData(silent = false) {
-  const thrPct = num($('studentThreshold').value) || 60;
-
-  if (STATE.entryMode === 'final') {
-    const cieMax = num($('cieMaxMarks').value) || 50;
-    const seeMax = num($('seeMaxMarks').value) || 100;
-    const cieThr = cieMax * thrPct / 100;
-    const seeThr = seeMax * thrPct / 100;
-
-    let cieAbove = 0, seeAbove = 0, total = 0;
-    STATE.students.forEach(s => {
-      if (s.cie != null && s.see != null) {
-        total++;
-        if (num(s.cie) >= cieThr) cieAbove++;
-        if (num(s.see) >= seeThr) seeAbove++;
-      }
-    });
-    const ciePct = total ? (cieAbove / total) * 100 : 0;
-    const seePct = total ? (seeAbove / total) * 100 : 0;
-
-    for (let i = 0; i < STATE.coCount; i++) {
-      STATE.ciePcts[i] = ciePct;
-      STATE.seePcts[i] = seePct;
-    }
-  } else {
-    /* CO-wise: per-CO CIE % and (if pasted) SEE % */
-    const maxCie = num($('maxMarks').value)    || 10;
-    const maxSee = num($('maxSeeMarks').value) || 20;
-    const cieThr = maxCie * thrPct / 100;
-    const seeThr = maxSee * thrPct / 100;
-    const withSee = STATE.seeInPaste;
-
-    for (let c = 0; c < STATE.coCount; c++) {
-      if (!STATE.students.length) {
-        STATE.ciePcts[c] = 0;
-        if (withSee) STATE.seePcts[c] = 0;
-        continue;
-      }
-      let cieAbove = 0, cieTotal = 0, seeAbove = 0, seeTotal = 0;
-      STATE.students.forEach(s => {
-        if (s.marks[c] != null) {
-          cieTotal++;
-          if (num(s.marks[c]) >= cieThr) cieAbove++;
+function parsePastedMarks() {
+    const raw = document.getElementById('pasteArea').value.trim();
+    if (!raw) return alert('Nothing pasted.');
+    const n = appData.cos.length;
+    const loaded = [];
+    raw.split('\n').forEach(line => {
+        const c = line.split('\t').map(s => s.trim());
+        if (c.length >= 1 + 2*n) {
+            loaded.push({
+                usn: c[0],
+                cie: c.slice(1, 1+n).map(v => num(v)),
+                see: c.slice(1+n, 1+2*n).map(v => num(v))
+            });
         }
-        if (withSee && s.seeMarks && s.seeMarks[c] != null) {
-          seeTotal++;
-          if (num(s.seeMarks[c]) >= seeThr) seeAbove++;
+    });
+    if (!loaded.length) return alert(`Invalid format. Expected ${1+2*n} tab-separated columns.`);
+    appData.students = loaded; renderAll();
+    alert(`Loaded ${loaded.length} student records.`);
+}
+
+/* ---------- ATTAINMENT ---------- */
+function computeAttainment() {
+    const threshold = num(document.getElementById('threshold') ? document.getElementById('threshold').value : appData.info.threshold, 60);
+    const cieWt = num(document.getElementById('cieWeight') ? document.getElementById('cieWeight').value : appData.info.cieWeight, 50) / 100;
+    const seeWt = num(document.getElementById('seeWeight') ? document.getElementById('seeWeight').value : appData.info.seeWeight, 50) / 100;
+    const maxCie = Math.max(1, num(document.getElementById('maxCie') ? document.getElementById('maxCie').value : appData.info.maxCie, 10));
+    const maxSee = Math.max(1, num(document.getElementById('maxSee') ? document.getElementById('maxSee').value : appData.info.maxSee, 20));
+
+    const total = appData.students.length;
+    const levels = [];
+    const coScores = [];
+
+    appData.cos.forEach((co, cIdx) => {
+        let ciePass = 0, seePass = 0;
+        if (total > 0) {
+            appData.students.forEach(st => {
+                if (((st.cie[cIdx] || 0) / maxCie) * 100 >= threshold) ciePass++;
+                if (((st.see[cIdx] || 0) / maxSee) * 100 >= threshold) seePass++;
+            });
         }
-      });
-      STATE.ciePcts[c] = cieTotal ? (cieAbove / cieTotal) * 100 : 0;
-      if (withSee) {
-        STATE.seePcts[c] = seeTotal ? (seeAbove / seeTotal) * 100 : 0;
-      }
-    }
-  }
+        const ciePct = total ? (ciePass / total) * 100 : 0;
+        const seePct = total ? (seePass / total) * 100 : 0;
+        const cieLvl = ciePct >= 80 ? 3.0 : (ciePct >= 70 ? 2.0 : (ciePct >= 60 ? 1.0 : 0.5));
+        const seeLvl = seePct >= 80 ? 3.0 : (seePct >= 70 ? 2.0 : (seePct >= 60 ? 1.0 : 0.5));
+        const combined = (cieLvl * cieWt) + (seeLvl * seeWt);
+        const indirect = appData.indirect[cIdx] != null ? appData.indirect[cIdx] : 2.5;
+        const final = (combined * 0.8) + (indirect * 0.2);
+        levels.push({ co, ciePct, seePct, cieLvl, seeLvl, combined, indirect, final });
+        coScores.push(final);
+    });
 
-  // Refresh visible inputs
-  for (let i = 0; i < STATE.coCount; i++) {
-    const elCie = $('cie_' + i);
-    if (elCie) elCie.value = STATE.ciePcts[i].toFixed(1);
-    const elSee = $('see_' + i);
-    if (elSee) elSee.value = STATE.seePcts[i].toFixed(1);
-  }
+    const poValues = poHeaders.map((_, pIdx) => {
+        let sum = 0, wsum = 0;
+        appData.cos.forEach((_, cIdx) => {
+            const w = (appData.copoMatrix[cIdx] && appData.copoMatrix[cIdx][pIdx]) || 0;
+            if (w > 0) { sum += (coScores[cIdx] || 0) * w; wsum += w; }
+        });
+        return wsum > 0 ? (sum / wsum) : 0;
+    });
 
-  $('chipThreshold').textContent = thrPct + '%';
-
-  if (!silent) calculateAll();
-  return STATE.ciePcts;
+    return { levels, coScores, poValues, maxCie, maxSee };
 }
 
-/* ====================================================================
-   MAIN CALCULATION
-   ==================================================================== */
-function calculateAll() {
-  const coCount = STATE.coCount;
-  const indirectOn = $('indirectMode').value === 'yes';
-  STATE.indirectOn = indirectOn;
+function renderAttainment() {
+    const { levels, poValues, maxCie, maxSee } = computeAttainment();
+    
+    const cieColHead = document.getElementById('cieColHead');
+    const seeColHead = document.getElementById('seeColHead');
+    if (cieColHead) cieColHead.innerHTML = `CIE Direct (3.0)<div class="text-[10px] text-indigo-600 font-normal">Max: ${maxCie}</div>`;
+    if (seeColHead) seeColHead.innerHTML = `SEE Direct (3.0)<div class="text-[10px] text-emerald-600 font-normal">Max: ${maxSee}</div>`;
 
-  let cieW = num($('cieWeight').value) / 100;
-  let seeW = num($('seeWeight').value) / 100;
-  const sumW = cieW + seeW;
-  if (sumW > 0) { cieW /= sumW; seeW /= sumW; } else { cieW = 0.5; seeW = 0.5; }
-  const target = num($('target').value) || 2.00;
+    document.getElementById('attainmentBody').innerHTML = levels.map(r => `
+        <tr class="border-b hover:bg-slate-50">
+            <td class="p-2 font-bold border">${esc(r.co.id)}</td>
+            <td class="p-2 border">${r.cieLvl.toFixed(2)}<div class="text-[9px] text-slate-500">${r.ciePct.toFixed(1)}% attained</div></td>
+            <td class="p-2 border">${r.seeLvl.toFixed(2)}<div class="text-[9px] text-slate-500">${r.seePct.toFixed(1)}% attained</div></td>
+            <td class="p-2 border font-semibold">${r.combined.toFixed(2)}</td>
+            <td class="p-2 border">${r.indirect.toFixed(2)}</td>
+            <td class="p-2 border font-bold bg-slate-50">${r.final.toFixed(2)}</td>
+            <td class="p-2 border">${r.final>=2.0?'<span class="text-emerald-600 font-bold">Attained</span>':'<span class="text-amber-600 font-bold">Action Req</span>'}</td>
+        </tr>`).join('');
 
-  $('sigFaculty').textContent = $('faculty').value || '—';
-  $('sigDept').textContent    = $('department').value || '—';
-
-  const finalCO = [];
-  let sumFinal = 0;
-  for (let i = 0; i < coCount; i++) {
-    const cieLvl = getLevel(STATE.ciePcts[i] || 0);
-    const seeLvl = getLevel(STATE.seePcts[i] || 0);
-    const direct = cieLvl * cieW + seeLvl * seeW;
-    const ind    = indirectOn ? (STATE.indirect[i] || 0) : 0;
-    const final  = indirectOn
-      ? (direct * DIRECT_SHARE + ind * INDIRECT_SHARE)
-      : direct;
-
-    finalCO[i] = final;
-    sumFinal  += final;
-
-    const setTxt = (id, v) => { const el = $(id); if (el) el.textContent = v; };
-    setTxt('cieLvl_' + i, cieLvl);
-    setTxt('seeLvl_' + i, seeLvl);
-    setTxt('direct_' + i, direct.toFixed(2));
-    setTxt('final_'  + i, final.toFixed(2));
-    setTxt('status_' + i, statusOf(final, target));
-  }
-  const avgCO = coCount ? sumFinal / coCount : 0;
-  STATE.finalCO = finalCO;
-
-  const poResults = [], psoResults = [];
-  for (let p = 0; p < PO_COUNT; p++) {
-    const matrix = [];
-    for (let c = 0; c < coCount; c++) {
-      const el = $('m_co' + c + '_po' + p);
-      matrix.push(el ? num(el.value) : 0);
-    }
-    poResults.push(programAttainment(finalCO, matrix, coCount, target));
-  }
-  for (let p = 0; p < PSO_COUNT; p++) {
-    const matrix = [];
-    for (let c = 0; c < coCount; c++) {
-      const el = $('m_co' + c + '_pso' + p);
-      matrix.push(el ? num(el.value) : 0);
-    }
-    psoResults.push(programAttainment(finalCO, matrix, coCount, target));
-  }
-  STATE.poResults  = poResults;
-  STATE.psoResults = psoResults;
-  STATE.avgCO      = avgCO;
-  STATE.target     = target;
-  STATE.cieW = cieW; STATE.seeW = seeW;
-
-  renderDashboards();
-  renderAudit();
-  renderFormula(cieW, seeW, target);
+    document.getElementById('poSummaryHead').innerHTML = poHeaders.map(p => `<th class="p-2 border">${p}</th>`).join('');
+    document.getElementById('poSummaryRow').innerHTML = poValues.map(v =>
+        `<td class="p-2 border font-bold ${v>=2.0?'text-emerald-600':(v>0?'text-amber-600':'text-slate-400')}">${v.toFixed(2)}</td>`
+    ).join('');
 }
 
-function programAttainment(coValues, matrix, coCount, target) {
-  let numerator = 0, matrixSum = 0;
-  for (let c = 0; c < coCount; c++) {
-    numerator += coValues[c] * matrix[c];
-    matrixSum += matrix[c];
-  }
-  const avgMatrix = coCount ? matrixSum / coCount : 0;
-  const denominator = avgMatrix * coCount;
-  const att = denominator > 0 ? numerator / denominator : 0;
-  return {
-    att, numerator, matrixSum, avgMatrix, denominator,
-    status: att > 0 ? statusOf(att, target) : '—',
-  };
+/* ---------- SAVE / LOAD ---------- */
+function saveDraft() {
+    try { localStorage.setItem('nba_course_file_v4', JSON.stringify(appData)); alert('Draft saved.'); }
+    catch (e) { alert('Save failed: ' + e.message); }
+}
+function loadDraft() {
+    try {
+        const s = localStorage.getItem('nba_course_file_v4');
+        if (s) appData = deepMerge(JSON.parse(JSON.stringify(DEFAULT_DATA)), JSON.parse(s));
+    } catch (e) { console.warn('Draft load failed', e); }
+}
+function exportJSON() {
+    const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `NBA_Course_File_${(appData.info.courseTitle.match(/^[A-Z0-9]+/i)||['Course'])[0]}.json`;
+    a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = evt => {
+        try {
+            appData = deepMerge(JSON.parse(JSON.stringify(DEFAULT_DATA)), JSON.parse(evt.target.result));
+            renderAll(); bindInfoFields(); alert('Imported.');
+        } catch (err) { alert('Invalid JSON.'); }
+        e.target.value = '';
+    };
+    r.readAsText(f);
+}
+function resetToSample() {
+    if (!confirm('Replace current data with the built-in sample?')) return;
+    appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    renderAll(); bindInfoFields(); alert('Sample data restored.');
 }
 
-/* ====================================================================
-   DASHBOARDS / AUDIT / FORMULA
-   ==================================================================== */
-function renderDashboards() {
-  const target = STATE.target || 2.0;
-
-  let html = '<div class="dash-label">Course Outcomes (CO)</div><div class="dash-grid">';
-  STATE.finalCO.forEach((v, i) => {
-    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
-    html += `<div class="metric ${cls}"><h4>CO${i + 1}</h4>
-      <div class="v">${v.toFixed(2)}<small>/3.0</small></div></div>`;
-  });
-  html += '</div>';
-  $('dashCO').innerHTML = html;
-
-  html = '<div class="dash-label">Program Outcomes (PO)</div><div class="dash-grid">';
-  STATE.poResults.forEach((r, i) => {
-    const v   = r.att;
-    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
-    html += `<div class="metric ${cls}"><h4>PO${i + 1}</h4>
-      <div class="v">${v > 0 ? v.toFixed(2) : '—'}<small>/3.0</small></div></div>`;
-  });
-  html += '</div>';
-  $('dashPO').innerHTML = html;
-
-  html = '<div class="dash-label">Program Specific Outcomes (PSO)</div><div class="dash-grid">';
-  STATE.psoResults.forEach((r, i) => {
-    const v   = r.att;
-    const cls = v >= target ? 'ok' : (v > 0 ? 'no' : '');
-    html += `<div class="metric ${cls}"><h4>PSO${i + 1}</h4>
-      <div class="v">${v > 0 ? v.toFixed(2) : '—'}<small>/3.0</small></div></div>`;
-  });
-  html += '</div>';
-  $('dashPSO').innerHTML = html;
-}
-
-function renderAudit() {
-  let body = '';
-  const push = (label, r) => {
-    body += `<tr>
-      <td class="row-label">${label}</td>
-      <td>${r.numerator.toFixed(2)}</td>
-      <td>${r.avgMatrix.toFixed(2)}</td>
-      <td>${STATE.coCount}</td>
-      <td>${r.denominator.toFixed(2)}</td>
-      <td><b>${r.att > 0 ? r.att.toFixed(2) : '—'}</b></td>
-      <td>${badgeFor(r.status)}</td>
-    </tr>`;
-  };
-  STATE.poResults.forEach((r, i)  => push('PO'  + (i + 1), r));
-  STATE.psoResults.forEach((r, i) => push('PSO' + (i + 1), r));
-  $('auditBody').innerHTML = body || '<tr><td colspan="7" style="padding:14px;color:#889">No results yet.</td></tr>';
-}
-
-function renderFormula(cieW, seeW, target) {
-  const on = STATE.indirectOn;
-  const modeLine = on
-    ? `<b>Mode</b> = Indirect <span style="color:#0b6b3a">INCLUDED</span> → <code>Direct 80% + Indirect 20%</code>`
-    : `<b>Mode</b> = Indirect <span style="color:#b42318">NOT USED</span> → <code>CIE 50% + SEE 50%</code>`;
-
-  const finalLine = on
-    ? `<code>Final CO = (Direct CO × 80%) + (Indirect × 20%)</code>`
-    : `<code>Final CO = Direct CO</code>`;
-
-  let entryLine;
-  if (STATE.entryMode === 'final') {
-    entryLine = `<b>Entry</b> = Final CIE + SEE · CIE max = ${$('cieMaxMarks').value}, SEE max = ${$('seeMaxMarks').value}`;
-  } else if (STATE.seeInPaste) {
-    entryLine = `<b>Entry</b> = CO-wise with pasted SEE · CIE max/CO = ${$('maxMarks').value}, SEE max/CO = ${$('maxSeeMarks').value}`;
-  } else {
-    entryLine = `<b>Entry</b> = CO-wise CIE only · CIE max/CO = ${$('maxMarks').value} · SEE % entered manually`;
-  }
-
-  $('formulaBox').innerHTML = `
-    ${entryLine}<br>
-    ${modeLine}<br>
-    <b>CIE weight</b> = ${(cieW * 100).toFixed(0)}% &nbsp;|&nbsp;
-    <b>SEE weight</b> = ${(seeW * 100).toFixed(0)}% &nbsp;|&nbsp;
-    <b>Target</b> = ${target.toFixed(2)} / 3.00<br>
-    <code>Direct CO = (CIE Level × ${(cieW * 100).toFixed(0)}%) + (SEE Level × ${(seeW * 100).toFixed(0)}%)</code><br>
-    ${finalLine}<br>
-    <b>Level scale</b> (students % above threshold):
-    ≥70% → 3 &nbsp;•&nbsp; 60–69% → 2 &nbsp;•&nbsp; 50–59% → 1 &nbsp;•&nbsp; &lt;50% → 0
-  `;
-}
-
-/* ====================================================================
-   EXCEL EXPORT
-   ==================================================================== */
-function exportExcel() {
-  calculateAll();
-  const courseCode = $('courseCode').value || 'COURSE';
-  const ay         = $('academicYear').value || '2025-26';
-
-  const wb = XLSX.utils.book_new();
-
-  const coRows = [
-    ['CO Attainment Detail'],
-    ['Course', courseCode, 'Academic Year', ay, 'Target', STATE.target],
-    ['Entry Mode', STATE.entryMode === 'final' ? 'Final CIE + SEE'
-                  : STATE.seeInPaste ? 'CO-wise (CIE + SEE)' : 'CO-wise (CIE only)'],
-    ['Mode', STATE.indirectOn ? 'Indirect included — 80 : 20 (Direct : Indirect)'
-                              : 'Direct only — 50 : 50 (CIE : SEE)'],
-    [],
-    ['CO', 'CIE %', 'CIE Level', 'SEE %', 'SEE Level', 'Direct', 'Indirect', 'Final', 'Status'],
-  ];
-  for (let i = 0; i < STATE.coCount; i++) {
-    const direct = getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW;
-    coRows.push([
-      'CO' + (i + 1),
-      STATE.ciePcts[i].toFixed(1),
-      getLevel(STATE.ciePcts[i]),
-      STATE.seePcts[i].toFixed(1),
-      getLevel(STATE.seePcts[i]),
-      direct.toFixed(2),
-      STATE.indirectOn ? STATE.indirect[i].toFixed(2) : '0.00',
-      STATE.finalCO[i].toFixed(2),
-      statusOf(STATE.finalCO[i], STATE.target),
-    ]);
-  }
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(coRows), 'CO_Attainment');
-
-  const poRows = [
-    ['PO / PSO Attainment'], [],
-    ['Metric', 'Σ(CO×Matrix)', 'Avg Matrix', 'No. COs', 'Denominator', 'Attainment', 'Status'],
-  ];
-  STATE.poResults.forEach((r, i) =>
-    poRows.push(['PO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2),
-      STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2), r.status]));
-  STATE.psoResults.forEach((r, i) =>
-    poRows.push(['PSO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2),
-      STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2), r.status]));
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(poRows), 'PO_PSO');
-
-  const mHead = ['CO', ...Array.from({ length: PO_COUNT }, (_, i) => 'PO' + (i + 1)),
-                        ...Array.from({ length: PSO_COUNT }, (_, i) => 'PSO' + (i + 1))];
-  const mRows = [mHead];
-  for (let c = 0; c < STATE.coCount; c++) {
-    const row = ['CO' + (c + 1)];
-    for (let p = 0; p < PO_COUNT; p++)  row.push(num($('m_co' + c + '_po' + p).value));
-    for (let p = 0; p < PSO_COUNT; p++) row.push(num($('m_co' + c + '_pso' + p).value));
-    mRows.push(row);
-  }
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mRows), 'Matrices');
-
-  XLSX.writeFile(wb, `Attainment_${courseCode}_${ay}.xlsx`);
-  showAlert('Excel workbook downloaded.', 'ok');
-}
-
-/* ====================================================================
-   PDF EXPORT
-   ==================================================================== */
-function exportPDF() {
-  try {
-    calculateAll();
+/* ---------- PROFESSIONAL PDF ---------- */
+function exportCompletePDF() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const doc = new jsPDF('p','mm','a4');
+    const PW = doc.internal.pageSize.getWidth();
+    const PH = doc.internal.pageSize.getHeight();
+    const M = 14;
+    let y = M;
 
-    const college = 'Basaveshwar Engineering College';
-    const dept    = $('department').value || '';
-    const course  = $('courseCode').value || '';
-    const cName   = $('courseName').value || '';
-    const ay      = $('academicYear').value || '';
-    const sem     = $('semester').value || '';
-    const div     = $('division').value || '';
-    const staff   = $('faculty').value || '';
+    const pageHeader = (title) => {
+        doc.setFillColor(67, 56, 202);
+        doc.rect(0, 0, PW, 11, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.text(String(appData.info.collegeName || 'NBA COURSE FILE').slice(0, 70), M, 7);
+        doc.text(String(title || '').slice(0, 50), PW - M, 7, { align: 'right' });
+        doc.setTextColor(0, 0, 0);
+        y = 20;
+    };
+
+    const sectionTitle = (num, title) => {
+        if (y > PH - 35) { doc.addPage(); pageHeader(title); }
+        doc.setFillColor(238, 242, 255);
+        doc.rect(M, y, PW - 2 * M, 8, 'F');
+        doc.setTextColor(67, 56, 202);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10.5);
+        doc.text(`${num}. ${title}`, M + 2, y + 5.5);
+        doc.setTextColor(0, 0, 0);
+        y += 12;
+    };
+
+    const paragraph = (text, size = 9) => {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(size);
+        const lines = doc.splitTextToSize(text || '', PW - 2 * M);
+        lines.forEach(line => {
+            if (y > PH - 20) { doc.addPage(); pageHeader('Continued'); }
+            doc.text(line, M, y);
+            y += size * 0.5;
+        });
+        y += 2;
+    };
+
+    /* ---------- COVER PAGE ---------- */
+    doc.setDrawColor(67, 56, 202);
+    doc.setLineWidth(1.2);
+    doc.rect(8, 8, PW - 16, PH - 16);
+    doc.setLineWidth(0.4);
+    doc.rect(11, 11, PW - 22, PH - 22);
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text(college.toUpperCase(), 148.5, 12, { align: 'center' });
+    doc.setTextColor(67, 56, 202);
+    doc.text((appData.info.collegeName || '').toUpperCase(), PW / 2, 28, { align: 'center' });
+    doc.setFontSize(9.5);
+    doc.setTextColor(90, 90, 90);
+    doc.text((appData.info.university || ''), PW / 2, 35, { align: 'center' });
     doc.setFontSize(10);
-    doc.text(dept.toUpperCase(), 148.5, 17, { align: 'center' });
-    doc.setDrawColor(15, 47, 87);
-    doc.setFillColor(232, 238, 246);
-    doc.rect(55, 20, 187, 6, 'FD');
-    doc.setFontSize(8.5);
-    doc.text('COURSE & PROGRAM OUTCOME (CO–PO–PSO) ATTAINMENT REPORT', 148.5, 24, { align: 'center' });
+    doc.text((appData.info.facultyDept || '').toUpperCase(), PW / 2, 42, { align: 'center' });
 
-    const baseStyle = {
-      theme: 'grid',
-      styles: { fontSize: 6.8, cellPadding: 0.8, halign: 'center', valign: 'middle',
-                lineColor: [140, 150, 165], lineWidth: 0.1, textColor: [15, 23, 42] },
-      headStyles: { fillColor: [232, 238, 246], textColor: [15, 47, 87], fontStyle: 'bold',
-                    lineColor: [120, 140, 165], lineWidth: 0.15 },
-    };
+    doc.setFontSize(22);
+    doc.setTextColor(0, 0, 0);
+    doc.text('COURSE FILE', PW / 2, 65, { align: 'center' });
 
-    let y = 30;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(90, 90, 90);
+    doc.text('Outcome-Based Education (OBE) Format', PW / 2, 73, { align: 'center' });
+    doc.text('NBA Accreditation Submission', PW / 2, 79, { align: 'center' });
 
-    doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
-      head: [['Academic Year', 'Course Code', 'Course Title', 'Sem / Div', 'Faculty', 'Target', 'Mode', 'Entry']],
-      body: [[ay, course, cName, `Sem ${sem} / Div ${div}`, staff,
-              STATE.target.toFixed(2) + ' / 3.00',
-              STATE.indirectOn ? 'Indirect 80 : 20' : 'Direct 50 : 50',
-              STATE.entryMode === 'final' ? 'Final CIE + SEE'
-                : STATE.seeInPaste ? 'CO-wise CIE + SEE' : 'CO-wise CIE']],
-      styles: { ...baseStyle.styles, fontSize: 7.2 },
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(M + 6, 92, PW - 2 * (M + 6), 92, 'FD');
+
+    doc.setTextColor(67, 56, 202);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('COURSE DETAILS', PW / 2, 101, { align: 'center' });
+
+    const rows = [
+        ['Course Code & Title', appData.info.courseTitle],
+        ['Program / Branch', appData.info.programName],
+        ['Academic Year', appData.info.acadYear],
+        ['Semester', appData.info.semester],
+        ['Regulation', appData.info.regulation],
+        ['Credits (L-T-P-C)', appData.info.credits],
+        ['CIE / SEE Weightage', `${appData.info.cieWeight}% / ${appData.info.seeWeight}%`],
+        ['Max Marks / CO', `CIE: ${appData.info.maxCie || 10} | SEE: ${appData.info.maxSee || 20}`]
+    ];
+    doc.setFontSize(9.5);
+    let ly = 111;
+    rows.forEach(([k, v]) => {
+        doc.setTextColor(60, 60, 60); doc.setFont('helvetica', 'bold'); doc.text(k, M + 12, ly);
+        doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'normal'); doc.text(String(v || ''), M + 68, ly);
+        ly += 8;
     });
-    y = doc.lastAutoTable.finalY + 4;
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
-    doc.text('1. COURSE OUTCOME (CO) ATTAINMENT', 10, y); y += 2;
-    const coBody = STATE.finalCO.map((_, i) => [
-      'CO' + (i + 1),
-      STATE.ciePcts[i].toFixed(1) + '%', getLevel(STATE.ciePcts[i]),
-      STATE.seePcts[i].toFixed(1) + '%', getLevel(STATE.seePcts[i]),
-      (getLevel(STATE.ciePcts[i]) * STATE.cieW + getLevel(STATE.seePcts[i]) * STATE.seeW).toFixed(2),
-      STATE.indirectOn ? STATE.indirect[i].toFixed(2) : '—',
-      STATE.finalCO[i].toFixed(2),
-      statusOf(STATE.finalCO[i], STATE.target),
-    ]);
+    doc.setTextColor(67, 56, 202); doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text('FACULTY IN-CHARGE', PW / 2, 200, { align: 'center' });
+    doc.setTextColor(0, 0, 0); doc.setFontSize(12);
+    doc.text(appData.info.facultyName || '', PW / 2, 210, { align: 'center' });
+    doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
+    doc.text(`${appData.info.facultyDesignation || ''} | ${appData.info.facultyDept || ''}`, PW / 2, 217, { align: 'center' });
+    doc.text(`Employee ID: ${appData.info.facultyId || ''}`, PW / 2, 224, { align: 'center' });
+    doc.text(appData.info.facultyEmail || '', PW / 2, 231, { align: 'center' });
+
+    doc.setFontSize(8); doc.setTextColor(120, 120, 120);
+    doc.text(`Generated on ${new Date().toLocaleString()}`, PW / 2, PH - 18, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+
+    /* ---------- SECTION 1 ---------- */
+    doc.addPage(); pageHeader('Course & Faculty Information');
+    sectionTitle('1', 'Institution, Course & Faculty Information');
     doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
-      head: [['CO', 'CIE %', 'Lvl', 'SEE %', 'Lvl', 'Direct', 'Indirect', 'Final', 'Status']],
-      body: coBody,
+        startY: y,
+        body: [
+            ['College', appData.info.collegeName, 'University', appData.info.university],
+            ['Academic Year', appData.info.acadYear, 'Semester', appData.info.semester],
+            ['Course Code & Title', appData.info.courseTitle, 'Program', appData.info.programName],
+            ['Regulation', appData.info.regulation, 'Credits', appData.info.credits],
+            ['CIE Weight', `${appData.info.cieWeight}%`, 'SEE Weight', `${appData.info.seeWeight}%`],
+            ['CIE Max / CO', `${appData.info.maxCie || 10}`, 'SEE Max / CO', `${appData.info.maxSee || 20}`],
+            ['Target Threshold', `${appData.info.threshold}%`, '—', ''],
+            ['Faculty Name', appData.info.facultyName, 'Designation', appData.info.facultyDesignation],
+            ['Employee ID', appData.info.facultyId, 'Department', appData.info.facultyDept],
+            ['Email', appData.info.facultyEmail, 'Specialization', appData.info.facultySpecialization]
+        ],
+        theme: 'grid',
+        styles: { fontSize: 8.5, cellPadding: 2.2 },
+        columnStyles: {
+            0: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 34 },
+            2: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 34 }
+        }
     });
-    y = doc.lastAutoTable.finalY + 4;
+    y = doc.lastAutoTable.finalY + 5;
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
-    doc.text('2. CO–PO & CO–PSO ARTICULATION MATRICES', 10, y); y += 2;
+    /* ---------- SECTION 2 ---------- */
+    sectionTitle('2', 'Prerequisites & Course Objectives');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5);
+    doc.text('Prerequisites:', M, y); y += 5;
+    paragraph(appData.info.prerequisites || '—');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5);
+    doc.text('Course Objectives:', M, y); y += 5;
+    paragraph(appData.info.courseObjectives || '—');
 
-    const poHead = ['CO', ...Array.from({ length: PO_COUNT }, (_, i) => 'P' + (i + 1))];
-    const poBody = [];
-    for (let c = 0; c < STATE.coCount; c++) {
-      const row = ['CO' + (c + 1)];
-      for (let p = 0; p < PO_COUNT; p++) row.push(num($('m_co' + c + '_po' + p).value));
-      poBody.push(row);
-    }
+    /* ---------- SECTION 3 ---------- */
+    sectionTitle('3', 'Course Outcomes');
     doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 10 }, tableWidth: 200,
-      head: [poHead], body: poBody,
+        startY: y > PH - 40 ? 25 : y,
+        head: [['CO', 'Statement']],
+        body: appData.cos.map(co => [co.id, co.text]),
+        theme: 'grid',
+        styles: { fontSize: 9, cellPadding: 2.2, valign: 'top' },
+        headStyles: { fillColor: [67, 56, 202] },
+        columnStyles: { 0: { cellWidth: 18, fontStyle: 'bold', halign: 'center' } }
     });
-    const poEndY = doc.lastAutoTable.finalY;
+    y = doc.lastAutoTable.finalY + 5;
 
-    const psoBody = [];
-    for (let c = 0; c < STATE.coCount; c++) {
-      const row = ['CO' + (c + 1)];
-      for (let p = 0; p < PSO_COUNT; p++) row.push(num($('m_co' + c + '_pso' + p).value));
-      psoBody.push(row);
-    }
+    /* ---------- SECTION 4 ---------- */
+    sectionTitle('4', 'Textbooks & References');
+    paragraph(appData.info.textbooks || '—');
+
+    /* ---------- SECTION 5 ---------- */
+    sectionTitle('5', 'CO-PO & PSO Mapping Matrix');
     doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 216 }, tableWidth: 69,
-      head: [['CO', 'PSO1', 'PSO2', 'PSO3']], body: psoBody,
+        startY: y > PH - 40 ? 25 : y,
+        head: [['CO', ...poHeaders]],
+        body: appData.cos.map((co, i) => [co.id, ...(appData.copoMatrix[i] || Array(poHeaders.length).fill(0))]),
+        theme: 'grid',
+        styles: { fontSize: 7, cellPadding: 1.5, halign: 'center' },
+        headStyles: { fillColor: [67, 56, 202], fontSize: 7 },
+        columnStyles: { 0: { fontStyle: 'bold', halign: 'left' } }
     });
-    y = Math.max(poEndY, doc.lastAutoTable.finalY) + 4;
+    y = doc.lastAutoTable.finalY + 5;
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
-    doc.text('3. PO & PSO ATTAINMENT', 10, y); y += 2;
-    const head = ['Metric', ...Array.from({ length: PO_COUNT }, (_, i) => 'PO' + (i + 1)),
-                            ...Array.from({ length: PSO_COUNT }, (_, i) => 'PSO' + (i + 1))];
-    const attRow    = ['Attainment'];
-    const statusRow = ['Status'];
-    STATE.poResults.forEach(r  => { attRow.push(r.att > 0 ? r.att.toFixed(2) : '—'); statusRow.push(r.status); });
-    STATE.psoResults.forEach(r => { attRow.push(r.att > 0 ? r.att.toFixed(2) : '—'); statusRow.push(r.status); });
+    /* ---------- SECTION 6 & 7 ---------- */
+    doc.addPage(); pageHeader('Student Marks – CIE & SEE');
+    sectionTitle('6', `CIE Marks (Continuous Internal Evaluation - Max ${appData.info.maxCie || 10})`);
     doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
-      head: [head], body: [attRow, statusRow],
-      styles: { ...baseStyle.styles, fontSize: 6.2 },
-      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 24 } },
+        startY: y,
+        head: [['#', 'USN', ...appData.cos.map(c => `CIE ${c.id}`)]],
+        body: appData.students.map((st, i) => [i + 1, st.usn, ...st.cie.map(v => v || 0)]),
+        theme: 'striped',
+        styles: { fontSize: 8, cellPadding: 1.5, halign: 'center' },
+        headStyles: { fillColor: [67, 56, 202] },
+        columnStyles: { 1: { halign: 'left' } }
+    });
+    y = doc.lastAutoTable.finalY + 5;
+
+    sectionTitle('7', `SEE Marks (Semester End Examination - Max ${appData.info.maxSee || 20})`);
+    doc.autoTable({
+        startY: y > PH - 40 ? 25 : y,
+        head: [['#', 'USN', ...appData.cos.map(c => `SEE ${c.id}`)]],
+        body: appData.students.map((st, i) => [i + 1, st.usn, ...st.see.map(v => v || 0)]),
+        theme: 'striped',
+        styles: { fontSize: 8, cellPadding: 1.5, halign: 'center' },
+        headStyles: { fillColor: [67, 56, 202] },
+        columnStyles: { 1: { halign: 'left' } }
+    });
+    y = doc.lastAutoTable.finalY + 5;
+
+    /* ---------- SECTION 8 ---------- */
+    doc.addPage(); pageHeader('Attainment Analysis');
+    sectionTitle('8', 'CO Attainment Summary');
+    const att = computeAttainment();
+    doc.autoTable({
+        startY: y,
+        head: [['CO', `CIE Lvl (/${att.maxCie})`, `SEE Lvl (/${att.maxSee})`, 'Combined Direct', 'Indirect', 'Final', 'Status']],
+        body: att.levels.map(r => [
+            r.co.id, r.cieLvl.toFixed(2), r.seeLvl.toFixed(2), r.combined.toFixed(2),
+            r.indirect.toFixed(2), r.final.toFixed(2), r.final >= 2.0 ? 'Attained' : 'Action Required'
+        ]),
+        theme: 'grid',
+        styles: { fontSize: 8.5, cellPadding: 2, halign: 'center' },
+        headStyles: { fillColor: [67, 56, 202] },
+        columnStyles: { 0: { fontStyle: 'bold' } }
+    });
+    y = doc.lastAutoTable.finalY + 5;
+
+    /* ---------- SECTION 9 ---------- */
+    if (y > PH - 60) { doc.addPage(); pageHeader('PO / PSO Attainment'); }
+    sectionTitle('9', 'Program Outcomes (PO) & PSO Attainment Summary');
+
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(90, 90, 90);
+    const mapped = att.poValues.filter(v => v > 0).length;
+    const attained = att.poValues.filter(v => v >= 2.0).length;
+    doc.text(`Target: 2.00   |   Attained: ${attained} of ${mapped} mapped outcomes`, M, y);
+    y += 5; doc.setTextColor(0, 0, 0);
+
+    doc.autoTable({
+        startY: y,
+        head: [poHeaders],
+        body: [att.poValues.map(v => v.toFixed(2))],
+        theme: 'grid',
+        styles: { fontSize: 7.5, halign: 'center', cellPadding: 2, fontStyle: 'bold' },
+        headStyles: { fillColor: [67, 56, 202], fontSize: 7.5 },
+        didParseCell: (d) => {
+            if (d.section === 'body') {
+                const v = parseFloat(d.cell.raw);
+                if (!isNaN(v)) {
+                    if (v >= 2.0) d.cell.styles.textColor = [22, 163, 74];
+                    else if (v > 0) d.cell.styles.textColor = [217, 119, 6];
+                    else d.cell.styles.textColor = [148, 163, 184];
+                }
+            }
+        }
     });
     y = doc.lastAutoTable.finalY + 3;
+    doc.setFontSize(7); doc.setTextColor(120, 120, 120);
+    doc.text('Legend:  Green = attained (>= 2.00)   Orange = action required (> 0)   Grey = not mapped (0)', M, y);
+    y += 5; doc.setTextColor(0, 0, 0);
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
-    doc.text('4. CALCULATION AUDIT', 10, y); y += 2;
-    const auditBody = [];
-    STATE.poResults.forEach((r, i)  => auditBody.push(['PO'  + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2), STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2)]));
-    STATE.psoResults.forEach((r, i) => auditBody.push(['PSO' + (i + 1), r.numerator.toFixed(2), r.avgMatrix.toFixed(2), STATE.coCount, r.denominator.toFixed(2), r.att.toFixed(2)]));
+    /* ---------- SECTION 10 ---------- */
+    doc.addPage(); pageHeader('Lesson Plan & Timetable');
+    sectionTitle('10', 'Lesson Plan Schedule');
     doc.autoTable({
-      ...baseStyle, startY: y, margin: { left: 10, right: 10 },
-      head: [['Metric', 'Σ(CO×Matrix)', 'Avg Matrix', 'No. COs', 'Denominator', 'Attainment']],
-      body: auditBody,
-      styles: { ...baseStyle.styles, fontSize: 5.8, cellPadding: 0.5 },
+        startY: y,
+        head: [['Lec', 'Unit', 'Topic', 'Planned', 'Actual', 'Method', 'CO']],
+        body: appData.lessons.map(l => [l.lec, l.unit, l.topic, l.planned, l.actual, l.method, l.co]),
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 1.8 },
+        headStyles: { fillColor: [67, 56, 202] },
+        columnStyles: { 2: { cellWidth: 60 } }
     });
-    y = doc.lastAutoTable.finalY + 3;
+    y = doc.lastAutoTable.finalY + 5;
 
-    doc.setFont('helvetica', 'italic'); doc.setFontSize(6.3);
-    const note =
-      (STATE.indirectOn
-        ? `Direct CO = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%) | ` +
-          `Final CO = (Direct × 80%) + (Indirect × 20%)  [80 : 20] | `
-        : `Final CO = (CIE×${(STATE.cieW * 100).toFixed(0)}%) + (SEE×${(STATE.seeW * 100).toFixed(0)}%)  [50 : 50] | `) +
-      `Scale: ≥70%→3, 60–69%→2, 50–59%→1, <50%→0 | ` +
-      `PO/PSO = Σ(CO×Matrix) / (Avg Matrix × No. of COs) | Target ≥ ${STATE.target.toFixed(2)}`;
-    doc.text(note, 10, y);
+    /* ---------- SECTION 11 ---------- */
+    sectionTitle('11', 'Class Timetable');
+    doc.autoTable({
+        startY: y > PH - 40 ? 25 : y,
+        head: [['Day', 'Time Slot', 'Subject', 'Room']],
+        body: appData.timetable.map(t => [t.day, t.time, t.subject, t.room]),
+        theme: 'grid',
+        styles: { fontSize: 8.5, cellPadding: 2 },
+        headStyles: { fillColor: [67, 56, 202] }
+    });
+    y = doc.lastAutoTable.finalY + 5;
 
-    const sigY = 197;
-    doc.setDrawColor(0); doc.setLineWidth(0.25);
-    doc.line(28, sigY, 95, sigY);
-    doc.line(202, sigY, 269, sigY);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(15, 47, 87);
-    doc.text(staff, 61.5, sigY + 4, { align: 'center' });
-    doc.text('Head of the Department', 235.5, sigY + 4, { align: 'center' });
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(80, 90, 105);
-    doc.text('Course Instructor / Faculty', 61.5, sigY + 7.5, { align: 'center' });
-    doc.text(dept, 235.5, sigY + 7.5, { align: 'center' });
+    /* ---------- SECTION 12 ---------- */
+    sectionTitle('12', 'Evidence Register');
+    doc.autoTable({
+        startY: y > PH - 40 ? 25 : y,
+        head: [['Item', 'Description', 'Type', 'Reference']],
+        body: appData.evidence.map(e => [e.id, e.title, e.type, e.link]),
+        theme: 'grid',
+        styles: { fontSize: 8.5, cellPadding: 2 },
+        headStyles: { fillColor: [67, 56, 202] }
+    });
+    y = doc.lastAutoTable.finalY + 8;
 
-    const now = new Date();
-    doc.setFontSize(5.8); doc.setTextColor(120, 130, 145);
-    doc.text(`Generated: ${now.toLocaleString()}  |  ${college}  |  Autonomous Institution`,
-      148.5, 208, { align: 'center' });
+    /* ---------- SECTION 13 ---------- */
+    if (y > PH - 70) { doc.addPage(); pageHeader('Approval & Signatures'); }
+    sectionTitle('13', 'Approval & Signatures');
+    y += 8;
+    const cols = 3, colW = (PW - 2 * M) / cols;
+    ['Prepared By', 'Verified By', 'Approved By'].forEach((title, i) => {
+        const x = M + i * colW;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.text(title, x + colW / 2, y, { align: 'center' });
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+        const role = ['Faculty In-Charge', 'HOD / NBA Coordinator', 'IQAC / Principal'][i];
+        doc.text(role, x + colW / 2, y + 6, { align: 'center' });
+        doc.line(x + 8, y + 38, x + colW - 8, y + 38);
+        doc.setFontSize(8);
+        doc.text('Signature & Date', x + colW / 2, y + 43, { align: 'center' });
+    });
 
-    doc.save(`CO_PO_PSO_${course}_${ay}.pdf`);
-    showAlert('PDF report downloaded.', 'ok');
-  } catch (e) {
-    console.error(e);
-    showAlert('PDF export failed: ' + e.message, 'err');
-  }
+    /* ---------- FOOTERS & PAGINATION ---------- */
+    const total = doc.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+        doc.setPage(i);
+        if (i === 1) continue;
+        doc.setFillColor(248, 250, 252);
+        doc.rect(0, PH - 10, PW, 10, 'F');
+        doc.setDrawColor(220, 220, 220);
+        doc.line(0, PH - 10, PW, PH - 10);
+        doc.setTextColor(100, 100, 100);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+        doc.text(String(appData.info.collegeName || '').slice(0, 55), M, PH - 4);
+        doc.text(`Page ${i} of ${total}`, PW / 2, PH - 4, { align: 'center' });
+        doc.text('NBA Course File', PW - M, PH - 4, { align: 'right' });
+        doc.setTextColor(0, 0, 0);
+    }
+
+    const code = (appData.info.courseTitle.match(/^[A-Z0-9]+/i) || ['Course'])[0];
+    const yr = (appData.info.acadYear || 'AY').replace(/\s+/g, '_');
+    doc.save(`NBA_Course_File_${code}_${yr}.pdf`);
 }
-
-/* ====================================================================
-   BOOT
-   ==================================================================== */
-window.addEventListener('DOMContentLoaded', () => {
-  const dz = $('dropzone');
-  const fi = $('fileInput');
-  dz.addEventListener('click', () => fi.click());
-  dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
-  dz.addEventListener('drop', (e) => {
-    e.preventDefault(); dz.classList.remove('drag');
-    handleFile(e.dataTransfer.files[0]);
-  });
-  fi.addEventListener('change', (e) => handleFile(e.target.files[0]));
-
-  // live recompute listeners
-  ['maxMarks', 'maxSeeMarks', 'studentThreshold', 'cieMaxMarks', 'seeMaxMarks'].forEach(id => {
-    const el = $(id);
-    if (el) el.addEventListener('input', () => {
-      if (STATE.students.length) computeFromData(false);
-      else calculateAll();
-    });
-  });
-  ['cieWeight', 'seeWeight', 'target'].forEach(id => {
-    const el = $(id);
-    if (el) el.addEventListener('input', calculateAll);
-  });
-
-  rebuildInputs();
-  updatePasteUI();
-});
 </script>
 </body>
 </html>
