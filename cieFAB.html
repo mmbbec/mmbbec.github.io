@@ -36,7 +36,8 @@
       .no-print {
         display: none !important;
       }
-      .print-page-break {
+      /* Only insert page break between A and B when BOTH are shown */
+      body.print-both #section-formatB {
         page-break-before: always;
         break-before: page;
       }
@@ -308,9 +309,9 @@
         </div>
       </section>
 
-      <!-- Print Page Separator -->
-      <div class="print-page-break my-10 no-print border-t-2 border-dashed border-slate-300 relative flex items-center justify-center">
-        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider -top-3">Print Page Break</span>
+      <!-- Screen-only visual divider (not printed; page break handled by CSS) -->
+      <div class="no-print my-10 border-t-2 border-dashed border-slate-300 relative flex items-center justify-center">
+        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider -top-3">Section Break</span>
       </div>
 
       <!-- ======================================================== -->
@@ -404,7 +405,7 @@
 
   <!-- Quick Add Row Modal for Format B (No Print) -->
   <div id="addModal" class="no-print fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 border border-slate-200">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i class="fa-solid fa-file-circle-plus text-emerald-600"></i>
@@ -493,95 +494,30 @@
     // ==========================================
     const COURSE_CATALOG = {
       "1": [
-        {
-          stream: "CSE Stream",
-          title: "Calculus and Linear Algebra",
-          code: "1BMAS101C",
-          label: "CSE Stream — Calculus and Linear Algebra (1BMAS101C)"
-        },
-        {
-          stream: "Civil Stream",
-          title: "Differential Calculus and Linear Algebra",
-          code: "1BMAC101C",
-          label: "Civil Stream — Differential Calculus and Linear Algebra (1BMAC101C)"
-        },
-        {
-          stream: "EEE Stream",
-          title: "Differential Calculus and Linear Algebra",
-          code: "1BMAE101C",
-          label: "EEE Stream — Differential Calculus and Linear Algebra (1BMAE101C)"
-        },
-        {
-          stream: "Mechanical Stream",
-          title: "Differential Calculus and Linear Algebra",
-          code: "1BMAM101C",
-          label: "Mechanical Stream — Differential Calculus and Linear Algebra (1BMAM101C)"
-        }
+        { stream: "CSE Stream", title: "Calculus and Linear Algebra", code: "1BMAS101C", label: "CSE Stream — Calculus and Linear Algebra (1BMAS101C)" },
+        { stream: "Civil Stream", title: "Differential Calculus and Linear Algebra", code: "1BMAC101C", label: "Civil Stream — Differential Calculus and Linear Algebra (1BMAC101C)" },
+        { stream: "EEE Stream", title: "Differential Calculus and Linear Algebra", code: "1BMAE101C", label: "EEE Stream — Differential Calculus and Linear Algebra (1BMAE101C)" },
+        { stream: "Mechanical Stream", title: "Differential Calculus and Linear Algebra", code: "1BMAM101C", label: "Mechanical Stream — Differential Calculus and Linear Algebra (1BMAM101C)" }
       ],
       "2": [
-        {
-          stream: "CSE Stream",
-          title: "Differential Equations And Numerical Methods For CSE Stream",
-          code: "1BMAS201C",
-          label: "CSE Stream — Differential Equations and Numerical Methods (1BMAS201C)"
-        },
-        {
-          stream: "Civil Stream",
-          title: "Calculus And Numerical Methods For CV Stream.",
-          code: "1BMAC201C",
-          label: "Civil Stream — Calculus and Numerical Methods (1BMAC201C)"
-        },
-        {
-          stream: "EEE Stream",
-          title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream",
-          code: "1BMAE201C",
-          label: "EEE Stream — Calculus, Laplace Transform and Numerical Methods (1BMAE201C)"
-        },
-        {
-          stream: "Mechanical Stream",
-          title: "Multivariable Calculus And Numerical Methods For ME Stream.",
-          code: "1BMAM201C",
-          label: "Mechanical Stream — Calculus and Numerical Methods (1BMAM201C)"
-        }
+        { stream: "CSE Stream", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", label: "CSE Stream — Differential Equations and Numerical Methods (1BMAS201C)" },
+        { stream: "Civil Stream", title: "Calculus And Numerical Methods For CV Stream.", code: "1BMAC201C", label: "Civil Stream — Calculus and Numerical Methods (1BMAC201C)" },
+        { stream: "EEE Stream", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", label: "EEE Stream — Calculus, Laplace Transform and Numerical Methods (1BMAE201C)" },
+        { stream: "Mechanical Stream", title: "Multivariable Calculus And Numerical Methods For ME Stream.", code: "1BMAM201C", label: "Mechanical Stream — Calculus and Numerical Methods (1BMAM201C)" }
       ],
       "3": [
-        {
-          stream: "CSE Stream",
-          title: "Mathematics for Computer Science",
-          code: "1BMAS301C",
-          label: "CSE Stream — Mathematics for Computer Science (1BMAS301C)"
-        },
-        {
-          stream: "Civil Stream",
-          title: "Mathematics for Civil Engineering",
-          code: "1BMAC301C",
-          label: "Civil Stream — Mathematics for Civil Engineering (1BMAC301C)"
-        },
-        {
-          stream: "EEE Stream",
-          title: "Mathematics for Electrical Engineering",
-          code: "1BMAE301C",
-          label: "EEE Stream — Mathematics for Electrical Engineering (1BMAE301C)"
-        },
-        {
-          stream: "Mechanical Stream",
-          title: "Mathematics for Mechanical Engineering",
-          code: "1BMAM301C",
-          label: "Mechanical Stream — Mathematics for Mechanical Engineering (1BMAM301C)"
-        },
-        {
-          stream: "Bridge Course",
-          title: "Bridge Course Mathematics-I",
-          code: "BMAB300M",
-          label: "Bridge Course Mathematics-I (BMAB300M)"
-        }
+        { stream: "CSE Stream", title: "Mathematics for Computer Science", code: "1BMAS301C", label: "CSE Stream — Mathematics for Computer Science (1BMAS301C)" },
+        { stream: "Civil Stream", title: "Mathematics for Civil Engineering", code: "1BMAC301C", label: "Civil Stream — Mathematics for Civil Engineering (1BMAC301C)" },
+        { stream: "EEE Stream", title: "Mathematics for Electrical Engineering", code: "1BMAE301C", label: "EEE Stream — Mathematics for Electrical Engineering (1BMAE301C)" },
+        { stream: "Mechanical Stream", title: "Mathematics for Mechanical Engineering", code: "1BMAM301C", label: "Mechanical Stream — Mathematics for Mechanical Engineering (1BMAM301C)" },
+        { stream: "Bridge Course", title: "Bridge Course Mathematics-I", code: "BMAB300M", label: "Bridge Course Mathematics-I (BMAB300M)" }
       ]
     };
 
     // Header default configuration
     const defaultHeaderConfig = {
       sangha: "B.V.V Sangha’s",
-      college: "BASAVESHWAR ENGINEERING COLLEG, BAGALKOTE",
+      college: "BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE",
       dept: "DEPARTMENT OF MATHEMATICS",
       cie: "CIE – I",
       ay: "2025 – 26",
@@ -593,7 +529,14 @@
       sigB_right: "HOD"
     };
 
-    let headerConfig = JSON.parse(localStorage.getItem('bec_cie_headerConfig_v2')) || defaultHeaderConfig;
+    const headerConfig = (() => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('bec_cie_headerConfig_v3'));
+        return stored ? { ...defaultHeaderConfig, ...stored } : { ...defaultHeaderConfig };
+      } catch (e) {
+        return { ...defaultHeaderConfig };
+      }
+    })();
 
     // Initial Data Format A (Faculty)
     const initialFormatA = [
@@ -629,20 +572,33 @@
 
     // State Variables
     let currentView = 'all';
-    let dataA = JSON.parse(localStorage.getItem('bec_cie_formatA_v2')) || JSON.parse(JSON.stringify(initialFormatA));
-    let dataB = JSON.parse(localStorage.getItem('bec_cie_formatB_v2')) || JSON.parse(JSON.stringify(initialFormatB));
+    let dataA = loadFromStorage('bec_cie_formatA_v3', initialFormatA);
+    let dataB = loadFromStorage('bec_cie_formatB_v3', initialFormatB);
+
+    function loadFromStorage(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(fallback));
+      } catch (e) {
+        return JSON.parse(JSON.stringify(fallback));
+      }
+    }
 
     // Persist to LocalStorage
     function persistData() {
-      localStorage.setItem('bec_cie_formatA_v2', JSON.stringify(dataA));
-      localStorage.setItem('bec_cie_formatB_v2', JSON.stringify(dataB));
-      localStorage.setItem('bec_cie_headerConfig_v2', JSON.stringify(headerConfig));
+      try {
+        localStorage.setItem('bec_cie_formatA_v3', JSON.stringify(dataA));
+        localStorage.setItem('bec_cie_formatB_v3', JSON.stringify(dataB));
+        localStorage.setItem('bec_cie_headerConfig_v3', JSON.stringify(headerConfig));
+      } catch (e) {
+        // localStorage may be unavailable (private mode / quota) — silently ignore
+      }
       updateSummaryMetrics();
     }
 
     // Save header edits
     function saveHeaderConfig(key, value) {
-      headerConfig[key] = value.trim();
+      headerConfig[key] = (value || '').trim();
       persistData();
       syncHeaders();
     }
@@ -708,15 +664,35 @@
     }
 
     function updateFieldA(index, key, val) {
-      if (dataA[index]) {
-        const oldName = dataA[index].name;
-        dataA[index][key] = val.trim();
-        persistData();
+      if (!dataA[index]) return;
 
-        // If faculty name was updated, re-sync faculty selects in Format B
-        if (key === 'name') {
-          renderFormatB();
-        }
+      const oldName = dataA[index].name;
+      const newVal = (val || '').toString().trim();
+
+      if (key === 'name' && !newVal) {
+        showToast("Faculty name cannot be empty", "error");
+        renderFormatA();
+        return;
+      }
+
+      dataA[index][key] = newVal;
+
+      if (key === 'name' && oldName.trim().toLowerCase() !== newVal.toLowerCase()) {
+        let updated = 0;
+        const oldLower = oldName.trim().toLowerCase();
+        dataB.forEach(row => {
+          if (row.faculty && row.faculty.trim().toLowerCase() === oldLower) {
+            row.faculty = newVal;
+            updated++;
+          }
+        });
+        persistData();
+        renderFormatB();
+        showToast(updated > 0
+          ? `Faculty renamed — ${updated} Format B row(s) synced`
+          : "Faculty name updated");
+      } else {
+        persistData();
       }
     }
 
@@ -728,7 +704,7 @@
       dataA[target] = temp;
       persistData();
       renderFormatA();
-      renderFormatB(); // update dropdown ordering
+      renderFormatB();
       showToast(`Faculty row moved ${step < 0 ? 'up' : 'down'}`);
     }
 
@@ -737,6 +713,7 @@
         showToast("At least one faculty member is required", "error");
         return;
       }
+      if (!confirm(`Delete faculty "${dataA[idx].name}"?`)) return;
       dataA.splice(idx, 1);
       persistData();
       renderFormatA();
@@ -756,6 +733,7 @@
       persistData();
       renderFormatA();
       renderFormatB();
+      // Only switch views if Format A is currently hidden
       if (currentView === 'formatB') switchView('formatA');
       showToast("New faculty member added");
     }
@@ -775,11 +753,11 @@
         tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
 
         const parsed = parseStudentCount(item.count);
-        const subDisplay = parsed.rr > 0 
-          ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>` 
+        const subDisplay = parsed.rr > 0
+          ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>`
           : '';
 
-        // Semester selector HTML
+        // Semester selector
         const semSelectHTML = `
           <select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5"
                   onchange="updateRowSem(${index}, this.value)">
@@ -789,12 +767,12 @@
           </select>
         `;
 
-        // Course Catalog dropdown selector HTML
-        const currentSemCourses = COURSE_CATALOG[item.sem] || COURSE_CATALOG["2"];
+        // Course preset selector
+        const currentSemCourses = COURSE_CATALOG[item.sem] || [];
         let courseOptionsHTML = `<option value="">-- Choose Course Preset --</option>`;
         currentSemCourses.forEach(c => {
           const isSelected = item.code === c.code ? 'selected' : '';
-          courseOptionsHTML += `<option value="${c.code}" ${isSelected}>${c.label}</option>`;
+          courseOptionsHTML += `<option value="${escapeHTML(c.code)}" ${isSelected}>${escapeHTML(c.label)}</option>`;
         });
 
         const coursePresetSelectHTML = `
@@ -806,44 +784,46 @@
           </div>
         `;
 
-        // Faculty In-Charge selector HTML
+        // Faculty In-Charge selector
         let facultyOptionsHTML = '';
         facultyList.forEach(fac => {
           const isSelected = (item.faculty && item.faculty.trim().toLowerCase() === fac.toLowerCase()) ? 'selected' : '';
           facultyOptionsHTML += `<option value="${escapeHTML(fac)}" ${isSelected}>${escapeHTML(fac)}</option>`;
         });
-        
-        // If assigned faculty is not in Format A, retain it as custom option
+
+        // Preserve any external faculty name not in Format A
         const isCustomFaculty = item.faculty && !facultyList.some(f => f.toLowerCase() === item.faculty.trim().toLowerCase());
         if (isCustomFaculty) {
           facultyOptionsHTML += `<option value="${escapeHTML(item.faculty)}" selected>${escapeHTML(item.faculty)} (External)</option>`;
         }
+        // If no faculty at all, add a placeholder
+        if (!facultyOptionsHTML) {
+          facultyOptionsHTML = `<option value="">— Select Faculty —</option>`;
+        }
 
         const facultySelectHTML = `
-          <div class="flex flex-col">
-            <select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full"
-                    onchange="updateFieldB(${index}, 'faculty', this.value)">
-              ${facultyOptionsHTML}
-            </select>
-          </div>
+          <select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full"
+                  onchange="updateFieldB(${index}, 'faculty', this.value)">
+            ${facultyOptionsHTML}
+          </select>
         `;
 
         tr.innerHTML = `
           <td class="text-center font-bold py-2.5 px-2 text-slate-700">${index + 1}</td>
-          <td class="text-center py-2.5 px-2">
-            ${semSelectHTML}
-          </td>
+          <td class="text-center py-2.5 px-2">${semSelectHTML}</td>
           <td contenteditable="true" onblur="updateFieldB(${index}, 'div', this.innerText)" class="editable-cell py-2.5 px-2 text-center font-bold text-blue-700" title="Click to edit Division">${escapeHTML(item.div)}</td>
           <td class="py-2.5 px-3">
             <div contenteditable="true" onblur="updateFieldB(${index}, 'title', this.innerText)" class="editable-cell font-medium text-slate-900" title="Click to edit Subject Title">${escapeHTML(item.title)}</div>
             ${coursePresetSelectHTML}
           </td>
           <td contenteditable="true" onblur="updateFieldB(${index}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-semibold text-slate-800" title="Click to edit Subject Code">${escapeHTML(item.code)}</td>
-          <td class="py-2.5 px-3">
-            ${facultySelectHTML}
-          </td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'count', this.innerText)" class="editable-cell py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40" title="Format: '65' or '65+1'">
-            ${escapeHTML(item.count)} ${subDisplay}
+          <td class="py-2.5 px-3">${facultySelectHTML}</td>
+          <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40">
+            <span contenteditable="true"
+                  onblur="updateFieldB(${index}, 'count', this.innerText, this)"
+                  class="editable-cell inline-block min-w-[3.5rem] rounded"
+                  title="Format: '65' or '65+1'">${escapeHTML(item.count)}</span>
+            <span id="count-total-${index}">${subDisplay}</span>
           </td>
           <td class="no-print action-col py-2 px-2 text-center">
             <div class="flex items-center justify-center space-x-1">
@@ -863,27 +843,73 @@
       });
     }
 
-    function updateFieldB(idx, key, val) {
-      if (dataB[idx]) {
-        dataB[idx][key] = val.trim();
-        persistData();
-        if (key === 'count') {
-          renderFormatB();
+    // Unified field updater for Format B (targeted, no full re-render for text edits)
+    function updateFieldB(idx, key, val, el) {
+      if (!dataB[idx]) return;
+      const trimmed = (val || '').toString().trim();
+
+      if (key === 'count') {
+        // Strip anything pasted in like "(66 total)"
+        const sanitized = trimmed.replace(/\s*\(\d+\s*total\)\s*/gi, '').replace(/[^0-9+]/g, '');
+
+        if (!sanitized || !/^\d+(\+\d+)?$/.test(sanitized)) {
+          showToast("Invalid count. Use '65' or '65+1'.", "error");
+          if (el) el.innerText = dataB[idx].count;
+          return;
         }
-      }
-    }
 
-    // Change semester on row
-    function updateRowSem(idx, newSem) {
-      if (dataB[idx]) {
-        dataB[idx].sem = newSem;
+        dataB[idx].count = sanitized;
+        if (el) el.innerText = sanitized;
+
+        const parsed = parseStudentCount(sanitized);
+        const totalEl = document.getElementById(`count-total-${idx}`);
+        if (totalEl) {
+          totalEl.innerHTML = parsed.rr > 0
+            ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>`
+            : '';
+        }
         persistData();
-        renderFormatB();
-        showToast(`Row ${idx + 1} updated to Semester ${newSem}`);
+        return;
       }
+
+      dataB[idx][key] = trimmed;
+      persistData();
     }
 
-    // Apply course preset to table row
+    // Change semester on a row, remapping course by stream when possible
+    function updateRowSem(idx, newSem) {
+      if (!dataB[idx]) return;
+      const oldSem = dataB[idx].sem;
+      if (oldSem === newSem) return;
+
+      const oldCourse = (COURSE_CATALOG[oldSem] || []).find(c => c.code === dataB[idx].code);
+      dataB[idx].sem = newSem;
+
+      const newCatalog = COURSE_CATALOG[newSem] || [];
+      const stillValid = newCatalog.some(c => c.code === dataB[idx].code);
+
+      if (!stillValid) {
+        if (oldCourse) {
+          const match = newCatalog.find(c => c.stream === oldCourse.stream);
+          if (match) {
+            dataB[idx].title = match.title;
+            dataB[idx].code = match.code;
+            showToast(`Semester changed — course remapped to ${match.stream}`);
+          } else {
+            showToast(`Semester changed. Please select a new course preset.`, "error");
+          }
+        } else {
+          showToast(`Semester changed. Please verify the course.`, "error");
+        }
+      } else {
+        showToast(`Semester updated to ${newSem}`);
+      }
+
+      persistData();
+      renderFormatB();
+    }
+
+    // Apply course preset to a table row
     function applyCoursePresetToRow(idx, code) {
       if (!code || !dataB[idx]) return;
       const sem = dataB[idx].sem;
@@ -894,7 +920,7 @@
         dataB[idx].code = selected.code;
         persistData();
         renderFormatB();
-        showToast(`Applied "${selected.title}"`);
+        showToast(`Applied "${selected.stream}" preset`);
       }
     }
 
@@ -914,6 +940,7 @@
         showToast("At least one division entry is required", "error");
         return;
       }
+      if (!confirm(`Delete division "${dataB[idx].div}" (${dataB[idx].code})?`)) return;
       dataB.splice(idx, 1);
       persistData();
       renderFormatB();
@@ -921,17 +948,16 @@
     }
 
     // ==========================================
-    // MODAL ADD ROW LOGIC (With Course Preset Dropdown)
+    // MODAL ADD ROW LOGIC
     // ==========================================
     function addDivisionRowModal() {
       const modal = document.getElementById('addModal');
       const divInput = document.getElementById('modal-div');
-      
-      // Auto-suggest next alphabetical section
-      const nextChar = String.fromCharCode(65 + (dataB.length % 26));
-      divInput.value = nextChar;
 
-      // Populate faculties
+      // Suggest the next unused division letter
+      divInput.value = nextDivisionLetter();
+
+      // Populate faculty dropdown
       const modalFacultySelect = document.getElementById('modal-faculty');
       modalFacultySelect.innerHTML = '';
       dataA.forEach(f => {
@@ -940,6 +966,15 @@
         opt.innerText = f.name;
         modalFacultySelect.appendChild(opt);
       });
+      if (!dataA.length) {
+        const opt = document.createElement('option');
+        opt.value = "";
+        opt.innerText = "— Add faculty in Format A first —";
+        modalFacultySelect.appendChild(opt);
+      }
+
+      // Reset the count field to a default
+      document.getElementById('modal-count').value = "60";
 
       onModalSemChange();
       modal.classList.remove('hidden');
@@ -965,6 +1000,9 @@
       if (catalog.length > 0) {
         presetSelect.selectedIndex = 1;
         onModalPresetChange();
+      } else {
+        document.getElementById('modal-title').value = "";
+        document.getElementById('modal-code').value = "";
       }
     }
 
@@ -982,20 +1020,27 @@
     function submitModalAdd() {
       const sem = document.getElementById('modal-sem').value;
       const div = (document.getElementById('modal-div').value || 'A').toUpperCase().trim();
-      const title = document.getElementById('modal-title').value.trim() || 'Applied Mathematics';
-      const code = document.getElementById('modal-code').value.trim() || '1BMAS201C';
-      const count = document.getElementById('modal-count').value.trim() || '60';
-      const faculty = document.getElementById('modal-faculty').value || (dataA[0] ? dataA[0].name : 'Faculty In-Charge');
+      const title = document.getElementById('modal-title').value.trim();
+      const code = document.getElementById('modal-code').value.trim();
+      const rawCount = document.getElementById('modal-count').value.trim() || '60';
+      const faculty = document.getElementById('modal-faculty').value || '';
 
-      dataB.push({
-        sl: dataB.length + 1,
-        sem,
-        div,
-        title,
-        code,
-        faculty,
-        count
-      });
+      if (!div) {
+        showToast("Please specify a division", "error");
+        return;
+      }
+      if (!title || !code) {
+        showToast("Subject title and code are required", "error");
+        return;
+      }
+
+      const sanitizedCount = rawCount.replace(/[^0-9+]/g, '');
+      if (!/^\d+(\+\d+)?$/.test(sanitizedCount)) {
+        showToast("Count must be '65' or '65+1' format", "error");
+        return;
+      }
+
+      dataB.push({ sl: dataB.length + 1, sem, div, title, code, faculty, count: sanitizedCount });
 
       persistData();
       renderFormatB();
@@ -1004,27 +1049,33 @@
       showToast(`Added Division ${div} (${code}) to Format B`);
     }
 
+    function nextDivisionLetter() {
+      const used = new Set(dataB.map(r => (r.div || '').toUpperCase().trim()).filter(Boolean));
+      for (let i = 0; i < 26; i++) {
+        const ch = String.fromCharCode(65 + i);
+        if (!used.has(ch)) return ch;
+      }
+      return '';
+    }
+
     // ==========================================
     // PARSING & ANALYTICS CALCULATION
     // ==========================================
     function parseStudentCount(str) {
-      if (!str) return { base: 0, rr: 0, total: 0 };
+      if (str == null) return { base: 0, rr: 0, total: 0 };
       const cleaned = str.toString().trim().replace(/\s+/g, '');
       if (cleaned.includes('+')) {
         const parts = cleaned.split('+');
         const base = parseInt(parts[0], 10) || 0;
         const rr = parseInt(parts[1], 10) || 0;
         return { base, rr, total: base + rr };
-      } else {
-        const base = parseInt(cleaned, 10) || 0;
-        return { base, rr: 0, total: base };
       }
+      const base = parseInt(cleaned, 10) || 0;
+      return { base, rr: 0, total: base };
     }
 
     function updateSummaryMetrics() {
-      let regTotal = 0;
-      let rrTotal = 0;
-      let grandTotal = 0;
+      let regTotal = 0, rrTotal = 0, grandTotal = 0;
 
       dataB.forEach(item => {
         const res = parseStudentCount(item.count);
@@ -1044,7 +1095,6 @@
       setVal('stat-rr-count', rrTotal);
       setVal('stat-grand-count', grandTotal);
 
-      // Table footer summary
       const footer = document.getElementById('footer-total-display');
       if (footer) {
         footer.innerHTML = `
@@ -1062,7 +1112,6 @@
       currentView = view;
       const secA = document.getElementById('section-formatA');
       const secB = document.getElementById('section-formatB');
-      const breaks = document.querySelectorAll('.print-page-break');
 
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-white', 'text-blue-700', 'shadow-xs');
@@ -1078,113 +1127,136 @@
       if (view === 'formatA') {
         secA.classList.remove('hidden');
         secB.classList.add('hidden');
-        breaks.forEach(b => b.classList.add('hidden'));
       } else if (view === 'formatB') {
         secA.classList.add('hidden');
         secB.classList.remove('hidden');
-        breaks.forEach(b => b.classList.add('hidden'));
       } else {
         secA.classList.remove('hidden');
         secB.classList.remove('hidden');
-        breaks.forEach(b => b.classList.remove('hidden'));
       }
+
+      // Controls print-time page break between sections
+      document.body.classList.toggle('print-both', view === 'all');
     }
 
     // ==========================================
-    // EXPORT TO CSV / EXCEL
+    // EXPORT TO CSV / EXCEL (proper escaping via Blob)
     // ==========================================
+    function csvCell(v) {
+      const s = (v == null ? '' : String(v));
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    function csvRow(arr) {
+      return arr.map(csvCell).join(',');
+    }
+
     function exportCSV() {
-      let csv = "data:text/csv;charset=utf-8,";
+      const rows = [];
 
       if (currentView === 'formatA' || currentView === 'all') {
-        csv += `"${headerConfig.sangha}"\r\n`;
-        csv += `"${headerConfig.college}"\r\n`;
-        csv += `"${headerConfig.dept}"\r\n`;
-        csv += `"${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})"\r\n`;
-        csv += `"Format A: Faculty Information (UG)"\r\n`;
-        csv += `"Sl No","Name of the faculty (Seniority wise)","Mobile No","Designation","Qualification","Teaching Experience"\r\n`;
+        rows.push(csvRow([headerConfig.sangha]));
+        rows.push(csvRow([headerConfig.college]));
+        rows.push(csvRow([headerConfig.dept]));
+        rows.push(csvRow([`${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})`]));
+        rows.push(csvRow(["Format A: Faculty Information (UG)"]));
+        rows.push(csvRow(["Sl No", "Name of the faculty (Seniority wise)", "Mobile No", "Designation", "Qualification", "Teaching Experience"]));
         dataA.forEach((item, i) => {
-          csv += `"${i+1}","${item.name}","${item.phone}","${item.designation}","${item.qualification}","${item.exp}"\r\n`;
+          rows.push(csvRow([i + 1, item.name, item.phone, item.designation, item.qualification, item.exp]));
         });
-        csv += `\r\n"${headerConfig.sigA_left}","","","","","${headerConfig.sigA_right}"\r\n\r\n`;
+        rows.push(csvRow([headerConfig.sigA_left, "", "", "", "", headerConfig.sigA_right]));
+        rows.push("");
       }
 
       if (currentView === 'formatB' || currentView === 'all') {
-        csv += `"${headerConfig.sangha}"\r\n`;
-        csv += `"${headerConfig.college}"\r\n`;
-        csv += `"${headerConfig.dept}"\r\n`;
-        csv += `"${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})"\r\n`;
-        csv += `"Format B: Subject wise Student Strength Information"\r\n`;
-        csv += `"Sl No","Sem","Div","Subjects Title","Subject Code","Name of the faculty in-charge","Regular Students","RR Students","Total Students"\r\n`;
+        rows.push(csvRow([headerConfig.sangha]));
+        rows.push(csvRow([headerConfig.college]));
+        rows.push(csvRow([headerConfig.dept]));
+        rows.push(csvRow([`${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})`]));
+        rows.push(csvRow(["Format B: Subject wise Student Strength Information"]));
+        rows.push(csvRow(["Sl No", "Sem", "Div", "Subjects Title", "Subject Code", "Name of the faculty in-charge", "Regular Students", "RR Students", "Total Students"]));
 
         let reg = 0, rr = 0, total = 0;
         dataB.forEach((item, i) => {
           const p = parseStudentCount(item.count);
-          reg += p.base;
-          rr += p.rr;
-          total += p.total;
-          csv += `"${i+1}","${item.sem}","${item.div}","${item.title}","${item.code}","${item.faculty}","${p.base}","${p.rr}","${p.total}"\r\n`;
+          reg += p.base; rr += p.rr; total += p.total;
+          rows.push(csvRow([i + 1, item.sem, item.div, item.title, item.code, item.faculty, p.base, p.rr, p.total]));
         });
-        csv += `"","","","","","Total:","${reg}","${rr}","${total}"\r\n`;
-        csv += `\r\n"${headerConfig.sigB_left}","","","","","${headerConfig.sigB_right}"\r\n`;
+        rows.push(csvRow(["", "", "", "", "", "Total:", reg, rr, total]));
+        rows.push(csvRow([headerConfig.sigB_left, "", "", "", "", headerConfig.sigB_right]));
       }
 
-      const encodedUri = encodeURI(csv);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `BEC_Bagalkote_CIE_${currentView}.csv`);
+      // Prepend BOM so Excel reads UTF-8 correctly
+      const csvText = "\uFEFF" + rows.join("\r\n");
+      const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `BEC_Bagalkote_CIE_${currentView}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast("CSV file successfully generated");
     }
 
     // ==========================================
     // COPY TO CLIPBOARD (Word & Sheets Friendly)
     // ==========================================
-    function copyToClipboardFormatted() {
+    function buildTSV() {
       let tsv = "";
-
       if (currentView === 'formatA' || currentView === 'all') {
         tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
         tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat A: Faculty Information (UG)\n\n`;
         tsv += "Sl No\tName of the faculty\tMobile No\tDesignation\tQualification\tTeaching Experience\n";
         dataA.forEach((item, i) => {
-          tsv += `${i+1}\t${item.name}\t${item.phone}\t${item.designation}\t${item.qualification}\t${item.exp}\n`;
+          tsv += `${i + 1}\t${item.name}\t${item.phone}\t${item.designation}\t${item.qualification}\t${item.exp}\n`;
         });
         tsv += `\n${headerConfig.sigA_left}\t\t\t\t\t${headerConfig.sigA_right}\n\n`;
       }
-
       if (currentView === 'formatB' || currentView === 'all') {
         tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
         tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat B: Subject wise Student Strength Information\n\n`;
         tsv += "Sl No\tSem\tDiv\tSubjects Title\tSubject code\tName of the faculty in-charge\tNumber of Re-registered Students\n";
         dataB.forEach((item, i) => {
-          tsv += `${i+1}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`;
+          tsv += `${i + 1}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`;
         });
         tsv += `\n${headerConfig.sigB_left}\t\t\t\t\t${headerConfig.sigB_right}\n`;
       }
+      return tsv;
+    }
 
-      const ta = document.createElement("textarea");
-      ta.value = tsv;
-      document.body.appendChild(ta);
-      ta.select();
+    async function copyToClipboardFormatted() {
+      const tsv = buildTSV();
       try {
-        document.execCommand('copy');
-        showToast("Tab-delimited table copied! Paste directly into Microsoft Word or Excel.");
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(tsv);
+        } else {
+          // Fallback for non-secure contexts (e.g. file://)
+          const ta = document.createElement('textarea');
+          ta.value = tsv;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        showToast("Tab-delimited table copied! Paste into Word or Excel.");
       } catch (e) {
         showToast("Clipboard copy failed", "error");
       }
-      document.body.removeChild(ta);
     }
 
     // ==========================================
     // RESET TO DEFAULTS
     // ==========================================
     function resetDefaultsModal() {
+      if (!confirm("Reset all data and headers back to the original BEC Bagalkote template? This cannot be undone.")) {
+        return;
+      }
       dataA = JSON.parse(JSON.stringify(initialFormatA));
       dataB = JSON.parse(JSON.stringify(initialFormatB));
-      headerConfig = JSON.parse(JSON.stringify(defaultHeaderConfig));
+      Object.assign(headerConfig, defaultHeaderConfig);
       persistData();
       syncHeaders();
       renderFormatA();
@@ -1194,7 +1266,7 @@
 
     // Helper: Escape HTML
     function escapeHTML(str) {
-      if (!str) return '';
+      if (str == null) return '';
       return str.toString()
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -1203,33 +1275,33 @@
         .replace(/'/g, '&#039;');
     }
 
-    // Toast function
+    // Toast
     function showToast(msg, type = "success") {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-message');
       const icon = document.getElementById('toast-icon');
 
       text.textContent = msg;
-      if (type === "error") {
-        icon.className = "fa-solid fa-circle-exclamation text-rose-400 text-base";
-      } else {
-        icon.className = "fa-solid fa-circle-check text-emerald-400 text-base";
-      }
+      icon.className = type === "error"
+        ? "fa-solid fa-circle-exclamation text-rose-400 text-base"
+        : "fa-solid fa-circle-check text-emerald-400 text-base";
 
       toast.classList.remove('translate-y-24', 'opacity-0');
       toast.classList.add('translate-y-0', 'opacity-100');
 
-      setTimeout(() => {
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-24', 'opacity-0');
       }, 2500);
     }
 
     // Initialize
-    window.onload = function() {
+    window.onload = function () {
       syncHeaders();
       renderFormatA();
       renderFormatB();
+      switchView('all');        // sets print-both class + tab styling
       updateSummaryMetrics();
     };
   </script>
