@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#B91C1C" />
-  <title>BEC Faculty Workspace · Dr Mahadev Biradar</title>
+  <title>Dr Mahadev Biradar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -121,6 +121,13 @@
       return '•••• •••• ' + escapeHtml(v.slice(-4));
     };
     const clone = function (o) { return JSON.parse(JSON.stringify(o)); };
+    const formatBytes = function (b) {
+      b = Number(b) || 0;
+      if (!b) return '';
+      if (b < 1024) return b + ' B';
+      if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+      return (b/(1024*1024)).toFixed(1) + ' MB';
+    };
 
     /* ================================================================
        4. STORAGE
@@ -151,10 +158,10 @@
        ================================================================ */
     const PROFILE = {
       name: 'Dr Mahadev Biradar',
-      designation: 'Associate Professor',
+      designation: 'Professor',
       department: 'Mathematics',
       institution: 'Basaveshwar Engineering College (Autonomous), Bagalkot – 587102, Karnataka',
-      employeeId: 'BEC/MATH/2009',
+      employeeId: 'MAT06',
       joiningDate: '2009-03-23',
       email: 'mmbbec@gmail.com',
       phone: '+91 90352 46580',
@@ -166,7 +173,7 @@
       scholarLink: 'https://scholar.google.com/citations?user=PQDhCuoAAAAJ',
       researchGate: 'https://www.researchgate.net/profile/Mahadev-Biradar',
       website: 'https://mahadevbiradar.in',
-      bio: 'Associate Professor of Mathematics at Basaveshwar Engineering College (Autonomous), Bagalkot, with over 15 years of teaching and research since March 2009. Ph.D. in Fluid Dynamics (Gulbarga University, 2008) specialising in Magnetohydrodynamics (MHD), non-Newtonian fluid dynamics, heat and mass transfer in porous media and boundary layer theory. Author of 23 peer-reviewed publications across Springer, Elsevier and World Scientific, three books and four published patents. Former Head of the Department (2015–2018) and Chairman of the Board of Studies in Mathematics; Programme Officer of the Youth Red Cross BEC Wing since 2012.',
+      bio: 'Professor of Mathematics at Basaveshwar Engineering College, BagalkotE, with over 24 years of teaching and research since March 2009. Ph.D. in Fluid Dynamics (Gulbarga University, 2008) specialising in Magnetohydrodynamics (MHD), non-Newtonian fluid dynamics, heat and mass transfer in porous media and boundary layer theory. Author of 28 peer-reviewed publications across Springer, Elsevier and World Scientific, three books and four published patents. Former Head of the Department (2015–2018) and Chairman of the Board of Studies in Mathematics; Programme Officer of the Youth Red Cross BEC Wing since 2012.',
       adminRoles: [
         'Head of Department, Mathematics (31 Aug 2015 – 10 Dec 2018)',
         'Chairman, Board of Studies in Mathematics (same period)',
@@ -176,24 +183,43 @@
       ],
       researchInterests: ['Magnetohydrodynamics (MHD)', 'Non-Newtonian Fluid Dynamics', 'Heat & Mass Transfer in Porous Media', 'Boundary Layer Theory', 'Numerical Analysis (Mathematica, MATLAB)'],
       experience: [
-        { role: 'Associate Professor', org: 'Basaveshwar Engineering College, Bagalkot', period: '23 Mar 2009 – present', current: true },
+        { role: 'Professor', org: 'Basaveshwar Engineering College, Bagalkot', period: '01 August 2026 – present', current: true },
+        { role: 'Associate Professor', org: 'Basaveshwar Engineering College, Bagalkot', period: '23 Mar 2009 – July 2026', current: true },
         { role: 'Lecturer', org: 'Guru Nanak Dev Engineering College, Bidar', period: 'Sep 2005 – Mar 2009', current: false },
         { role: 'Lecturer', org: 'Govt. Technical & Polytechnic College, Kalaburagi', period: 'Mar 2002 – Aug 2005', current: false }
       ]
     };
 
-    const PUBLICATIONS = [
-      { id:'p1', title:'Exploring anomalous diffusion in ternary nanofluids: a Maxwell model incorporating viscous dissipation and Nield boundary bioconvection', authors:'Biradar M., et al.', journal:'European Physical Journal Plus (Springer)', year:'2025', volume:'140, 170', doi:'10.1140/epjp/s13360-025-02500-1' },
-      { id:'p2', title:'Momentum, heat and mass transfer in hydrodynamic electrically conducting fluid flow over a stretching sheet', authors:'Biradar M., et al.', journal:'Modern Physics Letters B (World Scientific)', year:'2024', volume:'38, 16, 2341011', doi:'10.1142/S021798492341011X' },
-      { id:'p3', title:'Multiple slip effects of MHD boundary-layer motion of Casson nanoliquid', authors:'Biradar M., et al.', journal:'International Journal of Modern Physics B', year:'2023', volume:'37, 03, 2350022', doi:'10.1142/S0217979223500227' },
-      { id:'p4', title:'Analysis of volume fraction of Casson nanofluid flow over a flat moving plate', authors:'Biradar M.', journal:'Journal of the International Academy of Physical Sciences', year:'2023', volume:'27, 3', doi:'' },
-      { id:'p5', title:'MHD Casson nanofluid with non-uniform heat source/sink and viscous dissipation', authors:'Biradar M.', journal:'Proceedings of the Jangjeon Mathematical Society', year:'2022', volume:'25, 4', doi:'' },
-      { id:'p6', title:'Heat generation and absorption effects on thin film flow of unsteady Casson fluid', authors:'Biradar M.', journal:'MSAEA', year:'2022', volume:'71, 4', doi:'' },
-      { id:'p7', title:'Effects of MHD radiating and non-uniform heat source/sink Eyring–Powell fluid', authors:'Biradar M., et al.', journal:'Results in Engineering (Elsevier)', year:'2022', volume:'14, 100435', doi:'10.1016/j.rineng.2022.100435' },
-      { id:'p8', title:'Casson fluid flow of thin liquid film beyond the boundary', authors:'Biradar M.', journal:'Recent Trends in Mathematical Modelling', year:'2021', volume:'', doi:'' },
-      { id:'p9', title:'Mixed convective flow with variable viscosity and variable thermal conductivity', authors:'Biradar M.', journal:'J. Applied Mathematics and Computational Mechanics', year:'2021', volume:'20, 1', doi:'' },
-      { id:'p10', title:'Two-fluid magnetoconvection in a vertical enclosure', authors:'Biradar M.', journal:'Modelling, Measurement and Control B', year:'2005', volume:'74, 3–4', doi:'' }
-    ];
+   const PUBLICATIONS = [
+  { id:'p1', title:'MHD Double-Diffusive Convection in a Darcy–Forchheimer Porous Wavy Cavity with Radiation and Viscous Dissipation: A Finite Element Study', authors:'Mahadev Biradar', journal:'Journal of Numerical Simulations in Physics and Mathematics', year:'2026', volume:'2(2), 117–129', doi:'10.62762/JNSPM.2026.403753' },
+  { id:'p2', title:'Comparative Analysis of Cross Diffusion Effects on MHD Casson Williamson Ternary Nanofluid Flow with Heat and Mass Transfer', authors:'Mahadev Biradar, Amar Patil', journal:'Research Square', year:'2026', volume:'', doi:'10.21203/rs.3.rs-10611890/v1' },
+  { id:'p3', title:'Perturbation analysis of MHD Prandtl fluid flow with viscous dissipation, thermal radiation and double diffusion', authors:'Mahadev Biradar, A. B. Patil, M. Patil, V. S. Patil, R. B. Naik, and P. P. Humane', journal:'International Journal of Modelling and Simulation', year:'2026', volume:'1–15', doi:'10.1080/02286203.2026.2708091' },
+  { id:'p4', title:'Optimizing the heat performance of Casson ternary nanoliquid with radiative-magnetic-chemical reactive effects using Taguchi technology', authors:'Mahadev Biradar, C. N. Chidananda, G. S. Roopa, J. K. Madhukesh, and G. K. Ramesh', journal:'Thermal Advances', year:'2026', volume:'7, 100155', doi:'10.1016/j.thradv.2026.100155' },
+  { id:'p5', title:'Exploring anomalous diffusion in ternary nanofluids: a Maxwell model incorporating viscous dissipation and Nield boundary bioconvection', authors:'Mahadev Biradar, Amar B. Patil, Vishwambhar S. Patil, and Govind R. Rajput', journal:'European Physical Journal Plus', year:'2025', volume:'140, 170', doi:'10.1140/epjp/s13360-025-02500-1' },
+  { id:'p6', title:'Momentum, heat and mass transfer in the hydrodynamic electrically conducting fluid flow over a stretching sheet', authors:'Mahadev Biradar, Jagadish V. Tawade, B. Haewon, M. Kaviyarasu, V. Govindan, et al.', journal:'Modern Physics Letters B', year:'2024', volume:'38(16), 2341011', doi:'10.1142/S021798492341011X' },
+  { id:'p7', title:'Multiple slip effects of MHD boundary-layer motion of a Casson nanoliquid over a penetrable linearly stretching sheet embedded in non-Darcian porous medium', authors:'Mahadev Biradar, P. Priyanka, S. A. M. Abdelmohsen, Jagadish V. Tawade, et al.', journal:'International Journal of Modern Physics B', year:'2023', volume:'37(03), 2350022', doi:'10.1142/S0217979223500227' },
+  { id:'p8', title:'Analysis of volume fraction of Casson nanofluid flow over a flat moving plate with thermal radiation and nonuniform heat source/sink', authors:'Mahadev Biradar, Jagadish V. Tawade, M. M. Biradar, and D. N. Manjunatha B.', journal:'Journal of International Academy of Physical Sciences', year:'2023', volume:'27(3), 259–274', doi:'' },
+  { id:'p9', title:'MHD Casson nanofluid with nonuniform heat source/sink and viscous dissipation', authors:'Mahadev Biradar, Jagadish V. Tawade, and Rashmi Yala', journal:'Proceedings of the Jangjeon Mathematical Society', year:'2022', volume:'25(4), 387–400', doi:'' },
+  { id:'p10', title:'Numerical Solution of Hydrodynamic Electrically Conducting Fluid Flow over a Stretching Sheet', authors:'Mahadev Biradar, Padmini Kaji, and Jagadish V. Tawade', journal:'Mathematical Statistician and Engineering Applications', year:'2022', volume:'71(4), 12714–12730', doi:'' },
+  { id:'p11', title:'Heat generation and absorption effects on thin film flow of an unsteady Casson fluid across a penetrable flat plate', authors:'Mahadev Biradar, S. P. Pallavi, D. S. Sharanappa, V. Mb, and Jagadish V. Tawade', journal:'Mathematical Statistician and Engineering Applications', year:'2022', volume:'71(4), 13024–13041', doi:'' },
+  { id:'p12', title:'The effects of MHD radiating and non-uniform heat source/sink with heating on the momentum and heat transfer of Eyring–Powell fluid over a stretching', authors:'Mahadev Biradar, B. Manvi, Jagadish Tawade, et al.', journal:'Results in Engineering', year:'2022', volume:'14, 100435', doi:'10.1016/j.rineng.2022.100435' },
+  { id:'p13', title:'Effects of the Magnetohydrodynamic Flow within the Boundary Layer of a Jeffery Fluid in a Porous Medium over a Shrinking/Stretching Sheet', authors:'Mahadev Biradar, S. S. Benal, Jagadish V. Tawade, and H. L. Allasi', journal:'Journal', year:'2022', volume:'', doi:'' },
+  { id:'p14', title:'Casson Fluid Flow of Thin Liquid Film Beyond', authors:'Mahadev Biradar, Jagadish V. Tawade, and S. S. Benal', journal:'Recent Trends in Mathematical Modeling and High Performance Computing', year:'2021', volume:'', doi:'' },
+  { id:'p15', title:'Mixed Convective Flow With Variable Viscosity And Variable Thermal Conductivity In A Channel In The Presence Of First Order Chemical Reaction With Heat Generation Or Absorption', authors:'Mahadev Biradar and Patil Mallikarjun', journal:'Journal of Applied Mathematics and Computational Mechanics', year:'2021', volume:'20(1), 91–102', doi:'' },
+  { id:'p16', title:'Influence of radiant heat and non-uniform heat source on MHD Casson fluid flow of thin liquid film beyond a stretching sheet', authors:'Mahadev Biradar, Jagadish V. Tawade, and S. S. Benal', journal:'Recent Trends in Mathematical Modeling and High Performance Computing', year:'2021', volume:'', doi:'' },
+  { id:'p17', title:'Effect of Non-uniform heat source/sink for the Casson nanofluid in presence of viscous dissipation over the porous stretching sheet', authors:'Mahadev Biradar, S. B. Kerur, Jagadish V. Tawade, and B. K.', journal:'Journal of Engineering Sciences', year:'2020', volume:'', doi:'' },
+  { id:'p18', title:'Radiation effects on heat transfer of MHD Casson nanofluid flow over a porous stretching sheet in presence of non-uniform heat source/sink', authors:'Mahadev Biradar, Jagadish V. Tawade, and S. B. Kerur', journal:'Journal of Information and Computational Science', year:'2020', volume:'', doi:'' },
+  { id:'p19', title:'Non-uniform heat source/sink and thermal radiation effects on liquid film flow of Casson fluid thin film over a stretching sheet', authors:'Mahadev Biradar, Jagadish V. Tawade, and D. N.', journal:'Journal of Engineering Sciences', year:'2020', volume:'', doi:'' },
+  { id:'p20', title:'A new approach of MHD flows for UCM fluid over a permeable moving plate with space and temperature dependent internal heat generation/absorption', authors:'Mahadev Biradar, Jagadish V. Tawade, and S. S. Benal', journal:'AIP Conference Proceedings', year:'2020', volume:'2236, 1', doi:'' },
+  { id:'p21', title:'Transient MHD Nanofluid Flow with Chemical Reaction and Radiation Effects under Slip Boundary Conditions', authors:'Mahadev Biradar and Gousia Begum', journal:'International Journal of Enhanced Research in Science, Technology & Engineering', year:'2017', volume:'6(8)', doi:'' },
+  { id:'p22', title:'Flow and Heat Transfer of Micropolar and Viscous Fluid with Source or Sink in a Vertical Channel', authors:'Mahadev Biradar', journal:'International Journal on Emerging Technologies', year:'2015', volume:'6(2), 253', doi:'' },
+  { id:'p23', title:'Two fluid electromagneto convective flow and heat transfer between vertical wavy wall and a parallel flat wall', authors:'Mahadev Biradar', journal:'International Journal of Advanced Research in Engineering and Technology', year:'2015', volume:'', doi:'' },
+  { id:'p24', title:'Flow and heat transfer of micropolar and viscous fluid in a vertical channel', authors:'Mahadev Biradar', journal:'International Journal of Research in Engineering and Technology', year:'2014', volume:'3(3), 771–776', doi:'' },
+  { id:'p25', title:'Magneto-convective flow and heat transfer of two immiscible fluids between vertical wavy wall and a parallel flat wall', authors:'Mahadev Biradar', journal:'International Journal of Research in Engineering and Technology', year:'2014', volume:'3(1), 777–790', doi:'' },
+  { id:'p26', title:'Two Fluid Convective Flow And Heat Transfer Between Vertical Wavy Wall And A Parallel Flat Wall', authors:'Mahadev Biradar, J. Tawade, and M. M. Biradar', journal:'IJCAE', year:'2013', volume:'4(1), 144–163', doi:'' },
+  { id:'p27', title:'Convective Flow And Heat Transfer Of Composite Porous Medium Between Vertical Wavy Wall And A Parallel Flat Wall', authors:'Mahadev Biradar', journal:'IJCAE', year:'2013', volume:'4(1), 118–133', doi:'' },
+  { id:'p28', title:'Two Fluid Magnetoconvection in a Vertical Enclosure', authors:'Mahadev Biradar, J. C. Umavathi, and J. Prathap Kumar', journal:'Modelling, Measurement and Control B', year:'2005', volume:'74(3–4), 1–18', doi:'' }
+];
 
     const BOOKS = [
       { id:'b1', title:'Differential Equations: Methods & Applications', publisher:'Shineeks Publishers', year:'2024', isbn:'979-8-89496-001-2', pages:'189 pages', role:'Author' },
@@ -276,13 +302,13 @@
 
     function seedDocuments() {
       return [
-        { id:'d1', name:'Aadhaar Card', category:'Identity', subType:'Aadhaar', docNumber:'XXXX XXXX 6580', issueDate:'2015-03-10', expiryDate:'', authority:'UIDAI', notes:'Primary ID — masked', tags:['identity','masked'] },
-        { id:'d2', name:'PAN Card', category:'Identity', subType:'PAN', docNumber:'XXXXX1234B', issueDate:'2012-06-01', expiryDate:'', authority:'Income Tax Dept', notes:'Masked by default', tags:['finance','masked'] },
-        { id:'d3', name:'Passport', category:'Identity', subType:'Passport', docNumber:'P12XXXXX', issueDate:'2018-10-20', expiryDate:addDays(25), authority:'Govt of India', notes:'Renewal window open', tags:['travel','renewal'] },
-        { id:'d4', name:'Driving Licence', category:'Identity', subType:'Driving Licence', docNumber:'KA02 2009XXXXXXX', issueDate:'2009-03-23', expiryDate:addDays(60), authority:'RTO Karnataka', notes:'Renewal due', tags:['vehicle','renewal'] },
-        { id:'d5', name:'Employee ID Card', category:'Personal', subType:'Employee ID', docNumber:'BEC/MATH/2009', issueDate:'2009-03-23', expiryDate:'', authority:'BEC Bagalkot', notes:'College ID', tags:['college','id'] },
-        { id:'d6', name:'Scopus Author ID', category:'Personal', subType:'Research ID', docNumber:'57217004425', issueDate:'', expiryDate:'', authority:'Scopus', notes:'Author identifier', tags:['research'] },
-        { id:'d7', name:'ORCID iD', category:'Personal', subType:'Research ID', docNumber:'0000-0002-9897-8677', issueDate:'', expiryDate:'', authority:'ORCID', notes:'Researcher identifier', tags:['research'] }
+        { id:'d1', name:'Aadhaar Card', category:'Identity', subType:'Aadhaar', docNumber:'XXXX XXXX 6580', issueDate:'2015-03-10', expiryDate:'', authority:'UIDAI', notes:'Primary ID — masked', tags:['identity','masked'], attachment:null },
+        { id:'d2', name:'PAN Card', category:'Identity', subType:'PAN', docNumber:'XXXXX1234B', issueDate:'2012-06-01', expiryDate:'', authority:'Income Tax Dept', notes:'Masked by default', tags:['finance','masked'], attachment:null },
+        { id:'d3', name:'Passport', category:'Identity', subType:'Passport', docNumber:'P12XXXXX', issueDate:'2018-10-20', expiryDate:addDays(25), authority:'Govt of India', notes:'Renewal window open', tags:['travel','renewal'], attachment:null },
+        { id:'d4', name:'Driving Licence', category:'Identity', subType:'Driving Licence', docNumber:'KA02 2009XXXXXXX', issueDate:'2009-03-23', expiryDate:addDays(60), authority:'RTO Karnataka', notes:'Renewal due', tags:['vehicle','renewal'], attachment:null },
+        { id:'d5', name:'Employee ID Card', category:'Personal', subType:'Employee ID', docNumber:'BEC/MATH/2009', issueDate:'2009-03-23', expiryDate:'', authority:'BEC Bagalkot', notes:'College ID', tags:['college','id'], attachment:null },
+        { id:'d6', name:'Scopus Author ID', category:'Personal', subType:'Research ID', docNumber:'57217004425', issueDate:'', expiryDate:'', authority:'Scopus', notes:'Author identifier', tags:['research'], attachment:null },
+        { id:'d7', name:'ORCID iD', category:'Personal', subType:'Research ID', docNumber:'0000-0002-9897-8677', issueDate:'', expiryDate:'', authority:'ORCID', notes:'Researcher identifier', tags:['research'], attachment:null }
       ];
     }
 
@@ -305,7 +331,7 @@
     }
 
     /* ================================================================
-       6. RECORD SCHEMAS (drives add + edit + rename + delete)
+       6. RECORD SCHEMAS (drives add + edit + rename + delete + upload)
        ================================================================ */
     const RECORD_TYPES = {
       expense: {
@@ -319,7 +345,8 @@
           { key:'category', label:'Category', type:'select', options:['Food','Travel','Fuel','House','Education','Medical','Shopping','Bills','Family','Research','College','Books','Other'] },
           { key:'paymentMode', label:'Payment mode', type:'select', options:['UPI','Cash','Card','Netbanking'] },
           { key:'vendor', label:'Vendor', type:'text', placeholder:'Vendor' },
-          { key:'description', label:'Description', type:'textarea', rows:2, placeholder:'What was this for?' }
+          { key:'description', label:'Description', type:'textarea', rows:2, placeholder:'What was this for?' },
+          { key:'receipt', label:'Receipt (optional)', type:'file' }
         ]
       },
       publication: {
@@ -333,7 +360,8 @@
           { key:'journal', label:'Journal', type:'text', placeholder:'Journal name' },
           { key:'year', label:'Year', type:'text', def: () => String(new Date().getFullYear()) },
           { key:'volume', label:'Volume / Issue', type:'text' },
-          { key:'doi', label:'DOI (optional)', type:'text', placeholder:'10.xxxx/xxxxx' }
+          { key:'doi', label:'DOI (optional)', type:'text', placeholder:'10.xxxx/xxxxx' },
+          { key:'pdf', label:'Attach PDF (optional)', type:'file' }
         ]
       },
       document: {
@@ -343,7 +371,7 @@
         renameKey: 'name',
         fields: [
           { key:'name', label:'Document name', type:'text', required:true, placeholder:'e.g. Passport' },
-          { key:'category', label:'Category', type:'select', options:['Identity','Personal'] },
+          { key:'category', label:'Category', type:'select', options:['Identity','Personal','Academic','Financial','Other'] },
           { key:'subType', label:'Sub-type', type:'text', placeholder:'e.g. Research ID' },
           { key:'docNumber', label:'Document number', type:'text', placeholder:'Number' },
           { key:'issueDate', label:'Issue date', type:'date' },
@@ -352,7 +380,8 @@
           { key:'notes', label:'Notes', type:'textarea', rows:2 },
           { key:'tags', label:'Tags (comma separated)', type:'text',
             get: r => (r.tags || []).join(', '),
-            set: (r, v) => { r.tags = String(v||'').split(',').map(s => s.trim()).filter(Boolean); } }
+            set: (r, v) => { r.tags = String(v||'').split(',').map(s => s.trim()).filter(Boolean); } },
+          { key:'attachment', label:'Attach scan / copy', type:'file' }
         ]
       },
       task: {
@@ -405,7 +434,8 @@
           { key:'date', label:'Date', type:'date' },
           { key:'duration', label:'Duration', type:'text', placeholder:'e.g. 5 days' },
           { key:'type', label:'Type', type:'select', options:['FDP','Workshop','Webinar','Seminar','Conference','Course'] },
-          { key:'location', label:'Location', type:'text' }
+          { key:'location', label:'Location', type:'text' },
+          { key:'certificateFile', label:'Certificate file', type:'file' }
         ]
       },
       meeting: {
@@ -420,7 +450,25 @@
           { key:'venue', label:'Venue', type:'text' },
           { key:'participants', label:'Participants', type:'number' },
           { key:'type', label:'Type', type:'select', options:['Department','YRC','Committee','Other'] },
-          { key:'minutes', label:'Minutes', type:'textarea', rows:3 }
+          { key:'minutes', label:'Minutes', type:'textarea', rows:3 },
+          { key:'minutesFile', label:'Minutes file', type:'file' }
+        ]
+      },
+      vault: {
+        label: 'File', plural: 'Files', collection: 'vault', icon: 'upload',
+        title: r => r.title || (r.attachment && r.attachment.name) || 'File',
+        sub: r => {
+          const a = r.attachment;
+          const name = a && a.name ? a.name : '';
+          const size = a && a.size ? formatBytes(a.size) : '';
+          return [r.folder, name, size].filter(Boolean).join(' · ');
+        },
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'text', required:true, placeholder:'e.g. NAAC 2024 evidence' },
+          { key:'folder', label:'Category', type:'text', placeholder:'e.g. Certificates, NAAC, Academic' },
+          { key:'notes', label:'Notes', type:'textarea', rows:2 },
+          { key:'attachment', label:'Upload file', type:'file', required:true }
         ]
       },
       subject: {
@@ -492,7 +540,7 @@ function doGet(e) {
     if (action === 'pull') {
       const data = {};
       ['Profile','Expenses','Publications','Tasks','Documents',
-       'Books','Patents','Certificates','Meetings','Subjects'].forEach(function (name) {
+       'Books','Patents','Certificates','Meetings','Subjects','Files'].forEach(function (name) {
         data[name] = readSheet(getSheet(name));
       });
       result = { ok: true, data: data };
@@ -520,6 +568,26 @@ function doPost(e) {
       const name = 'bec-backup-' + stamp + '.json';
       folder.createFile(name, JSON.stringify(body.data, null, 2), 'application/json');
       return out({ ok: true, file: name });
+    }
+    if (body.action === 'upload') {
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+      const bytes = Utilities.base64Decode(body.data || '');
+      const blob = Utilities.newBlob(
+        bytes,
+        body.mimeType || 'application/octet-stream',
+        body.filename || 'upload.bin'
+      );
+      const file = folder.createFile(blob);
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (shareErr) {}
+      return out({
+        ok: true,
+        fileId: file.getId(),
+        url: 'https://drive.google.com/uc?export=view&id=' + file.getId(),
+        openUrl: file.getUrl(),
+        name: file.getName()
+      });
     }
     return out({ ok: false, error: 'Unknown action' });
   } catch (err) { return out({ ok: false, error: String(err) }); }
@@ -622,7 +690,6 @@ function readSheet(sh) {
         if (raw) stored = JSON.parse(raw) || {};
       } catch (e) {}
       const merged = Object.assign({}, defaults, stored);
-      // Migration: if an old session stored a blank URL, fall back to the current default.
       if (!merged.scriptUrl) merged.scriptUrl = SCRIPT_URL_DEFAULT;
       if (!merged.sheetUrl)  merged.sheetUrl  = SHEET_URL_DEFAULT;
       if (!merged.driveUrl)  merged.driveUrl  = DRIVE_URL_DEFAULT;
@@ -651,6 +718,7 @@ function readSheet(sh) {
       patents: store.get('patents', () => clone(PATENTS)),
       certificates: store.get('certificates', () => clone(CERTIFICATES)),
       meetings: store.get('meetings', seedMeetings),
+      vault: store.get('vault', () => []),
       cloud: loadCloudState()
     };
 
@@ -715,6 +783,15 @@ function readSheet(sh) {
       return '<button ' + (attrs || '') + ' class="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3 text-[13px] font-semibold text-stone-700 transition hover:bg-stone-50 active:scale-[0.99] ' + (cls || '') + '">' + text + '</button>';
     }
 
+    function attachmentBadge(att, cls) {
+      if (!att || !att.url) return '';
+      return '<a href="' + escapeHtml(att.url) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[10.5px] font-semibold text-emerald-700 hover:bg-emerald-100 ' + (cls || '') + '">' +
+        icon('file','h-3 w-3') +
+        '<span class="max-w-[160px] truncate">' + escapeHtml(att.name || 'File') + '</span>' +
+        (att.size ? '<span class="opacity-70">· ' + formatBytes(att.size) + '</span>' : '') +
+        icon('external','h-3 w-3') + '</a>';
+    }
+
     function toast(msg) {
       let el = document.getElementById('bec-toast');
       if (!el) {
@@ -730,7 +807,79 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       11. RENDER: LOGIN
+       11. FILE UPLOAD HELPERS
+       ================================================================ */
+    function readAsDataURL(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = function () { reject(reader.error || new Error('Read failed')); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadFile(file) {
+      const MAX_BYTES = 20 * 1024 * 1024;
+      if (file.size > MAX_BYTES) {
+        toast('File too large (max 20 MB)');
+        return null;
+      }
+      const meta = {
+        name: file.name,
+        size: file.size,
+        mimeType: file.type || 'application/octet-stream',
+        uploadedAt: new Date().toISOString()
+      };
+      const url = state.cloud.scriptUrl;
+
+      if (!url) {
+        // Local fallback: base64 data URL, capped
+        if (file.size > 800 * 1024) {
+          toast('Cloud sync required for files > 800 KB');
+          return null;
+        }
+        try {
+          const dataUrl = await readAsDataURL(file);
+          return Object.assign(meta, { url: dataUrl, local: true });
+        } catch (e) {
+          toast('Could not read file: ' + e.message);
+          return null;
+        }
+      }
+
+      try {
+        const dataUrl = await readAsDataURL(file);
+        const base64 = dataUrl.split(',')[1] || '';
+        const body = JSON.stringify({
+          action: 'upload',
+          filename: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          data: base64
+        });
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: body
+        });
+        let json = null;
+        try { json = await res.json(); } catch (e) {}
+        if (json && json.ok) {
+          return Object.assign(meta, {
+            url: json.openUrl || json.url,
+            downloadUrl: json.url,
+            fileId: json.fileId
+          });
+        }
+        toast('Upload failed: ' + (json && json.error || 'no response'));
+        return null;
+      } catch (err) {
+        toast('Upload error: ' + err.message);
+        return null;
+      }
+    }
+
+    /* ================================================================
+       12. RENDER: LOGIN
        ================================================================ */
     function renderLogin() {
       const err = state.loginError ? '<div role="alert" class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-[12px] font-medium text-red-700">' + icon('alert','mt-0.5 h-3.5 w-3.5 shrink-0') + '<span>' + escapeHtml(state.loginError) + '</span></div>' : '';
@@ -772,7 +921,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       12. RENDER: WORKSPACE SHELL
+       13. RENDER: WORKSPACE SHELL
        ================================================================ */
     const NAV = [
       { id:'home', label:'Home', icon:'home' },
@@ -844,7 +993,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       13. PAGE: HOME
+       14. PAGE: HOME
        ================================================================ */
     function renderHome() {
       const p = state.profile;
@@ -968,7 +1117,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       14. PAGE: ACADEMIC
+       15. PAGE: ACADEMIC
        ================================================================ */
     function planStats(subject) {
       const units = (subject.plan && subject.plan.units) || [];
@@ -1074,7 +1223,9 @@ function readSheet(sh) {
         } else {
           body = notes.map(function (n) {
             return card('<div class="flex items-center gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">' + icon('file','h-5 w-5') + '</span>' +
-              '<div class="min-w-0"><p class="truncate text-[12.5px] font-semibold text-ink">' + escapeHtml(n.name) + '</p><p class="text-[11px] text-stone-500">' + escapeHtml(n.type) + ' · ' + escapeHtml(s.code) + '</p></div></div>', 'mt-3');
+              '<div class="min-w-0 flex-1"><p class="truncate text-[12.5px] font-semibold text-ink">' + escapeHtml(n.name) + '</p><p class="text-[11px] text-stone-500">' + escapeHtml(n.type) + ' · ' + escapeHtml(s.code) + '</p></div>' +
+              (n.url ? '<a href="' + escapeHtml(n.url) + '" target="_blank" rel="noopener noreferrer" class="shrink-0 rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Open</a>' : '') +
+              '</div>', 'mt-3');
           }).join('');
         }
       } else if (tab === 'CIE') {
@@ -1147,7 +1298,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       15. PAGE: RESEARCH
+       16. PAGE: RESEARCH
        ================================================================ */
     function renderResearch() {
       const tab = state.researchTab || 'Publications';
@@ -1165,6 +1316,7 @@ function readSheet(sh) {
                 '<p class="mt-2 text-[11.5px] text-stone-500">' + escapeHtml(pub.journal) + (pub.volume ? ' · ' + escapeHtml(pub.volume) : '') + '</p>' +
                 '<p class="text-[11px] text-stone-400">' + escapeHtml(pub.authors) + '</p>' +
                 (pub.doi ? '<p class="mt-2 truncate rounded-lg bg-stone-50 px-2.5 py-1.5 text-[10.5px] text-stone-500">DOI: ' + escapeHtml(pub.doi) + '</p>' : '') +
+                (pub.pdf ? '<div class="mt-2">' + attachmentBadge(pub.pdf) + '</div>' : '') +
                 '<div class="mt-3 flex flex-wrap gap-2">' +
                   (pub.doi ? '<a href="https://doi.org/' + escapeHtml(pub.doi) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-ink/90">Open DOI' + icon('external','h-3 w-3') + '</a>' : '') +
                   '<button data-action="edit-record" data-type="publication" data-id="' + pub.id + '" class="inline-flex items-center gap-1 rounded-full border border-stone-200 px-3 py-1.5 text-[11px] font-semibold text-stone-600 hover:border-brand/40 hover:bg-brand-soft hover:text-brand">' + icon('pencil','h-3 w-3') + 'Edit</button>' +
@@ -1206,6 +1358,7 @@ function readSheet(sh) {
             return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
               '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
               '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
+              (c.certificateFile ? '<div class="mt-2">' + attachmentBadge(c.certificateFile) + '</div>' : '') +
               '<div class="mt-2 flex items-center justify-between"><div class="flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div>' +
                 '<div class="flex gap-1"><button data-action="edit-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
                 '<button data-action="delete-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
@@ -1254,7 +1407,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       16. PAGE: FINANCE
+       17. PAGE: FINANCE
        ================================================================ */
     function renderFinance() {
       const thisMonth = state.expenses.filter(function (e) { return String(e.date).slice(0,7) === monthKey(); });
@@ -1285,27 +1438,30 @@ function readSheet(sh) {
         sectionTitle('All expenses', '<span class="text-[11px] text-stone-400">' + state.expenses.length + ' records</span>') +
         (sorted.length === 0 ? emptyState('wallet','No expenses','Record your first expense.') :
           '<div class="space-y-2.5">' + sorted.map(function (e) {
-            return card('<div class="flex items-center justify-between gap-3 p-3.5">' +
+            return card('<div class="p-3.5">' +
+              '<div class="flex items-center justify-between gap-3">' +
               '<div class="flex min-w-0 items-center gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-stone-100 text-stone-500">' + icon('wallet','h-4 w-4') + '</span>' +
               '<div class="min-w-0"><p class="truncate text-[12.5px] font-semibold text-ink">' + escapeHtml(e.description) + '</p><p class="truncate text-[10.5px] text-stone-500">' + fmtDate(e.date) + ' · ' + escapeHtml(e.category) + ' · ' + escapeHtml(e.paymentMode) + '</p></div></div>' +
               '<div class="shrink-0 text-right"><p class="text-[13px] font-bold text-ink">' + fmtMoney(e.amount) + '</p><div class="mt-0.5 flex justify-end gap-1"><button data-action="edit-record" data-type="expense" data-id="' + e.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Edit</button><button data-action="delete-record" data-type="expense" data-id="' + e.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Remove</button></div></div>' +
+              '</div>' +
+              (e.receipt ? '<div class="mt-2">' + attachmentBadge(e.receipt) + '</div>' : '') +
               '</div>');
           }).join('') + '</div>') +
         '</div>';
     }
 
     /* ================================================================
-       17. PAGE: DOCUMENTS
+       18. PAGE: DOCUMENTS
        ================================================================ */
     function renderDocuments() {
-      const cats = ['All','Identity','Personal'];
+      const cats = ['All','Identity','Personal','Academic','Financial','Other'];
       const filter = state.docFilter || 'All';
       const list = filter === 'All' ? state.documents : state.documents.filter(function (d) { return d.category === filter; });
       const expiring = state.documents.filter(function (d) { return d.expiryDate && daysUntil(d.expiryDate) <= 60; });
 
       return '<div class="fade-up space-y-4 px-4 py-5">' +
         '<div class="flex items-start gap-3 rounded-2xl bg-ink p-4 text-white">' + icon('shield','mt-0.5 h-5 w-5 shrink-0 text-white/70') +
-          '<div><p class="text-[12.5px] font-bold">Encrypted local vault</p><p class="mt-1 text-[11px] leading-relaxed text-white/60">Aadhaar and PAN are masked by default. All records are stored in this browser and can be backed up to your Google Sheet / Drive from Settings → Cloud sync.</p></div></div>' +
+          '<div><p class="text-[12.5px] font-bold">Encrypted local vault</p><p class="mt-1 text-[11px] leading-relaxed text-white/60">Attach scans or copies of any document — files are uploaded to your Google Drive. Aadhaar and PAN numbers stay masked by default.</p></div></div>' +
         (expiring.length > 0 ? '<div class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">' + icon('alert','mt-0.5 h-4 w-4 shrink-0 text-brand') + '<p class="text-[11.5px] font-semibold text-brand">' + expiring.length + ' document(s) expiring within 60 days</p></div>' : '') +
         '<div class="flex items-center justify-between gap-3">' +
           '<div class="no-scrollbar flex gap-1.5 overflow-x-auto">' +
@@ -1332,6 +1488,7 @@ function readSheet(sh) {
                 '<span class="truncate font-mono text-[12px] font-semibold tracking-wide text-ink">' + maskNum(d.docNumber, revealed) + '</span>' +
                 '<button data-action="toggle-doc" data-id="' + d.id + '" aria-label="Reveal" class="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-stone-200 bg-white text-stone-500 hover:bg-stone-100">' + icon(revealed ? 'eyeOff' : 'eye', 'h-3.5 w-3.5') + '</button>' +
               '</div>' +
+              (d.attachment ? '<div class="mt-2.5">' + attachmentBadge(d.attachment) + '</div>' : '') +
               '<div class="mt-2.5 flex flex-wrap items-center gap-1.5">' +
                 (d.expiryDate ? badge('Expires ' + fmtDate(d.expiryDate), days !== null && days <= 30 ? 'danger' : 'warn') : badge('No expiry','neutral')) +
                 (d.tags || []).map(function (t) { return badge(t, 'neutral'); }).join('') +
@@ -1343,10 +1500,11 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       18. PAGE: MORE + SETTINGS (CRUD + Cloud)
+       19. PAGE: MORE (incl. Files / Vault)
        ================================================================ */
     const MODULES = [
       { id:'tasks', label:'Tasks & reminders', desc:'Due, overdue and completed', icon:'clipboard' },
+      { id:'vault', label:'Files & uploads', desc:'Drive-backed vault', icon:'upload' },
       { id:'meetings', label:'Meetings', desc:'Department & YRC minutes', icon:'users' },
       { id:'certificates', label:'Certificates', desc:'FDPs and workshops', icon:'award' },
       { id:'accreditation', label:'NAAC / NBA vault', desc:'Evidence readiness', icon:'building' },
@@ -1369,7 +1527,7 @@ function readSheet(sh) {
           '</div>';
       }
 
-      const titles = { tasks:'Tasks & reminders', meetings:'Meetings', certificates:'Certificates & FDPs', accreditation:'NAAC / NBA vault', reports:'Reports & backup', links:'Important links', settings:'Settings & data' };
+      const titles = { tasks:'Tasks & reminders', vault:'Files & uploads', meetings:'Meetings', certificates:'Certificates & FDPs', accreditation:'NAAC / NBA vault', reports:'Reports & backup', links:'Important links', settings:'Settings & data' };
       let body = '';
 
       if (state.moreModule === 'tasks') {
@@ -1389,6 +1547,33 @@ function readSheet(sh) {
               '<div class="flex shrink-0 flex-col items-end gap-1.5">' + badge(status, tone) + '<div class="flex gap-1"><button data-action="edit-record" data-type="task" data-id="' + t.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-ink">Edit</button><button data-action="delete-record" data-type="task" data-id="' + t.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Delete</button></div></div>' +
               '</div>', 'mb-2.5');
           }).join(''));
+      } else if (state.moreModule === 'vault') {
+        body = '<div class="mb-3 rounded-2xl bg-ink p-4 text-white">' +
+          '<p class="text-[10px] uppercase tracking-wider text-white/50">Drive-backed storage</p>' +
+          '<p class="mt-1 text-[15px] font-extrabold">' + state.vault.length + ' file' + (state.vault.length === 1 ? '' : 's') + ' uploaded</p>' +
+          '<p class="mt-1 text-[10.5px] text-white/60">Files land in your Drive folder and are viewable from any device.</p>' +
+          '<div class="mt-3 grid grid-cols-2 gap-2">' +
+            '<button data-action="open-sheet" data-sheet="vault" class="rounded-xl bg-white px-3 py-2 text-[11.5px] font-bold text-ink">' + icon('upload','mr-1 inline h-3.5 w-3.5') + 'Upload</button>' +
+            '<a href="' + escapeHtml(state.cloud.driveUrl) + '" target="_blank" rel="noopener noreferrer" class="rounded-xl bg-white/15 px-3 py-2 text-[11.5px] font-semibold">Open Drive ' + icon('external','ml-1 inline h-3 w-3') + '</a>' +
+          '</div></div>' +
+          (state.vault.length === 0 ? emptyState('upload','No files yet','Tap Upload to add your first file.') :
+          '<div class="space-y-2.5">' + state.vault.slice().sort(function (a,b) { return String((b.attachment||{}).uploadedAt || '').localeCompare(String((a.attachment||{}).uploadedAt || '')); }).map(function (f) {
+            const att = f.attachment || {};
+            return card('<div class="p-3.5">' +
+              '<div class="flex items-start gap-3">' +
+                '<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">' + icon('file','h-5 w-5') + '</span>' +
+                '<div class="min-w-0 flex-1"><p class="truncate text-[12.5px] font-bold text-ink">' + escapeHtml(f.title || att.name || 'File') + '</p>' +
+                '<p class="truncate text-[10.5px] text-stone-500">' + escapeHtml(att.name || '') + (att.size ? ' · ' + formatBytes(att.size) : '') + (f.folder ? ' · ' + escapeHtml(f.folder) : '') + '</p>' +
+                (f.notes ? '<p class="mt-1 text-[10.5px] text-stone-500">' + escapeHtml(f.notes) + '</p>' : '') +
+                '</div>' +
+                '<div class="flex shrink-0 flex-col gap-1">' +
+                  '<button data-action="edit-record" data-type="vault" data-id="' + f.id + '" aria-label="Edit" class="grid h-7 w-7 place-items-center rounded-md bg-stone-100 text-stone-700 hover:bg-stone-200">' + icon('pencil','h-3.5 w-3.5') + '</button>' +
+                  '<button data-action="delete-record" data-type="vault" data-id="' + f.id + '" aria-label="Delete" class="grid h-7 w-7 place-items-center rounded-md bg-red-50 text-brand hover:bg-red-100">' + icon('trash','h-3.5 w-3.5') + '</button>' +
+                '</div>' +
+              '</div>' +
+              (att.url ? '<div class="mt-2.5">' + attachmentBadge(att) + '</div>' : '') +
+              '</div>', 'mb-0');
+          }).join('') + '</div>');
       } else if (state.moreModule === 'meetings') {
         body = primaryBtn(icon('plus','h-4 w-4') + 'Add meeting', 'data-action="open-sheet" data-sheet="meeting"', 'w-full mb-3') +
           (state.meetings.length === 0 ? emptyState('users','No meetings','Add meeting minutes.') :
@@ -1396,6 +1581,7 @@ function readSheet(sh) {
             return card('<div class="p-4"><div class="flex items-start justify-between gap-3"><p class="text-[12.5px] font-bold text-ink">' + escapeHtml(m.title) + '</p>' + badge(m.type, m.type==='YRC'?'brand':'success') + '</div>' +
               '<p class="mt-1 text-[11px] text-stone-500">' + fmtDate(m.date) + ' · ' + escapeHtml(m.time) + ' · ' + escapeHtml(m.venue) + ' · ' + m.participants + ' participants</p>' +
               '<div class="mt-3 rounded-xl bg-stone-50 p-3"><p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">Minutes</p><p class="text-[11.5px] leading-relaxed text-stone-600">' + escapeHtml(m.minutes) + '</p></div>' +
+              (m.minutesFile ? '<div class="mt-2">' + attachmentBadge(m.minutesFile) + '</div>' : '') +
               '<div class="mt-2 flex justify-end gap-1"><button data-action="edit-record" data-type="meeting" data-id="' + m.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
               '<button data-action="delete-record" data-type="meeting" data-id="' + m.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
               '</div>', 'mb-3');
@@ -1406,6 +1592,7 @@ function readSheet(sh) {
             return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
               '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
               '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
+              (c.certificateFile ? '<div class="mt-2">' + attachmentBadge(c.certificateFile) + '</div>' : '') +
               '<div class="mt-2 flex items-center justify-between"><div class="flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div>' +
               '<div class="flex gap-1"><button data-action="edit-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
               '<button data-action="delete-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
@@ -1469,7 +1656,6 @@ function readSheet(sh) {
       const c = state.cloud;
       let html = '';
 
-      // ---- Profile ----
       const fields = [
         ['name','Full name'], ['designation','Designation'], ['department','Department'],
         ['employeeId','Employee ID'], ['email','Email'], ['phone','Phone'],
@@ -1482,8 +1668,7 @@ function readSheet(sh) {
         '<div class="mt-4 grid grid-cols-2 gap-2"><button data-action="save-profile" class="rounded-xl bg-brand px-4 py-3 text-[13px] font-bold text-white hover:bg-brand-dark">Save changes</button>' +
         '<button data-action="reset-profile" class="rounded-xl border border-stone-200 px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">Reset default</button></div></div>', 'mb-3');
 
-      // ---- Manage data (CRUD) ----
-      const groups = ['expense','publication','document','task','book','patent','certificate','meeting','subject'];
+      const groups = ['expense','publication','document','task','book','patent','certificate','meeting','vault','subject'];
       let dm = '<div class="space-y-2.5">';
       groups.forEach(function (type) {
         const schema = RECORD_TYPES[type];
@@ -1497,7 +1682,7 @@ function readSheet(sh) {
             '<button data-action="open-sheet" data-sheet="' + type + '" class="shrink-0 rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold text-white hover:bg-brand-dark">+ Add</button>' +
           '</div>' +
           (list.length === 0 ? '<p class="px-3 py-3 text-[11px] text-stone-400">No records yet</p>' :
-            '<ul class="divide-y divide-stone-100">' + list.map(function (r) {
+            '<ul class="divide-y divide-stone-100">' + list.slice(0, 25).map(function (r) {
               return '<li class="flex items-center gap-1.5 px-2.5 py-2">' +
                 '<div class="min-w-0 flex-1"><p class="truncate text-[11.5px] font-medium text-ink">' + escapeHtml(schema.title(r)) + '</p>' +
                 '<p class="truncate text-[10px] text-stone-400">' + escapeHtml(schema.sub(r)) + '</p></div>' +
@@ -1505,14 +1690,13 @@ function readSheet(sh) {
                 '<button data-action="rename-record" data-type="' + type + '" data-id="' + escapeHtml(r.id) + '" aria-label="Rename" class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-stone-100 text-stone-700 hover:bg-stone-200">' + icon('file','h-3.5 w-3.5') + '</button>' +
                 '<button data-action="delete-record" data-type="' + type + '" data-id="' + escapeHtml(r.id) + '" aria-label="Delete" class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-red-50 text-brand hover:bg-red-100">' + icon('trash','h-3.5 w-3.5') + '</button>' +
                 '</li>';
-            }).join('') + '</ul>') +
+            }).join('') + (list.length > 25 ? '<li class="px-3 py-2 text-[10px] text-stone-400">+ ' + (list.length - 25) + ' more…</li>' : '') + '</ul>') +
           '</div>';
       });
       dm += '</div>';
       html += card('<div class="p-4"><div class="mb-3 flex items-center justify-between"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Manage data</p>' +
         '<span class="text-[10px] text-stone-400">Edit · Rename · Delete</span></div>' + dm + '</div>', 'mb-3');
 
-      // ---- Cloud sync ----
       html += card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Cloud sync</p>' +
         '<div class="space-y-2.5">' +
           '<a href="' + escapeHtml(c.sheetUrl) + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-xl bg-stone-50 px-3 py-2.5 hover:bg-stone-100">' +
@@ -1523,7 +1707,7 @@ function readSheet(sh) {
             '<span class="flex items-center gap-1 text-[11.5px] font-semibold text-ink">Open' + icon('external','h-3 w-3 text-stone-400') + '</span></a>' +
           field('Apps Script Web App URL',
             '<input data-cloud-field="scriptUrl" value="' + escapeHtml(c.scriptUrl || '') + '" placeholder="https://script.google.com/macros/s/…/exec" class="' + inputCls + '" />') +
-          '<p class="text-[10.5px] leading-relaxed text-stone-500">Deploy the Apps Script below as a <b>Web App</b> (Execute as: <b>Me</b>, Who has access: <b>Anyone</b>). Paste the <code>/exec</code> URL above.</p>' +
+          '<p class="text-[10.5px] leading-relaxed text-stone-500">Deploy the Apps Script below as a <b>Web App</b> (Execute as: <b>Me</b>, Who has access: <b>Anyone</b>). Paste the <code>/exec</code> URL above. Uploads are stored in your Drive folder.</p>' +
           '<div class="grid grid-cols-2 gap-2">' +
             '<button data-action="cloud-push" class="rounded-xl bg-brand px-3 py-2.5 text-[12px] font-bold text-white hover:bg-brand-dark">Push to Sheet</button>' +
             '<button data-action="cloud-pull" class="rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-[12px] font-semibold text-stone-700 hover:bg-stone-50">Pull from Sheet</button>' +
@@ -1534,16 +1718,14 @@ function readSheet(sh) {
           (c.lastSync ? '<p class="text-center text-[10.5px] text-stone-500">Last sync: ' + escapeHtml(new Date(c.lastSync).toLocaleString('en-IN')) + '</p>' : '') +
         '</div></div>', 'mb-3');
 
-      // ---- Apps Script code ----
       html += card('<div class="p-4"><div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Apps Script setup</p>' +
         '<button data-action="copy-apps-script" class="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">' + icon('copy','h-3 w-3') + 'Copy</button></div>' +
-        '<p class="mb-2 text-[10.5px] leading-relaxed text-stone-500">Open your sheet → Extensions → Apps Script → paste → Deploy as Web App → paste the /exec URL above.</p>' +
+        '<p class="mb-2 text-[10.5px] leading-relaxed text-stone-500">Open your sheet → Extensions → Apps Script → paste → Deploy as Web App (Anyone) → paste the /exec URL above. The <code>upload</code> action saves files to your Drive folder.</p>' +
         '<pre id="apps-script-code" class="max-h-[260px] overflow-auto rounded-xl bg-ink p-3 text-[9.5px] leading-relaxed text-white/90">' + escapeHtml(APPS_SCRIPT_CODE) + '</pre></div>', 'mb-3');
 
-      // ---- Session ----
       html += card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Session</p>' +
         '<dl class="space-y-2 text-[12px]"><div class="flex justify-between gap-3"><dt class="text-stone-500">Signed in as</dt><dd class="truncate font-semibold text-ink">' + escapeHtml((state.session && state.session.email) || '—') + '</dd></div>' +
-        '<div class="flex justify-between gap-3"><dt class="text-stone-500">Storage</dt><dd class="font-semibold text-ink">Local + Google Sheet</dd></div></dl>' +
+        '<div class="flex justify-between gap-3"><dt class="text-stone-500">Storage</dt><dd class="font-semibold text-ink">Local + Google Sheet + Drive</dd></div></dl>' +
         '<div class="mt-3 grid grid-cols-2 gap-2"><button data-action="logout" class="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">' + icon('logout','h-4 w-4') + 'Sign out</button>' +
         '<button data-action="clear-data" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-semibold text-brand hover:bg-red-100">' + icon('trash','h-4 w-4') + 'Clear data</button></div></div>');
 
@@ -1551,7 +1733,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       19. SHEETS (schema-driven add + edit)
+       20. SHEETS (schema-driven add + edit + upload)
        ================================================================ */
     function fieldInputHtml(f, value) {
       const v = value == null ? '' : value;
@@ -1564,6 +1746,23 @@ function readSheet(sh) {
       }
       if (f.type === 'textarea') {
         return '<textarea name="' + f.key + '" rows="' + (f.rows||2) + '" class="' + inputCls + '" placeholder="' + escapeHtml(f.placeholder||'') + '"' + (f.required?' required':'') + '>' + escapeHtml(v) + '</textarea>';
+      }
+      if (f.type === 'file') {
+        let html = '';
+        const att = v && typeof v === 'object' ? v : null;
+        if (att && att.url) {
+          html += '<div data-attachment="' + f.key + '" class="mb-2 flex items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2">' +
+            '<div class="flex min-w-0 items-center gap-2">' + icon('file','h-4 w-4 shrink-0 text-emerald-600') +
+              '<div class="min-w-0"><p class="truncate text-[11.5px] font-semibold text-emerald-900">' + escapeHtml(att.name || 'File') + '</p>' +
+              '<p class="text-[10px] text-emerald-700">' + (att.size ? formatBytes(att.size) : 'Attached') + '</p></div>' +
+            '</div>' +
+            '<div class="flex shrink-0 gap-1">' +
+              '<a href="' + escapeHtml(att.url) + '" target="_blank" rel="noopener noreferrer" class="rounded-md bg-white px-2 py-1 text-[10px] font-bold text-emerald-700 hover:bg-emerald-100">Open</a>' +
+              '<button type="button" data-action="clear-file" data-field="' + f.key + '" class="rounded-md bg-white px-2 py-1 text-[10px] font-bold text-red-600 hover:bg-red-50">Remove</button>' +
+            '</div></div>';
+        }
+        html += '<input type="file" name="' + f.key + '"' + (f.required && !att ? ' required' : '') + ' class="block w-full text-[12px] text-stone-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-2 file:text-[11.5px] file:font-bold file:text-white hover:file:bg-brand-dark" />';
+        return html;
       }
       return '<input name="' + f.key + '" type="' + (f.type||'text') + '" value="' + escapeHtml(v) + '" class="' + inputCls + '" placeholder="' + escapeHtml(f.placeholder||'') + '"' + (f.required?' required':'') + ' />';
     }
@@ -1589,7 +1788,7 @@ function readSheet(sh) {
       inner += primaryBtn(btnLabel, 'type="submit"', 'w-full');
       inner += '</form>';
       const title = editing ? 'Edit ' + schema.label.toLowerCase() : 'Add ' + schema.label.toLowerCase();
-      const sub = editing ? 'Update the record below' : 'Create a new record';
+      const sub = editing ? 'Update the record below' : (type === 'vault' ? 'Files upload straight to your Drive folder' : 'Create a new record');
       return wrap(title, sub, inner);
     }
 
@@ -1608,9 +1807,9 @@ function readSheet(sh) {
 
       if (state.sheet === 'quick') {
         const items = [
-          ['Expense','wallet','expense'], ['Task','clipboard','task'], ['Document','folder','document'],
-          ['Publication','book','publication'], ['Book','book','book'], ['Patent','flask','patent'],
-          ['Certificate','award','certificate'], ['Meeting','users','meeting'], ['Subject','cap','subject']
+          ['Upload file','upload','vault'], ['Expense','wallet','expense'], ['Task','clipboard','task'],
+          ['Document','folder','document'], ['Publication','book','publication'], ['Certificate','award','certificate'],
+          ['Book','book','book'], ['Patent','flask','patent'], ['Subject','cap','subject']
         ];
         return wrap('Quick add', 'Create a record in the BEC workspace',
           '<div class="grid grid-cols-3 gap-2.5">' + items.map(function (item) {
@@ -1625,7 +1824,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       20. CLOUD SYNC
+       21. CLOUD SYNC
        ================================================================ */
     function buildCloudPayload() {
       return {
@@ -1640,7 +1839,8 @@ function readSheet(sh) {
           Patents: state.patents,
           Certificates: state.certificates,
           Meetings: state.meetings,
-          Subjects: state.subjects
+          Subjects: state.subjects,
+          Files: state.vault
         }
       };
     }
@@ -1731,6 +1931,7 @@ function readSheet(sh) {
           if (Array.isArray(d.Patents)) { state.patents = d.Patents.map(function (r) { return normalizeRecord('patent', r); }); persist('patents', state.patents); }
           if (Array.isArray(d.Certificates)) { state.certificates = d.Certificates.map(function (r) { return normalizeRecord('certificate', r); }); persist('certificates', state.certificates); }
           if (Array.isArray(d.Meetings)) { state.meetings = d.Meetings.map(function (r) { return normalizeRecord('meeting', r); }); persist('meetings', state.meetings); }
+          if (Array.isArray(d.Files)) { state.vault = d.Files.map(function (r) { return normalizeRecord('vault', r); }); persist('vault', state.vault); }
           if (Array.isArray(d.Subjects)) { state.subjects = d.Subjects.map(normalizeSubject); persist('subjects', state.subjects); }
           if (Array.isArray(d.Profile) && d.Profile[0]) {
             state.profile = Object.assign({}, state.profile, d.Profile[0]);
@@ -1784,7 +1985,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       21. RENDER ROOT (with focus preservation)
+       22. RENDER ROOT (with focus preservation)
        ================================================================ */
     function render() {
       const root = document.getElementById('app');
@@ -1803,7 +2004,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       22. EVENT HANDLERS
+       23. EVENT HANDLERS
        ================================================================ */
     function findRecord(type, id) {
       const schema = RECORD_TYPES[type];
@@ -1837,6 +2038,20 @@ function readSheet(sh) {
       if (action === 'set-doc-filter') { setState({ docFilter: btn.dataset.filter }); return; }
       if (action === 'open-sheet') { setState({ sheet: btn.dataset.sheet, editing: null }); return; }
       if (action === 'close-sheet') { setState({ sheet: null, editing: null }); return; }
+
+      if (action === 'clear-file') {
+        const fieldName = btn.dataset.field;
+        const form = btn.closest('form');
+        if (form) {
+          form.dataset.fileClear = form.dataset.fileClear || '';
+          if (form.dataset.fileClear.indexOf(fieldName) === -1) {
+            form.dataset.fileClear += (form.dataset.fileClear ? ',' : '') + fieldName;
+          }
+        }
+        const wrapper = btn.closest('[data-attachment]');
+        if (wrapper) wrapper.style.display = 'none';
+        return;
+      }
 
       if (action === 'quick-add') {
         const target = btn.dataset.target;
@@ -1939,7 +2154,8 @@ function readSheet(sh) {
           patents: state.patents,
           certificates: state.certificates,
           meetings: state.meetings,
-          subjects: state.subjects
+          subjects: state.subjects,
+          vault: state.vault
         }, null, 2);
         download('bec-backup.json', payload, 'application/json'); return;
       }
@@ -1990,7 +2206,7 @@ function readSheet(sh) {
       setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       const form = e.target;
       if (!form.id && !form.dataset.recordType) return;
       e.preventDefault();
@@ -2028,22 +2244,44 @@ function readSheet(sh) {
         } else {
           record = {};
         }
+
+        // Handle file fields first: upload files, apply clears, keep existing otherwise.
+        const clearFields = String(form.dataset.fileClear || '').split(',').filter(Boolean);
+        for (let i = 0; i < schema.fields.length; i++) {
+          const f = schema.fields[i];
+          if (f.type !== 'file') continue;
+          const input = form.querySelector('input[name="' + f.key + '"]');
+          const hasFile = input && input.files && input.files[0] && input.files[0].size > 0;
+          if (hasFile) {
+            toast('Uploading ' + input.files[0].name + '…');
+            const uploaded = await uploadFile(input.files[0]);
+            if (!uploaded) return; // abort save; toast already shown
+            record[f.key] = uploaded;
+          } else if (clearFields.indexOf(f.key) !== -1) {
+            record[f.key] = null;
+          }
+        }
+
         schema.fields.forEach(function (f) {
+          if (f.type === 'file') return;
           const v = data.get(f.key);
           if (f.set) { f.set(record, v); }
           else if (f.type === 'number') { record[f.key] = Number(v) || 0; }
           else { record[f.key] = v; }
         });
+
         for (let i = 0; i < schema.fields.length; i++) {
           const f = schema.fields[i];
           if (f.required) {
-            const v = f.get ? f.get(record) : record[f.key];
-            if (v == null || String(v).trim() === '') {
+            const v = f.type === 'file' ? record[f.key] : (f.get ? f.get(record) : record[f.key]);
+            const empty = (v == null) || (typeof v === 'string' && String(v).trim() === '');
+            if (empty) {
               toast(f.label + ' is required');
               return;
             }
           }
         }
+
         const coll = schema.collection;
         if (id) {
           state[coll] = state[coll].map(function (r) { return r.id === id ? Object.assign({}, r, record) : r; });
@@ -2070,7 +2308,7 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       23. INIT
+       24. INIT
        ================================================================ */
     document.addEventListener('click', handleClick);
     document.addEventListener('submit', handleSubmit);
