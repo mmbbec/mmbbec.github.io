@@ -4,43 +4,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Advanced Numerical Methods Solver</title>
+
+  <!-- Tailwind Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.3.1",
-        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
-      }
-    }
-  </script>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
     rel="stylesheet"
   />
+
+  <!-- React 18 UMD (no bundler, no importmap needed) -->
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel Standalone: transpiles JSX in the browser -->
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+
   <style>
     body { margin: 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif; background: #f8fafc; }
     .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
     .serif { font-family: "Instrument Serif", serif; }
     canvas { display: block; }
+    .boot {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      color: #64748b; font-size: 14px; letter-spacing: 0.2em;
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module">
-    import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-    import { createRoot } from "react-dom/client";
+  <div id="root">
+    <div class="boot">LOADING SOLVER…</div>
+  </div>
 
-    /* =====================================================================
+  <script type="text/babel" data-presets="react">
+    /* ---------------------------------------------------------------
+       React UMD globals
+       --------------------------------------------------------------- */
+    const { useState, useMemo, useCallback, useEffect, useRef } = React;
+    const { createRoot } = ReactDOM;
+
+    /* ===============================================================
        1. MATH EXPRESSION PARSER
-       =====================================================================
-       Uses `with(Math)` for scope — no fragile string replacement of "Math."
-       Supports: sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, exp,
-       sqrt, abs, log (natural), log10, log2, pow, ceil, floor, round,
-       sign, ln (alias → log), PI, E (or e), and ^ (→ **).
-       ===================================================================== */
-
+       =============================================================== */
     function compileUnary(expr) {
       const src = String(expr ?? "")
         .replace(/\^/g, "**")
@@ -48,7 +57,7 @@
         .replace(/\b[eE]\b/g, "E");
       try {
         const fn = new Function("x", "Math", `with (Math) { return (${src}); }`);
-        fn(0, Math); // smoke test
+        fn(0, Math);
         return (x) => {
           try {
             const v = fn(x, Math);
@@ -75,10 +84,9 @@
       } catch { return () => NaN; }
     }
 
-    /* =====================================================================
+    /* ===============================================================
        2. SHARED UI COMPONENTS
-       ===================================================================== */
-
+       =============================================================== */
     function Tabs({ tabs, active, onChange }) {
       return (
         <div className="flex gap-2">
@@ -171,10 +179,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        3. CANVAS PLOTTER
-       ===================================================================== */
-
+       =============================================================== */
     function FunctionPlot({
       title, f, xMin, xMax,
       points = [], extraSeries = [],
@@ -189,7 +196,7 @@
         if (!ctx) return;
 
         const dpr = window.devicePixelRatio || 1;
-        const W = canvas.clientWidth;
+        const W = canvas.clientWidth || 400;
         const H = height;
         canvas.width = W * dpr;
         canvas.height = H * dpr;
@@ -197,7 +204,6 @@
         canvas.style.height = H + "px";
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // Sample values to compute y-range
         const ys = [];
         if (f) {
           for (let i = 0; i <= 300; i++) {
@@ -219,12 +225,10 @@
         const mapX = (x) => ((x - xMin) / (xMax - xMin)) * (W - 40) + 30;
         const mapY = (y) => H - 30 - ((y - yMin) / (yMax - yMin)) * (H - 60);
 
-        // Background
         ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, W, H);
 
-        // Grid
         ctx.strokeStyle = "#eef2ff";
         ctx.lineWidth = 1;
         for (let i = 0; i <= 6; i++) {
@@ -236,7 +240,6 @@
           ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, H - 30); ctx.stroke();
         }
 
-        // Axes
         ctx.strokeStyle = "#94a3b8";
         ctx.lineWidth = 1.2;
         if (yMin <= 0 && 0 <= yMax) {
@@ -248,7 +251,6 @@
           ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, H - 30); ctx.stroke();
         }
 
-        // Shaded area under f
         if (f && shade) {
           ctx.beginPath();
           ctx.moveTo(mapX(xMin), mapY(0));
@@ -263,7 +265,6 @@
           ctx.fill();
         }
 
-        // Extra series (fit curves, iterates, etc.)
         extraSeries.forEach((s) => {
           ctx.beginPath();
           ctx.strokeStyle = s.color || "#6366f1";
@@ -278,7 +279,6 @@
           ctx.stroke();
         });
 
-        // Main curve
         if (f) {
           ctx.beginPath();
           ctx.strokeStyle = "#0f172a";
@@ -295,7 +295,6 @@
           ctx.stroke();
         }
 
-        // Points
         points.forEach((p) => {
           if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
           const px = mapX(p.x), py = mapY(p.y);
@@ -313,7 +312,6 @@
           }
         });
 
-        // Axis labels
         ctx.fillStyle = "#64748b";
         ctx.font = "11px ui-sans-serif, system-ui";
         ctx.fillText(xMin.toFixed(2), 30, H - 10);
@@ -340,10 +338,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        4. ROOT FINDING
-       ===================================================================== */
-
+       =============================================================== */
     function RootSolver() {
       const [expr, setExpr] = useState("x^3 - x - 2");
       const [method, setMethod] = useState("bisection");
@@ -488,11 +485,8 @@
                   <InputField label="f(x)" type="text" value={expr} onChange={setExpr} />
                   <div>
                     <label className="block text-[11px] font-medium text-slate-600 mb-1">Method</label>
-                    <select
-                      value={method}
-                      onChange={(e) => setMethod(e.target.value)}
-                      className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm"
-                    >
+                    <select value={method} onChange={(e) => setMethod(e.target.value)}
+                      className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-sm">
                       <option value="bisection">Bisection</option>
                       <option value="newton">Newton-Raphson</option>
                       <option value="secant">Secant</option>
@@ -500,7 +494,6 @@
                       <option value="fixed">Fixed-Point</option>
                     </select>
                   </div>
-
                   {(method === "bisection" || method === "regula") && (
                     <div className="grid grid-cols-2 gap-2">
                       <InputField label="a" value={a} onChange={(v) => setA(parseFloat(v) || 0)} />
@@ -523,10 +516,8 @@
                     <InputField label="Tolerance ε" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-4)} step="0.00001" />
                     <InputField label="Max iterations" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 50)} />
                   </div>
-                  <button
-                    onClick={solve}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-bold transition"
-                  >
+                  <button onClick={solve}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-bold transition">
                     SOLVE
                   </button>
                   <ErrorBanner msg={error} />
@@ -550,8 +541,7 @@
                       </div>
                       <div className="text-sm">
                         Root ≈ <b className="mono">{result.root?.toFixed(8)}</b>, iterations {result.iterations.length},
-                        last error <span className="mono">{result.lastErr?.toExponential(3)}</span>,
-                        f(root) = <span className="mono">{f(result.root).toExponential(3)}</span>
+                        last error <span className="mono">{result.lastErr?.toExponential(3)}</span>
                       </div>
                     </div>
                   )}
@@ -561,10 +551,10 @@
               {result && (
                 <div className="space-y-3 mt-2">
                   <StepCard label="Step 1 — Problem Restatement">
-                    Find root of f(x) = <span className="mono">{expr}</span> using {method}. Initialization: {initText}, tol = {tol}, max iter = {maxIter}.
+                    Find root of f(x) = <span className="mono">{expr}</span> using {method}. Initialization: {initText}, tol = {tol}.
                   </StepCard>
                   <StepCard label="Step 2 — Method + Formula">
-                    Governing formula per the Formula Sheet. Chosen because{" "}
+                    Chosen because{" "}
                     {method === "bisection" ? "it guarantees a bracket."
                       : method === "newton" ? "of quadratic convergence near simple roots."
                       : method === "secant" ? "it needs no derivative."
@@ -580,10 +570,10 @@
                   </div>
                   <div className="grid md:grid-cols-2 gap-3">
                     <StepCard label="Step 6 — Error & Stopping">
-                      Stopping criterion |x_n − x_(n−1)| &lt; ε = {tol}. Achieved error {result.lastErr?.toExponential(4)}.
+                      |x_n − x_(n−1)| &lt; ε = {tol}. Achieved error {result.lastErr?.toExponential(4)}.
                     </StepCard>
                     <StepCard label="Step 7 — Verification">
-                      Residual f(root) = <span className="mono">{f(result.root).toExponential(6)}</span> ≈ 0 → valid root.
+                      Residual f(root) = <span className="mono">{f(result.root).toExponential(6)}</span> ≈ 0 → valid.
                     </StepCard>
                   </div>
                 </div>
@@ -594,10 +584,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        5. LINEAR SYSTEMS
-       ===================================================================== */
-
+       =============================================================== */
     function LinearSolver() {
       const [size, setSize] = useState(2);
       const [A, setA] = useState([[4, 1], [1, 3]]);
@@ -756,25 +745,16 @@
       }, [A, b, size, method, x0, tol, maxIter]);
 
       const updateA = (i, j, v) => {
-        const n = parseFloat(v);
-        if (Number.isNaN(n)) return;
-        const copy = A.map((row) => [...row]);
-        copy[i][j] = n;
-        setA(copy);
+        const n = parseFloat(v); if (Number.isNaN(n)) return;
+        const copy = A.map((row) => [...row]); copy[i][j] = n; setA(copy);
       };
       const updateB = (i, v) => {
-        const n = parseFloat(v);
-        if (Number.isNaN(n)) return;
-        const copy = [...b];
-        copy[i] = n;
-        setB(copy);
+        const n = parseFloat(v); if (Number.isNaN(n)) return;
+        const copy = [...b]; copy[i] = n; setB(copy);
       };
       const updateX0 = (i, v) => {
-        const n = parseFloat(v);
-        if (Number.isNaN(n)) return;
-        const copy = [...x0];
-        copy[i] = n;
-        setX0(copy);
+        const n = parseFloat(v); if (Number.isNaN(n)) return;
+        const copy = [...x0]; copy[i] = n; setX0(copy);
       };
 
       const plotSeries = useMemo(() => {
@@ -799,19 +779,18 @@
 
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
-              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Linear Systems — Purpose</h3>
-              <p>Solve A·x = b. Direct methods: Gaussian elimination, Gauss-Jordan, LU, Cholesky.
-                 Iterative methods: Jacobi, Gauss-Seidel — converge if A is strictly diagonally dominant.</p>
+              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Linear Systems</h3>
+              <p>Solve A·x = b. Direct: Gauss, Gauss-Jordan, LU, Cholesky. Iterative: Jacobi, Gauss-Seidel — converge if strictly diagonally dominant.</p>
             </div>
           )}
 
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
-              <div>Gauss elimination: factor = a_ik / a_kk</div>
-              <div>LU (Doolittle): A = L·U, L unit lower, U upper</div>
-              <div>Cholesky: A = L·Lᵀ for SPD A</div>
-              <div>Jacobi: x_i^(k+1) = (b_i − Σ_(j≠i) a_ij · x_j^(k)) / a_ii</div>
-              <div>Gauss-Seidel: uses latest x_j^(k+1) for j &lt; i</div>
+              <div>Gauss: factor = a_ik / a_kk</div>
+              <div>LU (Doolittle): A = L·U</div>
+              <div>Cholesky: A = L·Lᵀ (SPD)</div>
+              <div>Jacobi: x_i^(k+1) = (b_i − Σ_(j≠i) a_ij·x_j^(k)) / a_ii</div>
+              <div>Seidel: uses latest x_j^(k+1) for j &lt; i</div>
             </div>
           )}
 
@@ -827,9 +806,9 @@
                     </select>
                     <select value={method} onChange={(e) => setMethod(e.target.value)}
                       className="border border-slate-200 rounded px-2 py-1 text-sm">
-                      <option value="gauss">Gaussian Elimination</option>
+                      <option value="gauss">Gaussian</option>
                       <option value="jordan">Gauss-Jordan</option>
-                      <option value="lu">LU Decomposition</option>
+                      <option value="lu">LU</option>
                       <option value="cholesky">Cholesky</option>
                       <option value="jacobi">Jacobi</option>
                       <option value="seidel">Gauss-Seidel</option>
@@ -839,18 +818,11 @@
                   <div>
                     <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">Matrix A</div>
                     <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${size}, minmax(0,1fr))` }}>
-                      {A.map((row, i) =>
-                        row.map((val, j) => (
-                          <input
-                            key={`${i}-${j}`}
-                            type="number"
-                            step="0.1"
-                            value={val}
-                            onChange={(e) => updateA(i, j, e.target.value)}
-                            className="border border-slate-200 rounded px-2 py-1.5 text-sm mono"
-                          />
-                        ))
-                      )}
+                      {A.map((row, i) => row.map((val, j) => (
+                        <input key={`${i}-${j}`} type="number" step="0.1" value={val}
+                          onChange={(e) => updateA(i, j, e.target.value)}
+                          className="border border-slate-200 rounded px-2 py-1.5 text-sm mono" />
+                      )))}
                     </div>
                   </div>
 
@@ -867,7 +839,7 @@
 
                   {(method === "jacobi" || method === "seidel") && (
                     <div className="space-y-2">
-                      <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase">Initial guess x₀</div>
+                      <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase">Initial x₀</div>
                       <div className="flex gap-1">
                         {x0.map((val, i) => (
                           <input key={i} type="number" value={val}
@@ -877,7 +849,7 @@
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <InputField label="Tolerance" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-6)} step="0.000001" />
-                        <InputField label="Max iterations" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
+                        <InputField label="Max iter" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
                       </div>
                     </div>
                   )}
@@ -907,7 +879,7 @@
                       <div className="text-sm mono">x = [{result.x.map((v) => v.toFixed(6)).join(", ")}]</div>
                       {result.diagonallyDominant !== undefined && (
                         <div className="text-[11px] mt-1 text-slate-600">
-                          Diagonal dominance: {result.diagonallyDominant ? "✓ satisfied — convergence expected" : "✗ not satisfied — may diverge"}
+                          Diagonal dominance: {result.diagonallyDominant ? "✓ satisfied" : "✗ not satisfied"}
                         </div>
                       )}
                     </div>
@@ -918,15 +890,8 @@
               {result && (
                 <div className="space-y-3">
                   <StepCard label="Step 1 — Problem Restatement">
-                    Solve A·x = b for a {size}×{size} system using {method}.
+                    Solve a {size}×{size} system using {method}.
                   </StepCard>
-                  <StepCard label="Step 2 — Method">{method === "gauss" ? "Row-reduce to upper-triangular, then back-substitute."
-                    : method === "jordan" ? "Reduce to RREF."
-                    : method === "lu" ? "Factor A = L·U, solve L·y = b then U·x = y."
-                    : method === "cholesky" ? "Factor A = L·Lᵀ (SPD), forward/back substitute."
-                    : method === "jacobi" ? "Iterative — uses old values."
-                    : "Iterative — uses latest values."}</StepCard>
-
                   {result.its && (
                     <div>
                       <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">
@@ -939,31 +904,19 @@
                       }))} />
                     </div>
                   )}
-
-                  {result.steps && (
-                    <StepCard label="Step 4 — Calculation Snapshots">
-                      <pre className="text-[11px] mono bg-slate-50 p-3 rounded border border-slate-200 overflow-auto">
-                        {JSON.stringify(result.steps[result.steps.length - 1], null, 2)}
-                      </pre>
-                    </StepCard>
-                  )}
-
                   {result.L && (
                     <StepCard label="Step 4 — LU Factors">
                       <div className="mono text-[11px]">L = {JSON.stringify(result.L)}</div>
                       {result.U && <div className="mono text-[11px]">U = {JSON.stringify(result.U)}</div>}
                     </StepCard>
                   )}
-
                   <StepCard label="Step 7 — Verification">
                     Residual ‖Ax − b‖ ={" "}
                     <span className="mono">
-                      {Math.sqrt(
-                        result.x.reduce((sum, xi, i) => {
-                          const Axi = A[i].reduce((s, aij, j) => s + aij * result.x[j], 0);
-                          return sum + (Axi - b[i]) ** 2;
-                        }, 0)
-                      ).toExponential(4)}
+                      {Math.sqrt(result.x.reduce((sum, xi, i) => {
+                        const Axi = A[i].reduce((s, aij, j) => s + aij * result.x[j], 0);
+                        return sum + (Axi - b[i]) ** 2;
+                      }, 0)).toExponential(4)}
                     </span>
                   </StepCard>
                 </div>
@@ -974,10 +927,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        6. INTERPOLATION
-       ===================================================================== */
-
+       =============================================================== */
     function InterpolationSolver() {
       const [dataStr, setDataStr] = useState("0,1;1,2;2,1;3,2.5");
       const [xp, setXp] = useState(1.5);
@@ -1013,8 +965,7 @@
             for (let j = 1; j < n; j++)
               for (let i = 0; i < n - j; i++)
                 table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / (xs[i + j] - xs[i]);
-            let v = table[0][0];
-            let prod = 1;
+            let v = table[0][0], prod = 1;
             for (let k = 1; k < n; k++) {
               prod *= xp - xs[k - 1];
               v += table[0][k] * prod;
@@ -1054,7 +1005,6 @@
             }
             extra = { table, h };
           } else if (method === "spline") {
-            // Natural cubic spline
             const h = xs.slice(1).map((x, i) => x - xs[i]);
             const alpha = Array(n).fill(0);
             for (let i = 1; i < n - 1; i++)
@@ -1097,7 +1047,7 @@
         const xHi = Math.max(...result.points.map((p) => p.x)) + 0.5;
         const pts = [];
         if (result.method === "spline") {
-          const { points: p, b, c, d } = result;
+          const { points: p, b, c, d } = result.extra;
           for (let i = 0; i < 300; i++) {
             const x = xLo + (i / 300) * (xHi - xLo);
             let y = NaN;
@@ -1137,19 +1087,17 @@
 
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
-              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Interpolation — Purpose</h3>
-              <p>Construct a polynomial (or piecewise polynomial) passing through all data points.
-                 Newton forward/backward for equally spaced nodes; divided differences for arbitrary;
-                 Lagrange basis; natural cubic spline for smoothness (C² continuity).</p>
+              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Interpolation</h3>
+              <p>Construct a polynomial through all data points. Forward/backward for equally spaced nodes, divided differences for arbitrary, Lagrange basis, natural cubic spline for smoothness.</p>
             </div>
           )}
 
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
-              <div>Lagrange: L_i(x) = Π_(j≠i) (x − x_j) / (x_i − x_j)</div>
-              <div>Divided diff: f[x_i, x_j] = (f[x_j] − f[x_i]) / (x_j − x_i)</div>
+              <div>Lagrange: L_i = Π_(j≠i) (x − x_j)/(x_i − x_j)</div>
+              <div>Divided diff: f[x_i,x_j] = (f[x_j]−f[x_i])/(x_j−x_i)</div>
               <div>Newton forward: p = (x − x₀)/h</div>
-              <div>Natural spline: solve tridiagonal system for second derivatives</div>
+              <div>Natural spline: solve tridiagonal system for c</div>
             </div>
           )}
 
@@ -1159,9 +1107,7 @@
                 <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
                   <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase">Inputs</div>
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 mb-1">
-                      Points (x,y; x,y; ...)
-                    </label>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">Points (x,y; x,y; ...)</label>
                     <input value={dataStr} onChange={(e) => setDataStr(e.target.value)}
                       className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mono" />
                   </div>
@@ -1171,10 +1117,10 @@
                       <select value={method} onChange={(e) => setMethod(e.target.value)}
                         className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-sm">
                         <option value="lagrange">Lagrange</option>
-                        <option value="divdiff">Divided Difference</option>
+                        <option value="divdiff">Divided Diff</option>
                         <option value="forward">Newton Forward</option>
                         <option value="backward">Newton Backward</option>
-                        <option value="spline">Natural Cubic Spline</option>
+                        <option value="spline">Natural Spline</option>
                       </select>
                     </div>
                     <InputField label="x_p" value={xp} onChange={(v) => setXp(parseFloat(v) || 0)} />
@@ -1185,9 +1131,7 @@
                   </button>
                   <ErrorBanner msg={error} />
                   {result && (
-                    <div className="text-sm">
-                      y({xp}) ≈ <b className="mono">{result.yp.toFixed(6)}</b>
-                    </div>
+                    <div className="text-sm">y({xp}) ≈ <b className="mono">{result.yp.toFixed(6)}</b></div>
                   )}
                 </div>
 
@@ -1204,34 +1148,9 @@
               </div>
 
               {result && (
-                <div className="space-y-3">
-                  <StepCard label="Step 1 — Problem Restatement">
-                    Interpolate at x_p = {xp} using {method} with {points.length} data points.
-                  </StepCard>
-                  <StepCard label="Step 2 — Method">
-                    {method === "lagrange" ? "Lagrange basis polynomials."
-                      : method === "divdiff" ? "Newton divided-difference form."
-                      : method === "forward" ? "Newton forward difference (equally spaced)."
-                      : method === "backward" ? "Newton backward difference (equally spaced)."
-                      : "Natural cubic spline (C² continuity, natural end conditions)."}
-                  </StepCard>
-                  <StepCard label="Step 3 — Initialization">
-                    Nodes: {points.map((p) => `(${p.x}, ${p.y})`).join(", ")}
-                  </StepCard>
-                  {result.extra.table && (
-                    <div>
-                      <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">
-                        Step 4 — {method === "divdiff" ? "Divided Difference" : "Difference"} Table
-                      </div>
-                      <ResultTable rows={result.extra.table.map((row, i) =>
-                        Object.fromEntries(row.map((v, j) => [`Δ^${j}`, i + j < points.length ? v : null]))
-                      )} />
-                    </div>
-                  )}
-                  <StepCard label="Step 8 — Final Answer">
-                    y({xp}) ≈ <b className="mono">{result.yp.toFixed(8)}</b>
-                  </StepCard>
-                </div>
+                <StepCard label="Step 8 — Final Answer">
+                  y({xp}) ≈ <b className="mono">{result.yp.toFixed(8)}</b> ({method})
+                </StepCard>
               )}
             </>
           )}
@@ -1239,10 +1158,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        7. DIFFERENTIATION
-       ===================================================================== */
-
+       =============================================================== */
     function DifferentiationSolver() {
       const [expr, setExpr] = useState("sin(x)");
       const [x0, setX0] = useState(0.5);
@@ -1262,18 +1180,18 @@
           let approx, formula;
           if (method === "forward") {
             approx = (f(x0 + h) - f(x0)) / h;
-            formula = "f'(x) ≈ (f(x + h) − f(x)) / h, O(h)";
+            formula = "f'(x) ≈ (f(x+h) − f(x))/h, O(h)";
           } else if (method === "backward") {
             approx = (f(x0) - f(x0 - h)) / h;
-            formula = "f'(x) ≈ (f(x) − f(x − h)) / h, O(h)";
+            formula = "f'(x) ≈ (f(x) − f(x−h))/h, O(h)";
           } else if (method === "central") {
             approx = (f(x0 + h) - f(x0 - h)) / (2 * h);
-            formula = "f'(x) ≈ (f(x + h) − f(x − h)) / (2h), O(h²)";
+            formula = "f'(x) ≈ (f(x+h) − f(x−h))/(2h), O(h²)";
           } else {
             approx = (f(x0 + h) - 2 * f(x0) + f(x0 - h)) / (h * h);
-            formula = "f''(x) ≈ (f(x + h) − 2f(x) + f(x − h)) / h², O(h²)";
+            formula = "f''(x) ≈ (f(x+h) − 2f(x) + f(x−h))/h², O(h²)";
           }
-          if (!Number.isFinite(approx)) throw new Error("Result is not finite — check inputs");
+          if (!Number.isFinite(approx)) throw new Error("Result is not finite");
           setResult({ approx, formula });
         } catch (e) {
           setError(e.message || "Error");
@@ -1293,24 +1211,20 @@
       return (
         <div className="space-y-4">
           <Tabs tabs={["theory", "formula", "solver"]} active={tab} onChange={setTab} />
-
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
               <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Numerical Differentiation</h3>
-              <p>Approximate derivatives from function values. Central differences are second-order accurate;
-                 forward/backward are first-order.</p>
+              <p>Approximate derivatives from function values. Central is second-order; forward/backward are first-order.</p>
             </div>
           )}
-
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
-              <div>Forward: (f(x+h) − f(x)) / h, O(h)</div>
-              <div>Backward: (f(x) − f(x−h)) / h, O(h)</div>
-              <div>Central: (f(x+h) − f(x−h)) / (2h), O(h²)</div>
-              <div>Second: (f(x+h) − 2f(x) + f(x−h)) / h², O(h²)</div>
+              <div>Forward: (f(x+h) − f(x))/h, O(h)</div>
+              <div>Backward: (f(x) − f(x−h))/h, O(h)</div>
+              <div>Central: (f(x+h) − f(x−h))/(2h), O(h²)</div>
+              <div>Second: (f(x+h) − 2f(x) + f(x−h))/h², O(h²)</div>
             </div>
           )}
-
           {tab === "solver" && (
             <div className="grid lg:grid-cols-2 gap-4">
               <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
@@ -1341,7 +1255,6 @@
                   </div>
                 )}
               </div>
-
               <FunctionPlot
                 title={`f(x) = ${expr} + tangent`}
                 stepLabel="Step 5 — Graph"
@@ -1356,10 +1269,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        8. INTEGRATION
-       ===================================================================== */
-
+       =============================================================== */
     function IntegrationSolver() {
       const [expr, setExpr] = useState("x^2");
       const [a, setA] = useState(0);
@@ -1437,7 +1349,7 @@
             }
             integral = R[k][k];
           }
-          if (!Number.isFinite(integral)) throw new Error("Integral is not finite — check f(x)");
+          if (!Number.isFinite(integral)) throw new Error("Integral is not finite");
           setResult({ integral, samples, h });
         } catch (e) {
           setError(e.message || "Error");
@@ -1447,26 +1359,22 @@
       return (
         <div className="space-y-4">
           <Tabs tabs={["theory", "formula", "solver"]} active={tab} onChange={setTab} />
-
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
               <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Numerical Integration</h3>
-              <p>Approximate ∫ f(x) dx. Trapezoidal O(h²), Simpson 1/3 O(h⁴) needs even n,
-                 Simpson 3/8 O(h⁴) needs n multiple of 3, Gauss quadrature uses optimal nodes, Romberg accelerates trapezoidal.</p>
+              <p>Trap O(h²), Simpson 1/3 O(h⁴) even n, Simpson 3/8 O(h⁴) n multiple of 3, Gauss quadrature optimal nodes, Romberg extrapolates trapezoidal.</p>
             </div>
           )}
-
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
               <div>Trap: (h/2)(f₀ + fₙ + 2Σ)</div>
               <div>Simpson 1/3: (h/3)(f₀ + fₙ + 4·odd + 2·even)</div>
-              <div>Simpson 3/8: (3h/8)(f₀ + fₙ + 3·non-mult3 + 2·mult3)</div>
-              <div>Gauss 2-pt: nodes ±1/√3, weights 1,1</div>
-              <div>Gauss 3-pt: nodes 0, ±√(3/5), weights 8/9, 5/9</div>
-              <div>Romberg: R[k][j] = (4ʲ·R[k][j−1] − R[k−1][j−1]) / (4ʲ − 1)</div>
+              <div>Simpson 3/8: (3h/8)(f₀ + fₙ + 3·non-3 + 2·mult3)</div>
+              <div>Gauss 2-pt: nodes ±1/√3</div>
+              <div>Gauss 3-pt: 0, ±√(3/5)</div>
+              <div>Romberg: R[k][j] = (4ʲ R[k][j−1] − R[k−1][j−1])/(4ʲ − 1)</div>
             </div>
           )}
-
           {tab === "solver" && (
             <div className="grid lg:grid-cols-2 gap-4">
               <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
@@ -1500,7 +1408,6 @@
                   </div>
                 )}
               </div>
-
               <FunctionPlot
                 title={`∫ ${expr} on [${a}, ${b}]`}
                 stepLabel="Step 5 — Graph"
@@ -1515,10 +1422,9 @@
       );
     }
 
-    /* =====================================================================
-       9. ODEs  (Euler, Heun, RK2, RK4, Adams-Bashforth-Moulton, Milne)
-       ===================================================================== */
-
+    /* ===============================================================
+       9. ODEs
+       =============================================================== */
     function ODESolver() {
       const [expr, setExpr] = useState("x + y");
       const [x0, setX0] = useState(0);
@@ -1552,44 +1458,40 @@
 
           if (method === "euler") {
             for (let i = 0; i < steps; i++) {
-              const x = xs[i], y = ys[i];
-              const k1 = f(x, y);
-              const yNew = y + h * k1;
-              xs.push(x + h); ys.push(yNew);
-              rows.push({ x: x + h, y: yNew, k1, k2: "—", k3: "—", k4: "—" });
+              const k1 = f(xs[i], ys[i]);
+              const yNew = ys[i] + h * k1;
+              xs.push(xs[i] + h); ys.push(yNew);
+              rows.push({ x: xs[i + 1], y: yNew, k1, k2: "—", k3: "—", k4: "—" });
             }
           } else if (method === "heun") {
             for (let i = 0; i < steps; i++) {
-              const x = xs[i], y = ys[i];
-              const k1 = f(x, y);
-              const yPred = y + h * k1;
-              const k2 = f(x + h, yPred);
-              const yNew = y + (h / 2) * (k1 + k2);
-              xs.push(x + h); ys.push(yNew);
-              rows.push({ x: x + h, y: yNew, k1, k2, k3: "—", k4: "—" });
+              const k1 = f(xs[i], ys[i]);
+              const yPred = ys[i] + h * k1;
+              const k2 = f(xs[i] + h, yPred);
+              const yNew = ys[i] + (h / 2) * (k1 + k2);
+              xs.push(xs[i] + h); ys.push(yNew);
+              rows.push({ x: xs[i + 1], y: yNew, k1, k2, k3: "—", k4: "—" });
             }
           } else if (method === "rk2") {
             for (let i = 0; i < steps; i++) {
-              const x = xs[i], y = ys[i];
-              const k1 = f(x, y);
-              const k2 = f(x + h / 2, y + (h * k1) / 2);
-              const yNew = y + h * k2;
-              xs.push(x + h); ys.push(yNew);
-              rows.push({ x: x + h, y: yNew, k1, k2, k3: "—", k4: "—" });
+              const k1 = f(xs[i], ys[i]);
+              const k2 = f(xs[i] + h / 2, ys[i] + (h * k1) / 2);
+              const yNew = ys[i] + h * k2;
+              xs.push(xs[i] + h); ys.push(yNew);
+              rows.push({ x: xs[i + 1], y: yNew, k1, k2, k3: "—", k4: "—" });
             }
           } else if (method === "rk4") {
             for (let i = 0; i < steps; i++) {
-              const step = rk4Step(xs[i], ys[i]);
-              xs.push(xs[i] + h); ys.push(step.yNew);
-              rows.push({ x: xs[i + 1], y: step.yNew, k1: step.k1, k2: step.k2, k3: step.k3, k4: step.k4 });
+              const s = rk4Step(xs[i], ys[i]);
+              xs.push(xs[i] + h); ys.push(s.yNew);
+              rows.push({ x: xs[i + 1], y: s.yNew, k1: s.k1, k2: s.k2, k3: s.k3, k4: s.k4 });
             }
           } else if (method === "adams" || method === "milne") {
-            // RK4 starter — must respect total step count
             const starterSteps = Math.min(3, steps);
             for (let i = 0; i < starterSteps; i++) {
-              const step = rk4Step(xs[i], ys[i]);
-              xs.push(xs[i] + h); ys.push(step.yNew);
-              rows.push({ x: xs[i + 1], y: step.yNew, k1: step.k1, k2: step.k2, k3: step.k3, k4: step.k4 });
+              const s = rk4Step(xs[i], ys[i]);
+              xs.push(xs[i] + h); ys.push(s.yNew);
+              rows.push({ x: xs[i + 1], y: s.yNew, k1: s.k1, k2: s.k2, k3: s.k3, k4: s.k4 });
             }
             for (let i = 3; i < steps; i++) {
               const x = xs[i], y = ys[i];
@@ -1611,16 +1513,14 @@
               rows.push({ x: x + h, y: yCorr, k1: fn, k2: yPred, k3: fPred, k4: yCorr });
             }
           }
-          if (ys.some((v) => !Number.isFinite(v))) throw new Error("Solution diverged (non-finite value)");
+          if (ys.some((v) => !Number.isFinite(v))) throw new Error("Solution diverged");
           setResult({ xs, ys, rows });
         } catch (e) {
           setError(e.message || "Error");
         }
       }, [expr, x0, y0, xf, h, method, f]);
 
-      const series = useMemo(() =>
-        result ? result.xs.map((x, i) => ({ x, y: result.ys[i] })) : []
-      , [result]);
+      const series = useMemo(() => result ? result.xs.map((x, i) => ({ x, y: result.ys[i] })) : [], [result]);
 
       const stageHeaders =
         method === "adams" || method === "milne"
@@ -1630,26 +1530,21 @@
       return (
         <div className="space-y-4">
           <Tabs tabs={["theory", "formula", "solver"]} active={tab} onChange={setTab} />
-
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
               <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Ordinary Differential Equations</h3>
-              <p>Solve y′ = f(x, y), y(x₀) = y₀. Single-step: Euler, Heun, RK2, RK4.
-                 Multistep: Adams-Bashforth-Moulton, Milne (use RK4 starter).</p>
+              <p>y′ = f(x, y), y(x₀) = y₀. Single-step: Euler, Heun, RK2, RK4. Multistep: Adams-Bashforth-Moulton, Milne (with RK4 starter).</p>
             </div>
           )}
-
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
-              <div>Euler: y_(n+1) = y_n + h·f(x_n, y_n)</div>
-              <div>Heun: predictor y_p = y_n + h·f_n; corrector y_(n+1) = y_n + (h/2)(f_n + f_p)</div>
-              <div>RK2: k1 = f(x_n, y_n), k2 = f(x_n + h/2, y_n + h·k1/2), y_(n+1) = y_n + h·k2</div>
+              <div>Euler: y_(n+1) = y_n + h·f_n</div>
+              <div>Heun: predictor + corrector</div>
               <div>RK4: k1..k4 stages, y_(n+1) = y_n + (h/6)(k1 + 2k2 + 2k3 + k4)</div>
               <div>Adams-Bashforth 4: y_p = y_n + (h/24)(55f_n − 59f_(n−1) + 37f_(n−2) − 9f_(n−3))</div>
               <div>Adams-Moulton 3: y_(n+1) = y_n + (h/24)(9f_p + 19f_n − 5f_(n−1) + f_(n−2))</div>
             </div>
           )}
-
           {tab === "solver" && (
             <>
               <div className="grid lg:grid-cols-2 gap-4">
@@ -1664,11 +1559,11 @@
                   <select value={method} onChange={(e) => setMethod(e.target.value)}
                     className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-sm">
                     <option value="euler">Euler</option>
-                    <option value="heun">Heun / Modified Euler</option>
-                    <option value="rk2">RK2 (midpoint)</option>
+                    <option value="heun">Heun</option>
+                    <option value="rk2">RK2</option>
                     <option value="rk4">RK4</option>
                     <option value="adams">Adams-Bashforth-Moulton</option>
-                    <option value="milne">Milne Predictor-Corrector</option>
+                    <option value="milne">Milne</option>
                   </select>
                   <button onClick={solve}
                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-bold transition">
@@ -1682,7 +1577,6 @@
                     </div>
                   )}
                 </div>
-
                 <FunctionPlot
                   title={`Solution y(x) — ${method}`}
                   stepLabel="Step 5 — Graph"
@@ -1695,15 +1589,7 @@
               {result && (
                 <div className="space-y-3">
                   <StepCard label="Step 1 — Problem Restatement">
-                    Solve y′ = {expr}, y({x0}) = {y0}, integrate to x = {xf} with h = {h} using {method}.
-                  </StepCard>
-                  <StepCard label="Step 2 — Method">
-                    {method === "euler" ? "Explicit Euler (first-order)."
-                      : method === "heun" ? "Heun's predictor-corrector (second-order)."
-                      : method === "rk2" ? "RK2 midpoint (second-order)."
-                      : method === "rk4" ? "Classical RK4 (fourth-order)."
-                      : method === "adams" ? "Adams-Bashforth predictor + Adams-Moulton corrector (fourth-order)."
-                      : "Milne predictor + corrector."}
+                    Solve y′ = {expr}, y({x0}) = {y0}, to x = {xf} with h = {h} using {method}.
                   </StepCard>
                   <div>
                     <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">
@@ -1746,10 +1632,9 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        10. CURVE FITTING
-       ===================================================================== */
-
+       =============================================================== */
     function CurveFitSolver() {
       const [dataStr, setDataStr] = useState("0,1;1,2;2,4;3,8");
       const [model, setModel] = useState("linear");
@@ -1774,8 +1659,7 @@
           const n = points.length;
           const xs = points.map((p) => p.x);
           const ys = points.map((p) => p.y);
-          let fittedYs = [];
-          let equation = "";
+          let fittedYs = [], equation = "";
 
           if (model === "linear") {
             const sx = xs.reduce((a, b) => a + b, 0);
@@ -1783,13 +1667,12 @@
             const sxy = xs.reduce((a, x, i) => a + x * ys[i], 0);
             const sxx = xs.reduce((a, x) => a + x * x, 0);
             const denom = n * sxx - sx * sx;
-            if (Math.abs(denom) < 1e-12) throw new Error("Singular normal equations — all x equal?");
+            if (Math.abs(denom) < 1e-12) throw new Error("Singular normal equations");
             const bSlope = (n * sxy - sx * sy) / denom;
             const aInt = (sy - bSlope * sx) / n;
             fittedYs = xs.map((x) => aInt + bSlope * x);
             equation = `y = ${aInt.toFixed(4)} + ${bSlope.toFixed(4)}·x`;
           } else if (model === "poly2") {
-            // Build 3×3 normal equations
             const s = [0, 0, 0, 0, 0];
             for (let k = 0; k < 5; k++) s[k] = xs.reduce((a, x) => a + Math.pow(x, k), 0);
             const t = [0, 1, 2].map((k) => xs.reduce((a, x, i) => a + Math.pow(x, k) * ys[i], 0));
@@ -1798,7 +1681,6 @@
               [s[1], s[2], s[3], t[1]],
               [s[2], s[3], s[4], t[2]],
             ];
-            // Partial pivoting
             for (let i = 0; i < 3; i++) {
               let p = i;
               for (let r = i + 1; r < 3; r++) if (Math.abs(M[r][i]) > Math.abs(M[p][i])) p = r;
@@ -1864,33 +1746,26 @@
       return (
         <div className="space-y-4">
           <Tabs tabs={["theory", "formula", "solver"]} active={tab} onChange={setTab} />
-
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
-              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Curve Fitting (Least Squares)</h3>
-              <p>Minimize SSE = Σ(y − ŷ)². Linear and polynomial fits solve normal equations directly.
-                 Exponential and logarithmic models use a change of variables (ln-transform).</p>
+              <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Curve Fitting</h3>
+              <p>Minimize SSE = Σ(y − ŷ)². Linear/poly2 solve normal equations; exp/log use ln-transform.</p>
             </div>
           )}
-
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
-              <div>Linear: b = (nΣxy − ΣxΣy) / (nΣx² − (Σx)²), a = ȳ − b·x̄</div>
-              <div>Poly2: solve 3×3 normal equations</div>
-              <div>Exponential: ln y = ln a + b·x → linear in (x, ln y)</div>
-              <div>Logarithmic: y = a + b·ln x → linear in (ln x, y)</div>
-              <div>SSE = Σ(y − ŷ)², MSE = SSE/n, RMSE = √MSE, R² = 1 − SSE/SST</div>
+              <div>Linear: b = (nΣxy − ΣxΣy)/(nΣx² − (Σx)²)</div>
+              <div>Exponential: ln y = ln a + b·x</div>
+              <div>Logarithmic: y = a + b·ln x</div>
+              <div>SSE, MSE, RMSE, R² = 1 − SSE/SST</div>
             </div>
           )}
-
           {tab === "solver" && (
             <>
               <div className="grid lg:grid-cols-2 gap-4">
                 <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 mb-1">
-                      Data points (x,y; x,y; ...)
-                    </label>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">Points (x,y; ...)</label>
                     <input value={dataStr} onChange={(e) => setDataStr(e.target.value)}
                       className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mono" />
                   </div>
@@ -1913,12 +1788,11 @@
                     <div className="text-sm space-y-1">
                       <div><b className="mono">{result.equation}</b></div>
                       <div className="text-[11px] text-slate-600">
-                        SSE = {result.sse.toFixed(4)} · MSE = {result.mse.toFixed(4)} · RMSE = {result.rmse.toFixed(4)} · R² = {result.r2.toFixed(4)}
+                        SSE = {result.sse.toFixed(4)} · RMSE = {result.rmse.toFixed(4)} · R² = {result.r2.toFixed(4)}
                       </div>
                     </div>
                   )}
                 </div>
-
                 {result && (
                   <FunctionPlot
                     title="Data + fitted curve"
@@ -1937,50 +1811,10 @@
               </div>
 
               {result && (
-                <div className="space-y-3">
-                  <StepCard label="Step 1 — Problem Restatement">
-                    Fit {model} to {result.points.length} data points.
-                  </StepCard>
-                  <StepCard label="Step 2 — Method">
-                    {model === "linear" ? "Ordinary least squares, linear normal equations."
-                      : model === "poly2" ? "Least squares via 3×3 normal equations (with partial pivoting)."
-                      : model === "exp" ? "Log-transform → linear regression in (x, ln y)."
-                      : "Log-transform → linear regression in (ln x, y)."}
-                  </StepCard>
-                  <div>
-                    <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">
-                      Step 4 — Fit Table
-                    </div>
-                    <div className="overflow-auto rounded-xl border border-slate-200 bg-white">
-                      <table className="w-full text-[11px] border-collapse">
-                        <thead>
-                          <tr className="bg-slate-50">
-                            <th className="border-b px-2 py-1.5 text-left font-bold mono">x</th>
-                            <th className="border-b px-2 py-1.5 text-left font-bold mono">y (obs)</th>
-                            <th className="border-b px-2 py-1.5 text-left font-bold mono">ŷ (fit)</th>
-                            <th className="border-b px-2 py-1.5 text-left font-bold mono">residual</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {result.points.map((p, i) => (
-                            <tr key={i} className={i % 2 ? "bg-slate-50/50" : ""}>
-                              <td className="border-b px-2 py-1 mono">{p.x}</td>
-                              <td className="border-b px-2 py-1 mono">{p.y}</td>
-                              <td className="border-b px-2 py-1 mono">{result.fittedYs[i].toFixed(4)}</td>
-                              <td className="border-b px-2 py-1 mono">{(p.y - result.fittedYs[i]).toFixed(4)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <StepCard label="Step 7 — Verification">
-                    R² = {result.r2.toFixed(4)} (1.0 = perfect fit). RMSE = {result.rmse.toFixed(4)}.
-                  </StepCard>
-                  <StepCard label="Step 8 — Final Answer">
-                    <span className="mono">{result.equation}</span>
-                  </StepCard>
-                </div>
+                <StepCard label="Step 8 — Final Answer">
+                  <span className="mono">{result.equation}</span>
+                  <div className="text-[11px] mt-1 text-slate-600">R² = {result.r2.toFixed(4)}</div>
+                </StepCard>
               )}
             </>
           )}
@@ -1988,10 +1822,9 @@
       );
     }
 
-    /* =====================================================================
-       11. EIGENVALUES (Power Method)
-       ===================================================================== */
-
+    /* ===============================================================
+       11. EIGENVALUES
+       =============================================================== */
     function EigenSolver() {
       const [size, setSize] = useState(2);
       const [A, setA] = useState([[2, 1], [1, 2]]);
@@ -2014,40 +1847,30 @@
         setError("");
         setResult(null);
         try {
-          // Normalize initial vector
           const norm0 = Math.sqrt(v0.reduce((a, v) => a + v * v, 0));
           if (norm0 < 1e-14) throw new Error("Initial vector is zero");
           let x = v0.map((v) => v / norm0);
-
           let lambda = 0;
           const its = [];
           for (let k = 0; k < maxIter; k++) {
             const y = Array(size).fill(0);
             for (let i = 0; i < size; i++)
               for (let j = 0; j < size; j++) y[i] += A[i][j] * x[j];
-
             const yNormInf = Math.max(...y.map(Math.abs));
-            if (yNormInf < 1e-14) throw new Error("Matrix-vector product underflow — zero eigenvalue?");
-
-            // Rayleigh quotient
+            if (yNormInf < 1e-14) throw new Error("Matrix-vector product underflow");
             const num = x.reduce((a, xi, i) => a + xi * y[i], 0);
             const den = x.reduce((a, xi) => a + xi * xi, 0);
             const lambdaK = num / den;
-
             const err = Math.abs(lambdaK - lambda);
             its.push({ k, x: [...x], y: [...y], lambda: lambdaK, err });
             lambda = lambdaK;
             x = y.map((v) => v / yNormInf);
-
             if (k > 0 && err < tol) break;
           }
-
-          // Residual ‖Av − λv‖
           const Av = Array(size).fill(0);
           for (let i = 0; i < size; i++)
             for (let j = 0; j < size; j++) Av[i] += A[i][j] * x[j];
           const residual = Math.sqrt(Av.reduce((a, v, i) => a + (v - lambda * x[i]) ** 2, 0));
-
           setResult({ lambda, x, its, residual });
         } catch (e) {
           setError(e.message || "Error");
@@ -2057,24 +1880,20 @@
       return (
         <div className="space-y-4">
           <Tabs tabs={["theory", "formula", "solver"]} active={tab} onChange={setTab} />
-
           {tab === "theory" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-[13px] leading-6 text-slate-700">
               <h3 className="font-bold text-slate-900 mb-2 text-[15px]">Eigenvalues — Power Method</h3>
-              <p>Find the dominant eigenvalue |λ₁| by iterating x_(k+1) = A·x_k / ‖A·x_k‖.
-                 Converges when |λ₁| &gt; |λ₂|.</p>
+              <p>Find dominant |λ₁| via x_(k+1) = A·x_k / ‖A·x_k‖. Converges when |λ₁| &gt; |λ₂|.</p>
             </div>
           )}
-
           {tab === "formula" && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] text-slate-800 space-y-1.5">
               <div>y_k = A·x_k</div>
               <div>x_(k+1) = y_k / max|y_k|</div>
-              <div>λ_k = (x_kᵀ A x_k) / (x_kᵀ x_k)  [Rayleigh quotient]</div>
+              <div>λ_k = (x_kᵀ A x_k)/(x_kᵀ x_k)</div>
               <div>Residual = ‖A·x − λ·x‖</div>
             </div>
           )}
-
           {tab === "solver" && (
             <>
               <div className="grid lg:grid-cols-2 gap-4">
@@ -2086,7 +1905,6 @@
                       {[2, 3, 4].map((n) => <option key={n} value={n}>{n}</option>)}
                     </select>
                   </div>
-
                   <div>
                     <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">Matrix A</div>
                     <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${size}, minmax(0,1fr))` }}>
@@ -2102,9 +1920,8 @@
                       )))}
                     </div>
                   </div>
-
                   <div>
-                    <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">Initial vector v₀</div>
+                    <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">Initial v₀</div>
                     <div className="flex gap-1">
                       {v0.map((val, i) => (
                         <input key={i} type="number" value={val}
@@ -2118,12 +1935,10 @@
                       ))}
                     </div>
                   </div>
-
                   <div className="grid grid-cols-2 gap-2">
                     <InputField label="Tolerance" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-6)} step="0.000001" />
-                    <InputField label="Max iterations" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
+                    <InputField label="Max iter" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
                   </div>
-
                   <button onClick={solve}
                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-bold transition">
                     POWER METHOD
@@ -2137,10 +1952,9 @@
                     </div>
                   )}
                 </div>
-
                 {result && (
                   <FunctionPlot
-                    title="λ estimate vs iteration"
+                    title="λ vs iteration"
                     stepLabel="Step 5 — Graph"
                     xMin={0} xMax={Math.max(1, result.its.length - 1)}
                     extraSeries={[{
@@ -2153,22 +1967,12 @@
 
               {result && (
                 <div className="space-y-3">
-                  <StepCard label="Step 1 — Problem Restatement">
-                    Find dominant eigenvalue of the {size}×{size} matrix via power iteration.
-                  </StepCard>
-                  <StepCard label="Step 2 — Method">
-                    Power iteration with Rayleigh quotient; converges if |λ₁| &gt; |λ₂|.
-                  </StepCard>
-                  <div>
-                    <div className="text-[11px] font-bold tracking-widest text-slate-500 uppercase mb-1">
-                      Step 4 — Iteration Table
-                    </div>
-                    <div className="overflow-auto rounded-xl border border-slate-200 bg-white">
+                  <StepCard label="Step 4 — Iteration Table">
+                    <div className="overflow-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
                           <tr className="bg-slate-50">
                             <th className="border-b px-2 py-1.5 text-left font-bold mono">k</th>
-                            <th className="border-b px-2 py-1.5 text-left font-bold mono">x_k</th>
                             <th className="border-b px-2 py-1.5 text-left font-bold mono">λ_k</th>
                             <th className="border-b px-2 py-1.5 text-left font-bold mono">err</th>
                           </tr>
@@ -2177,7 +1981,6 @@
                           {result.its.map((r, i) => (
                             <tr key={i} className={i % 2 ? "bg-slate-50/50" : ""}>
                               <td className="border-b px-2 py-1 mono">{r.k}</td>
-                              <td className="border-b px-2 py-1 mono">[{r.x.map((v) => v.toFixed(4)).join(", ")}]</td>
                               <td className="border-b px-2 py-1 mono">{r.lambda.toFixed(6)}</td>
                               <td className="border-b px-2 py-1 mono">{r.err.toExponential(2)}</td>
                             </tr>
@@ -2185,12 +1988,9 @@
                         </tbody>
                       </table>
                     </div>
-                  </div>
-                  <StepCard label="Step 7 — Verification">
-                    Residual ‖Av − λv‖ = {result.residual.toExponential(4)} → valid.
                   </StepCard>
                   <StepCard label="Step 8 — Final Answer">
-                    λ_max ≈ <b className="mono">{result.lambda.toFixed(10)}</b>, v ≈ <span className="mono">[{result.x.map((v) => v.toFixed(6)).join(", ")}]</span>
+                    λ_max ≈ <b className="mono">{result.lambda.toFixed(10)}</b>
                   </StepCard>
                 </div>
               )}
@@ -2200,69 +2000,66 @@
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        12. STATIC PAGES
-       ===================================================================== */
-
+       =============================================================== */
     function FormulaSheet() {
-      return (
-        <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] leading-6 whitespace-pre-wrap text-slate-800">
-{`ROOT FINDING
-  Bisection:  m = (a + b) / 2,  err = |m − m_prev|
-  Newton:     x_(n+1) = x_n − f(x_n) / f'(x_n)
-  Secant:     x_(n+1) = x_n − f_n·(x_n − x_(n−1)) / (f_n − f_(n−1))
-  Regula:     c = (a·f(b) − b·f(a)) / (f(b) − f(a))
-  Fixed:      x_(n+1) = g(x_n),  need |g'| < 1
+      const content = `ROOT FINDING
+  Bisection:  m = (a + b)/2
+  Newton:     x_(n+1) = x_n − f(x_n)/f'(x_n)
+  Secant:     x_(n+1) = x_n − f_n(x_n − x_(n−1))/(f_n − f_(n−1))
+  Regula:     c = (a·f(b) − b·f(a))/(f(b) − f(a))
+  Fixed:      x_(n+1) = g(x_n), |g'| < 1
 
 LINEAR SYSTEMS
   Gauss:      factor = a_ik / a_kk
-  LU:         A = L·U (Doolittle; L unit lower)
-  Cholesky:   A = L·Lᵀ (SPD only)
-  Jacobi:     x_i^(k+1) = (b_i − Σ_(j≠i) a_ij·x_j^(k)) / a_ii
-  Seidel:     uses latest x_j^(k+1) for j < i
+  LU:         A = L·U (Doolittle)
+  Cholesky:   A = L·Lᵀ (SPD)
+  Jacobi:     x_i^(k+1) = (b_i − Σ a_ij x_j^(k))/a_ii
+  Seidel:     uses latest values
 
 INTERPOLATION
-  Lagrange:   L_i(x) = Π_(j≠i) (x − x_j) / (x_i − x_j)
-  Divid.Diff: f[x_i, x_j] = (f[x_j] − f[x_i]) / (x_j − x_i)
-  Forward:    p = (x − x₀) / h
-  Spline:     natural cubic — solve tridiagonal system for c
+  Lagrange:   L_i(x) = Π (x − x_j)/(x_i − x_j)
+  Divid diff: f[x_i,x_j] = (f[x_j]−f[x_i])/(x_j−x_i)
+  Forward:    p = (x − x₀)/h
+  Spline:     natural cubic
 
 DIFFERENTIATION
-  Forward:    (f(x+h) − f(x)) / h,           O(h)
-  Backward:   (f(x) − f(x−h)) / h,           O(h)
-  Central:    (f(x+h) − f(x−h)) / (2h),      O(h²)
-  Second:     (f(x+h) − 2f(x) + f(x−h)) / h², O(h²)
+  Forward:    (f(x+h) − f(x))/h, O(h)
+  Backward:   (f(x) − f(x−h))/h, O(h)
+  Central:    (f(x+h) − f(x−h))/(2h), O(h²)
+  Second:     (f(x+h) − 2f(x) + f(x−h))/h², O(h²)
 
 INTEGRATION
-  Trap:       (h/2)·(f₀ + fₙ + 2Σ)
-  Simpson 1/3:(h/3)·(f₀ + fₙ + 4·odd + 2·even),     n even
-  Simpson 3/8:(3h/8)·(f₀ + fₙ + 3·non-3 + 2·mult3), n multiple of 3
-  Gauss 2-pt: nodes ±1/√3, weights 1, 1
-  Gauss 3-pt: nodes 0, ±√(3/5), weights 8/9, 5/9
-  Romberg:    R[k][j] = (4ʲ·R[k][j−1] − R[k−1][j−1]) / (4ʲ − 1)
+  Trap:       (h/2)(f₀ + fₙ + 2Σ)
+  Simpson1/3: (h/3)(f₀ + fₙ + 4odd + 2even), n even
+  Simpson3/8: (3h/8)(f₀ + fₙ + 3non-3 + 2mult3), n%3=0
+  Gauss 2-pt: ±1/√3, weights 1,1
+  Gauss 3-pt: 0, ±√(3/5), weights 8/9,5/9
+  Romberg:    R[k][j] = (4ʲ R[k][j−1] − R[k−1][j−1])/(4ʲ − 1)
 
 ODES
-  Euler:      y_(n+1) = y_n + h·f_n
-  Heun:       y_p = y_n + h·f_n;  y_(n+1) = y_n + (h/2)(f_n + f_p)
-  RK2:        y_(n+1) = y_n + h·f(x_n + h/2, y_n + (h/2)·k1)
+  Euler:      y_(n+1) = y_n + h f_n
+  Heun:       predictor + corrector
   RK4:        y_(n+1) = y_n + (h/6)(k1 + 2k2 + 2k3 + k4)
   Adams-B 4:  y_p = y_n + (h/24)(55f_n − 59f_(n−1) + 37f_(n−2) − 9f_(n−3))
   Adams-M 3:  y_(n+1) = y_n + (h/24)(9f_p + 19f_n − 5f_(n−1) + f_(n−2))
-  Milne pred: y_p = y_(n−3) + (4h/3)(2f_n − f_(n−1) + 2f_(n−2))
-  Milne corr: y_(n+1) = y_(n−1) + (h/3)(f_p + 4f_n + f_(n−1))
+  Milne:      y_p = y_(n−3) + (4h/3)(2f_n − f_(n−1) + 2f_(n−2))
 
 CURVE FITTING
-  Linear:     b = (n·Σxy − Σx·Σy) / (n·Σx² − (Σx)²),  a = ȳ − b·x̄
+  Linear:     b = (nΣxy − ΣxΣy)/(nΣx² − (Σx)²), a = ȳ − b x̄
   Poly2:      solve 3×3 normal equations
-  Exponential:ln y = ln a + b·x
-  Log:        y = a + b·ln x
-  Metrics:    SSE = Σ(y − ŷ)², MSE = SSE/n, RMSE = √MSE,
-              R² = 1 − SSE/SST, SST = Σ(y − ȳ)²
+  Exp:        ln y = ln a + b x
+  Log:        y = a + b ln x
+  SSE = Σ(y−ŷ)², MSE = SSE/n, RMSE = √MSE, R² = 1 − SSE/SST
 
 EIGENVALUES
-  Power:      y_k = A·x_k,  x_(k+1) = y_k / ‖y_k‖∞
-  Rayleigh:   λ_k = (x_kᵀ A x_k) / (x_kᵀ x_k)
-  Residual:   ‖A·x − λ·x‖`}
+  Power:      y_k = A x_k, x_(k+1) = y_k / ‖y_k‖∞
+  Rayleigh:   λ_k = (xᵀAx)/(xᵀx)`;
+
+      return (
+        <div className="rounded-xl border border-slate-200 bg-white p-6 mono text-[12px] leading-6 whitespace-pre-wrap text-slate-800">
+          {content}
         </div>
       );
     }
@@ -2272,18 +2069,10 @@ EIGENVALUES
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <div className="text-[12px] font-bold tracking-widest uppercase">Practice Problems</div>
           <div className="mt-3 text-[13px] leading-7 text-slate-700 space-y-3">
-            <div>
-              <b>1. Bisection.</b> Solve x³ − x − 2 = 0 on [1, 2], tol 0.001. Expected root ≈ 1.521.
-            </div>
-            <div>
-              <b>2. Simpson 1/3.</b> Evaluate ∫₀¹ x² dx with n = 6 → 0.333…
-            </div>
-            <div>
-              <b>3. RK4.</b> dy/dx = x + y, y(0) = 1, h = 0.2 up to x = 1.
-            </div>
-            <div>
-              <b>4. Power method.</b> Find dominant eigenvalue of [[4, 1], [2, 3]].
-            </div>
+            <div><b>1. Bisection.</b> x³ − x − 2 = 0 on [1, 2], tol 0.001. Expected ≈ 1.521.</div>
+            <div><b>2. Simpson 1/3.</b> ∫₀¹ x² dx, n = 6 → 0.333…</div>
+            <div><b>3. RK4.</b> dy/dx = x + y, y(0) = 1, h = 0.2 up to x = 1.</div>
+            <div><b>4. Power method.</b> Dominant eigenvalue of [[4, 1], [2, 3]].</div>
           </div>
         </div>
       );
@@ -2293,9 +2082,9 @@ EIGENVALUES
       const questions = [
         { q: "Bisection error reduces by?", opts: ["1/2 each iteration", "quadratically", "cubically"], correct: 0 },
         { q: "Simpson 1/3 requires?", opts: ["even n", "odd n", "multiple of 3"], correct: 0 },
-        { q: "RK4 order of accuracy?", opts: ["1", "2", "4"], correct: 2 },
+        { q: "RK4 order?", opts: ["1", "2", "4"], correct: 2 },
         { q: "Which method needs a bracket?", opts: ["Newton", "Secant", "Bisection"], correct: 2 },
-        { q: "Cholesky requires?", opts: ["symmetric positive-definite", "diagonally dominant", "singular"], correct: 0 },
+        { q: "Cholesky requires?", opts: ["SPD", "diagonally dominant", "singular"], correct: 0 },
       ];
       return (
         <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-3">
@@ -2305,12 +2094,11 @@ EIGENVALUES
               <div className="text-[13px] font-medium">{i + 1}. {q.q}</div>
               <div className="flex gap-2 mt-2 flex-wrap">
                 {q.opts.map((opt, j) => (
-                  <span key={j}
-                    className={`text-[11px] px-3 py-1 rounded-full border ${
-                      j === q.correct
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                        : "bg-white border-slate-200 text-slate-600"
-                    }`}>
+                  <span key={j} className={`text-[11px] px-3 py-1 rounded-full border ${
+                    j === q.correct
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                      : "bg-white border-slate-200 text-slate-600"
+                  }`}>
                     {opt}{j === q.correct ? " ✓" : ""}
                   </span>
                 ))}
@@ -2326,13 +2114,12 @@ EIGENVALUES
         <div className="rounded-xl border border-slate-200 bg-white p-6">
           <div className="text-[12px] font-bold tracking-widest uppercase">Progress Tracking</div>
           <p className="text-[13px] mt-3 text-slate-700 leading-6">
-            This artifact tracks each solver's result in local React state. Navigate to any solver,
-            click SOLVE, and its iteration table and canvas remain until page reload.
+            Each solver keeps its result in React state. Click SOLVE to generate tables and plots.
           </p>
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
             {["Root", "Linear", "Interp", "Diff", "Integ", "ODE", "Curve", "Eigen"].map((m) => (
               <div key={m} className="border border-slate-200 rounded-lg p-2 bg-slate-50">
-                {m}: ready when you click SOLVE
+                {m}: ready when you SOLVE
               </div>
             ))}
           </div>
@@ -2340,22 +2127,20 @@ EIGENVALUES
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        13. DASHBOARD
-       ===================================================================== */
-
+       =============================================================== */
     function Dashboard({ onNavigate }) {
       const modules = [
         { key: "root", title: "Root Finding", desc: "Bisection, Newton, Secant, Regula Falsi, Fixed-Point", color: "bg-violet-50", accent: "text-violet-600" },
         { key: "linear", title: "Linear Systems", desc: "Gauss, Gauss-Jordan, LU, Cholesky, Jacobi, Gauss-Seidel", color: "bg-blue-50", accent: "text-blue-600" },
         { key: "interp", title: "Interpolation", desc: "Lagrange, Divided Diff, Newton Forward/Backward, Spline", color: "bg-emerald-50", accent: "text-emerald-600" },
         { key: "diff", title: "Differentiation", desc: "Forward O(h), Backward O(h), Central O(h²), Second", color: "bg-amber-50", accent: "text-amber-600" },
-        { key: "integ", title: "Integration", desc: "Trapezoidal, Simpson 1/3 & 3/8, Gauss 2/3-pt, Romberg", color: "bg-rose-50", accent: "text-rose-600" },
+        { key: "integ", title: "Integration", desc: "Trap, Simpson 1/3 & 3/8, Gauss 2/3-pt, Romberg", color: "bg-rose-50", accent: "text-rose-600" },
         { key: "ode", title: "ODEs", desc: "Euler, Heun, RK2, RK4, Adams-Bashforth-Moulton, Milne", color: "bg-indigo-50", accent: "text-indigo-600" },
         { key: "curve", title: "Curve Fitting", desc: "Linear, Poly2, Exponential, Logarithmic + R²", color: "bg-teal-50", accent: "text-teal-600" },
         { key: "eigen", title: "Eigenvalues", desc: "Power method + Rayleigh quotient + residual", color: "bg-orange-50", accent: "text-orange-600" },
       ];
-
       return (
         <div className="space-y-4">
           <div className="rounded-[20px] border border-slate-200 bg-white p-6 md:p-8 relative overflow-hidden">
@@ -2368,18 +2153,14 @@ EIGENVALUES
                 Solve, iterate, visualize,<br />verify every step.
               </h1>
               <p className="text-[13px] md:text-[14px] text-slate-600 max-w-[640px] mt-3 leading-6">
-                Eight families of methods with genuine numerical computation, iteration tables,
-                error analysis, and canvas plots. Every button executes real algorithms.
+                Eight families of methods with genuine numerical computation, iteration tables, error analysis, and canvas plots.
               </p>
-              <div className="flex flex-wrap gap-2 mt-5">
-                <button onClick={() => onNavigate("root")}
-                  className="bg-slate-900 text-white rounded-full px-5 py-2.5 text-[12px] font-bold tracking-widest hover:bg-slate-800 transition">
-                  START SOLVING →
-                </button>
-              </div>
+              <button onClick={() => onNavigate("root")}
+                className="mt-5 bg-slate-900 text-white rounded-full px-5 py-2.5 text-[12px] font-bold tracking-widest hover:bg-slate-800 transition">
+                START SOLVING →
+              </button>
             </div>
           </div>
-
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3">
             {modules.map((m) => (
               <div key={m.key} className={`rounded-xl border border-slate-200 p-4 ${m.color} flex flex-col`}>
@@ -2402,10 +2183,9 @@ EIGENVALUES
       );
     }
 
-    /* =====================================================================
+    /* ===============================================================
        14. APP SHELL
-       ===================================================================== */
-
+       =============================================================== */
     function App() {
       const [page, setPage] = useState("dashboard");
 
@@ -2430,9 +2210,7 @@ EIGENVALUES
           <header className="sticky top-0 z-20 backdrop-blur bg-white/80 border-b border-slate-200">
             <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold serif text-[18px]">
-                  N
-                </div>
+                <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold serif text-[18px]">N</div>
                 <div>
                   <div className="text-[15px] md:text-[18px] font-bold tracking-tight leading-none">
                     ADVANCED NUMERICAL METHODS SOLVER
@@ -2461,14 +2239,10 @@ EIGENVALUES
                     }`}>
                     <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-[14px] font-bold ${
                       page === item.key ? "bg-white/10" : "bg-slate-100"
-                    }`}>
-                      {item.icon}
-                    </span>
+                    }`}>{item.icon}</span>
                     <span className="flex-1 min-w-0">
                       <span className="block text-[12px] font-bold leading-tight">{item.label}</span>
-                      <span className={`block text-[10px] truncate ${page === item.key ? "text-white/60" : "text-slate-500"}`}>
-                        {item.desc}
-                      </span>
+                      <span className={`block text-[10px] truncate ${page === item.key ? "text-white/60" : "text-slate-500"}`}>{item.desc}</span>
                     </span>
                   </button>
                 ))}
@@ -2493,13 +2267,18 @@ EIGENVALUES
           </div>
 
           <footer className="max-w-[1600px] mx-auto px-6 py-8 text-[10px] text-slate-400 tracking-widest">
-            ADVANCED NUMERICAL METHODS SOLVER · 8-STEP FORMAT · CANVAS PLOTS · VERIFICATION · ERROR ANALYSIS
+            ADVANCED NUMERICAL METHODS SOLVER · 8-STEP FORMAT · CANVAS PLOTS · VERIFICATION
           </footer>
         </div>
       );
     }
 
-    createRoot(document.getElementById("root")).render(<App />);
+    /* ===============================================================
+       BOOT
+       =============================================================== */
+    const rootEl = document.getElementById("root");
+    rootEl.innerHTML = "";
+    createRoot(rootEl).render(<App />);
   </script>
 </body>
 </html>
