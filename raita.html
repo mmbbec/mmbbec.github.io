@@ -45,6 +45,9 @@
     const SESSION_KEY = 'bec.ws.session.v1';
     const SESSION_TTL = 8 * 60 * 60 * 1000;
 
+    const SHEET_URL_DEFAULT = 'https://docs.google.com/spreadsheets/d/1PflXnULQSzYdGjicVm94vtM9aRS8C0sBKTWYtBEvWp8/edit?usp=sharing';
+    const DRIVE_URL_DEFAULT = 'https://drive.google.com/drive/folders/1e7e1iOZzMMjUiXOmlT0oeIGDPllbGymu?usp=drive_link';
+
     /* ================================================================
        2. ICONS
        ================================================================ */
@@ -82,7 +85,11 @@
       logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
       mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
       phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1z"/>',
-      flask: '<path d="M9 3h6"/><path d="M10 3v5.5L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 8.5V3"/><path d="M7.5 14h9"/>'
+      flask: '<path d="M9 3h6"/><path d="M10 3v5.5L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 8.5V3"/><path d="M7.5 14h9"/>',
+      pencil: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+      cloud: '<path d="M17.5 19H9a6 6 0 1 1 5.7-8h.8a4.5 4.5 0 0 1 2 8.5z"/>',
+      copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+      upload: '<path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/>'
     };
 
     function icon(name, cls) {
@@ -98,9 +105,9 @@
     const isoDate = function (d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); };
     const today = function () { return isoDate(new Date()); };
     const addDays = function (n) { const d = new Date(); d.setDate(d.getDate() + n); return isoDate(d); };
-    const parseDate = function (s) { const p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); };
+    const parseDate = function (s) { const p = String(s).slice(0,10).split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); };
     const daysUntil = function (s) { const t = new Date(); t.setHours(0,0,0,0); return Math.round((parseDate(s) - t) / DAY); };
-    const fmtDate = function (s) { return parseDate(s).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }); };
+    const fmtDate = function (s) { return s ? parseDate(s).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—'; };
     const fmtMoney = function (n) { return '₹' + Number(n||0).toLocaleString('en-IN'); };
     const monthKey = function () { return today().slice(0,7); };
     const currentYear = function () { const y = new Date().getFullYear(); const s = new Date().getMonth() >= 5 ? y : y - 1; return s + '-' + String(s+1).slice(-2); };
@@ -112,6 +119,7 @@
       if (/x/i.test(v)) return escapeHtml(v);
       return '•••• •••• ' + escapeHtml(v.slice(-4));
     };
+    const clone = function (o) { return JSON.parse(JSON.stringify(o)); };
 
     /* ================================================================
        4. STORAGE
@@ -296,7 +304,285 @@
     }
 
     /* ================================================================
-       6. SESSION
+       6. RECORD SCHEMAS (drives add + edit + rename + delete)
+       ================================================================ */
+    const RECORD_TYPES = {
+      expense: {
+        label: 'Expense', plural: 'Expenses', collection: 'expenses', icon: 'wallet',
+        title: r => r.description || 'Expense',
+        sub: r => fmtMoney(r.amount) + ' · ' + fmtDate(r.date),
+        renameKey: 'description',
+        fields: [
+          { key:'amount', label:'Amount (₹)', type:'number', required:true, placeholder:'0' },
+          { key:'date', label:'Date', type:'date', def: () => today() },
+          { key:'category', label:'Category', type:'select', options:['Food','Travel','Fuel','House','Education','Medical','Shopping','Bills','Family','Research','College','Books','Other'] },
+          { key:'paymentMode', label:'Payment mode', type:'select', options:['UPI','Cash','Card','Netbanking'] },
+          { key:'vendor', label:'Vendor', type:'text', placeholder:'Vendor' },
+          { key:'description', label:'Description', type:'textarea', rows:2, placeholder:'What was this for?' }
+        ]
+      },
+      publication: {
+        label: 'Publication', plural: 'Publications', collection: 'publications', icon: 'book',
+        title: r => r.title || 'Publication',
+        sub: r => (r.journal || '') + (r.year ? ' · ' + r.year : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'textarea', rows:2, required:true, placeholder:'Publication title' },
+          { key:'authors', label:'Authors', type:'text', def: () => 'Biradar M.' },
+          { key:'journal', label:'Journal', type:'text', placeholder:'Journal name' },
+          { key:'year', label:'Year', type:'text', def: () => String(new Date().getFullYear()) },
+          { key:'volume', label:'Volume / Issue', type:'text' },
+          { key:'doi', label:'DOI (optional)', type:'text', placeholder:'10.xxxx/xxxxx' }
+        ]
+      },
+      document: {
+        label: 'Document', plural: 'Documents', collection: 'documents', icon: 'file',
+        title: r => r.name || 'Document',
+        sub: r => (r.category || '') + (r.subType ? ' · ' + r.subType : ''),
+        renameKey: 'name',
+        fields: [
+          { key:'name', label:'Document name', type:'text', required:true, placeholder:'e.g. Passport' },
+          { key:'category', label:'Category', type:'select', options:['Identity','Personal'] },
+          { key:'subType', label:'Sub-type', type:'text', placeholder:'e.g. Research ID' },
+          { key:'docNumber', label:'Document number', type:'text', placeholder:'Number' },
+          { key:'issueDate', label:'Issue date', type:'date' },
+          { key:'expiryDate', label:'Expiry date', type:'date' },
+          { key:'authority', label:'Issuing authority', type:'text', placeholder:'Authority' },
+          { key:'notes', label:'Notes', type:'textarea', rows:2 },
+          { key:'tags', label:'Tags (comma separated)', type:'text',
+            get: r => (r.tags || []).join(', '),
+            set: (r, v) => { r.tags = String(v||'').split(',').map(s => s.trim()).filter(Boolean); } }
+        ]
+      },
+      task: {
+        label: 'Task', plural: 'Tasks', collection: 'tasks', icon: 'clipboard',
+        title: r => r.title || 'Task',
+        sub: r => (r.category || '') + ' · ' + (r.priority || '') + (r.dueDate ? ' · ' + fmtDate(r.dueDate) : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Task', type:'textarea', rows:2, required:true, placeholder:'What needs to be done?' },
+          { key:'category', label:'Category', type:'select', options:['Teaching','Research','NAAC','YRC','College','Personal'] },
+          { key:'priority', label:'Priority', type:'select', options:['High','Medium','Low'], def: () => 'Medium' },
+          { key:'dueDate', label:'Due date', type:'date', def: () => addDays(1) },
+          { key:'status', label:'Status', type:'select', options:['Pending','Completed'], def: () => 'Pending' }
+        ]
+      },
+      book: {
+        label: 'Book', plural: 'Books', collection: 'books', icon: 'book',
+        title: r => r.title || 'Book',
+        sub: r => (r.publisher || '') + (r.year ? ' · ' + r.year : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'textarea', rows:2, required:true },
+          { key:'publisher', label:'Publisher', type:'text' },
+          { key:'year', label:'Year', type:'text' },
+          { key:'isbn', label:'ISBN', type:'text' },
+          { key:'pages', label:'Pages', type:'text' },
+          { key:'role', label:'Role', type:'select', options:['Author','Co-author','Editor'] }
+        ]
+      },
+      patent: {
+        label: 'Patent', plural: 'Patents', collection: 'patents', icon: 'flask',
+        title: r => r.title || 'Patent',
+        sub: r => 'App ' + (r.appNo || '—') + (r.year ? ' · ' + r.year : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'textarea', rows:2, required:true },
+          { key:'appNo', label:'Application number', type:'text' },
+          { key:'year', label:'Year', type:'text' },
+          { key:'status', label:'Status', type:'select', options:['Published','Granted','Filed','Pending'] }
+        ]
+      },
+      certificate: {
+        label: 'Certificate', plural: 'Certificates', collection: 'certificates', icon: 'award',
+        title: r => r.title || 'Certificate',
+        sub: r => (r.org || '') + (r.date ? ' · ' + fmtDate(r.date) : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'text', required:true },
+          { key:'org', label:'Organisation', type:'text' },
+          { key:'date', label:'Date', type:'date' },
+          { key:'duration', label:'Duration', type:'text', placeholder:'e.g. 5 days' },
+          { key:'type', label:'Type', type:'select', options:['FDP','Workshop','Webinar','Seminar','Conference','Course'] },
+          { key:'location', label:'Location', type:'text' }
+        ]
+      },
+      meeting: {
+        label: 'Meeting', plural: 'Meetings', collection: 'meetings', icon: 'users',
+        title: r => r.title || 'Meeting',
+        sub: r => (r.date ? fmtDate(r.date) : '') + (r.venue ? ' · ' + r.venue : ''),
+        renameKey: 'title',
+        fields: [
+          { key:'title', label:'Title', type:'text', required:true },
+          { key:'date', label:'Date', type:'date' },
+          { key:'time', label:'Time', type:'text', placeholder:'10:30 AM' },
+          { key:'venue', label:'Venue', type:'text' },
+          { key:'participants', label:'Participants', type:'number' },
+          { key:'type', label:'Type', type:'select', options:['Department','YRC','Committee','Other'] },
+          { key:'minutes', label:'Minutes', type:'textarea', rows:3 }
+        ]
+      },
+      subject: {
+        label: 'Subject', plural: 'Subjects', collection: 'subjects', icon: 'cap',
+        title: r => r.name || 'Subject',
+        sub: r => (r.code || '') + ' · ' + (r.branch || '') + (r.sem ? ' · Sem ' + r.sem : ''),
+        renameKey: 'name',
+        createDefaults: () => ({
+          attendance: { average: 0, below: 0 },
+          plan: { units: [] },
+          notes: [],
+          cie: { test: 'CIE Test 1', average: 0, max: 30, passRate: 0 },
+          schedule: [],
+          academicYear: currentYear(),
+          semesterType: 'ODD'
+        }),
+        fields: [
+          { key:'code', label:'Code', type:'text', required:true },
+          { key:'name', label:'Subject name', type:'text', required:true },
+          { key:'branch', label:'Branch', type:'text' },
+          { key:'sem', label:'Semester', type:'number' },
+          { key:'division', label:'Division', type:'text' },
+          { key:'credits', label:'Credits', type:'number' },
+          { key:'ltp', label:'L-T-P', type:'text', placeholder:'3-1-0' },
+          { key:'students', label:'Students', type:'number' },
+          { key:'faculty', label:'Faculty', type:'text' },
+          { key:'attendanceAvg', label:'Attendance %', type:'number',
+            get: r => (r.attendance && r.attendance.average) || 0,
+            set: (r, v) => { r.attendance = Object.assign({}, r.attendance || {}, { average: Number(v) || 0 }); } },
+          { key:'attendanceBelow', label:'Students below 75%', type:'number',
+            get: r => (r.attendance && r.attendance.below) || 0,
+            set: (r, v) => { r.attendance = Object.assign({}, r.attendance || {}, { below: Number(v) || 0 }); } },
+          { key:'cieAvg', label:'CIE average', type:'number',
+            get: r => (r.cie && r.cie.average) || 0,
+            set: (r, v) => { r.cie = Object.assign({}, r.cie || {}, { average: Number(v) || 0 }); } },
+          { key:'cieMax', label:'CIE max', type:'number',
+            get: r => (r.cie && r.cie.max) || 30,
+            set: (r, v) => { r.cie = Object.assign({}, r.cie || {}, { max: Number(v) || 30 }); } },
+          { key:'cieTest', label:'CIE test label', type:'text',
+            get: r => (r.cie && r.cie.test) || 'CIE Test 1',
+            set: (r, v) => { r.cie = Object.assign({}, r.cie || {}, { test: v }); } }
+        ]
+      }
+    };
+
+    /* ================================================================
+       7. APPS SCRIPT CODE (shown in Settings → Cloud sync)
+       ================================================================ */
+    const APPS_SCRIPT_CODE = `/**
+ * BEC Faculty Workspace — Google Sheet + Drive bridge
+ * ─────────────────────────────────────────────────────
+ * 1. Open your Google Sheet → Extensions → Apps Script
+ * 2. Delete the default code, paste this file, save
+ * 3. Deploy → New deployment → Web app
+ *    • Execute as: Me
+ *    • Who has access: Anyone
+ * 4. Authorise when prompted (Sheets + Drive scopes)
+ * 5. Copy the /exec URL and paste it in the app:
+ *    Settings → Cloud sync → Apps Script Web App URL
+ */
+const SHEET_ID  = '1PflXnULQSzYdGjicVm94vtM9aRS8C0sBKTWYtBEvWp8';
+const FOLDER_ID = '1e7e1iOZzMMjUiXOmlT0oeIGDPllbGymu';
+
+function doGet(e) {
+  const action = (e.parameter.action || 'pull');
+  const cb = e.parameter.callback;
+  let result;
+  try {
+    if (action === 'pull') {
+      const data = {};
+      ['Profile','Expenses','Publications','Tasks','Documents',
+       'Books','Patents','Certificates','Meetings','Subjects'].forEach(function (name) {
+        data[name] = readSheet(getSheet(name));
+      });
+      result = { ok: true, data: data };
+    } else {
+      result = { ok: true, action: action, time: new Date().toISOString() };
+    }
+  } catch (err) { result = { ok: false, error: String(err) }; }
+  const json = JSON.stringify(result);
+  if (cb) return ContentService.createTextOutput(cb + '(' + json + ')')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  return ContentService.createTextOutput(json)
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    if (body.action === 'push') {
+      writeAll(body.data || {});
+      return out({ ok: true, savedAt: new Date().toISOString() });
+    }
+    if (body.action === 'backup') {
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const name = 'bec-backup-' + stamp + '.json';
+      folder.createFile(name, JSON.stringify(body.data, null, 2), 'application/json');
+      return out({ ok: true, file: name });
+    }
+    return out({ ok: false, error: 'Unknown action' });
+  } catch (err) { return out({ ok: false, error: String(err) }); }
+}
+
+function out(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getSS() { return SpreadsheetApp.openById(SHEET_ID); }
+
+function getSheet(name) {
+  const ss = getSS();
+  let sh = ss.getSheetByName(name);
+  if (!sh) sh = ss.insertSheet(name);
+  return sh;
+}
+
+function writeAll(data) {
+  Object.keys(data).forEach(function (name) {
+    const rows = data[name];
+    if (!Array.isArray(rows)) return;
+    const sh = getSheet(name);
+    sh.clear();
+    if (rows.length === 0) return;
+    const headers = [];
+    const seen = {};
+    rows.forEach(function (r) {
+      Object.keys(r).forEach(function (k) {
+        if (!seen[k]) { seen[k] = true; headers.push(k); }
+      });
+    });
+    const values = [headers].concat(rows.map(function (r) {
+      return headers.map(function (h) {
+        const v = r[h];
+        if (v == null) return '';
+        if (typeof v === 'object') return JSON.stringify(v);
+        return v;
+      });
+    }));
+    sh.getRange(1, 1, values.length, headers.length).setValues(values);
+  });
+}
+
+function readSheet(sh) {
+  const values = sh.getDataRange().getValues();
+  if (values.length < 2) return [];
+  const headers = values[0];
+  return values.slice(1).map(function (row) {
+    const obj = {};
+    headers.forEach(function (h, i) {
+      let v = row[i];
+      if (typeof v === 'string' && (v.charAt(0) === '{' || v.charAt(0) === '[')) {
+        try { v = JSON.parse(v); } catch (e) {}
+      }
+      obj[h] = v;
+    });
+    return obj;
+  });
+}`;
+
+    /* ================================================================
+       8. SESSION
        ================================================================ */
     function readSession() {
       try {
@@ -319,7 +605,7 @@
     }
 
     /* ================================================================
-       7. STATE
+       9. STATE
        ================================================================ */
     const state = {
       session: readSession(),
@@ -330,18 +616,26 @@
       activeSubjectId: null,
       moreModule: null,
       sheet: null,
+      editing: null,
       revealedDocs: {},
       filters: {},
-      profile: store.get('profile', PROFILE),
-      publications: store.get('publications', PUBLICATIONS),
+      profile: store.get('profile', () => clone(PROFILE)),
+      publications: store.get('publications', () => clone(PUBLICATIONS)),
       expenses: store.get('expenses', seedExpenses),
       documents: store.get('documents', seedDocuments),
       tasks: store.get('tasks', seedTasks),
       subjects: store.get('subjects', seedSubjects),
-      meetings: seedMeetings(),
-      books: BOOKS,
-      patents: PATENTS,
-      certificates: CERTIFICATES
+      books: store.get('books', () => clone(BOOKS)),
+      patents: store.get('patents', () => clone(PATENTS)),
+      certificates: store.get('certificates', () => clone(CERTIFICATES)),
+      meetings: store.get('meetings', seedMeetings),
+      cloud: store.get('cloud', () => ({
+        sheetUrl: SHEET_URL_DEFAULT,
+        driveUrl: DRIVE_URL_DEFAULT,
+        scriptUrl: '',
+        lastSync: null,
+        autoSync: false
+      }))
     };
 
     function setState(patch) {
@@ -352,7 +646,7 @@
     function persist(key, val) { store.set(key, val); }
 
     /* ================================================================
-       8. HTML HELPERS
+       10. HTML HELPERS
        ================================================================ */
     function badge(text, tone) {
       const tones = {
@@ -405,8 +699,22 @@
       return '<button ' + (attrs || '') + ' class="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3 text-[13px] font-semibold text-stone-700 transition hover:bg-stone-50 active:scale-[0.99] ' + (cls || '') + '">' + text + '</button>';
     }
 
+    function toast(msg) {
+      let el = document.getElementById('bec-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'bec-toast';
+        el.style.cssText = 'position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:70;background:#0F172A;color:#fff;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:600;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center;';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = '1';
+      clearTimeout(el._t);
+      el._t = setTimeout(function () { el.style.opacity = '0'; }, 2600);
+    }
+
     /* ================================================================
-       9. RENDER: LOGIN
+       11. RENDER: LOGIN
        ================================================================ */
     function renderLogin() {
       const err = state.loginError ? '<div role="alert" class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-[12px] font-medium text-red-700">' + icon('alert','mt-0.5 h-3.5 w-3.5 shrink-0') + '<span>' + escapeHtml(state.loginError) + '</span></div>' : '';
@@ -448,7 +756,7 @@
     }
 
     /* ================================================================
-       10. RENDER: WORKSPACE SHELL
+       12. RENDER: WORKSPACE SHELL
        ================================================================ */
     const NAV = [
       { id:'home', label:'Home', icon:'home' },
@@ -520,11 +828,11 @@
     }
 
     /* ================================================================
-       11. PAGE: HOME
+       13. PAGE: HOME
        ================================================================ */
     function renderHome() {
       const p = state.profile;
-      const monthExp = state.expenses.filter(function (e) { return e.date.slice(0,7) === monthKey(); });
+      const monthExp = state.expenses.filter(function (e) { return String(e.date).slice(0,7) === monthKey(); });
       const monthTotal = monthExp.reduce(function (s, e) { return s + Number(e.amount||0); }, 0);
       const openTasks = state.tasks.filter(function (t) { return t.status !== 'Completed'; });
       const dueSoon = openTasks.filter(function (t) { return daysUntil(t.dueDate) <= 1; });
@@ -540,7 +848,6 @@
 
       let html = '<div class="fade-up space-y-5 px-4 py-5">';
 
-      // Hero
       html += '<section class="relative overflow-hidden rounded-3xl bg-ink p-5 text-white">' +
         '<div class="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-brand/30 blur-2xl"></div>' +
         '<div class="relative">' +
@@ -560,7 +867,6 @@
           '</div>' +
         '</div></section>';
 
-      // Today
       html += '<section>' + sectionTitle(todayLabel);
       html += '<div class="grid grid-cols-2 gap-3">';
       if (focus) {
@@ -570,7 +876,7 @@
               '<p class="text-[10px] font-bold uppercase tracking-wider text-brand">In focus</p>' +
               '<p class="mt-1 truncate text-[14px] font-bold text-ink">' + escapeHtml(focus.name) + '</p>' +
               '<p class="mt-0.5 text-[11px] text-stone-500">' + escapeHtml(focus.code) + ' · ' + escapeHtml(focus.branch) + ' · Sem ' + focus.sem + ' · Div ' + escapeHtml(focus.division) + '</p>' +
-              '<div class="mt-2 flex flex-wrap gap-1.5">' + badge(focus.attendance.average + '% attendance', 'success') + badge(focus.students + ' students', 'neutral') + badge('CIE ' + focus.cie.average + '/' + focus.cie.max, 'brand') + '</div>' +
+              '<div class="mt-2 flex flex-wrap gap-1.5">' + badge((focus.attendance&&focus.attendance.average||0) + '% attendance', 'success') + badge(focus.students + ' students', 'neutral') + badge('CIE ' + (focus.cie&&focus.cie.average||0) + '/' + (focus.cie&&focus.cie.max||30), 'brand') + '</div>' +
             '</div>' +
             '<span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-stone-50 text-stone-400">' + icon('chevronRight','h-4 w-4') + '</span>' +
           '</div></button>';
@@ -585,7 +891,6 @@
         '<p class="mt-1 text-[10.5px] text-stone-500">' + monthExp.length + ' recorded expenses</p></button>';
       html += '</div></section>';
 
-      // Research
       html += '<section>' + sectionTitle('Research profile', '<button data-action="nav" data-tab="research" class="text-[11px] font-semibold text-brand">View all</button>');
       html += card(
         '<div class="p-4">' +
@@ -608,7 +913,6 @@
       );
       html += '</section>';
 
-      // Alerts
       html += '<section>' + sectionTitle('Alerts');
       if (expiring.length > 0) {
         html += '<div class="rounded-2xl border border-amber-200 bg-amber-50 p-4">' +
@@ -637,7 +941,6 @@
       }
       html += '</section>';
 
-      // Admin roles
       html += '<section>' + sectionTitle('Administrative roles');
       html += card('<div class="divide-y divide-stone-100">' + p.adminRoles.slice(0,4).map(function (role) {
         return '<div class="flex items-start gap-2.5 px-4 py-3"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span><span class="text-[12px] leading-snug text-stone-700">' + escapeHtml(role) + '</span></div>';
@@ -649,10 +952,10 @@
     }
 
     /* ================================================================
-       12. PAGE: ACADEMIC
+       14. PAGE: ACADEMIC
        ================================================================ */
     function planStats(subject) {
-      const units = subject.plan.units;
+      const units = (subject.plan && subject.plan.units) || [];
       const done = units.filter(function (u) { return u.status === 'Completed'; }).length;
       return { done: done, total: units.length, percent: units.length ? Math.round((done/units.length)*100) : 0 };
     }
@@ -686,10 +989,13 @@
 
       html += '<section>' + sectionTitle(state.year + ' · ' + state.semester, '<span class="text-[11px] text-stone-400">' + visible.length + ' subjects</span>');
       if (visible.length === 0) {
-        html += emptyState('cap', 'No subjects for this semester', 'Switch to another semester or academic year to view teaching records.');
+        html += emptyState('cap', 'No subjects for this semester', 'Add a subject from More → Settings → Manage data, or switch semester.');
       } else {
         html += '<div class="space-y-3">' + visible.map(function (s) {
           const st = planStats(s);
+          const att = (s.attendance && s.attendance.average) || 0;
+          const cie = (s.cie && s.cie.average) || 0;
+          const cieMax = (s.cie && s.cie.max) || 30;
           return '<button data-action="open-subject" data-id="' + s.id + '" class="w-full rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-card hover:border-brand/30">' +
             '<div class="flex items-start justify-between gap-3">' +
               '<div class="min-w-0">' +
@@ -699,7 +1005,7 @@
               '</div>' +
               '<span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-stone-50 text-stone-400">' + icon('chevronRight','h-4 w-4') + '</span>' +
             '</div>' +
-            '<div class="mt-3 flex flex-wrap gap-1.5">' + badge(s.attendance.average + '% attendance', 'success') + badge(st.percent + '% syllabus', 'neutral') + badge('CIE ' + s.cie.average + '/' + s.cie.max, 'brand') + '</div>' +
+            '<div class="mt-3 flex flex-wrap gap-1.5">' + badge(att + '% attendance', 'success') + badge(st.percent + '% syllabus', 'neutral') + badge('CIE ' + cie + '/' + cieMax, 'brand') + '</div>' +
             '<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-ink" style="width:' + st.percent + '%"></div></div>' +
           '</button>';
         }).join('') + '</div>';
@@ -712,38 +1018,45 @@
       const st = planStats(s);
       const tab = state.subjectTab || 'Overview';
       const tabs = ['Overview','Timetable','Attendance','Lesson plan','Notes','CIE','Course file'];
+      const notes = s.notes || [];
+      const schedule = s.schedule || [];
+      const units = (s.plan && s.plan.units) || [];
+      const att = (s.attendance && s.attendance.average) || 0;
+      const attBelow = (s.attendance && s.attendance.below) || 0;
+      const cie = s.cie || { test:'CIE Test 1', average:0, max:30, passRate:0 };
 
       let body = '';
 
       if (tab === 'Overview') {
-        body = '<div class="grid grid-cols-2 gap-3">' + statTile('Class strength', s.students, 'Division ' + s.division) + statTile('Attendance', s.attendance.average + '%', s.attendance.below + ' below 75%', 'brand') + '</div>' +
+        body = '<div class="grid grid-cols-2 gap-3">' + statTile('Class strength', s.students, 'Division ' + s.division) + statTile('Attendance', att + '%', attBelow + ' below 75%', 'brand') + '</div>' +
           card('<div class="p-4"><div class="mb-2 flex items-center justify-between"><p class="text-[12.5px] font-bold text-ink">Syllabus coverage</p><span class="text-[11px] font-semibold text-stone-500">' + st.done + '/' + st.total + ' units</span></div>' +
             '<div class="h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-ink" style="width:' + st.percent + '%"></div></div>' +
             '<p class="mt-2 text-[11px] text-stone-500">' + st.percent + '% of the planned syllabus is complete.</p></div>', 'mt-3') +
           card('<div class="p-4"><p class="mb-2 text-[12.5px] font-bold text-ink">CIE performance</p>' +
-            '<div class="flex items-center justify-between text-[12px] text-stone-600"><span>' + escapeHtml(s.cie.test) + '</span><span class="font-bold text-ink">' + s.cie.average + '/' + s.cie.max + '</span></div>' +
-            '<div class="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-brand" style="width:' + ((s.cie.average/s.cie.max)*100) + '%"></div></div>' +
-            '<p class="mt-2 text-[11px] text-stone-500">Pass rate ' + s.cie.passRate + '%</p></div>', 'mt-3');
+            '<div class="flex items-center justify-between text-[12px] text-stone-600"><span>' + escapeHtml(cie.test) + '</span><span class="font-bold text-ink">' + cie.average + '/' + cie.max + '</span></div>' +
+            '<div class="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-brand" style="width:' + ((cie.average/cie.max)*100) + '%"></div></div>' +
+            '<p class="mt-2 text-[11px] text-stone-500">Pass rate ' + (cie.passRate||0) + '%</p></div>', 'mt-3');
       } else if (tab === 'Timetable') {
-        body = card('<div class="divide-y divide-stone-100">' + s.schedule.map(function (slot) {
-          return '<div class="flex items-center gap-3 px-4 py-3"><span class="grid h-9 w-11 place-items-center rounded-lg bg-ink text-[11px] font-bold text-white">' + slot.day + '</span>' +
+        body = card('<div class="divide-y divide-stone-100">' + (schedule.length === 0 ? '<p class="px-4 py-6 text-center text-[12px] text-stone-400">No timetable slots.</p>' : schedule.map(function (slot) {
+          return '<div class="flex items-center gap-3 px-4 py-3"><span class="grid h-9 w-11 place-items-center rounded-lg bg-ink text-[11px] font-bold text-white">' + escapeHtml(slot.day) + '</span>' +
             '<div><p class="text-[12.5px] font-semibold text-ink">' + escapeHtml(slot.time) + '</p><p class="text-[11px] text-stone-500">' + escapeHtml(slot.room) + '</p></div></div>';
-        }).join('') + '</div>');
+        }).join('')) + '</div>');
       } else if (tab === 'Attendance') {
-        body = card('<div class="p-4"><div class="flex items-center justify-between"><p class="text-[12.5px] font-bold text-ink">Average attendance</p><span class="text-[12.5px] font-bold text-brand">' + s.attendance.average + '%</span></div>' +
-          '<div class="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-brand" style="width:' + s.attendance.average + '%"></div></div>' +
-          '<p class="mt-2 text-[11px] text-stone-500">' + s.attendance.below + ' students below the 75% threshold.</p></div>');
+        body = card('<div class="p-4"><div class="flex items-center justify-between"><p class="text-[12.5px] font-bold text-ink">Average attendance</p><span class="text-[12.5px] font-bold text-brand">' + att + '%</span></div>' +
+          '<div class="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-brand" style="width:' + att + '%"></div></div>' +
+          '<p class="mt-2 text-[11px] text-stone-500">' + attBelow + ' students below the 75% threshold.</p></div>');
       } else if (tab === 'Lesson plan') {
         body = card('<div class="p-4"><div class="h-2 overflow-hidden rounded-full bg-stone-100"><div class="h-full rounded-full bg-brand" style="width:' + st.percent + '%"></div></div><p class="mt-2 text-[11px] text-stone-500">' + st.done + ' of ' + st.total + ' units complete · ' + st.percent + '%</p></div>') +
-          s.plan.units.map(function (u) {
+          (units.length === 0 ? emptyState('clipboard', 'No lesson plan', 'Units will appear once you add them.') :
+          units.map(function (u) {
             const tone = u.status === 'Completed' ? 'success' : u.status === 'In Progress' ? 'neutral' : 'warn';
             return card('<div class="flex items-center justify-between gap-3 p-4"><span class="text-[12.5px] font-semibold text-ink">' + escapeHtml(u.name) + '</span>' + badge(u.status, tone) + '</div>', 'mt-3');
-          }).join('');
+          }).join(''));
       } else if (tab === 'Notes') {
-        if (s.notes.length === 0) {
+        if (notes.length === 0) {
           body = emptyState('file', 'No material uploaded', 'Upload notes, slides or code for this subject.');
         } else {
-          body = s.notes.map(function (n) {
+          body = notes.map(function (n) {
             return card('<div class="flex items-center gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">' + icon('file','h-5 w-5') + '</span>' +
               '<div class="min-w-0"><p class="truncate text-[12.5px] font-semibold text-ink">' + escapeHtml(n.name) + '</p><p class="text-[11px] text-stone-500">' + escapeHtml(n.type) + ' · ' + escapeHtml(s.code) + '</p></div></div>', 'mt-3');
           }).join('');
@@ -751,8 +1064,8 @@
       } else if (tab === 'CIE') {
         body = card('<div class="overflow-hidden">' +
           '<div class="grid grid-cols-4 bg-stone-50 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wide text-stone-500"><span>Test</span><span class="text-center">Max</span><span class="text-center">Average</span><span class="text-right">Status</span></div>' +
-          '<div class="grid grid-cols-4 border-t border-stone-100 px-4 py-3 text-[12px]"><span class="font-medium text-ink">' + escapeHtml(s.cie.test) + '</span><span class="text-center text-stone-600">' + s.cie.max + '</span><span class="text-center font-bold text-ink">' + s.cie.average + '</span><span class="text-right font-semibold text-emerald-600">Completed</span></div></div>') +
-          '<div class="mt-3 rounded-2xl bg-ink p-4 text-white"><p class="text-[10px] uppercase tracking-wider text-white/50">Consolidated CIE</p><p class="mt-1 text-[18px] font-extrabold">' + s.cie.average + '/' + s.cie.max + ' average</p><p class="mt-1 text-[11px] text-white/60">Pass rate ' + s.cie.passRate + '%</p></div>';
+          '<div class="grid grid-cols-4 border-t border-stone-100 px-4 py-3 text-[12px]"><span class="font-medium text-ink">' + escapeHtml(cie.test) + '</span><span class="text-center text-stone-600">' + cie.max + '</span><span class="text-center font-bold text-ink">' + cie.average + '</span><span class="text-right font-semibold text-emerald-600">Completed</span></div></div>') +
+          '<div class="mt-3 rounded-2xl bg-ink p-4 text-white"><p class="text-[10px] uppercase tracking-wider text-white/50">Consolidated CIE</p><p class="mt-1 text-[18px] font-extrabold">' + cie.average + '/' + cie.max + ' average</p><p class="mt-1 text-[11px] text-white/60">Pass rate ' + (cie.passRate||0) + '%</p></div>';
       } else if (tab === 'Course file') {
         const checklist = buildChecklist(s);
         const done = checklist.filter(function (c) { return c.done; }).length;
@@ -783,6 +1096,10 @@
 
     function buildChecklist(s) {
       const st = planStats(s);
+      const notes = s.notes || [];
+      const schedule = s.schedule || [];
+      const att = (s.attendance && s.attendance.average) || 0;
+      const cie = s.cie || {};
       return [
         { label:'Course information sheet', done:Boolean(s.code) },
         { label:'Approved syllabus', done:true },
@@ -791,13 +1108,13 @@
         { label:'CO–PO mapping', done:true },
         { label:'CO–PSO mapping', done:true },
         { label:'Academic calendar', done:true },
-        { label:'Timetable', done:s.schedule.length > 0 },
+        { label:'Timetable', done:schedule.length > 0 },
         { label:'Lesson plan (5 units)', done:st.total >= 5 },
         { label:'Teaching plan', done:true },
         { label:'Teaching–learning methodologies', done:true },
-        { label:'Notes & reference material', done:s.notes.length > 0 },
-        { label:'Attendance register', done:s.attendance.average > 0 },
-        { label:'CIE records', done:Boolean(s.cie.average) },
+        { label:'Notes & reference material', done:notes.length > 0 },
+        { label:'Attendance register', done:att > 0 },
+        { label:'CIE records', done:Boolean(cie.average) },
         { label:'Question papers', done:true },
         { label:'Assignments', done:true },
         { label:'Performance analysis', done:false },
@@ -809,12 +1126,12 @@
         { label:'Corrective actions', done:false },
         { label:'Continuous improvement', done:false },
         { label:'Previous year comparison', done:false },
-        { label:'Evidence attachments', done:s.notes.length > 0 }
+        { label:'Evidence attachments', done:notes.length > 0 }
       ];
     }
 
     /* ================================================================
-       13. PAGE: RESEARCH
+       15. PAGE: RESEARCH
        ================================================================ */
     function renderResearch() {
       const tab = state.researchTab || 'Publications';
@@ -832,33 +1149,52 @@
                 '<p class="mt-2 text-[11.5px] text-stone-500">' + escapeHtml(pub.journal) + (pub.volume ? ' · ' + escapeHtml(pub.volume) : '') + '</p>' +
                 '<p class="text-[11px] text-stone-400">' + escapeHtml(pub.authors) + '</p>' +
                 (pub.doi ? '<p class="mt-2 truncate rounded-lg bg-stone-50 px-2.5 py-1.5 text-[10.5px] text-stone-500">DOI: ' + escapeHtml(pub.doi) + '</p>' : '') +
-                '<div class="mt-3 flex gap-2">' +
+                '<div class="mt-3 flex flex-wrap gap-2">' +
                   (pub.doi ? '<a href="https://doi.org/' + escapeHtml(pub.doi) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-ink/90">Open DOI' + icon('external','h-3 w-3') + '</a>' : '') +
-                  '<button data-action="remove-pub" data-id="' + pub.id + '" class="inline-flex items-center gap-1 rounded-full border border-stone-200 px-3 py-1.5 text-[11px] font-semibold text-stone-600 hover:border-red-200 hover:bg-red-50 hover:text-brand">' + icon('trash','h-3 w-3') + 'Remove</button>' +
+                  '<button data-action="edit-record" data-type="publication" data-id="' + pub.id + '" class="inline-flex items-center gap-1 rounded-full border border-stone-200 px-3 py-1.5 text-[11px] font-semibold text-stone-600 hover:border-brand/40 hover:bg-brand-soft hover:text-brand">' + icon('pencil','h-3 w-3') + 'Edit</button>' +
+                  '<button data-action="delete-record" data-type="publication" data-id="' + pub.id + '" class="inline-flex items-center gap-1 rounded-full border border-stone-200 px-3 py-1.5 text-[11px] font-semibold text-stone-600 hover:border-red-200 hover:bg-red-50 hover:text-brand">' + icon('trash','h-3 w-3') + 'Delete</button>' +
                 '</div></div>', 'mb-3');
             }).join(''));
       } else if (tab === 'Books') {
-        body = state.books.map(function (b) {
-          return card('<div class="flex gap-3 p-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">' + icon('book','h-5 w-5') + '</span>' +
-            '<div class="min-w-0"><h3 class="text-[12.5px] font-bold leading-snug text-ink">' + escapeHtml(b.title) + '</h3>' +
-            '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(b.publisher) + ' · ' + b.year + '</p>' +
-            '<p class="text-[11px] text-stone-400">ISBN ' + escapeHtml(b.isbn) + (b.pages !== '—' ? ' · ' + escapeHtml(b.pages) : '') + '</p>' +
-            '<div class="mt-2">' + badge(b.role, 'neutral') + '</div></div></div>', 'mb-3');
-        }).join('');
+        body = '<div class="mb-3 flex items-center justify-between gap-3"><span class="text-[11px] text-stone-500">' + state.books.length + ' books</span>' +
+          primaryBtn(icon('plus','h-3.5 w-3.5') + 'Add', 'data-action="open-sheet" data-sheet="book"', 'px-3 py-2 text-[11.5px]') + '</div>' +
+          (state.books.length === 0 ? emptyState('book','No books','Add a book to your research record.') :
+          state.books.map(function (b) {
+            return card('<div class="flex gap-3 p-4"><span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">' + icon('book','h-5 w-5') + '</span>' +
+              '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold leading-snug text-ink">' + escapeHtml(b.title) + '</h3>' +
+              '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(b.publisher) + ' · ' + b.year + '</p>' +
+              '<p class="text-[11px] text-stone-400">ISBN ' + escapeHtml(b.isbn) + (b.pages !== '—' ? ' · ' + escapeHtml(b.pages) : '') + '</p>' +
+              '<div class="mt-2 flex items-center justify-between"><div>' + badge(b.role, 'neutral') + '</div>' +
+                '<div class="flex gap-1"><button data-action="edit-record" data-type="book" data-id="' + b.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
+                '<button data-action="delete-record" data-type="book" data-id="' + b.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
+              '</div></div></div>', 'mb-3');
+          }).join(''));
       } else if (tab === 'Patents') {
-        body = state.patents.map(function (p) {
-          return card('<div class="p-4"><div class="flex items-start gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-purple-50 text-purple-600">' + icon('flask','h-5 w-5') + '</span>' +
-            '<div class="min-w-0"><h3 class="text-[12.5px] font-bold leading-snug text-ink">' + escapeHtml(p.title) + '</h3>' +
-            '<p class="mt-1 text-[11px] text-stone-500">Application ' + escapeHtml(p.appNo) + ' · ' + p.year + '</p>' +
-            '<div class="mt-2">' + badge(p.status, 'success') + '</div></div></div></div>', 'mb-3');
-        }).join('');
+        body = '<div class="mb-3 flex items-center justify-between gap-3"><span class="text-[11px] text-stone-500">' + state.patents.length + ' patents</span>' +
+          primaryBtn(icon('plus','h-3.5 w-3.5') + 'Add', 'data-action="open-sheet" data-sheet="patent"', 'px-3 py-2 text-[11.5px]') + '</div>' +
+          (state.patents.length === 0 ? emptyState('flask','No patents','Add a patent to your research record.') :
+          state.patents.map(function (p) {
+            return card('<div class="p-4"><div class="flex items-start gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-purple-50 text-purple-600">' + icon('flask','h-5 w-5') + '</span>' +
+              '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold leading-snug text-ink">' + escapeHtml(p.title) + '</h3>' +
+              '<p class="mt-1 text-[11px] text-stone-500">Application ' + escapeHtml(p.appNo) + ' · ' + p.year + '</p>' +
+              '<div class="mt-2 flex items-center justify-between"><div>' + badge(p.status, 'success') + '</div>' +
+                '<div class="flex gap-1"><button data-action="edit-record" data-type="patent" data-id="' + p.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
+                '<button data-action="delete-record" data-type="patent" data-id="' + p.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
+              '</div></div></div></div>', 'mb-3');
+          }).join(''));
       } else if (tab === 'Certificates') {
-        body = state.certificates.map(function (c) {
-          return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
-            '<div class="min-w-0"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
-            '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
-            '<div class="mt-2 flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div></div></div>', 'mb-3');
-        }).join('');
+        body = '<div class="mb-3 flex items-center justify-between gap-3"><span class="text-[11px] text-stone-500">' + state.certificates.length + ' certificates</span>' +
+          primaryBtn(icon('plus','h-3.5 w-3.5') + 'Add', 'data-action="open-sheet" data-sheet="certificate"', 'px-3 py-2 text-[11.5px]') + '</div>' +
+          (state.certificates.length === 0 ? emptyState('award','No certificates','Add an FDP or workshop.') :
+          state.certificates.map(function (c) {
+            return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
+              '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
+              '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
+              '<div class="mt-2 flex items-center justify-between"><div class="flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div>' +
+                '<div class="flex gap-1"><button data-action="edit-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
+                '<button data-action="delete-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
+              '</div></div></div>', 'mb-3');
+          }).join(''));
       } else if (tab === 'Profile') {
         const p = state.profile;
         const linkRow = function (label, value, href) {
@@ -902,19 +1238,19 @@
     }
 
     /* ================================================================
-       14. PAGE: FINANCE
+       16. PAGE: FINANCE
        ================================================================ */
     function renderFinance() {
-      const thisMonth = state.expenses.filter(function (e) { return e.date.slice(0,7) === monthKey(); });
+      const thisMonth = state.expenses.filter(function (e) { return String(e.date).slice(0,7) === monthKey(); });
       const monthTotal = thisMonth.reduce(function (s, e) { return s + Number(e.amount||0); }, 0);
-      const todayTotal = state.expenses.filter(function (e) { return e.date === today(); }).reduce(function (s, e) { return s + Number(e.amount||0); }, 0);
+      const todayTotal = state.expenses.filter(function (e) { return String(e.date).slice(0,10) === today(); }).reduce(function (s, e) { return s + Number(e.amount||0); }, 0);
       const income = 95000 + 8000;
       const byCat = {};
       thisMonth.forEach(function (e) { byCat[e.category] = (byCat[e.category]||0) + Number(e.amount||0); });
       const cats = Object.keys(byCat).sort(function (a,b) { return byCat[b] - byCat[a]; });
       const maxCat = Math.max(1, ...cats.map(function (c) { return byCat[c]; }));
 
-      const sorted = state.expenses.slice().sort(function (a,b) { return b.date.localeCompare(a.date); });
+      const sorted = state.expenses.slice().sort(function (a,b) { return String(b.date).localeCompare(String(a.date)); });
 
       return '<div class="fade-up space-y-4 px-4 py-5">' +
         '<div class="grid grid-cols-2 gap-3">' +
@@ -936,14 +1272,14 @@
             return card('<div class="flex items-center justify-between gap-3 p-3.5">' +
               '<div class="flex min-w-0 items-center gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-stone-100 text-stone-500">' + icon('wallet','h-4 w-4') + '</span>' +
               '<div class="min-w-0"><p class="truncate text-[12.5px] font-semibold text-ink">' + escapeHtml(e.description) + '</p><p class="truncate text-[10.5px] text-stone-500">' + fmtDate(e.date) + ' · ' + escapeHtml(e.category) + ' · ' + escapeHtml(e.paymentMode) + '</p></div></div>' +
-              '<div class="shrink-0 text-right"><p class="text-[13px] font-bold text-ink">' + fmtMoney(e.amount) + '</p><button data-action="remove-exp" data-id="' + e.id + '" class="mt-0.5 text-[10px] font-semibold text-stone-400 hover:text-brand">Remove</button></div>' +
+              '<div class="shrink-0 text-right"><p class="text-[13px] font-bold text-ink">' + fmtMoney(e.amount) + '</p><div class="mt-0.5 flex justify-end gap-1"><button data-action="edit-record" data-type="expense" data-id="' + e.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Edit</button><button data-action="delete-record" data-type="expense" data-id="' + e.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Remove</button></div></div>' +
               '</div>');
           }).join('') + '</div>') +
         '</div>';
     }
 
     /* ================================================================
-       15. PAGE: DOCUMENTS
+       17. PAGE: DOCUMENTS
        ================================================================ */
     function renderDocuments() {
       const cats = ['All','Identity','Personal'];
@@ -953,7 +1289,7 @@
 
       return '<div class="fade-up space-y-4 px-4 py-5">' +
         '<div class="flex items-start gap-3 rounded-2xl bg-ink p-4 text-white">' + icon('shield','mt-0.5 h-5 w-5 shrink-0 text-white/70') +
-          '<div><p class="text-[12.5px] font-bold">Encrypted local vault</p><p class="mt-1 text-[11px] leading-relaxed text-white/60">Aadhaar and PAN are masked by default. All records are stored in this browser only.</p></div></div>' +
+          '<div><p class="text-[12.5px] font-bold">Encrypted local vault</p><p class="mt-1 text-[11px] leading-relaxed text-white/60">Aadhaar and PAN are masked by default. All records are stored in this browser and can be backed up to your Google Sheet / Drive from Settings → Cloud sync.</p></div></div>' +
         (expiring.length > 0 ? '<div class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5">' + icon('alert','mt-0.5 h-4 w-4 shrink-0 text-brand') + '<p class="text-[11.5px] font-semibold text-brand">' + expiring.length + ' document(s) expiring within 60 days</p></div>' : '') +
         '<div class="flex items-center justify-between gap-3">' +
           '<div class="no-scrollbar flex gap-1.5 overflow-x-auto">' +
@@ -973,7 +1309,8 @@
                 '<div class="min-w-0"><p class="text-[12.5px] font-bold text-ink">' + escapeHtml(d.name) + '</p>' +
                   '<p class="text-[11px] text-stone-500">' + escapeHtml(d.category) + ' · ' + escapeHtml(d.subType) + '</p>' +
                   '<p class="text-[10.5px] text-stone-400">' + escapeHtml(d.authority) + '</p></div></div>' +
-                '<button data-action="remove-doc" data-id="' + d.id + '" aria-label="Remove" class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-stone-50 text-stone-400 hover:bg-red-50 hover:text-brand">' + icon('trash','h-3.5 w-3.5') + '</button>' +
+                '<div class="flex shrink-0 gap-1"><button data-action="edit-record" data-type="document" data-id="' + d.id + '" aria-label="Edit" class="grid h-8 w-8 place-items-center rounded-full bg-stone-50 text-stone-400 hover:bg-stone-100 hover:text-ink">' + icon('pencil','h-3.5 w-3.5') + '</button>' +
+                '<button data-action="delete-record" data-type="document" data-id="' + d.id + '" aria-label="Remove" class="grid h-8 w-8 place-items-center rounded-full bg-stone-50 text-stone-400 hover:bg-red-50 hover:text-brand">' + icon('trash','h-3.5 w-3.5') + '</button></div>' +
               '</div>' +
               '<div class="mt-3 flex items-center justify-between gap-3 rounded-xl bg-stone-50 px-3 py-2.5">' +
                 '<span class="truncate font-mono text-[12px] font-semibold tracking-wide text-ink">' + maskNum(d.docNumber, revealed) + '</span>' +
@@ -981,7 +1318,7 @@
               '</div>' +
               '<div class="mt-2.5 flex flex-wrap items-center gap-1.5">' +
                 (d.expiryDate ? badge('Expires ' + fmtDate(d.expiryDate), days !== null && days <= 30 ? 'danger' : 'warn') : badge('No expiry','neutral')) +
-                d.tags.map(function (t) { return badge(t, 'neutral'); }).join('') +
+                (d.tags || []).map(function (t) { return badge(t, 'neutral'); }).join('') +
               '</div>' +
               (d.notes ? '<p class="mt-2 text-[11px] text-stone-500">' + escapeHtml(d.notes) + '</p>' : '') +
               '</div>');
@@ -990,16 +1327,16 @@
     }
 
     /* ================================================================
-       16. PAGE: MORE
+       18. PAGE: MORE + SETTINGS (CRUD + Cloud)
        ================================================================ */
     const MODULES = [
       { id:'tasks', label:'Tasks & reminders', desc:'Due, overdue and completed', icon:'clipboard' },
       { id:'meetings', label:'Meetings', desc:'Department & YRC minutes', icon:'users' },
       { id:'certificates', label:'Certificates', desc:'FDPs and workshops', icon:'award' },
       { id:'accreditation', label:'NAAC / NBA vault', desc:'Evidence readiness', icon:'building' },
-      { id:'reports', label:'Reports & backup', desc:'CSV and JSON export', icon:'download' },
+      { id:'reports', label:'Reports & backup', desc:'CSV, JSON, Drive', icon:'download' },
       { id:'links', label:'Important links', desc:'VTU, ORCID, Scholar', icon:'link' },
-      { id:'settings', label:'Settings', desc:'Profile and preferences', icon:'settings' }
+      { id:'settings', label:'Settings & data', desc:'Profile, CRUD, cloud sync', icon:'settings' }
     ];
 
     function renderMore() {
@@ -1016,14 +1353,15 @@
           '</div>';
       }
 
-      const titles = { tasks:'Tasks & reminders', meetings:'Meetings', certificates:'Certificates & FDPs', accreditation:'NAAC / NBA vault', reports:'Reports & backup', links:'Important links', settings:'Settings' };
+      const titles = { tasks:'Tasks & reminders', meetings:'Meetings', certificates:'Certificates & FDPs', accreditation:'NAAC / NBA vault', reports:'Reports & backup', links:'Important links', settings:'Settings & data' };
       let body = '';
 
       if (state.moreModule === 'tasks') {
         body = primaryBtn(icon('plus','h-4 w-4') + 'Add task', 'data-action="open-sheet" data-sheet="task"', 'w-full mb-3') +
+          (state.tasks.length === 0 ? emptyState('clipboard','No tasks','Add a follow-up to track.') :
           state.tasks.slice().sort(function (a,b) {
             if ((a.status==='Completed') !== (b.status==='Completed')) return a.status==='Completed'?1:-1;
-            return a.dueDate.localeCompare(b.dueDate);
+            return String(a.dueDate).localeCompare(String(b.dueDate));
           }).map(function (t) {
             const done = t.status === 'Completed';
             const status = done ? 'Completed' : (daysUntil(t.dueDate) < 0 ? 'Overdue' : 'Pending');
@@ -1032,25 +1370,33 @@
               '<button data-action="toggle-task" data-id="' + t.id + '" aria-label="Toggle" class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ' + (done ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-stone-300 bg-white text-transparent hover:border-emerald-500') + '">' + icon('check','h-3 w-3') + '</button>' +
               '<div class="min-w-0 flex-1"><p class="text-[12.5px] font-semibold leading-snug ' + (done ? 'text-stone-400 line-through' : 'text-ink') + '">' + escapeHtml(t.title) + '</p>' +
               '<p class="mt-1 text-[10.5px] text-stone-500">' + escapeHtml(t.category) + ' · ' + escapeHtml(t.priority) + ' · due ' + fmtDate(t.dueDate) + '</p></div>' +
-              '<div class="flex shrink-0 flex-col items-end gap-1.5">' + badge(status, tone) + '<button data-action="remove-task" data-id="' + t.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Delete</button></div>' +
+              '<div class="flex shrink-0 flex-col items-end gap-1.5">' + badge(status, tone) + '<div class="flex gap-1"><button data-action="edit-record" data-type="task" data-id="' + t.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-ink">Edit</button><button data-action="delete-record" data-type="task" data-id="' + t.id + '" class="text-[10px] font-semibold text-stone-400 hover:text-brand">Delete</button></div></div>' +
               '</div>', 'mb-2.5');
-          }).join('');
+          }).join(''));
       } else if (state.moreModule === 'meetings') {
-        body = state.meetings.map(function (m) {
-          return card('<div class="p-4"><div class="flex items-start justify-between gap-3"><p class="text-[12.5px] font-bold text-ink">' + escapeHtml(m.title) + '</p>' + badge(m.type, m.type==='YRC'?'brand':'success') + '</div>' +
-            '<p class="mt-1 text-[11px] text-stone-500">' + fmtDate(m.date) + ' · ' + escapeHtml(m.time) + ' · ' + escapeHtml(m.venue) + ' · ' + m.participants + ' participants</p>' +
-            '<div class="mt-3 rounded-xl bg-stone-50 p-3"><p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">Minutes</p><p class="text-[11.5px] leading-relaxed text-stone-600">' + escapeHtml(m.minutes) + '</p></div>' +
-            '</div>', 'mb-3');
-        }).join('');
+        body = primaryBtn(icon('plus','h-4 w-4') + 'Add meeting', 'data-action="open-sheet" data-sheet="meeting"', 'w-full mb-3') +
+          (state.meetings.length === 0 ? emptyState('users','No meetings','Add meeting minutes.') :
+          state.meetings.map(function (m) {
+            return card('<div class="p-4"><div class="flex items-start justify-between gap-3"><p class="text-[12.5px] font-bold text-ink">' + escapeHtml(m.title) + '</p>' + badge(m.type, m.type==='YRC'?'brand':'success') + '</div>' +
+              '<p class="mt-1 text-[11px] text-stone-500">' + fmtDate(m.date) + ' · ' + escapeHtml(m.time) + ' · ' + escapeHtml(m.venue) + ' · ' + m.participants + ' participants</p>' +
+              '<div class="mt-3 rounded-xl bg-stone-50 p-3"><p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">Minutes</p><p class="text-[11.5px] leading-relaxed text-stone-600">' + escapeHtml(m.minutes) + '</p></div>' +
+              '<div class="mt-2 flex justify-end gap-1"><button data-action="edit-record" data-type="meeting" data-id="' + m.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
+              '<button data-action="delete-record" data-type="meeting" data-id="' + m.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
+              '</div>', 'mb-3');
+          }).join(''));
       } else if (state.moreModule === 'certificates') {
-        body = state.certificates.map(function (c) {
-          return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
-            '<div class="min-w-0"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
-            '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
-            '<div class="mt-2 flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div></div></div>', 'mb-3');
-        }).join('');
+        body = primaryBtn(icon('plus','h-4 w-4') + 'Add certificate', 'data-action="open-sheet" data-sheet="certificate"', 'w-full mb-3') +
+          state.certificates.map(function (c) {
+            return card('<div class="flex gap-3 p-4"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-600">' + icon('award','h-5 w-5') + '</span>' +
+              '<div class="min-w-0 flex-1"><h3 class="text-[12.5px] font-bold text-ink">' + escapeHtml(c.title) + '</h3>' +
+              '<p class="mt-1 text-[11px] text-stone-500">' + escapeHtml(c.org) + ' · ' + fmtDate(c.date) + ' · ' + escapeHtml(c.duration) + '</p>' +
+              '<div class="mt-2 flex items-center justify-between"><div class="flex flex-wrap gap-1.5">' + badge(c.type,'neutral') + badge(c.location,'neutral') + '</div>' +
+              '<div class="flex gap-1"><button data-action="edit-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">Edit</button>' +
+              '<button data-action="delete-record" data-type="certificate" data-id="' + c.id + '" class="rounded-md bg-red-50 px-2 py-1 text-[10px] font-semibold text-brand hover:bg-red-100">Delete</button></div>' +
+              '</div></div></div>', 'mb-3');
+          }).join('');
       } else if (state.moreModule === 'accreditation') {
-        const overall = Math.round(state.subjects.reduce(function (sum, s) {
+        const overall = state.subjects.length === 0 ? 0 : Math.round(state.subjects.reduce(function (sum, s) {
           const cl = buildChecklist(s);
           return sum + (cl.filter(function (c) { return c.done; }).length / cl.length) * 100;
         }, 0) / state.subjects.length);
@@ -1067,11 +1413,12 @@
           [['Expenses (CSV)', state.expenses.length + ' records', 'export-expenses'],
            ['Publications (CSV)', state.publications.length + ' records', 'export-publications'],
            ['Tasks (CSV)', state.tasks.length + ' records', 'export-tasks'],
-           ['Full backup (JSON)', 'Expenses, publications, tasks', 'export-backup']].map(function (item) {
+           ['Full backup (JSON)', 'All collections + profile', 'export-backup'],
+           ['Save backup to Google Drive', 'Uses Apps Script backup endpoint', 'cloud-backup']].map(function (item) {
             return '<button data-action="' + item[2] + '" class="flex w-full items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-card hover:border-brand/30">' +
-              '<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-stone-50 text-ink">' + icon('download','h-5 w-5') + '</span>' +
+              '<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-stone-50 text-ink">' + icon(item[2] === 'cloud-backup' ? 'cloud' : 'download','h-5 w-5') + '</span>' +
               '<span class="min-w-0 flex-1"><span class="block text-[12.5px] font-bold text-ink">' + item[0] + '</span><span class="block text-[10.5px] text-stone-500">' + item[1] + '</span></span>' +
-              icon('download','h-4 w-4 shrink-0 text-stone-400') + '</button>';
+              icon(item[2] === 'cloud-backup' ? 'upload' : 'download','h-4 w-4 shrink-0 text-stone-400') + '</button>';
           }).join('') +
           '</div>';
       } else if (state.moreModule === 'links') {
@@ -1081,6 +1428,8 @@
           ['Google Scholar', p.scholarId, p.scholarLink],
           ['ResearchGate', 'Profile', p.researchGate],
           ['Personal website', p.website.replace('https://',''), p.website],
+          ['Google Sheet', 'Workspace data', state.cloud.sheetUrl],
+          ['Google Drive', 'Backups folder', state.cloud.driveUrl],
           ['VTU', 'vtu.ac.in', 'https://vtu.ac.in']
         ];
         body = '<div class="space-y-2.5">' + links.map(function (l) {
@@ -1090,23 +1439,7 @@
             icon('external','h-4 w-4 shrink-0 text-stone-400') + '</a>';
         }).join('') + '</div>';
       } else if (state.moreModule === 'settings') {
-        const p = state.profile;
-        const fields = [
-          ['name','Full name'], ['designation','Designation'], ['department','Department'],
-          ['employeeId','Employee ID'], ['email','Email'], ['phone','Phone'],
-          ['scopusId','Scopus ID'], ['orcid','ORCID'], ['website','Website']
-        ];
-        body = card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Profile</p>' +
-          '<div class="space-y-3">' + fields.map(function (f) {
-            return field(f[1], '<input data-profile-field="' + f[0] + '" value="' + escapeHtml(p[f[0]]) + '" class="' + inputCls + '" />');
-          }).join('') + '</div>' +
-          '<div class="mt-4 grid grid-cols-2 gap-2"><button data-action="save-profile" class="rounded-xl bg-brand px-4 py-3 text-[13px] font-bold text-white hover:bg-brand-dark">Save changes</button>' +
-          '<button data-action="reset-profile" class="rounded-xl border border-stone-200 px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">Reset default</button></div></div>', 'mb-3') +
-          card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Session</p>' +
-          '<dl class="space-y-2 text-[12px]"><div class="flex justify-between gap-3"><dt class="text-stone-500">Signed in as</dt><dd class="truncate font-semibold text-ink">' + escapeHtml((state.session && state.session.email) || '—') + '</dd></div>' +
-          '<div class="flex justify-between gap-3"><dt class="text-stone-500">Storage</dt><dd class="font-semibold text-ink">Local browser only</dd></div></dl>' +
-          '<div class="mt-3 grid grid-cols-2 gap-2"><button data-action="logout" class="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">' + icon('logout','h-4 w-4') + 'Sign out</button>' +
-          '<button data-action="clear-data" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-semibold text-brand hover:bg-red-100">' + icon('trash','h-4 w-4') + 'Clear data</button></div></div>');
+        body = renderSettings();
       }
 
       return '<div class="fade-up px-4 py-5">' +
@@ -1115,9 +1448,135 @@
         body + '</div>';
     }
 
+    function renderSettings() {
+      const p = state.profile;
+      const c = state.cloud;
+      let html = '';
+
+      // ---- Profile ----
+      const fields = [
+        ['name','Full name'], ['designation','Designation'], ['department','Department'],
+        ['employeeId','Employee ID'], ['email','Email'], ['phone','Phone'],
+        ['scopusId','Scopus ID'], ['orcid','ORCID'], ['website','Website']
+      ];
+      html += card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Profile</p>' +
+        '<div class="space-y-3">' + fields.map(function (f) {
+          return field(f[1], '<input data-profile-field="' + f[0] + '" value="' + escapeHtml(p[f[0]] || '') + '" class="' + inputCls + '" />');
+        }).join('') + '</div>' +
+        '<div class="mt-4 grid grid-cols-2 gap-2"><button data-action="save-profile" class="rounded-xl bg-brand px-4 py-3 text-[13px] font-bold text-white hover:bg-brand-dark">Save changes</button>' +
+        '<button data-action="reset-profile" class="rounded-xl border border-stone-200 px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">Reset default</button></div></div>', 'mb-3');
+
+      // ---- Manage data (CRUD) ----
+      const groups = ['expense','publication','document','task','book','patent','certificate','meeting','subject'];
+      let dm = '<div class="space-y-2.5">';
+      groups.forEach(function (type) {
+        const schema = RECORD_TYPES[type];
+        const list = state[schema.collection] || [];
+        dm += '<div class="overflow-hidden rounded-xl border border-stone-200">' +
+          '<div class="flex items-center justify-between gap-2 bg-stone-50 px-3 py-2">' +
+            '<div class="flex items-center gap-2 min-w-0">' + icon(schema.icon,'h-3.5 w-3.5 shrink-0 text-stone-500') +
+              '<span class="truncate text-[11.5px] font-bold text-ink">' + escapeHtml(schema.plural) + '</span>' +
+              '<span class="rounded-full bg-white px-1.5 py-0.5 text-[9.5px] font-bold text-stone-500">' + list.length + '</span>' +
+            '</div>' +
+            '<button data-action="open-sheet" data-sheet="' + type + '" class="shrink-0 rounded-full bg-brand px-2.5 py-1 text-[10px] font-bold text-white hover:bg-brand-dark">+ Add</button>' +
+          '</div>' +
+          (list.length === 0 ? '<p class="px-3 py-3 text-[11px] text-stone-400">No records yet</p>' :
+            '<ul class="divide-y divide-stone-100">' + list.map(function (r) {
+              return '<li class="flex items-center gap-1.5 px-2.5 py-2">' +
+                '<div class="min-w-0 flex-1"><p class="truncate text-[11.5px] font-medium text-ink">' + escapeHtml(schema.title(r)) + '</p>' +
+                '<p class="truncate text-[10px] text-stone-400">' + escapeHtml(schema.sub(r)) + '</p></div>' +
+                '<button data-action="edit-record" data-type="' + type + '" data-id="' + escapeHtml(r.id) + '" aria-label="Edit" class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-stone-100 text-stone-700 hover:bg-stone-200">' + icon('pencil','h-3.5 w-3.5') + '</button>' +
+                '<button data-action="rename-record" data-type="' + type + '" data-id="' + escapeHtml(r.id) + '" aria-label="Rename" class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-stone-100 text-stone-700 hover:bg-stone-200">' + icon('file','h-3.5 w-3.5') + '</button>' +
+                '<button data-action="delete-record" data-type="' + type + '" data-id="' + escapeHtml(r.id) + '" aria-label="Delete" class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-red-50 text-brand hover:bg-red-100">' + icon('trash','h-3.5 w-3.5') + '</button>' +
+                '</li>';
+            }).join('') + '</ul>') +
+          '</div>';
+      });
+      dm += '</div>';
+      html += card('<div class="p-4"><div class="mb-3 flex items-center justify-between"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Manage data</p>' +
+        '<span class="text-[10px] text-stone-400">Edit · Rename · Delete</span></div>' + dm + '</div>', 'mb-3');
+
+      // ---- Cloud sync ----
+      html += card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Cloud sync</p>' +
+        '<div class="space-y-2.5">' +
+          '<a href="' + escapeHtml(c.sheetUrl) + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-xl bg-stone-50 px-3 py-2.5 hover:bg-stone-100">' +
+            '<span class="flex items-center gap-2 text-[11.5px] text-stone-600">' + icon('grid','h-4 w-4 text-emerald-600') + 'Google Sheet</span>' +
+            '<span class="flex items-center gap-1 text-[11.5px] font-semibold text-ink">Open' + icon('external','h-3 w-3 text-stone-400') + '</span></a>' +
+          '<a href="' + escapeHtml(c.driveUrl) + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-xl bg-stone-50 px-3 py-2.5 hover:bg-stone-100">' +
+            '<span class="flex items-center gap-2 text-[11.5px] text-stone-600">' + icon('folder','h-4 w-4 text-amber-600') + 'Google Drive folder</span>' +
+            '<span class="flex items-center gap-1 text-[11.5px] font-semibold text-ink">Open' + icon('external','h-3 w-3 text-stone-400') + '</span></a>' +
+          field('Apps Script Web App URL',
+            '<input data-cloud-field="scriptUrl" value="' + escapeHtml(c.scriptUrl || '') + '" placeholder="https://script.google.com/macros/s/…/exec" class="' + inputCls + '" />') +
+          '<p class="text-[10.5px] leading-relaxed text-stone-500">Deploy the Apps Script below as a <b>Web App</b> (Execute as: <b>Me</b>, Who has access: <b>Anyone</b>). Paste the <code>/exec</code> URL above.</p>' +
+          '<div class="grid grid-cols-2 gap-2">' +
+            '<button data-action="cloud-push" class="rounded-xl bg-brand px-3 py-2.5 text-[12px] font-bold text-white hover:bg-brand-dark">Push to Sheet</button>' +
+            '<button data-action="cloud-pull" class="rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-[12px] font-semibold text-stone-700 hover:bg-stone-50">Pull from Sheet</button>' +
+            '<button data-action="cloud-backup" class="rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-[12px] font-semibold text-stone-700 hover:bg-stone-50">Backup to Drive</button>' +
+            '<button data-action="cloud-ping" class="rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-[12px] font-semibold text-stone-700 hover:bg-stone-50">Test connection</button>' +
+          '</div>' +
+          '<button data-action="cloud-save" class="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-[11.5px] font-semibold text-stone-600 hover:bg-stone-50">Save cloud settings</button>' +
+          (c.lastSync ? '<p class="text-center text-[10.5px] text-stone-500">Last sync: ' + escapeHtml(new Date(c.lastSync).toLocaleString('en-IN')) + '</p>' : '') +
+        '</div></div>', 'mb-3');
+
+      // ---- Apps Script code ----
+      html += card('<div class="p-4"><div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Apps Script setup</p>' +
+        '<button data-action="copy-apps-script" class="inline-flex items-center gap-1 rounded-md bg-stone-100 px-2 py-1 text-[10px] font-semibold text-stone-700 hover:bg-stone-200">' + icon('copy','h-3 w-3') + 'Copy</button></div>' +
+        '<p class="mb-2 text-[10.5px] leading-relaxed text-stone-500">Open your sheet → Extensions → Apps Script → paste → Deploy as Web App → paste the /exec URL above.</p>' +
+        '<pre id="apps-script-code" class="max-h-[260px] overflow-auto rounded-xl bg-ink p-3 text-[9.5px] leading-relaxed text-white/90">' + escapeHtml(APPS_SCRIPT_CODE) + '</pre></div>', 'mb-3');
+
+      // ---- Session ----
+      html += card('<div class="p-4"><p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">Session</p>' +
+        '<dl class="space-y-2 text-[12px]"><div class="flex justify-between gap-3"><dt class="text-stone-500">Signed in as</dt><dd class="truncate font-semibold text-ink">' + escapeHtml((state.session && state.session.email) || '—') + '</dd></div>' +
+        '<div class="flex justify-between gap-3"><dt class="text-stone-500">Storage</dt><dd class="font-semibold text-ink">Local + Google Sheet</dd></div></dl>' +
+        '<div class="mt-3 grid grid-cols-2 gap-2"><button data-action="logout" class="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3 text-[13px] font-semibold text-stone-700 hover:bg-stone-50">' + icon('logout','h-4 w-4') + 'Sign out</button>' +
+        '<button data-action="clear-data" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-semibold text-brand hover:bg-red-100">' + icon('trash','h-4 w-4') + 'Clear data</button></div></div>');
+
+      return html;
+    }
+
     /* ================================================================
-       17. SHEETS (MODALS)
+       19. SHEETS (schema-driven add + edit)
        ================================================================ */
+    function fieldInputHtml(f, value) {
+      const v = value == null ? '' : value;
+      if (f.type === 'select') {
+        const opts = (f.options || []).slice();
+        if (v && opts.indexOf(v) === -1) opts.unshift(v);
+        return '<select name="' + f.key + '" class="' + inputCls + '">' + opts.map(function (o) {
+          return '<option' + (o === v ? ' selected' : '') + '>' + escapeHtml(o) + '</option>';
+        }).join('') + '</select>';
+      }
+      if (f.type === 'textarea') {
+        return '<textarea name="' + f.key + '" rows="' + (f.rows||2) + '" class="' + inputCls + '" placeholder="' + escapeHtml(f.placeholder||'') + '"' + (f.required?' required':'') + '>' + escapeHtml(v) + '</textarea>';
+      }
+      return '<input name="' + f.key + '" type="' + (f.type||'text') + '" value="' + escapeHtml(v) + '" class="' + inputCls + '" placeholder="' + escapeHtml(f.placeholder||'') + '"' + (f.required?' required':'') + ' />';
+    }
+
+    function renderRecordSheet(type, wrap) {
+      const schema = RECORD_TYPES[type];
+      if (!schema) return '';
+      const editing = state.editing && state.editing.type === type ? state.editing : null;
+      const record = editing ? state.editing.record : {};
+      let inner = '<form data-record-type="' + type + '"' + (editing ? ' data-record-id="' + escapeHtml(editing.id) + '"' : '') + ' class="space-y-3">';
+      schema.fields.forEach(function (f) {
+        let val;
+        if (editing) {
+          val = f.get ? f.get(record) : record[f.key];
+          if (val == null && f.def) val = f.def();
+          if (val == null) val = '';
+        } else {
+          val = f.def ? f.def() : '';
+        }
+        inner += field(f.label, fieldInputHtml(f, val));
+      });
+      const btnLabel = editing ? 'Save changes' : 'Add ' + schema.label.toLowerCase();
+      inner += primaryBtn(btnLabel, 'type="submit"', 'w-full');
+      inner += '</form>';
+      const title = editing ? 'Edit ' + schema.label.toLowerCase() : 'Add ' + schema.label.toLowerCase();
+      const sub = editing ? 'Update the record below' : 'Create a new record';
+      return wrap(title, sub, inner);
+    }
+
     function renderSheet() {
       if (!state.sheet) return '';
 
@@ -1134,7 +1593,8 @@
       if (state.sheet === 'quick') {
         const items = [
           ['Expense','wallet','expense'], ['Task','clipboard','task'], ['Document','folder','document'],
-          ['Publication','book','publication'], ['Certificates','award','goto:certificates'], ['Academics','cap','goto:academic']
+          ['Publication','book','publication'], ['Book','book','book'], ['Patent','flask','patent'],
+          ['Certificate','award','certificate'], ['Meeting','users','meeting'], ['Subject','cap','subject']
         ];
         return wrap('Quick add', 'Create a record in the BEC workspace',
           '<div class="grid grid-cols-3 gap-2.5">' + items.map(function (item) {
@@ -1144,83 +1604,197 @@
           }).join('') + '</div>');
       }
 
-      if (state.sheet === 'expense') {
-        return wrap('Add expense', 'Recorded locally in your workspace',
-          '<form id="form-expense" class="space-y-3">' +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Amount (₹)', '<input name="amount" type="number" min="1" required class="' + inputCls + '" placeholder="0" />') +
-              field('Date', '<input name="date" type="date" value="' + today() + '" class="' + inputCls + '" />') +
-            '</div>' +
-            field('Category', '<select name="category" class="' + inputCls + '">' +
-              ['Food','Travel','Fuel','House','Education','Medical','Shopping','Bills','Family','Research','College','Books','Other'].map(function (c) { return '<option>' + c + '</option>'; }).join('') + '</select>') +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Payment mode', '<select name="paymentMode" class="' + inputCls + '"><option>UPI</option><option>Cash</option><option>Card</option><option>Netbanking</option></select>') +
-              field('Vendor', '<input name="vendor" class="' + inputCls + '" placeholder="Vendor" />') +
-            '</div>' +
-            field('Description', '<textarea name="description" rows="2" class="' + inputCls + '" placeholder="What was this for?"></textarea>') +
-            primaryBtn('Save expense', 'type="submit"', 'w-full') +
-          '</form>');
-      }
-
-      if (state.sheet === 'publication') {
-        return wrap('Add publication', 'Add to your research record',
-          '<form id="form-publication" class="space-y-3">' +
-            field('Title', '<textarea name="title" rows="2" required class="' + inputCls + '" placeholder="Publication title"></textarea>') +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Journal', '<input name="journal" class="' + inputCls + '" placeholder="Journal" />') +
-              field('Year', '<input name="year" value="' + new Date().getFullYear() + '" class="' + inputCls + '" />') +
-            '</div>' +
-            field('Authors', '<input name="authors" value="Biradar M." class="' + inputCls + '" />') +
-            field('DOI (optional)', '<input name="doi" class="' + inputCls + '" placeholder="10.xxxx/xxxxx" />') +
-            primaryBtn('Save publication', 'type="submit"', 'w-full') +
-          '</form>');
-      }
-
-      if (state.sheet === 'document') {
-        return wrap('Add document', 'Stored locally — masked by default',
-          '<form id="form-document" class="space-y-3">' +
-            field('Document name', '<input name="name" required class="' + inputCls + '" placeholder="e.g. Passport" />') +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Document number', '<input name="docNumber" class="' + inputCls + '" placeholder="Number" />') +
-              field('Category', '<select name="category" class="' + inputCls + '"><option>Identity</option><option>Personal</option></select>') +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Sub-type', '<input name="subType" class="' + inputCls + '" placeholder="e.g. Research ID" />') +
-              field('Expiry date', '<input name="expiryDate" type="date" class="' + inputCls + '" />') +
-            '</div>' +
-            field('Issuing authority', '<input name="authority" class="' + inputCls + '" placeholder="Authority" />') +
-            primaryBtn('Save document', 'type="submit"', 'w-full') +
-          '</form>');
-      }
-
-      if (state.sheet === 'task') {
-        return wrap('Add task', 'Track a follow-up',
-          '<form id="form-task" class="space-y-3">' +
-            field('Task', '<textarea name="title" rows="2" required class="' + inputCls + '" placeholder="What needs to be done?"></textarea>') +
-            '<div class="grid grid-cols-2 gap-3">' +
-              field('Category', '<select name="category" class="' + inputCls + '"><option>Teaching</option><option>Research</option><option>NAAC</option><option>YRC</option><option>College</option><option>Personal</option></select>') +
-              field('Priority', '<select name="priority" class="' + inputCls + '"><option>High</option><option selected>Medium</option><option>Low</option></select>') +
-            '</div>' +
-            field('Due date', '<input name="dueDate" type="date" value="' + addDays(1) + '" class="' + inputCls + '" />') +
-            primaryBtn('Save task', 'type="submit"', 'w-full') +
-          '</form>');
-      }
-
+      if (RECORD_TYPES[state.sheet]) return renderRecordSheet(state.sheet, wrap);
       return '';
     }
 
     /* ================================================================
-       18. RENDER ROOT
+       20. CLOUD SYNC
+       ================================================================ */
+    function buildCloudPayload() {
+      return {
+        action: 'push',
+        data: {
+          Profile: [state.profile],
+          Expenses: state.expenses,
+          Publications: state.publications,
+          Tasks: state.tasks,
+          Documents: state.documents,
+          Books: state.books,
+          Patents: state.patents,
+          Certificates: state.certificates,
+          Meetings: state.meetings,
+          Subjects: state.subjects
+        }
+      };
+    }
+
+    function normalizeRecord(type, r) {
+      const out = Object.assign({}, r || {});
+      ['date','dueDate','expiryDate','issueDate'].forEach(function (k) {
+        if (out[k]) out[k] = String(out[k]).slice(0, 10);
+      });
+      ['amount','participants','students','credits','sem'].forEach(function (k) {
+        if (out[k] != null) out[k] = Number(out[k]) || 0;
+      });
+      if (typeof out.tags === 'string') out.tags = out.tags.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+      if (!Array.isArray(out.tags) && type === 'document') out.tags = [];
+      return out;
+    }
+
+    function normalizeSubject(s) {
+      s = normalizeRecord('subject', s);
+      s.attendance = s.attendance || { average: 0, below: 0 };
+      s.cie = s.cie || { test: 'CIE Test 1', average: 0, max: 30, passRate: 0 };
+      s.plan = s.plan || { units: [] };
+      if (!Array.isArray(s.plan.units)) s.plan.units = [];
+      s.notes = Array.isArray(s.notes) ? s.notes : [];
+      s.schedule = Array.isArray(s.schedule) ? s.schedule : [];
+      s.academicYear = s.academicYear || currentYear();
+      s.semesterType = s.semesterType || 'ODD';
+      s.sem = Number(s.sem) || 1;
+      s.credits = Number(s.credits) || 0;
+      s.students = Number(s.students) || 0;
+      return s;
+    }
+
+    async function cloudPush() {
+      const url = state.cloud.scriptUrl;
+      if (!url) { toast('Add the Apps Script /exec URL first'); return; }
+      const body = JSON.stringify(buildCloudPayload());
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: body
+        });
+        let json = null;
+        try { json = await res.json(); } catch (e) {}
+        if (json && json.ok) {
+          state.cloud.lastSync = new Date().toISOString();
+          persist('cloud', state.cloud);
+          render();
+          toast('Pushed to Google Sheet ✓');
+        } else if (json) {
+          toast('Push returned: ' + (json.error || 'unknown'));
+        } else {
+          await pushNoCors(url, body);
+        }
+      } catch (err) {
+        await pushNoCors(url, body);
+      }
+    }
+
+    async function pushNoCors(url, body) {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: body
+        });
+        toast('Push sent — tap Pull to verify');
+      } catch (err) {
+        toast('Push failed: ' + err.message);
+      }
+    }
+
+    function cloudPull() {
+      const url = state.cloud.scriptUrl;
+      if (!url) { toast('Add the Apps Script /exec URL first'); return; }
+      const cbName = 'becPull_' + Date.now();
+      window[cbName] = function (json) {
+        try {
+          if (!json || !json.ok) { toast('Pull failed'); return; }
+          const d = json.data || {};
+          if (Array.isArray(d.Expenses)) { state.expenses = d.Expenses.map(function (r) { return normalizeRecord('expense', r); }); persist('expenses', state.expenses); }
+          if (Array.isArray(d.Publications)) { state.publications = d.Publications.map(function (r) { return normalizeRecord('publication', r); }); persist('publications', state.publications); }
+          if (Array.isArray(d.Tasks)) { state.tasks = d.Tasks.map(function (r) { return normalizeRecord('task', r); }); persist('tasks', state.tasks); }
+          if (Array.isArray(d.Documents)) { state.documents = d.Documents.map(function (r) { return normalizeRecord('document', r); }); persist('documents', state.documents); }
+          if (Array.isArray(d.Books)) { state.books = d.Books.map(function (r) { return normalizeRecord('book', r); }); persist('books', state.books); }
+          if (Array.isArray(d.Patents)) { state.patents = d.Patents.map(function (r) { return normalizeRecord('patent', r); }); persist('patents', state.patents); }
+          if (Array.isArray(d.Certificates)) { state.certificates = d.Certificates.map(function (r) { return normalizeRecord('certificate', r); }); persist('certificates', state.certificates); }
+          if (Array.isArray(d.Meetings)) { state.meetings = d.Meetings.map(function (r) { return normalizeRecord('meeting', r); }); persist('meetings', state.meetings); }
+          if (Array.isArray(d.Subjects)) { state.subjects = d.Subjects.map(normalizeSubject); persist('subjects', state.subjects); }
+          if (Array.isArray(d.Profile) && d.Profile[0]) {
+            state.profile = Object.assign({}, state.profile, d.Profile[0]);
+            persist('profile', state.profile);
+          }
+          state.cloud.lastSync = new Date().toISOString();
+          persist('cloud', state.cloud);
+          render();
+          toast('Pulled from Google Sheet ✓');
+        } catch (e) { toast('Pull error: ' + e.message); }
+        delete window[cbName];
+        const tag = document.getElementById('bec-jsonp'); if (tag) tag.remove();
+      };
+      const s = document.createElement('script');
+      s.id = 'bec-jsonp';
+      s.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'action=pull&callback=' + cbName + '&t=' + Date.now();
+      s.onerror = function () { delete window[cbName]; toast('Pull failed — check the /exec URL and deployment access'); };
+      document.body.appendChild(s);
+      setTimeout(function () { delete window[cbName]; s.remove(); }, 15000);
+    }
+
+    async function cloudBackup() {
+      const url = state.cloud.scriptUrl;
+      if (!url) { toast('Add the Apps Script /exec URL first'); return; }
+      const payload = { action: 'backup', data: buildCloudPayload().data };
+      const body = JSON.stringify(payload);
+      try {
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body });
+        let json = null;
+        try { json = await res.json(); } catch (e) {}
+        if (json && json.ok) toast('Backup saved to Drive: ' + json.file);
+        else await pushNoCors(url, body);
+      } catch (err) {
+        await pushNoCors(url, body);
+      }
+    }
+
+    function cloudPing() {
+      const url = state.cloud.scriptUrl;
+      if (!url) { toast('Add the Apps Script /exec URL first'); return; }
+      const cb = 'becPing_' + Date.now();
+      window[cb] = function (res) {
+        delete window[cb];
+        if (res && res.ok) toast('Connected ✓'); else toast('Connection failed');
+      };
+      const s = document.createElement('script');
+      s.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'action=ping&callback=' + cb + '&t=' + Date.now();
+      s.onerror = function () { delete window[cb]; toast('Connection error'); };
+      document.body.appendChild(s);
+      setTimeout(function () { delete window[cb]; s.remove(); }, 8000);
+    }
+
+    /* ================================================================
+       21. RENDER ROOT (with focus preservation)
        ================================================================ */
     function render() {
       const root = document.getElementById('app');
       if (!root) return;
+      const active = document.activeElement;
+      const wasSearch = active && active.id === 'search-input';
+      const selStart = wasSearch ? active.selectionStart : 0;
       root.innerHTML = state.session ? renderWorkspace() : renderLogin();
+      if (wasSearch) {
+        const el = document.getElementById('search-input');
+        if (el) {
+          el.focus();
+          try { el.setSelectionRange(selStart, selStart); } catch (e) {}
+        }
+      }
     }
 
     /* ================================================================
-       19. EVENT HANDLERS
+       22. EVENT HANDLERS
        ================================================================ */
+    function findRecord(type, id) {
+      const schema = RECORD_TYPES[type];
+      if (!schema) return null;
+      return (state[schema.collection] || []).find(function (r) { return r.id === id; }) || null;
+    }
+
     function handleClick(e) {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -1232,8 +1806,11 @@
         return;
       }
       if (action === 'clear-search') { setState({ query: '' }); return; }
-      if (action === 'logout') { clearSession(); setState({ session: null, tab: 'home', activeSubjectId: null, moreModule: null }); return; }
-      if (action === 'nav') { setState({ tab: btn.dataset.tab, moreModule: btn.dataset.module || null, activeSubjectId: null, query: '' }); window.scrollTo(0,0); return; }
+      if (action === 'logout') { clearSession(); setState({ session: null, tab: 'home', activeSubjectId: null, moreModule: null, sheet: null, editing: null }); return; }
+      if (action === 'nav') {
+        setState({ tab: btn.dataset.tab, moreModule: btn.dataset.module || null, activeSubjectId: null, query: '', sheet: null, editing: null });
+        window.scrollTo(0,0); return;
+      }
       if (action === 'set-year') { setState({ year: btn.dataset.year }); return; }
       if (action === 'set-semester') { setState({ semester: btn.dataset.sem }); return; }
       if (action === 'open-subject') { setState({ tab: 'academic', activeSubjectId: btn.dataset.id, subjectTab: 'Overview' }); return; }
@@ -1242,8 +1819,8 @@
       if (action === 'set-research-tab') { setState({ researchTab: btn.dataset.tab }); return; }
       if (action === 'set-module') { setState({ moreModule: btn.dataset.module || null }); return; }
       if (action === 'set-doc-filter') { setState({ docFilter: btn.dataset.filter }); return; }
-      if (action === 'open-sheet') { setState({ sheet: btn.dataset.sheet }); return; }
-      if (action === 'close-sheet') { setState({ sheet: null }); return; }
+      if (action === 'open-sheet') { setState({ sheet: btn.dataset.sheet, editing: null }); return; }
+      if (action === 'close-sheet') { setState({ sheet: null, editing: null }); return; }
 
       if (action === 'quick-add') {
         const target = btn.dataset.target;
@@ -1252,8 +1829,56 @@
           if (dest === 'academic') setState({ tab: 'academic', sheet: null, moreModule: null });
           else setState({ tab: 'more', sheet: null, moreModule: dest });
         } else {
-          setState({ sheet: target });
+          setState({ sheet: target, editing: null });
         }
+        return;
+      }
+
+      if (action === 'edit-record') {
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const schema = RECORD_TYPES[type];
+        if (!schema) return;
+        const record = findRecord(type, id);
+        if (!record) { toast('Record not found'); return; }
+        setState({ sheet: type, editing: { type: type, id: id, record: record } });
+        return;
+      }
+
+      if (action === 'rename-record') {
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const schema = RECORD_TYPES[type];
+        if (!schema) return;
+        const record = findRecord(type, id);
+        if (!record) { toast('Record not found'); return; }
+        const current = schema.title(record);
+        const next = window.prompt('Rename ' + schema.label.toLowerCase(), current);
+        if (next == null) return;
+        const trimmed = next.trim();
+        if (!trimmed || trimmed === current) return;
+        const key = schema.renameKey || 'title';
+        const coll = schema.collection;
+        state[coll] = state[coll].map(function (r) {
+          return r.id === id ? Object.assign({}, r, { [key]: trimmed }) : r;
+        });
+        persist(coll, state[coll]);
+        render();
+        toast('Renamed ✓');
+        return;
+      }
+
+      if (action === 'delete-record') {
+        const type = btn.dataset.type;
+        const id = btn.dataset.id;
+        const schema = RECORD_TYPES[type];
+        if (!schema) return;
+        if (!window.confirm('Delete this ' + schema.label.toLowerCase() + '?\n\nThis cannot be undone.')) return;
+        const coll = schema.collection;
+        state[coll] = state[coll].filter(function (r) { return r.id !== id; });
+        persist(coll, state[coll]);
+        render();
+        toast('Deleted ✓');
         return;
       }
 
@@ -1261,22 +1886,6 @@
         const id = btn.dataset.id;
         const tasks = state.tasks.map(function (t) { return t.id === id ? Object.assign({}, t, { status: t.status === 'Completed' ? 'Pending' : 'Completed' }) : t; });
         state.tasks = tasks; persist('tasks', tasks); render(); return;
-      }
-      if (action === 'remove-task') {
-        const tasks = state.tasks.filter(function (t) { return t.id !== btn.dataset.id; });
-        state.tasks = tasks; persist('tasks', tasks); render(); return;
-      }
-      if (action === 'remove-pub') {
-        const pubs = state.publications.filter(function (p) { return p.id !== btn.dataset.id; });
-        state.publications = pubs; persist('publications', pubs); render(); return;
-      }
-      if (action === 'remove-exp') {
-        const exps = state.expenses.filter(function (x) { return x.id !== btn.dataset.id; });
-        state.expenses = exps; persist('expenses', exps); render(); return;
-      }
-      if (action === 'remove-doc') {
-        const docs = state.documents.filter(function (d) { return d.id !== btn.dataset.id; });
-        state.documents = docs; persist('documents', docs); render(); return;
       }
       if (action === 'toggle-doc') {
         const id = btn.dataset.id;
@@ -1303,7 +1912,19 @@
         download('bec-tasks.csv', csv); return;
       }
       if (action === 'export-backup') {
-        const payload = JSON.stringify({ generatedAt: new Date().toISOString(), expenses: state.expenses, publications: state.publications, tasks: state.tasks, documents: state.documents }, null, 2);
+        const payload = JSON.stringify({
+          generatedAt: new Date().toISOString(),
+          profile: state.profile,
+          expenses: state.expenses,
+          publications: state.publications,
+          tasks: state.tasks,
+          documents: state.documents,
+          books: state.books,
+          patents: state.patents,
+          certificates: state.certificates,
+          meetings: state.meetings,
+          subjects: state.subjects
+        }, null, 2);
         download('bec-backup.json', payload, 'application/json'); return;
       }
 
@@ -1311,9 +1932,36 @@
         document.querySelectorAll('[data-profile-field]').forEach(function (inp) {
           state.profile[inp.dataset.profileField] = inp.value;
         });
-        persist('profile', state.profile); render(); return;
+        persist('profile', state.profile);
+        render();
+        toast('Profile saved ✓');
+        return;
       }
-      if (action === 'reset-profile') { state.profile = JSON.parse(JSON.stringify(PROFILE)); persist('profile', state.profile); render(); return; }
+      if (action === 'reset-profile') { state.profile = clone(PROFILE); persist('profile', state.profile); render(); toast('Profile reset'); return; }
+
+      if (action === 'cloud-save') {
+        document.querySelectorAll('[data-cloud-field]').forEach(function (inp) {
+          state.cloud[inp.dataset.cloudField] = inp.value.trim();
+        });
+        persist('cloud', state.cloud);
+        render();
+        toast('Cloud settings saved ✓');
+        return;
+      }
+      if (action === 'cloud-push') { cloudPush(); return; }
+      if (action === 'cloud-pull') { cloudPull(); return; }
+      if (action === 'cloud-backup') { cloudBackup(); return; }
+      if (action === 'cloud-ping') { cloudPing(); return; }
+      if (action === 'copy-apps-script') {
+        const doCopy = function () {
+          try {
+            navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(function () { toast('Apps Script copied ✓'); }, function () { toast('Copy failed — select the code manually'); });
+          } catch (e) { toast('Copy failed — select the code manually'); }
+        };
+        doCopy();
+        return;
+      }
+
       if (action === 'clear-data') {
         if (!window.confirm('Clear all locally stored workspace data and reload?')) return;
         store.clear(); clearSession(); window.location.reload(); return;
@@ -1331,7 +1979,7 @@
 
     function handleSubmit(e) {
       const form = e.target;
-      if (!form.id) return;
+      if (!form.id && !form.dataset.recordType) return;
       e.preventDefault();
 
       if (form.id === 'login-form') {
@@ -1352,34 +2000,50 @@
         return;
       }
 
-      if (form.id === 'form-expense') {
+      if (form.dataset.recordType) {
+        const type = form.dataset.recordType;
+        const schema = RECORD_TYPES[type];
+        if (!schema) return;
+        const id = form.dataset.recordId;
         const data = new FormData(form);
-        const amount = Number(data.get('amount'));
-        if (!amount || amount <= 0) return;
-        const newExp = { id: 'e-' + Date.now(), date: data.get('date') || today(), amount: amount, category: data.get('category'), paymentMode: data.get('paymentMode'), vendor: data.get('vendor') || '—', description: data.get('description') || 'Expense' };
-        state.expenses = [newExp].concat(state.expenses); persist('expenses', state.expenses);
-        setState({ sheet: null }); return;
-      }
-      if (form.id === 'form-publication') {
-        const data = new FormData(form);
-        if (!data.get('title')) return;
-        const newPub = { id: 'p-' + Date.now(), title: data.get('title'), authors: data.get('authors') || 'Biradar M.', journal: data.get('journal') || 'Journal', year: data.get('year') || String(new Date().getFullYear()), volume: '', doi: data.get('doi') || '' };
-        state.publications = [newPub].concat(state.publications); persist('publications', state.publications);
-        setState({ sheet: null }); return;
-      }
-      if (form.id === 'form-document') {
-        const data = new FormData(form);
-        if (!data.get('name')) return;
-        const newDoc = { id: 'd-' + Date.now(), name: data.get('name'), category: data.get('category'), subType: data.get('subType') || 'General', docNumber: data.get('docNumber') || 'XXXX', issueDate: today(), expiryDate: data.get('expiryDate') || '', authority: data.get('authority') || 'BEC Bagalkot', notes: 'Added manually', tags: ['manual'] };
-        state.documents = state.documents.concat([newDoc]); persist('documents', state.documents);
-        setState({ sheet: null }); return;
-      }
-      if (form.id === 'form-task') {
-        const data = new FormData(form);
-        if (!data.get('title')) return;
-        const newTask = { id: 't-' + Date.now(), title: data.get('title'), category: data.get('category'), priority: data.get('priority'), dueDate: data.get('dueDate') || today(), status: 'Pending' };
-        state.tasks = [newTask].concat(state.tasks); persist('tasks', state.tasks);
-        setState({ sheet: null }); return;
+        let record;
+        if (id) {
+          const original = state.editing && state.editing.id === id ? state.editing.record : findRecord(type, id);
+          record = original ? clone(original) : {};
+        } else if (schema.createDefaults) {
+          record = schema.createDefaults();
+        } else {
+          record = {};
+        }
+        schema.fields.forEach(function (f) {
+          const v = data.get(f.key);
+          if (f.set) { f.set(record, v); }
+          else if (f.type === 'number') { record[f.key] = Number(v) || 0; }
+          else { record[f.key] = v; }
+        });
+        for (let i = 0; i < schema.fields.length; i++) {
+          const f = schema.fields[i];
+          if (f.required) {
+            const v = f.get ? f.get(record) : record[f.key];
+            if (v == null || String(v).trim() === '') {
+              toast(f.label + ' is required');
+              return;
+            }
+          }
+        }
+        const coll = schema.collection;
+        if (id) {
+          state[coll] = state[coll].map(function (r) { return r.id === id ? Object.assign({}, r, record) : r; });
+        } else {
+          record.id = type.slice(0, 2) + '-' + Date.now().toString(36);
+          state[coll] = [record].concat(state[coll]);
+        }
+        persist(coll, state[coll]);
+        state.sheet = null;
+        state.editing = null;
+        render();
+        toast(id ? 'Updated ✓' : 'Saved ✓');
+        return;
       }
     }
 
@@ -1387,14 +2051,13 @@
       const target = e.target;
       if (target.id === 'search-input') {
         state.query = target.value;
-        // Just update search hits — re-render only if query changes
         render();
         return;
       }
     }
 
     /* ================================================================
-       20. INIT
+       23. INIT
        ================================================================ */
     document.addEventListener('click', handleClick);
     document.addEventListener('submit', handleSubmit);
@@ -1402,13 +2065,9 @@
 
     render();
 
-    // Global error handler — shows errors instead of blank page
     window.addEventListener('error', function (e) {
       console.error('Workspace error:', e.error || e.message);
     });
-
-    // Note: search input re-render loses focus; for production, use a more
-    // targeted update. For this demo, it's acceptable.
   })();
   </script>
 </body>
