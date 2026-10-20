@@ -45,8 +45,9 @@
     const SESSION_KEY = 'bec.ws.session.v1';
     const SESSION_TTL = 8 * 60 * 60 * 1000;
 
-    const SHEET_URL_DEFAULT = 'https://docs.google.com/spreadsheets/d/1PflXnULQSzYdGjicVm94vtM9aRS8C0sBKTWYtBEvWp8/edit?usp=sharing';
-    const DRIVE_URL_DEFAULT = 'https://drive.google.com/drive/folders/1e7e1iOZzMMjUiXOmlT0oeIGDPllbGymu?usp=drive_link';
+    const SHEET_URL_DEFAULT  = 'https://docs.google.com/spreadsheets/d/1PflXnULQSzYdGjicVm94vtM9aRS8C0sBKTWYtBEvWp8/edit?usp=sharing';
+    const DRIVE_URL_DEFAULT  = 'https://drive.google.com/drive/folders/1e7e1iOZzMMjUiXOmlT0oeIGDPllbGymu?usp=drive_link';
+    const SCRIPT_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbw9NhHnGl7vziHRrMwdT3NBPZ3GaYtkJDR85ZWxX-b0KjXD0TGGclRxI2I8vzUIUE5G/exec';
 
     /* ================================================================
        2. ICONS
@@ -605,8 +606,29 @@ function readSheet(sh) {
     }
 
     /* ================================================================
-       9. STATE
+       9. STATE (with cloud migration)
        ================================================================ */
+    function loadCloudState() {
+      const defaults = {
+        sheetUrl:  SHEET_URL_DEFAULT,
+        driveUrl:  DRIVE_URL_DEFAULT,
+        scriptUrl: SCRIPT_URL_DEFAULT,
+        lastSync:  null,
+        autoSync:  false
+      };
+      let stored = {};
+      try {
+        const raw = localStorage.getItem(PREFIX + 'cloud');
+        if (raw) stored = JSON.parse(raw) || {};
+      } catch (e) {}
+      const merged = Object.assign({}, defaults, stored);
+      // Migration: if an old session stored a blank URL, fall back to the current default.
+      if (!merged.scriptUrl) merged.scriptUrl = SCRIPT_URL_DEFAULT;
+      if (!merged.sheetUrl)  merged.sheetUrl  = SHEET_URL_DEFAULT;
+      if (!merged.driveUrl)  merged.driveUrl  = DRIVE_URL_DEFAULT;
+      return merged;
+    }
+
     const state = {
       session: readSession(),
       tab: 'home',
@@ -629,13 +651,7 @@ function readSheet(sh) {
       patents: store.get('patents', () => clone(PATENTS)),
       certificates: store.get('certificates', () => clone(CERTIFICATES)),
       meetings: store.get('meetings', seedMeetings),
-      cloud: store.get('cloud', () => ({
-        sheetUrl: SHEET_URL_DEFAULT,
-        driveUrl: DRIVE_URL_DEFAULT,
-        scriptUrl: '',
-        lastSync: null,
-        autoSync: false
-      }))
+      cloud: loadCloudState()
     };
 
     function setState(patch) {
@@ -1953,12 +1969,9 @@ function readSheet(sh) {
       if (action === 'cloud-backup') { cloudBackup(); return; }
       if (action === 'cloud-ping') { cloudPing(); return; }
       if (action === 'copy-apps-script') {
-        const doCopy = function () {
-          try {
-            navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(function () { toast('Apps Script copied ✓'); }, function () { toast('Copy failed — select the code manually'); });
-          } catch (e) { toast('Copy failed — select the code manually'); }
-        };
-        doCopy();
+        try {
+          navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(function () { toast('Apps Script copied ✓'); }, function () { toast('Copy failed — select the code manually'); });
+        } catch (e) { toast('Copy failed — select the code manually'); }
         return;
       }
 
