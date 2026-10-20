@@ -3,27 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BEC Bagalkote - Format A & B Document Generator</title>
+  <title>B.V.V Sangha’s BEC Bagalkote — CIE Formats A &amp; B Generator</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome for crisp icons -->
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Inter font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
-  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
-    .serif-heading {
+    .serif-title {
       font-family: 'Merriweather', serif;
     }
-    /* Table specific print styling */
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Print Specific Styling */
     @media print {
       body {
         background: #ffffff !important;
         color: #000000 !important;
-        font-size: 10.5pt;
+        font-size: 10.5pt !important;
+        padding: 0 !important;
+        margin: 0 !important;
       }
       .no-print {
         display: none !important;
@@ -45,28 +53,45 @@
         width: 100% !important;
       }
       .print-table th, .print-table td {
-        border: 1px solid #000000 !important;
+        border: 1px solid #111111 !important;
         padding: 4px 6px !important;
-        color: #000 !important;
+        color: #000000 !important;
+        background: transparent !important;
       }
       .print-table th {
-        background-color: #f2f2f2 !important;
+        background-color: #f1f5f9 !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
+        font-weight: 700 !important;
       }
-      .action-col, .row-controls {
+      .action-col, .row-controls, .course-preset-selector {
         display: none !important;
       }
-      [contenteditable="true"] {
-        border-bottom: none !important;
+      /* Transform selects into plain text on print */
+      select.print-as-text {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: none !important;
         background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        color: inherit !important;
+      }
+      [contenteditable="true"] {
+        outline: none !important;
+        border-bottom: none !important;
       }
       @page {
         size: A4 portrait;
         margin: 1.2cm 1cm 1.2cm 1cm;
       }
     }
-    /* Non-print table styling */
+
+    /* Interactive Table Styling */
     .formal-table th {
       background-color: #f8fafc;
       font-weight: 700;
@@ -77,8 +102,10 @@
       border: 1px solid #cbd5e1;
     }
     .editable-cell {
-      transition: all 0.15s ease;
       min-height: 24px;
+      padding: 4px 6px;
+      border-radius: 3px;
+      transition: background-color 0.15s, box-shadow 0.15s;
     }
     .editable-cell:hover {
       background-color: #f1f5f9;
@@ -87,7 +114,6 @@
     .editable-cell:focus {
       outline: 2px solid #2563eb;
       background-color: #eff6ff;
-      border-radius: 2px;
     }
     .editable-header-field {
       border-bottom: 1.5px dashed #94a3b8;
@@ -108,126 +134,137 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform transition-all duration-300 translate-y-20 opacity-0 bg-slate-900 text-white px-5 py-3 rounded-lg shadow-xl flex items-center space-x-3 text-sm font-medium">
-    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-    <span id="toast-message">Action completed successfully</span>
+  <!-- Interactive Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform transition-all duration-300 translate-y-24 opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm font-medium pointer-events-none">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toast-message">Notification message</span>
   </div>
 
-  <!-- Top Application Bar (No Print) -->
-  <header class="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-sm">
+  <!-- Top App Bar (No Print) -->
+  <header class="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-lg text-white shadow">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-700 to-indigo-500 flex items-center justify-center font-bold text-white shadow-md text-base">
           BEC
         </div>
         <div>
-          <h1 class="text-sm font-bold tracking-wide uppercase text-slate-200">Department of Mathematics</h1>
-          <p class="text-xs text-slate-400">CIE – I Formats A &amp; B Portal (AY 2025 – 26)</p>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-100">B.V.V Sangha’s BEC Bagalkote</h1>
+            <span class="text-[10px] bg-blue-900 text-blue-200 border border-blue-700 px-1.5 py-0.5 rounded font-mono">MATH DEPT</span>
+          </div>
+          <p class="text-xs text-slate-400">CIE – I Document Generator (Formats A &amp; B with Catalog Dropdown)</p>
         </div>
       </div>
-      
-      <!-- Quick Action Controls -->
+
+      <!-- Quick Action Buttons -->
       <div class="flex items-center space-x-2">
-        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
+        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
           <i class="fa-solid fa-print"></i>
           <span>Print / PDF</span>
         </button>
-        <button onclick="exportCurrentViewCSV()" class="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition">
+        <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition">
           <i class="fa-solid fa-file-excel text-emerald-400"></i>
-          <span class="hidden sm:inline">Export</span> Excel/CSV
+          <span class="hidden sm:inline">Export</span> CSV
         </button>
-        <button onclick="copyTableText()" class="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition" title="Copy formatted text to paste in Word or Google Docs">
-          <i class="fa-solid fa-file-word text-blue-400"></i>
+        <button onclick="copyToClipboardFormatted()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition" title="Copy table to paste directly into MS Word">
+          <i class="fa-solid fa-copy text-blue-400"></i>
           <span class="hidden md:inline">Copy for Word</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Interactive Control Panel & Filters (No Print) -->
-  <div class="no-print bg-white border-b border-slate-200 shadow-xs">
+  <!-- Interactive Control Panel & Action Center (No Print) -->
+  <section class="no-print bg-white border-b border-slate-200 shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         
-        <!-- Tab Navigation -->
+        <!-- Tab Selector: All, Format A, Format B -->
         <div class="inline-flex rounded-lg bg-slate-100 p-1 border border-slate-200 self-start">
-          <button id="tab-all" onclick="switchView('all')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-medium transition duration-150 bg-white text-blue-700 shadow-xs">
-            <i class="fa-solid fa-file-invoice mr-1.5"></i> Both Formats
+          <button id="tab-all" onclick="switchView('all')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-blue-700 shadow-xs">
+            <i class="fa-solid fa-layer-group mr-1.5"></i> Both Formats
           </button>
-          <button id="tab-formatA" onclick="switchView('formatA')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition duration-150">
-            <i class="fa-solid fa-user-tie mr-1.5"></i> Format A (Faculty)
+          <button id="tab-formatA" onclick="switchView('formatA')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+            <i class="fa-solid fa-chalkboard-user mr-1.5"></i> Format A (Faculty)
           </button>
-          <button id="tab-formatB" onclick="switchView('formatB')" class="tab-btn px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition duration-150">
-            <i class="fa-solid fa-users-rectangle mr-1.5"></i> Format B (Students)
+          <button id="tab-formatB" onclick="switchView('formatB')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+            <i class="fa-solid fa-table-list mr-1.5"></i> Format B (Subjects &amp; Strength)
           </button>
         </div>
 
-        <!-- Document Add / Utility Actions -->
+        <!-- Add Actions and Preset Quick-Loader -->
         <div class="flex items-center flex-wrap gap-2 text-xs">
-          <button onclick="addFacultyRow()" class="px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-semibold flex items-center gap-1.5">
+          <button onclick="addFacultyRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-semibold flex items-center gap-1.5 transition">
             <i class="fa-solid fa-user-plus text-xs"></i> + Add Faculty (Format A)
           </button>
-          <button onclick="addDivisionRow()" class="px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 font-semibold flex items-center gap-1.5">
+          
+          <button onclick="addDivisionRowModal()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-semibold flex items-center gap-1.5 shadow-sm transition">
             <i class="fa-solid fa-plus text-xs"></i> + Add Subject / Division (Format B)
           </button>
-          <button onclick="resetDataConfirmation()" class="px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-rotate-left text-xs"></i> Reset Default
+
+          <button onclick="resetDefaultsModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 font-medium flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-rotate-left text-xs"></i> Reset Default Data
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Live Analytics Banner for Format B (No Print) -->
-  <div id="stats-bar" class="no-print bg-slate-50 border-b border-slate-200 py-3">
+  <!-- Realtime Analytics Bar (No Print) -->
+  <section class="no-print bg-slate-50 border-b border-slate-200 py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center sm:text-left">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
         <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <div class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Faculty Count</div>
-          <div id="stat-faculty-count" class="text-xl font-bold text-slate-800 mt-0.5">9</div>
+          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Faculty Registered</span>
+          <span id="stat-faculty-count" class="text-xl font-bold text-slate-800">9</span>
+          <span class="text-[11px] text-slate-400 ml-1">in Format A</span>
         </div>
         <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <div class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Total Divisions</div>
-          <div id="stat-divisions-count" class="text-xl font-bold text-blue-600 mt-0.5">15</div>
+          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Total Divisions</span>
+          <span id="stat-divisions-count" class="text-xl font-bold text-blue-600">15</span>
+          <span class="text-[11px] text-slate-400 ml-1">sections</span>
         </div>
         <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <div class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Regular Enrolled</div>
-          <div id="stat-regular-count" class="text-xl font-bold text-slate-800 mt-0.5">908</div>
+          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Regular Students</span>
+          <span id="stat-regular-count" class="text-xl font-bold text-emerald-600">908</span>
+          <span class="text-[11px] text-slate-400 ml-1">enrolled</span>
         </div>
         <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <div class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">Re-registered / Grand Total</div>
-          <div class="text-xl font-bold text-indigo-600 mt-0.5">
-            <span id="stat-rr-count">40</span> <span class="text-xs text-slate-400 font-normal">/</span> <span id="stat-grand-count" class="text-emerald-600">948</span>
-          </div>
+          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">RR / Grand Total</span>
+          <span class="text-xl font-bold text-slate-800">
+            <span id="stat-rr-count" class="text-indigo-600">40</span> 
+            <span class="text-xs text-slate-400 font-normal">RR</span> 
+            <span class="text-slate-300">/</span> 
+            <span id="stat-grand-count" class="text-blue-700">948</span>
+          </span>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- MAIN DOCUMENT PREVIEW WRAPPER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 print:p-0 print:m-0 print:max-w-none">
+  <!-- MAIN DOCUMENT PREVIEW CANVAS -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 print:p-0 print:m-0 print:max-w-none">
     
-    <!-- Printable Document Sheet Container -->
     <div class="bg-white shadow-xl rounded-xl border border-slate-200 p-6 sm:p-10 document-card print:border-none print:shadow-none print:p-0">
 
-      <!-- ========================================== -->
-      <!-- SECTION: FORMAT A                          -->
-      <!-- ========================================== -->
+      <!-- ======================================================== -->
+      <!-- SECTION: FORMAT A (Faculty Information - UG)             -->
+      <!-- ======================================================== -->
       <section id="section-formatA" class="mb-12">
-        <!-- Official College Letterhead Header -->
+        <!-- Institutional Header Format A -->
         <div class="text-center pb-4 border-b-2 border-slate-900 mb-6">
-          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha">B.V.V. Sangha’s</h4>
-          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-heading text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college">Basaveshwar Engineering College, Bagalkote</h2>
-          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept">Department of Mathematics</h3>
+          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha">B.V.V Sangha’s</h4>
+          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-title text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college">BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE</h2>
+          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept">DEPARTMENT OF MATHEMATICS</h3>
           
           <div class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded border border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
             <span contenteditable="true" onblur="saveHeaderConfig('cie', this.innerText)" class="editable-header-field" id="header-cie">CIE – I</span> for the Academic Year 
             <span contenteditable="true" onblur="saveHeaderConfig('ay', this.innerText)" class="editable-header-field" id="header-ay">2025 – 26</span> 
             (<span contenteditable="true" onblur="saveHeaderConfig('semType', this.innerText)" class="editable-header-field" id="header-semType">Even Semester</span>)
           </div>
+
           <div class="mt-4 flex items-center justify-between">
             <h1 class="text-sm sm:text-base font-black tracking-wide uppercase text-slate-900 underline decoration-1 underline-offset-4">
               Format A: Faculty Information (UG)
@@ -249,16 +286,16 @@
                 <th class="py-2.5 px-3">Designation</th>
                 <th class="w-24 py-2.5 px-2">Qualification</th>
                 <th class="w-32 py-2.5 px-2">Teaching Experience</th>
-                <th class="w-28 py-2 px-2 no-print action-col text-center">Row Actions</th>
+                <th class="w-24 py-2 px-2 no-print action-col text-center">Row Actions</th>
               </tr>
             </thead>
             <tbody id="tbody-formatA" class="divide-y divide-slate-200">
-              <!-- Populated via JavaScript -->
+              <!-- Dynamically populated -->
             </tbody>
           </table>
         </div>
 
-        <!-- Signatures for Format A -->
+        <!-- Institutional Signatures Format A -->
         <div class="mt-14 pt-4 flex justify-between items-end text-xs sm:text-sm font-bold text-slate-900">
           <div class="text-center">
             <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
@@ -271,62 +308,72 @@
         </div>
       </section>
 
-      <!-- Page break delimiter for printing cleanly -->
-      <div class="print-page-break my-8 no-print border-t-2 border-dashed border-slate-300 flex items-center justify-center">
-        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold -mt-3 uppercase tracking-wider">Print Page Break</span>
+      <!-- Print Page Separator -->
+      <div class="print-page-break my-10 no-print border-t-2 border-dashed border-slate-300 relative flex items-center justify-center">
+        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider -top-3">Print Page Break</span>
       </div>
 
-      <!-- ========================================== -->
-      <!-- SECTION: FORMAT B                          -->
-      <!-- ========================================== -->
+      <!-- ======================================================== -->
+      <!-- SECTION: FORMAT B (Subject wise Student Strength)        -->
+      <!-- ======================================================== -->
       <section id="section-formatB" class="pt-2">
-        <!-- Official College Letterhead Header for Format B -->
+        <!-- Institutional Header Format B -->
         <div class="text-center pb-4 border-b-2 border-slate-900 mb-6">
-          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha-b">B.V.V. Sangha’s</h4>
-          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-heading text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college-b">Basaveshwar Engineering College, Bagalkote</h2>
-          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept-b">Department of Mathematics</h3>
+          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha-b">B.V.V Sangha’s</h4>
+          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-title text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college-b">BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE</h2>
+          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept-b">DEPARTMENT OF MATHEMATICS</h3>
           
           <div class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded border border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
             <span contenteditable="true" onblur="saveHeaderConfig('cie', this.innerText)" class="editable-header-field" id="header-cie-b">CIE – I</span> for the Academic Year 
             <span contenteditable="true" onblur="saveHeaderConfig('ay', this.innerText)" class="editable-header-field" id="header-ay-b">2025 – 26</span> 
             (<span contenteditable="true" onblur="saveHeaderConfig('semType', this.innerText)" class="editable-header-field" id="header-semType-b">Even Semester</span>)
           </div>
+
           <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
+            <div class="text-left">
               <h1 class="text-sm sm:text-base font-black tracking-wide uppercase text-slate-900 underline decoration-1 underline-offset-4">
                 Format B: Subject wise Student Strength Information
               </h1>
               <p class="text-xs font-semibold text-slate-700 mt-0.5">
-                <span contenteditable="true" onblur="saveHeaderConfig('formatB_sub', this.innerText)" class="editable-header-field" id="header-formatB_sub">II Semester (Regular) + RR</span>
+                <span contenteditable="true" onblur="saveHeaderConfig('formatB_sub', this.innerText)" class="editable-header-field" id="header-formatB_sub">II semester (Regular)+RR</span>
               </p>
             </div>
-            <button onclick="addDivisionRow()" class="no-print text-xs bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 px-2.5 py-1 rounded font-semibold flex items-center self-start sm:self-auto gap-1">
-              <i class="fa-solid fa-plus text-[10px]"></i> Add Subject / Division
-            </button>
+            
+            <div class="no-print flex items-center gap-2">
+              <button onclick="addDivisionRowModal()" class="text-xs bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-sm">
+                <i class="fa-solid fa-plus text-[10px]"></i> + Add Division Row
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Format B Table -->
+        <!-- Format B Interactive Table with Dropdowns -->
         <div class="overflow-x-auto">
-          <table class="w-full text-xs sm:text-sm text-left formal-table print-table">
+          <table class="w-full text-xs sm:text-sm text-left formal-table print-table" id="table-formatB">
             <thead>
               <tr class="text-center align-middle">
                 <th class="w-12 py-2.5 px-2">Sl No</th>
-                <th class="w-12 py-2.5 px-2">Sem</th>
-                <th class="w-12 py-2.5 px-2">Div</th>
-                <th class="py-2.5 px-3">Subjects Title</th>
-                <th class="w-28 py-2.5 px-2">Subject Code</th>
-                <th class="py-2.5 px-3">Name of the Faculty In-Charge</th>
-                <th class="w-44 py-2.5 px-2">Regular / Re-registered Students<br><span class="text-[10px] text-slate-500 font-normal">[Reg] + [RR] = [Total]</span></th>
-                <th class="w-28 py-2 px-2 no-print action-col text-center">Row Actions</th>
+                <th class="w-20 py-2.5 px-2">Sem</th>
+                <th class="w-14 py-2.5 px-2">Div</th>
+                <th class="py-2.5 px-3">
+                  Subjects Title
+                  <div class="no-print text-[10px] font-normal text-blue-600">Quick preset selector available</div>
+                </th>
+                <th class="w-28 py-2.5 px-2">Subject code</th>
+                <th class="w-56 py-2.5 px-3">Name of the faculty in-charge</th>
+                <th class="w-44 py-2.5 px-2">
+                  Number of Re-registered Students
+                  <div class="text-[10px] font-normal text-slate-500">[Regular] + [RR]</div>
+                </th>
+                <th class="w-24 py-2 px-2 no-print action-col text-center">Actions</th>
               </tr>
             </thead>
             <tbody id="tbody-formatB" class="divide-y divide-slate-200">
-              <!-- Populated via JavaScript -->
+              <!-- Dynamically populated -->
             </tbody>
             <tfoot>
               <tr class="font-bold bg-slate-100 border-t-2 border-slate-900">
-                <td colspan="6" class="py-2.5 px-3 text-right">Total Students (Regular + RR):</td>
+                <td colspan="6" class="py-2.5 px-3 text-right">Total Students:</td>
                 <td class="py-2.5 px-3 text-center" id="footer-total-display">Calculating...</td>
                 <td class="no-print action-col"></td>
               </tr>
@@ -334,12 +381,12 @@
           </table>
         </div>
 
-        <!-- Note info -->
+        <!-- Footnote info -->
         <div class="mt-3 text-[11px] text-slate-500 italic print:text-slate-800">
-          * Note: Values formatted with '+' indicate [Regular Students] + [Re-registered (RR) Students]. For example, typing "62+7" automatically parses 62 Regular and 7 RR students.
+          * Dropdowns for Semester, Subject Title, and Faculty in-charge are interactive for quick document population and print seamlessly as plain text. Format counts like "65+1" calculate 65 regular + 1 RR student.
         </div>
 
-        <!-- Signatures for Format B -->
+        <!-- Institutional Signatures Format B -->
         <div class="mt-14 pt-4 flex justify-between items-end text-xs sm:text-sm font-bold text-slate-900">
           <div class="text-center">
             <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
@@ -355,12 +402,83 @@
     </div>
   </main>
 
-  <!-- Help & Keyboard hints footer (No Print) -->
+  <!-- Quick Add Row Modal for Format B (No Print) -->
+  <div id="addModal" class="no-print fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-file-circle-plus text-emerald-600"></i>
+          Add Subject / Division Row (Format B)
+        </h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Semester</label>
+            <select id="modal-sem" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="onModalSemChange()">
+              <option value="1">Semester 1</option>
+              <option value="2" selected>Semester 2</option>
+              <option value="3">Semester 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Division (Section)</label>
+            <input type="text" id="modal-div" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-bold text-center uppercase" placeholder="e.g. P, Q, A">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Select Course / Syllabus Preset</label>
+          <select id="modal-preset" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="onModalPresetChange()">
+            <!-- Populated via JS based on selected semester -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Subject Title (Editable)</label>
+          <input type="text" id="modal-title" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Differential Equations And Numerical Methods...">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Subject Code</label>
+            <input type="text" id="modal-code" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono" placeholder="1BMAS201C">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Student Strength / RR</label>
+            <input type="text" id="modal-count" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono" placeholder="e.g. 60 or 60+2" value="60">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Faculty In-Charge</label>
+          <select id="modal-faculty" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <!-- Dynamically populated from Format A -->
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-end space-x-2 pt-3 border-t border-slate-200">
+        <button onclick="closeModal()" class="px-3.5 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-semibold">
+          Cancel
+        </button>
+        <button onclick="submitModalAdd()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+          Add Row
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom App Note (No Print) -->
   <footer class="no-print bg-slate-900 text-slate-400 text-xs py-4 border-t border-slate-800 mt-auto text-center">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div>
-        <i class="fa-solid fa-circle-info mr-1 text-blue-400"></i>
-        <span>Every cell and header text is directly editable on-screen. Seniority and divisions can be moved up/down with auto-renumbering.</span>
+        <i class="fa-solid fa-graduation-cap text-blue-400 mr-1.5"></i>
+        <span>Department of Mathematics — Continuous Internal Evaluation System</span>
       </div>
       <div>
         <span>Basaveshwar Engineering College, Bagalkote</span>
@@ -370,124 +488,193 @@
 
   <!-- Application Logic -->
   <script>
-    // Header config state
+    // ==========================================
+    // SYLLABUS CATALOG BY SEMESTER
+    // ==========================================
+    const COURSE_CATALOG = {
+      "1": [
+        {
+          stream: "CSE Stream",
+          title: "Calculus and Linear Algebra",
+          code: "1BMAS101C",
+          label: "CSE Stream — Calculus and Linear Algebra (1BMAS101C)"
+        },
+        {
+          stream: "Civil Stream",
+          title: "Differential Calculus and Linear Algebra",
+          code: "1BMAC101C",
+          label: "Civil Stream — Differential Calculus and Linear Algebra (1BMAC101C)"
+        },
+        {
+          stream: "EEE Stream",
+          title: "Differential Calculus and Linear Algebra",
+          code: "1BMAE101C",
+          label: "EEE Stream — Differential Calculus and Linear Algebra (1BMAE101C)"
+        },
+        {
+          stream: "Mechanical Stream",
+          title: "Differential Calculus and Linear Algebra",
+          code: "1BMAM101C",
+          label: "Mechanical Stream — Differential Calculus and Linear Algebra (1BMAM101C)"
+        }
+      ],
+      "2": [
+        {
+          stream: "CSE Stream",
+          title: "Differential Equations And Numerical Methods For CSE Stream",
+          code: "1BMAS201C",
+          label: "CSE Stream — Differential Equations and Numerical Methods (1BMAS201C)"
+        },
+        {
+          stream: "Civil Stream",
+          title: "Calculus And Numerical Methods For CV Stream.",
+          code: "1BMAC201C",
+          label: "Civil Stream — Calculus and Numerical Methods (1BMAC201C)"
+        },
+        {
+          stream: "EEE Stream",
+          title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream",
+          code: "1BMAE201C",
+          label: "EEE Stream — Calculus, Laplace Transform and Numerical Methods (1BMAE201C)"
+        },
+        {
+          stream: "Mechanical Stream",
+          title: "Multivariable Calculus And Numerical Methods For ME Stream.",
+          code: "1BMAM201C",
+          label: "Mechanical Stream — Calculus and Numerical Methods (1BMAM201C)"
+        }
+      ],
+      "3": [
+        {
+          stream: "CSE Stream",
+          title: "Mathematics for Computer Science",
+          code: "1BMAS301C",
+          label: "CSE Stream — Mathematics for Computer Science (1BMAS301C)"
+        },
+        {
+          stream: "Civil Stream",
+          title: "Mathematics for Civil Engineering",
+          code: "1BMAC301C",
+          label: "Civil Stream — Mathematics for Civil Engineering (1BMAC301C)"
+        },
+        {
+          stream: "EEE Stream",
+          title: "Mathematics for Electrical Engineering",
+          code: "1BMAE301C",
+          label: "EEE Stream — Mathematics for Electrical Engineering (1BMAE301C)"
+        },
+        {
+          stream: "Mechanical Stream",
+          title: "Mathematics for Mechanical Engineering",
+          code: "1BMAM301C",
+          label: "Mechanical Stream — Mathematics for Mechanical Engineering (1BMAM301C)"
+        },
+        {
+          stream: "Bridge Course",
+          title: "Bridge Course Mathematics-I",
+          code: "BMAB300M",
+          label: "Bridge Course Mathematics-I (BMAB300M)"
+        }
+      ]
+    };
+
+    // Header default configuration
     const defaultHeaderConfig = {
-      sangha: "B.V.V. Sangha’s",
-      college: "Basaveshwar Engineering College, Bagalkote",
-      dept: "Department of Mathematics",
+      sangha: "B.V.V Sangha’s",
+      college: "BASAVESHWAR ENGINEERING COLLEG, BAGALKOTE",
+      dept: "DEPARTMENT OF MATHEMATICS",
       cie: "CIE – I",
       ay: "2025 – 26",
       semType: "Even Semester",
-      formatB_sub: "II Semester (Regular) + RR",
+      formatB_sub: "II semester (Regular)+RR",
       sigA_left: "CIE Coordinator",
       sigA_right: "HOD",
       sigB_left: "CIE Coordinator",
       sigB_right: "HOD"
     };
 
-    let headerConfig = JSON.parse(localStorage.getItem('bec_math_headerConfig')) || defaultHeaderConfig;
+    let headerConfig = JSON.parse(localStorage.getItem('bec_cie_headerConfig_v2')) || defaultHeaderConfig;
 
-    // Initial Dataset for Format A
+    // Initial Data Format A (Faculty)
     const initialFormatA = [
       { sl: 1, name: "Dr. S V Gurushantanavar", phone: "8317492301", designation: "Associate Professor and HOD", qualification: "Ph.D", exp: "29 Years" },
-      { sl: 2, name: "Dr. V M Shettar", phone: "9480079044", designation: "Associate Professor", qualification: "Ph.D", exp: "31 Years" },
+      { sl: 2, name: "Dr.V M Shettar", phone: "9480079044", designation: "Associate Professor", qualification: "Ph.D", exp: "31 Years" },
       { sl: 3, name: "Dr. M M Biradar", phone: "9035246580", designation: "Associate Professor", qualification: "Ph.D", exp: "27 Years" },
       { sl: 4, name: "Dr. K Ram Prasad", phone: "6362542536", designation: "Associate Professor", qualification: "Ph.D", exp: "20 Years" },
       { sl: 5, name: "Dr. A H Agadi", phone: "9886088204", designation: "Assistant Professor (Sr.Scale)", qualification: "Ph.D", exp: "29 Years" },
       { sl: 6, name: "Dr. Ishwar Maharudrappa", phone: "9916201677", designation: "Assistant Professor", qualification: "Ph.D", exp: "22 Years" },
-      { sl: 7, name: "Smt. V M Pudakalkatti", phone: "9916748927", designation: "Assistant Professor", qualification: "M.Sc.", exp: "27 Years" },
+      { sl: 7, name: "Smt.V M Pudakalkatti", phone: "9916748927", designation: "Assistant Professor", qualification: "M.Sc.", exp: "27 Years" },
       { sl: 8, name: "Dr Pradeep Hiremath", phone: "7349400222", designation: "Assistant Professor", qualification: "Ph.D", exp: "05 Years" },
       { sl: 9, name: "Dr Abhilash Nandeppanavar", phone: "8951732203", designation: "Assistant Professor", qualification: "Ph.D", exp: "02 Years" }
     ];
 
-    // Initial Dataset for Format B
+    // Initial Data Format B (Subject-wise Student Strength)
     const initialFormatB = [
       { sl: 1, sem: "2", div: "A", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr S V Gurushantanavar", count: "63" },
       { sl: 2, sem: "2", div: "B", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr S V Gurushantanavar", count: "65+1" },
       { sl: 3, sem: "2", div: "C", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr M M Biradar", count: "62+1" },
       { sl: 4, sem: "2", div: "D", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr M M Biradar", count: "60" },
-      { sl: 5, sem: "2", div: "E", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr K Ramprasad", count: "60+2" },
-      { sl: 6, sem: "2", div: "F", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr K Ramprasad", count: "60" },
-      { sl: 7, sem: "2", div: "G", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr V M Shettar", count: "65" },
-      { sl: 8, sem: "2", div: "H", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr V M Shettar", count: "62" },
+      { sl: 5, sem: "2", div: "E", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr K Ram Prasad", count: "60+2" },
+      { sl: 6, sem: "2", div: "F", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr K Ram Prasad", count: "60" },
+      { sl: 7, sem: "2", div: "G", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr.V M Shettar", count: "65" },
+      { sl: 8, sem: "2", div: "H", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr.V M Shettar", count: "62" },
       { sl: 9, sem: "2", div: "I", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr Pradeep Hiremath", count: "62+7" },
       { sl: 10, sem: "2", div: "J", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr Pradeep Hiremath", count: "61" },
-      { sl: 11, sem: "2", div: "K", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr A H Agadi", count: "58+6" },
-      { sl: 12, sem: "2", div: "L", title: "Calculus And Numerical Methods For CV Stream.", code: "1BMAC201C", faculty: "Smt V M Pudakalakatti", count: "63+2" },
-      { sl: 13, sem: "2", div: "M", title: "Calculus And Numerical Methods For CV Stream.", code: "1BMAC201C", faculty: "Dr Ishwar M P", count: "62+10" },
+      { sl: 11, sem: "2", div: "K", title: "Calculus, Laplace Transform And Numerical Techniques For EEE Stream", code: "1BMAE201C", faculty: "Dr. A H Agadi", count: "58+6" },
+      { sl: 12, sem: "2", div: "L", title: "Calculus And Numerical Methods For CV Stream.", code: "1BMAC201C", faculty: "Smt.V M Pudakalkatti", count: "63+2" },
+      { sl: 13, sem: "2", div: "M", title: "Calculus And Numerical Methods For CV Stream.", code: "1BMAC201C", faculty: "Dr. Ishwar Maharudrappa", count: "62+10" },
       { sl: 14, sem: "2", div: "N", title: "Multivariable Calculus And Numerical Methods For ME Stream.", code: "1BMAM201C", faculty: "Dr S S Benchalli", count: "45+1" },
-      { sl: 15, sem: "2", div: "O", title: "Multivariable Calculus And Numerical Methods For ME Stream.", code: "1BMAM201C", faculty: "Dr Abhilash N", count: "55+10" }
+      { sl: 15, sem: "2", div: "O", title: "Multivariable Calculus And Numerical Methods For ME Stream.", code: "1BMAM201C", faculty: "Dr Abhilash Nandeppanavar", count: "55+10" }
     ];
 
     // State Variables
-    let currentView = 'all'; // 'all', 'formatA', 'formatB'
-    let dataA = JSON.parse(localStorage.getItem('bec_math_formatA')) || JSON.parse(JSON.stringify(initialFormatA));
-    let dataB = JSON.parse(localStorage.getItem('bec_math_formatB')) || JSON.parse(JSON.stringify(initialFormatB));
+    let currentView = 'all';
+    let dataA = JSON.parse(localStorage.getItem('bec_cie_formatA_v2')) || JSON.parse(JSON.stringify(initialFormatA));
+    let dataB = JSON.parse(localStorage.getItem('bec_cie_formatB_v2')) || JSON.parse(JSON.stringify(initialFormatB));
 
-    // Save to LocalStorage
-    function persistState() {
-      localStorage.setItem('bec_math_formatA', JSON.stringify(dataA));
-      localStorage.setItem('bec_math_formatB', JSON.stringify(dataB));
-      localStorage.setItem('bec_math_headerConfig', JSON.stringify(headerConfig));
-      updateAnalytics();
+    // Persist to LocalStorage
+    function persistData() {
+      localStorage.setItem('bec_cie_formatA_v2', JSON.stringify(dataA));
+      localStorage.setItem('bec_cie_formatB_v2', JSON.stringify(dataB));
+      localStorage.setItem('bec_cie_headerConfig_v2', JSON.stringify(headerConfig));
+      updateSummaryMetrics();
     }
 
-    // Save header field dynamically
+    // Save header edits
     function saveHeaderConfig(key, value) {
       headerConfig[key] = value.trim();
-      persistState();
-      syncHeaderDisplays();
+      persistData();
+      syncHeaders();
     }
 
-    // Sync header fields across both sections
-    function syncHeaderDisplays() {
-      const elSangha = document.getElementById('header-sangha');
-      const elSanghaB = document.getElementById('header-sangha-b');
-      if (elSangha) elSangha.innerText = headerConfig.sangha;
-      if (elSanghaB) elSanghaB.innerText = headerConfig.sangha;
+    function syncHeaders() {
+      const setIfExists = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = val;
+      };
 
-      const elCollege = document.getElementById('header-college');
-      const elCollegeB = document.getElementById('header-college-b');
-      if (elCollege) elCollege.innerText = headerConfig.college;
-      if (elCollegeB) elCollegeB.innerText = headerConfig.college;
-
-      const elDept = document.getElementById('header-dept');
-      const elDeptB = document.getElementById('header-dept-b');
-      if (elDept) elDept.innerText = headerConfig.dept;
-      if (elDeptB) elDeptB.innerText = headerConfig.dept;
-
-      const elCie = document.getElementById('header-cie');
-      const elCieB = document.getElementById('header-cie-b');
-      if (elCie) elCie.innerText = headerConfig.cie;
-      if (elCieB) elCieB.innerText = headerConfig.cie;
-
-      const elAy = document.getElementById('header-ay');
-      const elAyB = document.getElementById('header-ay-b');
-      if (elAy) elAy.innerText = headerConfig.ay;
-      if (elAyB) elAyB.innerText = headerConfig.ay;
-
-      const elSemType = document.getElementById('header-semType');
-      const elSemTypeB = document.getElementById('header-semType-b');
-      if (elSemType) elSemType.innerText = headerConfig.semType;
-      if (elSemTypeB) elSemTypeB.innerText = headerConfig.semType;
-
-      const elSubB = document.getElementById('header-formatB_sub');
-      if (elSubB) elSubB.innerText = headerConfig.formatB_sub;
-
-      const elSigALeft = document.getElementById('header-sigA_left');
-      if (elSigALeft) elSigALeft.innerText = headerConfig.sigA_left;
-
-      const elSigARight = document.getElementById('header-sigA_right');
-      if (elSigARight) elSigARight.innerText = headerConfig.sigA_right;
-
-      const elSigBLeft = document.getElementById('header-sigB_left');
-      if (elSigBLeft) elSigBLeft.innerText = headerConfig.sigB_left;
-
-      const elSigBRight = document.getElementById('header-sigB_right');
-      if (elSigBRight) elSigBRight.innerText = headerConfig.sigB_right;
+      setIfExists('header-sangha', headerConfig.sangha);
+      setIfExists('header-sangha-b', headerConfig.sangha);
+      setIfExists('header-college', headerConfig.college);
+      setIfExists('header-college-b', headerConfig.college);
+      setIfExists('header-dept', headerConfig.dept);
+      setIfExists('header-dept-b', headerConfig.dept);
+      setIfExists('header-cie', headerConfig.cie);
+      setIfExists('header-cie-b', headerConfig.cie);
+      setIfExists('header-ay', headerConfig.ay);
+      setIfExists('header-ay-b', headerConfig.ay);
+      setIfExists('header-semType', headerConfig.semType);
+      setIfExists('header-semType-b', headerConfig.semType);
+      setIfExists('header-formatB_sub', headerConfig.formatB_sub);
+      setIfExists('header-sigA_left', headerConfig.sigA_left);
+      setIfExists('header-sigA_right', headerConfig.sigA_right);
+      setIfExists('header-sigB_left', headerConfig.sigB_left);
+      setIfExists('header-sigB_right', headerConfig.sigB_right);
     }
 
-    // Render Format A Table with Seniority Reordering & Direct Inline Editing
+    // ==========================================
+    // RENDER FORMAT A (Faculty Information)
+    // ==========================================
     function renderFormatA() {
       const tbody = document.getElementById('tbody-formatA');
       tbody.innerHTML = '';
@@ -496,21 +683,21 @@
         const tr = document.createElement('tr');
         tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
         tr.innerHTML = `
-          <td class="text-center font-bold py-2.5 px-2 text-slate-700">${index + 1}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'name', this.innerText)" class="editable-cell py-2.5 px-3 font-semibold text-slate-800" title="Click to edit name">${item.name}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'phone', this.innerText)" class="editable-cell py-2.5 px-3 text-center tracking-wider font-mono text-slate-700" title="Click to edit phone">${item.phone}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'designation', this.innerText)" class="editable-cell py-2.5 px-3" title="Click to edit designation">${item.designation}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'qualification', this.innerText)" class="editable-cell py-2.5 px-2 text-center" title="Click to edit qualification">${item.qualification}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'exp', this.innerText)" class="editable-cell py-2.5 px-2 text-center" title="Click to edit experience">${item.exp}</td>
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
+          <td contenteditable="true" onblur="updateFieldA(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900" title="Click to edit name">${escapeHTML(item.name)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${index}, 'phone', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono text-slate-700" title="Click to edit phone">${escapeHTML(item.phone)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${index}, 'designation', this.innerText)" class="editable-cell py-2 px-3 text-slate-800" title="Click to edit designation">${escapeHTML(item.designation)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${index}, 'qualification', this.innerText)" class="editable-cell py-2 px-2 text-center font-medium" title="Click to edit qualification">${escapeHTML(item.qualification)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${index}, 'exp', this.innerText)" class="editable-cell py-2 px-2 text-center" title="Click to edit experience">${escapeHTML(item.exp)}</td>
           <td class="no-print action-col py-2 px-2 text-center">
             <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowA(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up (Higher seniority)" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400">
+              <button onclick="moveRowA(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up in Seniority" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
                 <i class="fa-solid fa-arrow-up text-xs"></i>
               </button>
-              <button onclick="moveRowA(${index}, 1)" ${index === dataA.length - 1 ? 'disabled' : ''} title="Move Down (Lower seniority)" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400">
+              <button onclick="moveRowA(${index}, 1)" ${index === dataA.length - 1 ? 'disabled' : ''} title="Move Down in Seniority" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
                 <i class="fa-solid fa-arrow-down text-xs"></i>
               </button>
-              <button onclick="deleteRowA(${index})" title="Delete faculty" class="p-1 text-slate-400 hover:text-rose-600 transition">
+              <button onclick="deleteRowA(${index})" title="Delete Faculty" class="p-1 text-slate-400 hover:text-rose-600">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
             </div>
@@ -520,112 +707,43 @@
       });
     }
 
-    // Render Format B Table with Breakdown Calculator & Reordering
-    function renderFormatB() {
-      const tbody = document.getElementById('tbody-formatB');
-      tbody.innerHTML = '';
+    function updateFieldA(index, key, val) {
+      if (dataA[index]) {
+        const oldName = dataA[index].name;
+        dataA[index][key] = val.trim();
+        persistData();
 
-      dataB.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
-        
-        const countParsed = parseStudentCount(item.count);
-        const displayTotalPill = countParsed.rr > 0 
-          ? `<span class="text-[11px] text-slate-500 font-normal">(${countParsed.total} total)</span>`
-          : '';
-
-        tr.innerHTML = `
-          <td class="text-center font-bold py-2.5 px-2 text-slate-700">${index + 1}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'sem', this.innerText)" class="editable-cell py-2.5 px-2 text-center font-semibold" title="Click to edit sem">${item.sem}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'div', this.innerText)" class="editable-cell py-2.5 px-2 text-center font-bold text-blue-700" title="Click to edit section/div">${item.div}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'title', this.innerText)" class="editable-cell py-2.5 px-3" title="Click to edit subject title">${item.title}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-medium text-slate-700" title="Click to edit course code">${item.code}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'faculty', this.innerText)" class="editable-cell py-2.5 px-3 font-semibold text-slate-800" title="Click to edit faculty in-charge">${item.faculty}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'count', this.innerText)" class="editable-cell py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40" title="Edit count (e.g. '62' or '62+7')">
-            ${item.count} ${displayTotalPill}
-          </td>
-          <td class="no-print action-col py-2 px-2 text-center">
-            <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowB(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400">
-                <i class="fa-solid fa-arrow-up text-xs"></i>
-              </button>
-              <button onclick="moveRowB(${index}, 1)" ${index === dataB.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30 disabled:hover:text-slate-400">
-                <i class="fa-solid fa-arrow-down text-xs"></i>
-              </button>
-              <button onclick="deleteRowB(${index})" title="Delete division" class="p-1 text-slate-400 hover:text-rose-600 transition">
-                <i class="fa-solid fa-trash-can text-xs"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Update field handlers
-    function updateFieldA(idx, key, val) {
-      if (dataA[idx]) {
-        dataA[idx][key] = val.trim();
-        persistState();
+        // If faculty name was updated, re-sync faculty selects in Format B
+        if (key === 'name') {
+          renderFormatB();
+        }
       }
     }
 
-    function updateFieldB(idx, key, val) {
-      if (dataB[idx]) {
-        dataB[idx][key] = val.trim();
-        persistState();
-        renderFormatB(); // re-render to update dynamic (total) pill if present
-      }
-    }
-
-    // Seniority Reordering for Format A
-    function moveRowA(idx, direction) {
-      const target = idx + direction;
+    function moveRowA(idx, step) {
+      const target = idx + step;
       if (target < 0 || target >= dataA.length) return;
       const temp = dataA[idx];
       dataA[idx] = dataA[target];
       dataA[target] = temp;
-      persistState();
+      persistData();
       renderFormatA();
-      showToast(`Faculty row moved ${direction < 0 ? 'up' : 'down'}`);
+      renderFormatB(); // update dropdown ordering
+      showToast(`Faculty row moved ${step < 0 ? 'up' : 'down'}`);
     }
 
-    // Division Reordering for Format B
-    function moveRowB(idx, direction) {
-      const target = idx + direction;
-      if (target < 0 || target >= dataB.length) return;
-      const temp = dataB[idx];
-      dataB[idx] = dataB[target];
-      dataB[target] = temp;
-      persistState();
-      renderFormatB();
-      showToast(`Division row moved ${direction < 0 ? 'up' : 'down'}`);
-    }
-
-    // Delete handlers with renumbering
     function deleteRowA(idx) {
       if (dataA.length <= 1) {
-        showToast("At least one faculty row is required", "error");
+        showToast("At least one faculty member is required", "error");
         return;
       }
       dataA.splice(idx, 1);
-      persistState();
+      persistData();
       renderFormatA();
-      showToast("Faculty member removed");
-    }
-
-    function deleteRowB(idx) {
-      if (dataB.length <= 1) {
-        showToast("At least one section row is required", "error");
-        return;
-      }
-      dataB.splice(idx, 1);
-      persistState();
       renderFormatB();
-      showToast("Division entry removed");
+      showToast("Faculty entry removed");
     }
 
-    // Explicit Add Faculty Button for Format A
     function addFacultyRow() {
       dataA.push({
         sl: dataA.length + 1,
@@ -633,37 +751,262 @@
         phone: "9876543210",
         designation: "Assistant Professor",
         qualification: "Ph.D",
-        exp: "01 Year"
+        exp: "01 Years"
       });
-      persistState();
+      persistData();
       renderFormatA();
-      if (currentView === 'formatB') {
-        switchView('formatA');
-      }
-      showToast("New faculty member added to Format A");
+      renderFormatB();
+      if (currentView === 'formatB') switchView('formatA');
+      showToast("New faculty member added");
     }
 
-    // Explicit Add Division/Subject Button for Format B
-    function addDivisionRow() {
-      const nextDivChar = String.fromCharCode(65 + (dataB.length % 26));
+    // ==========================================
+    // RENDER FORMAT B (Interactive Table + Dropdowns)
+    // ==========================================
+    function renderFormatB() {
+      const tbody = document.getElementById('tbody-formatB');
+      tbody.innerHTML = '';
+
+      // Collect current faculty list from Format A
+      const facultyList = dataA.map(f => f.name.trim()).filter(Boolean);
+
+      dataB.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+
+        const parsed = parseStudentCount(item.count);
+        const subDisplay = parsed.rr > 0 
+          ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>` 
+          : '';
+
+        // Semester selector HTML
+        const semSelectHTML = `
+          <select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5"
+                  onchange="updateRowSem(${index}, this.value)">
+            <option value="1" ${item.sem === '1' ? 'selected' : ''}>1</option>
+            <option value="2" ${item.sem === '2' ? 'selected' : ''}>2</option>
+            <option value="3" ${item.sem === '3' ? 'selected' : ''}>3</option>
+          </select>
+        `;
+
+        // Course Catalog dropdown selector HTML
+        const currentSemCourses = COURSE_CATALOG[item.sem] || COURSE_CATALOG["2"];
+        let courseOptionsHTML = `<option value="">-- Choose Course Preset --</option>`;
+        currentSemCourses.forEach(c => {
+          const isSelected = item.code === c.code ? 'selected' : '';
+          courseOptionsHTML += `<option value="${c.code}" ${isSelected}>${c.label}</option>`;
+        });
+
+        const coursePresetSelectHTML = `
+          <div class="no-print mt-1 course-preset-selector">
+            <select class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 w-full cursor-pointer hover:bg-blue-100"
+                    onchange="applyCoursePresetToRow(${index}, this.value)">
+              ${courseOptionsHTML}
+            </select>
+          </div>
+        `;
+
+        // Faculty In-Charge selector HTML
+        let facultyOptionsHTML = '';
+        facultyList.forEach(fac => {
+          const isSelected = (item.faculty && item.faculty.trim().toLowerCase() === fac.toLowerCase()) ? 'selected' : '';
+          facultyOptionsHTML += `<option value="${escapeHTML(fac)}" ${isSelected}>${escapeHTML(fac)}</option>`;
+        });
+        
+        // If assigned faculty is not in Format A, retain it as custom option
+        const isCustomFaculty = item.faculty && !facultyList.some(f => f.toLowerCase() === item.faculty.trim().toLowerCase());
+        if (isCustomFaculty) {
+          facultyOptionsHTML += `<option value="${escapeHTML(item.faculty)}" selected>${escapeHTML(item.faculty)} (External)</option>`;
+        }
+
+        const facultySelectHTML = `
+          <div class="flex flex-col">
+            <select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full"
+                    onchange="updateFieldB(${index}, 'faculty', this.value)">
+              ${facultyOptionsHTML}
+            </select>
+          </div>
+        `;
+
+        tr.innerHTML = `
+          <td class="text-center font-bold py-2.5 px-2 text-slate-700">${index + 1}</td>
+          <td class="text-center py-2.5 px-2">
+            ${semSelectHTML}
+          </td>
+          <td contenteditable="true" onblur="updateFieldB(${index}, 'div', this.innerText)" class="editable-cell py-2.5 px-2 text-center font-bold text-blue-700" title="Click to edit Division">${escapeHTML(item.div)}</td>
+          <td class="py-2.5 px-3">
+            <div contenteditable="true" onblur="updateFieldB(${index}, 'title', this.innerText)" class="editable-cell font-medium text-slate-900" title="Click to edit Subject Title">${escapeHTML(item.title)}</div>
+            ${coursePresetSelectHTML}
+          </td>
+          <td contenteditable="true" onblur="updateFieldB(${index}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-semibold text-slate-800" title="Click to edit Subject Code">${escapeHTML(item.code)}</td>
+          <td class="py-2.5 px-3">
+            ${facultySelectHTML}
+          </td>
+          <td contenteditable="true" onblur="updateFieldB(${index}, 'count', this.innerText)" class="editable-cell py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40" title="Format: '65' or '65+1'">
+            ${escapeHTML(item.count)} ${subDisplay}
+          </td>
+          <td class="no-print action-col py-2 px-2 text-center">
+            <div class="flex items-center justify-center space-x-1">
+              <button onclick="moveRowB(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
+                <i class="fa-solid fa-arrow-up text-xs"></i>
+              </button>
+              <button onclick="moveRowB(${index}, 1)" ${index === dataB.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
+                <i class="fa-solid fa-arrow-down text-xs"></i>
+              </button>
+              <button onclick="deleteRowB(${index})" title="Delete Division" class="p-1 text-slate-400 hover:text-rose-600">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateFieldB(idx, key, val) {
+      if (dataB[idx]) {
+        dataB[idx][key] = val.trim();
+        persistData();
+        if (key === 'count') {
+          renderFormatB();
+        }
+      }
+    }
+
+    // Change semester on row
+    function updateRowSem(idx, newSem) {
+      if (dataB[idx]) {
+        dataB[idx].sem = newSem;
+        persistData();
+        renderFormatB();
+        showToast(`Row ${idx + 1} updated to Semester ${newSem}`);
+      }
+    }
+
+    // Apply course preset to table row
+    function applyCoursePresetToRow(idx, code) {
+      if (!code || !dataB[idx]) return;
+      const sem = dataB[idx].sem;
+      const catalog = COURSE_CATALOG[sem] || [];
+      const selected = catalog.find(c => c.code === code);
+      if (selected) {
+        dataB[idx].title = selected.title;
+        dataB[idx].code = selected.code;
+        persistData();
+        renderFormatB();
+        showToast(`Applied "${selected.title}"`);
+      }
+    }
+
+    function moveRowB(idx, step) {
+      const target = idx + step;
+      if (target < 0 || target >= dataB.length) return;
+      const temp = dataB[idx];
+      dataB[idx] = dataB[target];
+      dataB[target] = temp;
+      persistData();
+      renderFormatB();
+      showToast(`Division moved ${step < 0 ? 'up' : 'down'}`);
+    }
+
+    function deleteRowB(idx) {
+      if (dataB.length <= 1) {
+        showToast("At least one division entry is required", "error");
+        return;
+      }
+      dataB.splice(idx, 1);
+      persistData();
+      renderFormatB();
+      showToast("Division entry removed");
+    }
+
+    // ==========================================
+    // MODAL ADD ROW LOGIC (With Course Preset Dropdown)
+    // ==========================================
+    function addDivisionRowModal() {
+      const modal = document.getElementById('addModal');
+      const divInput = document.getElementById('modal-div');
+      
+      // Auto-suggest next alphabetical section
+      const nextChar = String.fromCharCode(65 + (dataB.length % 26));
+      divInput.value = nextChar;
+
+      // Populate faculties
+      const modalFacultySelect = document.getElementById('modal-faculty');
+      modalFacultySelect.innerHTML = '';
+      dataA.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.name;
+        opt.innerText = f.name;
+        modalFacultySelect.appendChild(opt);
+      });
+
+      onModalSemChange();
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('addModal').classList.add('hidden');
+    }
+
+    function onModalSemChange() {
+      const sem = document.getElementById('modal-sem').value;
+      const presetSelect = document.getElementById('modal-preset');
+      const catalog = COURSE_CATALOG[sem] || [];
+
+      presetSelect.innerHTML = `<option value="">-- Choose a course syllabus --</option>`;
+      catalog.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.code;
+        opt.innerText = c.label;
+        presetSelect.appendChild(opt);
+      });
+
+      if (catalog.length > 0) {
+        presetSelect.selectedIndex = 1;
+        onModalPresetChange();
+      }
+    }
+
+    function onModalPresetChange() {
+      const sem = document.getElementById('modal-sem').value;
+      const code = document.getElementById('modal-preset').value;
+      const catalog = COURSE_CATALOG[sem] || [];
+      const item = catalog.find(c => c.code === code);
+      if (item) {
+        document.getElementById('modal-title').value = item.title;
+        document.getElementById('modal-code').value = item.code;
+      }
+    }
+
+    function submitModalAdd() {
+      const sem = document.getElementById('modal-sem').value;
+      const div = (document.getElementById('modal-div').value || 'A').toUpperCase().trim();
+      const title = document.getElementById('modal-title').value.trim() || 'Applied Mathematics';
+      const code = document.getElementById('modal-code').value.trim() || '1BMAS201C';
+      const count = document.getElementById('modal-count').value.trim() || '60';
+      const faculty = document.getElementById('modal-faculty').value || (dataA[0] ? dataA[0].name : 'Faculty In-Charge');
+
       dataB.push({
         sl: dataB.length + 1,
-        sem: "2",
-        div: nextDivChar,
-        title: "Calculus And Numerical Methods",
-        code: "1BMAS201C",
-        faculty: dataA[0] ? dataA[0].name : "Faculty In-Charge",
-        count: "60"
+        sem,
+        div,
+        title,
+        code,
+        faculty,
+        count
       });
-      persistState();
+
+      persistData();
       renderFormatB();
-      if (currentView === 'formatA') {
-        switchView('formatB');
-      }
-      showToast("New division added to Format B");
+      closeModal();
+      if (currentView === 'formatA') switchView('formatB');
+      showToast(`Added Division ${div} (${code}) to Format B`);
     }
 
-    // Parse values like "62+7" or "62 + 7" into base and RR
+    // ==========================================
+    // PARSING & ANALYTICS CALCULATION
+    // ==========================================
     function parseStudentCount(str) {
       if (!str) return { base: 0, rr: 0, total: 0 };
       const cleaned = str.toString().trim().replace(/\s+/g, '');
@@ -678,46 +1021,49 @@
       }
     }
 
-    // Update Live Calculation and Analytics Summary
-    function updateAnalytics() {
-      let totalRegular = 0;
-      let totalRR = 0;
+    function updateSummaryMetrics() {
+      let regTotal = 0;
+      let rrTotal = 0;
       let grandTotal = 0;
 
       dataB.forEach(item => {
         const res = parseStudentCount(item.count);
-        totalRegular += res.base;
-        totalRR += res.rr;
+        regTotal += res.base;
+        rrTotal += res.rr;
         grandTotal += res.total;
       });
 
-      const elFacCount = document.getElementById('stat-faculty-count');
-      const elDivCount = document.getElementById('stat-divisions-count');
-      const elRegCount = document.getElementById('stat-regular-count');
-      const elRrCount = document.getElementById('stat-rr-count');
-      const elGrandCount = document.getElementById('stat-grand-count');
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
 
-      if (elFacCount) elFacCount.textContent = dataA.length;
-      if (elDivCount) elDivCount.textContent = dataB.length;
-      if (elRegCount) elRegCount.textContent = totalRegular;
-      if (elRrCount) elRrCount.textContent = totalRR;
-      if (elGrandCount) elGrandCount.textContent = grandTotal;
+      setVal('stat-faculty-count', dataA.length);
+      setVal('stat-divisions-count', dataB.length);
+      setVal('stat-regular-count', regTotal);
+      setVal('stat-rr-count', rrTotal);
+      setVal('stat-grand-count', grandTotal);
 
-      // Update Table Footer Display
-      const footerDisplay = document.getElementById('footer-total-display');
-      if (footerDisplay) {
-        footerDisplay.innerHTML = `<span class="text-blue-700">${totalRegular}</span> (Reg) + <span class="text-indigo-600">${totalRR}</span> (RR) = <span class="text-emerald-700 text-sm font-black underline decoration-2">${grandTotal}</span>`;
+      // Table footer summary
+      const footer = document.getElementById('footer-total-display');
+      if (footer) {
+        footer.innerHTML = `
+          <span class="text-blue-700 font-bold">${regTotal}</span> (Reg) + 
+          <span class="text-indigo-600 font-bold">${rrTotal}</span> (RR) = 
+          <span class="text-emerald-700 text-sm font-black underline decoration-2">${grandTotal}</span>
+        `;
       }
     }
 
-    // Tab switcher
+    // ==========================================
+    // TAB VIEW SWITCHER
+    // ==========================================
     function switchView(view) {
       currentView = view;
       const secA = document.getElementById('section-formatA');
       const secB = document.getElementById('section-formatB');
       const breaks = document.querySelectorAll('.print-page-break');
 
-      // Update button styling
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-white', 'text-blue-700', 'shadow-xs');
         btn.classList.add('text-slate-600');
@@ -738,136 +1084,153 @@
         secB.classList.remove('hidden');
         breaks.forEach(b => b.classList.add('hidden'));
       } else {
-        // all
         secA.classList.remove('hidden');
         secB.classList.remove('hidden');
         breaks.forEach(b => b.classList.remove('hidden'));
       }
     }
 
-    // Reset Confirmation
-    function resetDataConfirmation() {
-      dataA = JSON.parse(JSON.stringify(initialFormatA));
-      dataB = JSON.parse(JSON.stringify(initialFormatB));
-      headerConfig = JSON.parse(JSON.stringify(defaultHeaderConfig));
-      persistState();
-      syncHeaderDisplays();
-      renderFormatA();
-      renderFormatB();
-      showToast("Data restored to original official BEC template");
-    }
-
-    // Export CSV / Excel
-    function exportCurrentViewCSV() {
-      let csvContent = "data:text/csv;charset=utf-8,";
+    // ==========================================
+    // EXPORT TO CSV / EXCEL
+    // ==========================================
+    function exportCSV() {
+      let csv = "data:text/csv;charset=utf-8,";
 
       if (currentView === 'formatA' || currentView === 'all') {
-        csvContent += `"${headerConfig.sangha}"\r\n`;
-        csvContent += `"${headerConfig.college}"\r\n`;
-        csvContent += `"${headerConfig.dept}"\r\n`;
-        csvContent += `"${headerConfig.cie} for AY ${headerConfig.ay} (${headerConfig.semType})"\r\n`;
-        csvContent += "FORMAT A: FACULTY INFORMATION (UG)\r\n";
-        csvContent += "Sl No,Name of the Faculty (Seniority wise),Mobile No,Designation,Qualification,Teaching Experience\r\n";
-        dataA.forEach((r, i) => {
-          csvContent += `"${i+1}","${r.name}","${r.phone}","${r.designation}","${r.qualification}","${r.exp}"\r\n`;
+        csv += `"${headerConfig.sangha}"\r\n`;
+        csv += `"${headerConfig.college}"\r\n`;
+        csv += `"${headerConfig.dept}"\r\n`;
+        csv += `"${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})"\r\n`;
+        csv += `"Format A: Faculty Information (UG)"\r\n`;
+        csv += `"Sl No","Name of the faculty (Seniority wise)","Mobile No","Designation","Qualification","Teaching Experience"\r\n`;
+        dataA.forEach((item, i) => {
+          csv += `"${i+1}","${item.name}","${item.phone}","${item.designation}","${item.qualification}","${item.exp}"\r\n`;
         });
-        csvContent += `\r\n"${headerConfig.sigA_left}","","","","","${headerConfig.sigA_right}"\r\n\r\n`;
+        csv += `\r\n"${headerConfig.sigA_left}","","","","","${headerConfig.sigA_right}"\r\n\r\n`;
       }
 
       if (currentView === 'formatB' || currentView === 'all') {
-        csvContent += `"${headerConfig.sangha}"\r\n`;
-        csvContent += `"${headerConfig.college}"\r\n`;
-        csvContent += `"${headerConfig.dept}"\r\n`;
-        csvContent += `"${headerConfig.cie} for AY ${headerConfig.ay} (${headerConfig.semType})"\r\n`;
-        csvContent += "FORMAT B: SUBJECT WISE STUDENT STRENGTH INFORMATION\r\n";
-        csvContent += "Sl No,Sem,Div,Subjects Title,Subject Code,Name of the Faculty In-Charge,Regular Students,RR Students,Total Students\r\n";
-        
-        let sumReg = 0, sumRR = 0, sumTotal = 0;
-        dataB.forEach((r, i) => {
-          const parsed = parseStudentCount(r.count);
-          sumReg += parsed.base;
-          sumRR += parsed.rr;
-          sumTotal += parsed.total;
-          csvContent += `"${i+1}","${r.sem}","${r.div}","${r.title}","${r.code}","${r.faculty}","${parsed.base}","${parsed.rr}","${parsed.total}"\r\n`;
+        csv += `"${headerConfig.sangha}"\r\n`;
+        csv += `"${headerConfig.college}"\r\n`;
+        csv += `"${headerConfig.dept}"\r\n`;
+        csv += `"${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})"\r\n`;
+        csv += `"Format B: Subject wise Student Strength Information"\r\n`;
+        csv += `"Sl No","Sem","Div","Subjects Title","Subject Code","Name of the faculty in-charge","Regular Students","RR Students","Total Students"\r\n`;
+
+        let reg = 0, rr = 0, total = 0;
+        dataB.forEach((item, i) => {
+          const p = parseStudentCount(item.count);
+          reg += p.base;
+          rr += p.rr;
+          total += p.total;
+          csv += `"${i+1}","${item.sem}","${item.div}","${item.title}","${item.code}","${item.faculty}","${p.base}","${p.rr}","${p.total}"\r\n`;
         });
-        csvContent += `"","","","","","Total:","${sumReg}","${sumRR}","${sumTotal}"\r\n`;
-        csvContent += `\r\n"${headerConfig.sigB_left}","","","","","${headerConfig.sigB_right}"\r\n`;
+        csv += `"","","","","","Total:","${reg}","${rr}","${total}"\r\n`;
+        csv += `\r\n"${headerConfig.sigB_left}","","","","","${headerConfig.sigB_right}"\r\n`;
       }
 
-      const encodedUri = encodeURI(csvContent);
+      const encodedUri = encodeURI(csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `BEC_Maths_CIE_${currentView}.csv`);
+      link.setAttribute("download", `BEC_Bagalkote_CIE_${currentView}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast("CSV / Excel spreadsheet downloaded");
+      showToast("CSV file successfully generated");
     }
 
-    // Copy formatted table to clipboard formatted for MS Word & Docs
-    function copyTableText() {
-      let output = "";
+    // ==========================================
+    // COPY TO CLIPBOARD (Word & Sheets Friendly)
+    // ==========================================
+    function copyToClipboardFormatted() {
+      let tsv = "";
+
       if (currentView === 'formatA' || currentView === 'all') {
-        output += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
-        output += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFORMAT A: FACULTY INFORMATION (UG)\n\n`;
-        output += "Sl No\tName of the Faculty\tMobile No\tDesignation\tQualification\tTeaching Experience\n";
-        dataA.forEach((r, i) => {
-          output += `${i+1}\t${r.name}\t${r.phone}\t${r.designation}\t${r.qualification}\t${r.exp}\n`;
+        tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
+        tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat A: Faculty Information (UG)\n\n`;
+        tsv += "Sl No\tName of the faculty\tMobile No\tDesignation\tQualification\tTeaching Experience\n";
+        dataA.forEach((item, i) => {
+          tsv += `${i+1}\t${item.name}\t${item.phone}\t${item.designation}\t${item.qualification}\t${item.exp}\n`;
         });
-        output += `\n${headerConfig.sigA_left}\t\t\t\t\t${headerConfig.sigA_right}\n\n`;
-      }
-      if (currentView === 'formatB' || currentView === 'all') {
-        output += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
-        output += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFORMAT B: SUBJECT WISE STUDENT STRENGTH INFORMATION\n\n`;
-        output += "Sl No\tSem\tDiv\tSubjects Title\tSubject Code\tFaculty In-Charge\tStudents (Reg + RR)\n";
-        dataB.forEach((r, i) => {
-          output += `${i+1}\t${r.sem}\t${r.div}\t${r.title}\t${r.code}\t${r.faculty}\t${r.count}\n`;
-        });
-        output += `\n${headerConfig.sigB_left}\t\t\t\t\t${headerConfig.sigB_right}\n`;
+        tsv += `\n${headerConfig.sigA_left}\t\t\t\t\t${headerConfig.sigA_right}\n\n`;
       }
 
-      // Clipboard fallback
-      const tempTextArea = document.createElement("textarea");
-      tempTextArea.value = output;
-      document.body.appendChild(tempTextArea);
-      tempTextArea.select();
+      if (currentView === 'formatB' || currentView === 'all') {
+        tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
+        tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat B: Subject wise Student Strength Information\n\n`;
+        tsv += "Sl No\tSem\tDiv\tSubjects Title\tSubject code\tName of the faculty in-charge\tNumber of Re-registered Students\n";
+        dataB.forEach((item, i) => {
+          tsv += `${i+1}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`;
+        });
+        tsv += `\n${headerConfig.sigB_left}\t\t\t\t\t${headerConfig.sigB_right}\n`;
+      }
+
+      const ta = document.createElement("textarea");
+      ta.value = tsv;
+      document.body.appendChild(ta);
+      ta.select();
       try {
         document.execCommand('copy');
-        showToast("Tab-separated data copied! Ready to paste into Word or Sheets.");
-      } catch (err) {
-        showToast("Failed to copy", "error");
+        showToast("Tab-delimited table copied! Paste directly into Microsoft Word or Excel.");
+      } catch (e) {
+        showToast("Clipboard copy failed", "error");
       }
-      document.body.removeChild(tempTextArea);
+      document.body.removeChild(ta);
     }
 
-    // Toast notification display
-    function showToast(message, type = "success") {
+    // ==========================================
+    // RESET TO DEFAULTS
+    // ==========================================
+    function resetDefaultsModal() {
+      dataA = JSON.parse(JSON.stringify(initialFormatA));
+      dataB = JSON.parse(JSON.stringify(initialFormatB));
+      headerConfig = JSON.parse(JSON.stringify(defaultHeaderConfig));
+      persistData();
+      syncHeaders();
+      renderFormatA();
+      renderFormatB();
+      showToast("Restored original BEC Bagalkote template data");
+    }
+
+    // Helper: Escape HTML
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Toast function
+    function showToast(msg, type = "success") {
       const toast = document.getElementById('toast');
-      const msg = document.getElementById('toast-message');
+      const text = document.getElementById('toast-message');
       const icon = document.getElementById('toast-icon');
 
-      msg.textContent = message;
-      if (type === 'error') {
-        icon.className = "fa-solid fa-circle-exclamation text-rose-400";
+      text.textContent = msg;
+      if (type === "error") {
+        icon.className = "fa-solid fa-circle-exclamation text-rose-400 text-base";
       } else {
-        icon.className = "fa-solid fa-circle-check text-emerald-400";
+        icon.className = "fa-solid fa-circle-check text-emerald-400 text-base";
       }
 
-      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.remove('translate-y-24', 'opacity-0');
       toast.classList.add('translate-y-0', 'opacity-100');
 
       setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2600);
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2500);
     }
 
-    // Initialize application on load
+    // Initialize
     window.onload = function() {
-      syncHeaderDisplays();
+      syncHeaders();
       renderFormatA();
       renderFormatB();
-      updateAnalytics();
+      updateSummaryMetrics();
     };
   </script>
 </body>
