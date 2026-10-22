@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>B.V.V Sangha’s BEC Bagalkote — CIE Formats A &amp; B Generator</title>
+  <title>B.V.V Sangha’s BEC Bagalkote — CIE Formats Generator</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -24,7 +24,7 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Print Specific Styling */
+    /* Print Specific Styling — A4 LANDSCAPE */
     @media print {
       body {
         background: #ffffff !important;
@@ -36,8 +36,10 @@
       .no-print {
         display: none !important;
       }
-      /* Only insert page break between A and B when BOTH are shown */
-      body.print-both #section-formatB {
+      /* Insert page break between formats when ALL are shown */
+      body.print-all #section-formatB,
+      body.print-all #section-formatC,
+      body.print-all #section-formatD {
         page-break-before: always;
         break-before: page;
       }
@@ -49,21 +51,26 @@
         width: 100% !important;
         max-width: 100% !important;
       }
+      /* Tables stretch edge-to-edge and justify their columns */
       .print-table {
         border-collapse: collapse !important;
         width: 100% !important;
+        table-layout: auto !important;
       }
       .print-table th, .print-table td {
         border: 1px solid #111111 !important;
-        padding: 4px 6px !important;
+        padding: 5px 7px !important;
         color: #000000 !important;
         background: transparent !important;
+        vertical-align: middle !important;
+        word-break: break-word !important;
       }
       .print-table th {
         background-color: #f1f5f9 !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
         font-weight: 700 !important;
+        text-align: center !important;
       }
       .action-col, .row-controls, .course-preset-selector {
         display: none !important;
@@ -81,14 +88,16 @@
         font-size: inherit !important;
         font-weight: inherit !important;
         color: inherit !important;
+        text-align: inherit !important;
+        text-align-last: inherit !important;
       }
       [contenteditable="true"] {
         outline: none !important;
         border-bottom: none !important;
       }
       @page {
-        size: A4 portrait;
-        margin: 1.2cm 1cm 1.2cm 1cm;
+        size: A4 landscape;
+        margin: 1cm 1.1cm 1cm 1.1cm;
       }
     }
 
@@ -155,13 +164,13 @@
             <h1 class="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-100">B.V.V Sangha’s BEC Bagalkote</h1>
             <span class="text-[10px] bg-blue-900 text-blue-200 border border-blue-700 px-1.5 py-0.5 rounded font-mono">MATH DEPT</span>
           </div>
-          <p class="text-xs text-slate-400">CIE – I Document Generator (Formats A &amp; B with Catalog Dropdown)</p>
+          <p class="text-xs text-slate-400">CIE – I Document Generator (All Formats)</p>
         </div>
       </div>
 
       <!-- Quick Action Buttons -->
       <div class="flex items-center space-x-2">
-        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
+        <button onclick="window.print()" title="Prints on A4 Landscape" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
           <i class="fa-solid fa-print"></i>
           <span>Print / PDF</span>
         </button>
@@ -182,64 +191,46 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         
-        <!-- Tab Selector: All, Format A, Format B -->
-        <div class="inline-flex rounded-lg bg-slate-100 p-1 border border-slate-200 self-start">
+        <!-- Tab Selector -->
+        <div class="inline-flex flex-wrap rounded-lg bg-slate-100 p-1 border border-slate-200 self-start gap-1">
           <button id="tab-all" onclick="switchView('all')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-blue-700 shadow-xs">
-            <i class="fa-solid fa-layer-group mr-1.5"></i> Both Formats
+            <i class="fa-solid fa-layer-group mr-1.5"></i> All Formats
           </button>
           <button id="tab-formatA" onclick="switchView('formatA')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
-            <i class="fa-solid fa-chalkboard-user mr-1.5"></i> Format A (Faculty)
+            Format A
           </button>
           <button id="tab-formatB" onclick="switchView('formatB')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
-            <i class="fa-solid fa-table-list mr-1.5"></i> Format B (Subjects &amp; Strength)
+            Format B
+          </button>
+          <button id="tab-formatC" onclick="switchView('formatC')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+            Format C
+          </button>
+          <button id="tab-formatD" onclick="switchView('formatD')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+            Format D
           </button>
         </div>
 
         <!-- Add Actions and Preset Quick-Loader -->
         <div class="flex items-center flex-wrap gap-2 text-xs">
           <button onclick="addFacultyRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-semibold flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-user-plus text-xs"></i> + Add Faculty (Format A)
+            <i class="fa-solid fa-user-plus text-xs"></i> + Add Faculty (A)
           </button>
           
           <button onclick="addDivisionRowModal()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-semibold flex items-center gap-1.5 shadow-sm transition">
-            <i class="fa-solid fa-plus text-xs"></i> + Add Subject / Division (Format B)
+            <i class="fa-solid fa-plus text-xs"></i> + Add Subject (B)
+          </button>
+
+          <button onclick="addRowC()" class="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 font-semibold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-plus text-xs"></i> Add Row (C)
+          </button>
+
+          <button onclick="addRowD()" class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-plus text-xs"></i> Add Row (D)
           </button>
 
           <button onclick="resetDefaultsModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 font-medium flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-rotate-left text-xs"></i> Reset Default Data
+            <i class="fa-solid fa-rotate-left text-xs"></i> Reset
           </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Realtime Analytics Bar (No Print) -->
-  <section class="no-print bg-slate-50 border-b border-slate-200 py-3">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
-        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Faculty Registered</span>
-          <span id="stat-faculty-count" class="text-xl font-bold text-slate-800">9</span>
-          <span class="text-[11px] text-slate-400 ml-1">in Format A</span>
-        </div>
-        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Total Divisions</span>
-          <span id="stat-divisions-count" class="text-xl font-bold text-blue-600">15</span>
-          <span class="text-[11px] text-slate-400 ml-1">sections</span>
-        </div>
-        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">Regular Students</span>
-          <span id="stat-regular-count" class="text-xl font-bold text-emerald-600">908</span>
-          <span class="text-[11px] text-slate-400 ml-1">enrolled</span>
-        </div>
-        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs">
-          <span class="text-[11px] text-slate-500 font-semibold uppercase tracking-wider block">RR / Grand Total</span>
-          <span class="text-xl font-bold text-slate-800">
-            <span id="stat-rr-count" class="text-indigo-600">40</span> 
-            <span class="text-xs text-slate-400 font-normal">RR</span> 
-            <span class="text-slate-300">/</span> 
-            <span id="stat-grand-count" class="text-blue-700">948</span>
-          </span>
         </div>
       </div>
     </div>
@@ -270,13 +261,10 @@
             <h1 class="text-sm sm:text-base font-black tracking-wide uppercase text-slate-900 underline decoration-1 underline-offset-4">
               Format A: Faculty Information (UG)
             </h1>
-            <button onclick="addFacultyRow()" class="no-print text-xs bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100 px-2.5 py-1 rounded font-semibold flex items-center gap-1">
-              <i class="fa-solid fa-plus text-[10px]"></i> Add Faculty
-            </button>
           </div>
         </div>
 
-        <!-- Faculty Table -->
+        <!-- Faculty Table (Qualification column removed) -->
         <div class="overflow-x-auto">
           <table class="w-full text-xs sm:text-sm text-left formal-table print-table">
             <thead>
@@ -285,8 +273,7 @@
                 <th class="py-2.5 px-3">Name of the faculty<br><span class="text-[10px] sm:text-xs font-normal text-slate-500">(Seniority wise)</span></th>
                 <th class="w-32 py-2.5 px-3">Mobile No</th>
                 <th class="py-2.5 px-3">Designation</th>
-                <th class="w-24 py-2.5 px-2">Qualification</th>
-                <th class="w-32 py-2.5 px-2">Teaching Experience</th>
+                <th class="w-36 py-2.5 px-2">Teaching Experience</th>
                 <th class="w-24 py-2 px-2 no-print action-col text-center">Row Actions</th>
               </tr>
             </thead>
@@ -309,15 +296,10 @@
         </div>
       </section>
 
-      <!-- Screen-only visual divider (not printed; page break handled by CSS) -->
-      <div class="no-print my-10 border-t-2 border-dashed border-slate-300 relative flex items-center justify-center">
-        <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider -top-3">Section Break</span>
-      </div>
-
       <!-- ======================================================== -->
       <!-- SECTION: FORMAT B (Subject wise Student Strength)        -->
       <!-- ======================================================== -->
-      <section id="section-formatB" class="pt-2">
+      <section id="section-formatB" class="pt-2 mb-12">
         <!-- Institutional Header Format B -->
         <div class="text-center pb-4 border-b-2 border-slate-900 mb-6">
           <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha-b">B.V.V Sangha’s</h4>
@@ -339,16 +321,10 @@
                 <span contenteditable="true" onblur="saveHeaderConfig('formatB_sub', this.innerText)" class="editable-header-field" id="header-formatB_sub">II semester (Regular)+RR</span>
               </p>
             </div>
-            
-            <div class="no-print flex items-center gap-2">
-              <button onclick="addDivisionRowModal()" class="text-xs bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 shadow-sm">
-                <i class="fa-solid fa-plus text-[10px]"></i> + Add Division Row
-              </button>
-            </div>
           </div>
         </div>
 
-        <!-- Format B Interactive Table with Dropdowns -->
+        <!-- Format B Interactive Table -->
         <div class="overflow-x-auto">
           <table class="w-full text-xs sm:text-sm text-left formal-table print-table" id="table-formatB">
             <thead>
@@ -372,19 +348,8 @@
             <tbody id="tbody-formatB" class="divide-y divide-slate-200">
               <!-- Dynamically populated -->
             </tbody>
-            <tfoot>
-              <tr class="font-bold bg-slate-100 border-t-2 border-slate-900">
-                <td colspan="6" class="py-2.5 px-3 text-right">Total Students:</td>
-                <td class="py-2.5 px-3 text-center" id="footer-total-display">Calculating...</td>
-                <td class="no-print action-col"></td>
-              </tr>
-            </tfoot>
+            <!-- Total Students Row removed as requested -->
           </table>
-        </div>
-
-        <!-- Footnote info -->
-        <div class="mt-3 text-[11px] text-slate-500 italic print:text-slate-800">
-          * Dropdowns for Semester, Subject Title, and Faculty in-charge are interactive for quick document population and print seamlessly as plain text. Format counts like "65+1" calculate 65 regular + 1 RR student.
         </div>
 
         <!-- Institutional Signatures Format B -->
@@ -396,6 +361,120 @@
           <div class="text-center">
             <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
             <span contenteditable="true" onblur="saveHeaderConfig('sigB_right', this.innerText)" class="editable-header-field" id="header-sigB_right">HOD</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SECTION: FORMAT C (Faculty having Blood Relationship)    -->
+      <!-- ======================================================== -->
+      <section id="section-formatC" class="pt-2 mb-12">
+        <div class="text-center pb-4 border-b-2 border-slate-900 mb-6">
+          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha-c">B.V.V Sangha’s</h4>
+          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-title text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college-c">BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE</h2>
+          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept-c">DEPARTMENT OF MATHEMATICS</h3>
+          
+          <div class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded border border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
+            <span contenteditable="true" onblur="saveHeaderConfig('cie', this.innerText)" class="editable-header-field" id="header-cie-c">CIE – I</span> for the Academic Year 
+            <span contenteditable="true" onblur="saveHeaderConfig('ay', this.innerText)" class="editable-header-field" id="header-ay-c">2025 – 26</span> 
+            (<span contenteditable="true" onblur="saveHeaderConfig('semType', this.innerText)" class="editable-header-field" id="header-semType-c">Even Semester</span>)
+          </div>
+
+          <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h1 class="text-sm sm:text-base font-black tracking-wide uppercase text-slate-900 underline decoration-1 underline-offset-4">
+              Format C: Faculty Information having Blood Relationship with Students
+            </h1>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs sm:text-sm text-left formal-table print-table" id="table-formatC">
+            <thead>
+              <tr class="text-center align-middle bg-slate-50">
+                <th rowspan="2" class="w-12 py-2 px-2 border-b border-slate-300">Sl.</th>
+                <th rowspan="2" class="py-2 px-3 border-b border-slate-300">Faculty Name</th>
+                <th rowspan="2" class="py-2 px-3 border-b border-slate-300">Dept.</th>
+                <th rowspan="2" class="w-20 py-2 px-2 border-b border-slate-300">Sem.</th>
+                <th colspan="3" class="py-2 px-3 border-b border-l border-slate-300">Student Information</th>
+                <th rowspan="2" class="w-36 py-2 px-3 border-b border-slate-300">Relationship</th>
+                <th rowspan="2" class="w-24 py-2 px-2 no-print action-col text-center border-b border-slate-300">Actions</th>
+              </tr>
+              <tr class="text-center bg-slate-50">
+                <th class="py-2 px-3 border-l border-slate-300">Branch</th>
+                <th class="py-2 px-3 border-l border-slate-300">Division if any</th>
+                <th class="py-2 px-3 border-l border-slate-300">Roll No</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-formatC" class="divide-y divide-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Signatures Format C -->
+        <div class="mt-14 pt-4 flex justify-between items-end text-xs sm:text-sm font-bold text-slate-900">
+          <div class="text-center">
+            <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
+            <span contenteditable="true" onblur="saveHeaderConfig('sigC_left', this.innerText)" class="editable-header-field" id="header-sigC_left">CIE Coordinator</span>
+          </div>
+          <div class="text-center">
+            <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
+            <span contenteditable="true" onblur="saveHeaderConfig('sigC_right', this.innerText)" class="editable-header-field" id="header-sigC_right">HOD</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SECTION: FORMAT D (Physically Handicapped Students)      -->
+      <!-- ======================================================== -->
+      <section id="section-formatD" class="pt-2">
+        <div class="text-center pb-4 border-b-2 border-slate-900 mb-6">
+          <h4 contenteditable="true" onblur="saveHeaderConfig('sangha', this.innerText)" class="editable-header-field text-xs sm:text-sm font-semibold tracking-wider text-slate-700 uppercase" id="header-sangha-d">B.V.V Sangha’s</h4>
+          <h2 contenteditable="true" onblur="saveHeaderConfig('college', this.innerText)" class="editable-header-field block serif-title text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight" id="header-college-d">BASAVESHWAR ENGINEERING COLLEGE, BAGALKOTE</h2>
+          <h3 contenteditable="true" onblur="saveHeaderConfig('dept', this.innerText)" class="editable-header-field block text-xs sm:text-base font-bold text-slate-800 uppercase mt-0.5" id="header-dept-d">DEPARTMENT OF MATHEMATICS</h3>
+          
+          <div class="inline-block mt-2 px-3 py-1 bg-slate-100 rounded border border-slate-300 text-xs sm:text-sm font-semibold text-slate-800">
+            <span contenteditable="true" onblur="saveHeaderConfig('cie', this.innerText)" class="editable-header-field" id="header-cie-d">CIE – I</span> for the Academic Year 
+            <span contenteditable="true" onblur="saveHeaderConfig('ay', this.innerText)" class="editable-header-field" id="header-ay-d">2025 – 26</span> 
+            (<span contenteditable="true" onblur="saveHeaderConfig('semType', this.innerText)" class="editable-header-field" id="header-semType-d">Even Semester</span>)
+          </div>
+
+          <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h1 class="text-sm sm:text-base font-black tracking-wide uppercase text-slate-900 underline decoration-1 underline-offset-4">
+              Format D: Physically Handicapped Students Information
+            </h1>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs sm:text-sm text-left formal-table print-table" id="table-formatD">
+            <thead>
+              <tr class="text-center align-middle">
+                <th class="w-12 py-2.5 px-2">Sl.</th>
+                <th class="py-2.5 px-3">Name of the Student</th>
+                <th class="w-36 py-2.5 px-3">USN</th>
+                <th class="w-20 py-2.5 px-2">Sem.</th>
+                <th class="w-28 py-2.5 px-3">Branch</th>
+                <th class="w-32 py-2.5 px-3">Division if any</th>
+                <th class="w-24 py-2.5 px-2">Roll No</th>
+                <th class="w-24 py-2 px-2 no-print action-col text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-formatD" class="divide-y divide-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Signatures Format D -->
+        <div class="mt-14 pt-4 flex justify-between items-end text-xs sm:text-sm font-bold text-slate-900">
+          <div class="text-center">
+            <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
+            <span contenteditable="true" onblur="saveHeaderConfig('sigD_left', this.innerText)" class="editable-header-field" id="header-sigD_left">CIE Coordinator</span>
+          </div>
+          <div class="text-center">
+            <div class="w-44 border-b border-dashed border-slate-400 mb-1"></div>
+            <span contenteditable="true" onblur="saveHeaderConfig('sigD_right', this.innerText)" class="editable-header-field" id="header-sigD_right">HOD</span>
           </div>
         </div>
       </section>
@@ -523,15 +602,15 @@
       ay: "2025 – 26",
       semType: "Even Semester",
       formatB_sub: "II semester (Regular)+RR",
-      sigA_left: "CIE Coordinator",
-      sigA_right: "HOD",
-      sigB_left: "CIE Coordinator",
-      sigB_right: "HOD"
+      sigA_left: "CIE Coordinator", sigA_right: "HOD",
+      sigB_left: "CIE Coordinator", sigB_right: "HOD",
+      sigC_left: "CIE Coordinator", sigC_right: "HOD",
+      sigD_left: "CIE Coordinator", sigD_right: "HOD"
     };
 
     const headerConfig = (() => {
       try {
-        const stored = JSON.parse(localStorage.getItem('bec_cie_headerConfig_v3'));
+        const stored = JSON.parse(localStorage.getItem('bec_cie_headerConfig_v5'));
         return stored ? { ...defaultHeaderConfig, ...stored } : { ...defaultHeaderConfig };
       } catch (e) {
         return { ...defaultHeaderConfig };
@@ -540,18 +619,19 @@
 
     // Initial Data Format A (Faculty)
     const initialFormatA = [
-      { sl: 1, name: "Dr. S V Gurushantanavar", phone: "8317492301", designation: "Associate Professor and HOD", qualification: "Ph.D", exp: "29 Years" },
-      { sl: 2, name: "Dr.V M Shettar", phone: "9480079044", designation: "Associate Professor", qualification: "Ph.D", exp: "31 Years" },
-      { sl: 3, name: "Dr. M M Biradar", phone: "9035246580", designation: "Associate Professor", qualification: "Ph.D", exp: "27 Years" },
-      { sl: 4, name: "Dr. K Ram Prasad", phone: "6362542536", designation: "Associate Professor", qualification: "Ph.D", exp: "20 Years" },
-      { sl: 5, name: "Dr. A H Agadi", phone: "9886088204", designation: "Assistant Professor (Sr.Scale)", qualification: "Ph.D", exp: "29 Years" },
-      { sl: 6, name: "Dr. Ishwar Maharudrappa", phone: "9916201677", designation: "Assistant Professor", qualification: "Ph.D", exp: "22 Years" },
-      { sl: 7, name: "Smt.V M Pudakalkatti", phone: "9916748927", designation: "Assistant Professor", qualification: "M.Sc.", exp: "27 Years" },
-      { sl: 8, name: "Dr Pradeep Hiremath", phone: "7349400222", designation: "Assistant Professor", qualification: "Ph.D", exp: "05 Years" },
-      { sl: 9, name: "Dr Abhilash Nandeppanavar", phone: "8951732203", designation: "Assistant Professor", qualification: "Ph.D", exp: "02 Years" }
+      { sl: 1, name: "Dr. S V Gurushantanavar", phone: "8317492301", designation: "Associate Professor and HOD", exp: "29 Years" },
+      { sl: 2, name: "Dr.V M Shettar", phone: "9480079044", designation: "Associate Professor", exp: "31 Years" },
+      { sl: 3, name: "Dr. M M Biradar", phone: "9035246580", designation: "Associate Professor", exp: "27 Years" },
+      { sl: 4, name: "Dr. K Ram Prasad", phone: "6362542536", designation: "Associate Professor", exp: "20 Years" },
+      { sl: 5, name: "Dr. A H Agadi", phone: "9886088204", designation: "Assistant Professor (Sr.Scale)", exp: "29 Years" },
+      { sl: 6, name: "Dr. Ishwar Maharudrappa", phone: "9916201677", designation: "Assistant Professor", exp: "22 Years" },
+      { sl: 7, name: "Smt.V M Pudakalkatti", phone: "9916748927", designation: "Assistant Professor", exp: "27 Years" },
+      { sl: 8, name: "Dr Pradeep Hiremath", phone: "7349400222", designation: "Assistant Professor", exp: "05 Years" },
+      { sl: 9, name: "Dr Abhilash Nandeppanavar", phone: "8951732203", designation: "Assistant Professor", exp: "02 Years" },
+      { sl: 10, name: "Dr S S Benchalli", phone: "9448000000", designation: "Professor", exp: "25 Years" } // Added
     ];
 
-    // Initial Data Format B (Subject-wise Student Strength)
+    // Initial Data Format B
     const initialFormatB = [
       { sl: 1, sem: "2", div: "A", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr S V Gurushantanavar", count: "63" },
       { sl: 2, sem: "2", div: "B", title: "Differential Equations And Numerical Methods For CSE Stream", code: "1BMAS201C", faculty: "Dr S V Gurushantanavar", count: "65+1" },
@@ -570,10 +650,22 @@
       { sl: 15, sem: "2", div: "O", title: "Multivariable Calculus And Numerical Methods For ME Stream.", code: "1BMAM201C", faculty: "Dr Abhilash Nandeppanavar", count: "55+10" }
     ];
 
+    // Initial Data Format C
+    const initialFormatC = [
+      { sl: 1, name: "Dr. S V Gurushantanavar", dept: "Maths", sem: "2", branch: "CSE", div: "A", roll: "01", relationship: "Father" }
+    ];
+
+    // Initial Data Format D
+    const initialFormatD = [
+      { sl: 1, name: "Student Name", usn: "1BM22CS001", sem: "2", branch: "CSE", div: "A", roll: "01" }
+    ];
+
     // State Variables
     let currentView = 'all';
-    let dataA = loadFromStorage('bec_cie_formatA_v3', initialFormatA);
-    let dataB = loadFromStorage('bec_cie_formatB_v3', initialFormatB);
+    let dataA = loadFromStorage('bec_cie_formatA_v5', initialFormatA);
+    let dataB = loadFromStorage('bec_cie_formatB_v5', initialFormatB);
+    let dataC = loadFromStorage('bec_cie_formatC_v5', initialFormatC);
+    let dataD = loadFromStorage('bec_cie_formatD_v5', initialFormatD);
 
     function loadFromStorage(key, fallback) {
       try {
@@ -587,13 +679,12 @@
     // Persist to LocalStorage
     function persistData() {
       try {
-        localStorage.setItem('bec_cie_formatA_v3', JSON.stringify(dataA));
-        localStorage.setItem('bec_cie_formatB_v3', JSON.stringify(dataB));
-        localStorage.setItem('bec_cie_headerConfig_v3', JSON.stringify(headerConfig));
-      } catch (e) {
-        // localStorage may be unavailable (private mode / quota) — silently ignore
-      }
-      updateSummaryMetrics();
+        localStorage.setItem('bec_cie_formatA_v5', JSON.stringify(dataA));
+        localStorage.setItem('bec_cie_formatB_v5', JSON.stringify(dataB));
+        localStorage.setItem('bec_cie_formatC_v5', JSON.stringify(dataC));
+        localStorage.setItem('bec_cie_formatD_v5', JSON.stringify(dataD));
+        localStorage.setItem('bec_cie_headerConfig_v5', JSON.stringify(headerConfig));
+      } catch (e) { }
     }
 
     // Save header edits
@@ -609,27 +700,25 @@
         if (el) el.innerText = val;
       };
 
-      setIfExists('header-sangha', headerConfig.sangha);
-      setIfExists('header-sangha-b', headerConfig.sangha);
-      setIfExists('header-college', headerConfig.college);
-      setIfExists('header-college-b', headerConfig.college);
-      setIfExists('header-dept', headerConfig.dept);
-      setIfExists('header-dept-b', headerConfig.dept);
-      setIfExists('header-cie', headerConfig.cie);
-      setIfExists('header-cie-b', headerConfig.cie);
-      setIfExists('header-ay', headerConfig.ay);
-      setIfExists('header-ay-b', headerConfig.ay);
-      setIfExists('header-semType', headerConfig.semType);
-      setIfExists('header-semType-b', headerConfig.semType);
+      ['', '-b', '-c', '-d'].forEach(suffix => {
+        setIfExists('header-sangha' + suffix, headerConfig.sangha);
+        setIfExists('header-college' + suffix, headerConfig.college);
+        setIfExists('header-dept' + suffix, headerConfig.dept);
+        setIfExists('header-cie' + suffix, headerConfig.cie);
+        setIfExists('header-ay' + suffix, headerConfig.ay);
+        setIfExists('header-semType' + suffix, headerConfig.semType);
+      });
+
       setIfExists('header-formatB_sub', headerConfig.formatB_sub);
-      setIfExists('header-sigA_left', headerConfig.sigA_left);
-      setIfExists('header-sigA_right', headerConfig.sigA_right);
-      setIfExists('header-sigB_left', headerConfig.sigB_left);
-      setIfExists('header-sigB_right', headerConfig.sigB_right);
+      
+      ['A', 'B', 'C', 'D'].forEach(l => {
+        setIfExists('header-sig' + l + '_left', headerConfig['sig' + l + '_left']);
+        setIfExists('header-sig' + l + '_right', headerConfig['sig' + l + '_right']);
+      });
     }
 
     // ==========================================
-    // RENDER FORMAT A (Faculty Information)
+    // RENDER FORMAT A
     // ==========================================
     function renderFormatA() {
       const tbody = document.getElementById('tbody-formatA');
@@ -643,14 +732,13 @@
           <td contenteditable="true" onblur="updateFieldA(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900" title="Click to edit name">${escapeHTML(item.name)}</td>
           <td contenteditable="true" onblur="updateFieldA(${index}, 'phone', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono text-slate-700" title="Click to edit phone">${escapeHTML(item.phone)}</td>
           <td contenteditable="true" onblur="updateFieldA(${index}, 'designation', this.innerText)" class="editable-cell py-2 px-3 text-slate-800" title="Click to edit designation">${escapeHTML(item.designation)}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'qualification', this.innerText)" class="editable-cell py-2 px-2 text-center font-medium" title="Click to edit qualification">${escapeHTML(item.qualification)}</td>
           <td contenteditable="true" onblur="updateFieldA(${index}, 'exp', this.innerText)" class="editable-cell py-2 px-2 text-center" title="Click to edit experience">${escapeHTML(item.exp)}</td>
           <td class="no-print action-col py-2 px-2 text-center">
             <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowA(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up in Seniority" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
+              <button onclick="moveRowA(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
                 <i class="fa-solid fa-arrow-up text-xs"></i>
               </button>
-              <button onclick="moveRowA(${index}, 1)" ${index === dataA.length - 1 ? 'disabled' : ''} title="Move Down in Seniority" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
+              <button onclick="moveRowA(${index}, 1)" ${index === dataA.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
                 <i class="fa-solid fa-arrow-down text-xs"></i>
               </button>
               <button onclick="deleteRowA(${index})" title="Delete Faculty" class="p-1 text-slate-400 hover:text-rose-600">
@@ -665,7 +753,6 @@
 
     function updateFieldA(index, key, val) {
       if (!dataA[index]) return;
-
       const oldName = dataA[index].name;
       const newVal = (val || '').toString().trim();
 
@@ -688,9 +775,7 @@
         });
         persistData();
         renderFormatB();
-        showToast(updated > 0
-          ? `Faculty renamed — ${updated} Format B row(s) synced`
-          : "Faculty name updated");
+        showToast(updated > 0 ? `Faculty renamed — ${updated} Format B row(s) synced` : "Faculty name updated");
       } else {
         persistData();
       }
@@ -699,75 +784,45 @@
     function moveRowA(idx, step) {
       const target = idx + step;
       if (target < 0 || target >= dataA.length) return;
-      const temp = dataA[idx];
-      dataA[idx] = dataA[target];
-      dataA[target] = temp;
-      persistData();
-      renderFormatA();
-      renderFormatB();
-      showToast(`Faculty row moved ${step < 0 ? 'up' : 'down'}`);
+      const temp = dataA[idx]; dataA[idx] = dataA[target]; dataA[target] = temp;
+      persistData(); renderFormatA(); renderFormatB();
     }
 
     function deleteRowA(idx) {
-      if (dataA.length <= 1) {
-        showToast("At least one faculty member is required", "error");
-        return;
-      }
+      if (dataA.length <= 1) return showToast("At least one faculty member is required", "error");
       if (!confirm(`Delete faculty "${dataA[idx].name}"?`)) return;
       dataA.splice(idx, 1);
-      persistData();
-      renderFormatA();
-      renderFormatB();
+      persistData(); renderFormatA(); renderFormatB();
       showToast("Faculty entry removed");
     }
 
     function addFacultyRow() {
-      dataA.push({
-        sl: dataA.length + 1,
-        name: "New Faculty Member",
-        phone: "9876543210",
-        designation: "Assistant Professor",
-        qualification: "Ph.D",
-        exp: "01 Years"
-      });
-      persistData();
-      renderFormatA();
-      renderFormatB();
-      // Only switch views if Format A is currently hidden
-      if (currentView === 'formatB') switchView('formatA');
+      dataA.push({ sl: dataA.length + 1, name: "New Faculty Member", phone: "9876543210", designation: "Assistant Professor", exp: "01 Years" });
+      persistData(); renderFormatA(); renderFormatB();
+      if (currentView === 'formatB' || currentView === 'formatC' || currentView === 'formatD') switchView('formatA');
       showToast("New faculty member added");
     }
 
     // ==========================================
-    // RENDER FORMAT B (Interactive Table + Dropdowns)
+    // RENDER FORMAT B
     // ==========================================
     function renderFormatB() {
       const tbody = document.getElementById('tbody-formatB');
       tbody.innerHTML = '';
-
-      // Collect current faculty list from Format A
       const facultyList = dataA.map(f => f.name.trim()).filter(Boolean);
 
       dataB.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
 
-        const parsed = parseStudentCount(item.count);
-        const subDisplay = parsed.rr > 0
-          ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>`
-          : '';
-
-        // Semester selector
         const semSelectHTML = `
-          <select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5"
-                  onchange="updateRowSem(${index}, this.value)">
+          <select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5" onchange="updateRowSem(${index}, this.value)">
             <option value="1" ${item.sem === '1' ? 'selected' : ''}>1</option>
             <option value="2" ${item.sem === '2' ? 'selected' : ''}>2</option>
             <option value="3" ${item.sem === '3' ? 'selected' : ''}>3</option>
           </select>
         `;
 
-        // Course preset selector
         const currentSemCourses = COURSE_CATALOG[item.sem] || [];
         let courseOptionsHTML = `<option value="">-- Choose Course Preset --</option>`;
         currentSemCourses.forEach(c => {
@@ -777,33 +832,25 @@
 
         const coursePresetSelectHTML = `
           <div class="no-print mt-1 course-preset-selector">
-            <select class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 w-full cursor-pointer hover:bg-blue-100"
-                    onchange="applyCoursePresetToRow(${index}, this.value)">
+            <select class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 w-full cursor-pointer hover:bg-blue-100" onchange="applyCoursePresetToRow(${index}, this.value)">
               ${courseOptionsHTML}
             </select>
           </div>
         `;
 
-        // Faculty In-Charge selector
         let facultyOptionsHTML = '';
         facultyList.forEach(fac => {
           const isSelected = (item.faculty && item.faculty.trim().toLowerCase() === fac.toLowerCase()) ? 'selected' : '';
           facultyOptionsHTML += `<option value="${escapeHTML(fac)}" ${isSelected}>${escapeHTML(fac)}</option>`;
         });
-
-        // Preserve any external faculty name not in Format A
         const isCustomFaculty = item.faculty && !facultyList.some(f => f.toLowerCase() === item.faculty.trim().toLowerCase());
         if (isCustomFaculty) {
           facultyOptionsHTML += `<option value="${escapeHTML(item.faculty)}" selected>${escapeHTML(item.faculty)} (External)</option>`;
         }
-        // If no faculty at all, add a placeholder
-        if (!facultyOptionsHTML) {
-          facultyOptionsHTML = `<option value="">— Select Faculty —</option>`;
-        }
+        if (!facultyOptionsHTML) facultyOptionsHTML = `<option value="">— Select Faculty —</option>`;
 
         const facultySelectHTML = `
-          <select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full"
-                  onchange="updateFieldB(${index}, 'faculty', this.value)">
+          <select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full" onchange="updateFieldB(${index}, 'faculty', this.value)">
             ${facultyOptionsHTML}
           </select>
         `;
@@ -818,24 +865,12 @@
           </td>
           <td contenteditable="true" onblur="updateFieldB(${index}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-semibold text-slate-800" title="Click to edit Subject Code">${escapeHTML(item.code)}</td>
           <td class="py-2.5 px-3">${facultySelectHTML}</td>
-          <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40">
-            <span contenteditable="true"
-                  onblur="updateFieldB(${index}, 'count', this.innerText, this)"
-                  class="editable-cell inline-block min-w-[3.5rem] rounded"
-                  title="Format: '65' or '65+1'">${escapeHTML(item.count)}</span>
-            <span id="count-total-${index}">${subDisplay}</span>
-          </td>
+          <td contenteditable="true" onblur="updateFieldB(${index}, 'count', this.innerText, this)" class="editable-cell py-2.5 px-3 text-center font-mono font-bold text-slate-900 bg-amber-50/40" title="Format: '65' or '65+1'">${escapeHTML(item.count)}</td>
           <td class="no-print action-col py-2 px-2 text-center">
             <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowB(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
-                <i class="fa-solid fa-arrow-up text-xs"></i>
-              </button>
-              <button onclick="moveRowB(${index}, 1)" ${index === dataB.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25">
-                <i class="fa-solid fa-arrow-down text-xs"></i>
-              </button>
-              <button onclick="deleteRowB(${index})" title="Delete Division" class="p-1 text-slate-400 hover:text-rose-600">
-                <i class="fa-solid fa-trash-can text-xs"></i>
-              </button>
+              <button onclick="moveRowB(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+              <button onclick="moveRowB(${index}, 1)" ${index === dataB.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-down text-xs"></i></button>
+              <button onclick="deleteRowB(${index})" title="Delete Division" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
             </div>
           </td>
         `;
@@ -843,40 +878,26 @@
       });
     }
 
-    // Unified field updater for Format B (targeted, no full re-render for text edits)
     function updateFieldB(idx, key, val, el) {
       if (!dataB[idx]) return;
       const trimmed = (val || '').toString().trim();
 
       if (key === 'count') {
-        // Strip anything pasted in like "(66 total)"
         const sanitized = trimmed.replace(/\s*\(\d+\s*total\)\s*/gi, '').replace(/[^0-9+]/g, '');
-
         if (!sanitized || !/^\d+(\+\d+)?$/.test(sanitized)) {
           showToast("Invalid count. Use '65' or '65+1'.", "error");
           if (el) el.innerText = dataB[idx].count;
           return;
         }
-
         dataB[idx].count = sanitized;
         if (el) el.innerText = sanitized;
-
-        const parsed = parseStudentCount(sanitized);
-        const totalEl = document.getElementById(`count-total-${idx}`);
-        if (totalEl) {
-          totalEl.innerHTML = parsed.rr > 0
-            ? `<span class="text-[11px] text-slate-500 font-normal">(${parsed.total} total)</span>`
-            : '';
-        }
         persistData();
         return;
       }
-
       dataB[idx][key] = trimmed;
       persistData();
     }
 
-    // Change semester on a row, remapping course by stream when possible
     function updateRowSem(idx, newSem) {
       if (!dataB[idx]) return;
       const oldSem = dataB[idx].sem;
@@ -884,17 +905,14 @@
 
       const oldCourse = (COURSE_CATALOG[oldSem] || []).find(c => c.code === dataB[idx].code);
       dataB[idx].sem = newSem;
-
       const newCatalog = COURSE_CATALOG[newSem] || [];
-      const stillValid = newCatalog.some(c => c.code === dataB[idx].code);
-
-      if (!stillValid) {
+      if (!newCatalog.some(c => c.code === dataB[idx].code)) {
         if (oldCourse) {
           const match = newCatalog.find(c => c.stream === oldCourse.stream);
           if (match) {
             dataB[idx].title = match.title;
             dataB[idx].code = match.code;
-            showToast(`Semester changed — course remapped to ${match.stream}`);
+            showToast(`Semester changed — remapped to ${match.stream}`);
           } else {
             showToast(`Semester changed. Please select a new course preset.`, "error");
           }
@@ -904,85 +922,152 @@
       } else {
         showToast(`Semester updated to ${newSem}`);
       }
-
-      persistData();
-      renderFormatB();
+      persistData(); renderFormatB();
     }
 
-    // Apply course preset to a table row
     function applyCoursePresetToRow(idx, code) {
       if (!code || !dataB[idx]) return;
-      const sem = dataB[idx].sem;
-      const catalog = COURSE_CATALOG[sem] || [];
-      const selected = catalog.find(c => c.code === code);
+      const selected = (COURSE_CATALOG[dataB[idx].sem] || []).find(c => c.code === code);
       if (selected) {
         dataB[idx].title = selected.title;
         dataB[idx].code = selected.code;
-        persistData();
-        renderFormatB();
-        showToast(`Applied "${selected.stream}" preset`);
+        persistData(); renderFormatB();
+        showToast(`Applied preset`);
       }
     }
 
     function moveRowB(idx, step) {
       const target = idx + step;
       if (target < 0 || target >= dataB.length) return;
-      const temp = dataB[idx];
-      dataB[idx] = dataB[target];
-      dataB[target] = temp;
-      persistData();
-      renderFormatB();
-      showToast(`Division moved ${step < 0 ? 'up' : 'down'}`);
+      const temp = dataB[idx]; dataB[idx] = dataB[target]; dataB[target] = temp;
+      persistData(); renderFormatB();
     }
 
     function deleteRowB(idx) {
-      if (dataB.length <= 1) {
-        showToast("At least one division entry is required", "error");
-        return;
-      }
-      if (!confirm(`Delete division "${dataB[idx].div}" (${dataB[idx].code})?`)) return;
+      if (dataB.length <= 1) return showToast("At least one division entry is required", "error");
+      if (!confirm(`Delete division "${dataB[idx].div}"?`)) return;
       dataB.splice(idx, 1);
-      persistData();
-      renderFormatB();
-      showToast("Division entry removed");
+      persistData(); renderFormatB();
     }
 
     // ==========================================
-    // MODAL ADD ROW LOGIC
+    // RENDER FORMAT C
+    // ==========================================
+    function renderFormatC() {
+      const tbody = document.getElementById('tbody-formatC');
+      tbody.innerHTML = '';
+
+      dataC.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+        tr.innerHTML = `
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'dept', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.dept)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${index}, 'relationship', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.relationship)}</td>
+          <td class="no-print action-col py-2 px-2 text-center">
+            <button onclick="deleteRowC(${index})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateFieldC(index, key, val) {
+      if (!dataC[index]) return;
+      dataC[index][key] = (val || '').toString().trim();
+      persistData();
+    }
+
+    function addRowC() {
+      dataC.push({ sl: dataC.length + 1, name: "Faculty Name", dept: "Dept", sem: "Sem", branch: "Branch", div: "Div", roll: "Roll", relationship: "Relation" });
+      persistData(); renderFormatC();
+      if (currentView !== 'formatC' && currentView !== 'all') switchView('formatC');
+      showToast("New row added to Format C");
+    }
+
+    function deleteRowC(idx) {
+      if (!confirm("Delete this row from Format C?")) return;
+      dataC.splice(idx, 1);
+      persistData(); renderFormatC();
+    }
+
+    // ==========================================
+    // RENDER FORMAT D
+    // ==========================================
+    function renderFormatD() {
+      const tbody = document.getElementById('tbody-formatD');
+      tbody.innerHTML = '';
+
+      dataD.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+        tr.innerHTML = `
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'usn', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono">${escapeHTML(item.usn)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${index}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
+          <td class="no-print action-col py-2 px-2 text-center">
+            <button onclick="deleteRowD(${index})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateFieldD(index, key, val) {
+      if (!dataD[index]) return;
+      dataD[index][key] = (val || '').toString().trim();
+      persistData();
+    }
+
+    function addRowD() {
+      dataD.push({ sl: dataD.length + 1, name: "Student Name", usn: "USN", sem: "Sem", branch: "Branch", div: "Div", roll: "Roll" });
+      persistData(); renderFormatD();
+      if (currentView !== 'formatD' && currentView !== 'all') switchView('formatD');
+      showToast("New row added to Format D");
+    }
+
+    function deleteRowD(idx) {
+      if (!confirm("Delete this row from Format D?")) return;
+      dataD.splice(idx, 1);
+      persistData(); renderFormatD();
+    }
+
+    // ==========================================
+    // MODAL ADD ROW LOGIC (FORMAT B)
     // ==========================================
     function addDivisionRowModal() {
       const modal = document.getElementById('addModal');
       const divInput = document.getElementById('modal-div');
-
-      // Suggest the next unused division letter
       divInput.value = nextDivisionLetter();
-
-      // Populate faculty dropdown
+      
       const modalFacultySelect = document.getElementById('modal-faculty');
       modalFacultySelect.innerHTML = '';
       dataA.forEach(f => {
         const opt = document.createElement('option');
-        opt.value = f.name;
-        opt.innerText = f.name;
+        opt.value = f.name; opt.innerText = f.name;
         modalFacultySelect.appendChild(opt);
       });
       if (!dataA.length) {
         const opt = document.createElement('option');
-        opt.value = "";
-        opt.innerText = "— Add faculty in Format A first —";
+        opt.value = ""; opt.innerText = "— Add faculty first —";
         modalFacultySelect.appendChild(opt);
       }
 
-      // Reset the count field to a default
       document.getElementById('modal-count').value = "60";
-
       onModalSemChange();
       modal.classList.remove('hidden');
     }
 
-    function closeModal() {
-      document.getElementById('addModal').classList.add('hidden');
-    }
+    function closeModal() { document.getElementById('addModal').classList.add('hidden'); }
 
     function onModalSemChange() {
       const sem = document.getElementById('modal-sem').value;
@@ -992,8 +1077,7 @@
       presetSelect.innerHTML = `<option value="">-- Choose a course syllabus --</option>`;
       catalog.forEach(c => {
         const opt = document.createElement('option');
-        opt.value = c.code;
-        opt.innerText = c.label;
+        opt.value = c.code; opt.innerText = c.label;
         presetSelect.appendChild(opt);
       });
 
@@ -1009,8 +1093,7 @@
     function onModalPresetChange() {
       const sem = document.getElementById('modal-sem').value;
       const code = document.getElementById('modal-preset').value;
-      const catalog = COURSE_CATALOG[sem] || [];
-      const item = catalog.find(c => c.code === code);
+      const item = (COURSE_CATALOG[sem] || []).find(c => c.code === code);
       if (item) {
         document.getElementById('modal-title').value = item.title;
         document.getElementById('modal-code').value = item.code;
@@ -1025,28 +1108,16 @@
       const rawCount = document.getElementById('modal-count').value.trim() || '60';
       const faculty = document.getElementById('modal-faculty').value || '';
 
-      if (!div) {
-        showToast("Please specify a division", "error");
-        return;
-      }
-      if (!title || !code) {
-        showToast("Subject title and code are required", "error");
-        return;
-      }
+      if (!div) return showToast("Please specify a division", "error");
+      if (!title || !code) return showToast("Subject title and code are required", "error");
 
       const sanitizedCount = rawCount.replace(/[^0-9+]/g, '');
-      if (!/^\d+(\+\d+)?$/.test(sanitizedCount)) {
-        showToast("Count must be '65' or '65+1' format", "error");
-        return;
-      }
+      if (!/^\d+(\+\d+)?$/.test(sanitizedCount)) return showToast("Count must be '65' or '65+1'", "error");
 
       dataB.push({ sl: dataB.length + 1, sem, div, title, code, faculty, count: sanitizedCount });
-
-      persistData();
-      renderFormatB();
-      closeModal();
+      persistData(); renderFormatB(); closeModal();
       if (currentView === 'formatA') switchView('formatB');
-      showToast(`Added Division ${div} (${code}) to Format B`);
+      showToast(`Added Division ${div}`);
     }
 
     function nextDivisionLetter() {
@@ -1059,168 +1130,121 @@
     }
 
     // ==========================================
-    // PARSING & ANALYTICS CALCULATION
-    // ==========================================
-    function parseStudentCount(str) {
-      if (str == null) return { base: 0, rr: 0, total: 0 };
-      const cleaned = str.toString().trim().replace(/\s+/g, '');
-      if (cleaned.includes('+')) {
-        const parts = cleaned.split('+');
-        const base = parseInt(parts[0], 10) || 0;
-        const rr = parseInt(parts[1], 10) || 0;
-        return { base, rr, total: base + rr };
-      }
-      const base = parseInt(cleaned, 10) || 0;
-      return { base, rr: 0, total: base };
-    }
-
-    function updateSummaryMetrics() {
-      let regTotal = 0, rrTotal = 0, grandTotal = 0;
-
-      dataB.forEach(item => {
-        const res = parseStudentCount(item.count);
-        regTotal += res.base;
-        rrTotal += res.rr;
-        grandTotal += res.total;
-      });
-
-      const setVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-      };
-
-      setVal('stat-faculty-count', dataA.length);
-      setVal('stat-divisions-count', dataB.length);
-      setVal('stat-regular-count', regTotal);
-      setVal('stat-rr-count', rrTotal);
-      setVal('stat-grand-count', grandTotal);
-
-      const footer = document.getElementById('footer-total-display');
-      if (footer) {
-        footer.innerHTML = `
-          <span class="text-blue-700 font-bold">${regTotal}</span> (Reg) + 
-          <span class="text-indigo-600 font-bold">${rrTotal}</span> (RR) = 
-          <span class="text-emerald-700 text-sm font-black underline decoration-2">${grandTotal}</span>
-        `;
-      }
-    }
-
-    // ==========================================
     // TAB VIEW SWITCHER
     // ==========================================
     function switchView(view) {
       currentView = view;
-      const secA = document.getElementById('section-formatA');
-      const secB = document.getElementById('section-formatB');
+      const secs = { formatA: document.getElementById('section-formatA'), formatB: document.getElementById('section-formatB'), formatC: document.getElementById('section-formatC'), formatD: document.getElementById('section-formatD') };
 
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-white', 'text-blue-700', 'shadow-xs');
         btn.classList.add('text-slate-600');
       });
-
       const activeBtn = document.getElementById(`tab-${view}`);
       if (activeBtn) {
         activeBtn.classList.add('bg-white', 'text-blue-700', 'shadow-xs');
         activeBtn.classList.remove('text-slate-600');
       }
 
-      if (view === 'formatA') {
-        secA.classList.remove('hidden');
-        secB.classList.add('hidden');
-      } else if (view === 'formatB') {
-        secA.classList.add('hidden');
-        secB.classList.remove('hidden');
+      if (view === 'all') {
+        Object.values(secs).forEach(el => el.classList.remove('hidden'));
       } else {
-        secA.classList.remove('hidden');
-        secB.classList.remove('hidden');
+        Object.keys(secs).forEach(k => secs[k].classList.add('hidden'));
+        secs[view].classList.remove('hidden');
       }
 
-      // Controls print-time page break between sections
-      document.body.classList.toggle('print-both', view === 'all');
+      document.body.classList.toggle('print-all', view === 'all');
     }
 
     // ==========================================
-    // EXPORT TO CSV / EXCEL (proper escaping via Blob)
+    // EXPORT TO CSV / EXCEL
     // ==========================================
-    function csvCell(v) {
-      const s = (v == null ? '' : String(v));
-      return '"' + s.replace(/"/g, '""') + '"';
-    }
-    function csvRow(arr) {
-      return arr.map(csvCell).join(',');
-    }
+    function csvCell(v) { const s = (v == null ? '' : String(v)); return '"' + s.replace(/"/g, '""') + '"'; }
+    function csvRow(arr) { return arr.map(csvCell).join(','); }
 
     function exportCSV() {
       const rows = [];
-
-      if (currentView === 'formatA' || currentView === 'all') {
+      const addHeader = (title) => {
         rows.push(csvRow([headerConfig.sangha]));
         rows.push(csvRow([headerConfig.college]));
         rows.push(csvRow([headerConfig.dept]));
         rows.push(csvRow([`${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})`]));
-        rows.push(csvRow(["Format A: Faculty Information (UG)"]));
-        rows.push(csvRow(["Sl No", "Name of the faculty (Seniority wise)", "Mobile No", "Designation", "Qualification", "Teaching Experience"]));
-        dataA.forEach((item, i) => {
-          rows.push(csvRow([i + 1, item.name, item.phone, item.designation, item.qualification, item.exp]));
-        });
-        rows.push(csvRow([headerConfig.sigA_left, "", "", "", "", headerConfig.sigA_right]));
+        rows.push(csvRow([title]));
+      };
+
+      if (currentView === 'formatA' || currentView === 'all') {
+        addHeader("Format A: Faculty Information (UG)");
+        rows.push(csvRow(["Sl No", "Name of the faculty (Seniority wise)", "Mobile No", "Designation", "Teaching Experience"]));
+        dataA.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.phone, item.designation, item.exp])));
+        rows.push(csvRow([headerConfig.sigA_left, "", "", "", headerConfig.sigA_right]));
         rows.push("");
       }
 
       if (currentView === 'formatB' || currentView === 'all') {
-        rows.push(csvRow([headerConfig.sangha]));
-        rows.push(csvRow([headerConfig.college]));
-        rows.push(csvRow([headerConfig.dept]));
-        rows.push(csvRow([`${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})`]));
-        rows.push(csvRow(["Format B: Subject wise Student Strength Information"]));
-        rows.push(csvRow(["Sl No", "Sem", "Div", "Subjects Title", "Subject Code", "Name of the faculty in-charge", "Regular Students", "RR Students", "Total Students"]));
-
-        let reg = 0, rr = 0, total = 0;
-        dataB.forEach((item, i) => {
-          const p = parseStudentCount(item.count);
-          reg += p.base; rr += p.rr; total += p.total;
-          rows.push(csvRow([i + 1, item.sem, item.div, item.title, item.code, item.faculty, p.base, p.rr, p.total]));
-        });
-        rows.push(csvRow(["", "", "", "", "", "Total:", reg, rr, total]));
+        addHeader("Format B: Subject wise Student Strength Information");
+        rows.push(csvRow(["Sl No", "Sem", "Div", "Subjects Title", "Subject Code", "Name of the faculty in-charge", "Regular + RR"]));
+        dataB.forEach((item, i) => rows.push(csvRow([i + 1, item.sem, item.div, item.title, item.code, item.faculty, item.count])));
         rows.push(csvRow([headerConfig.sigB_left, "", "", "", "", headerConfig.sigB_right]));
+        rows.push("");
       }
 
-      // Prepend BOM so Excel reads UTF-8 correctly
+      if (currentView === 'formatC' || currentView === 'all') {
+        addHeader("Format C: Faculty Information having Blood Relationship with Students");
+        rows.push(csvRow(["Sl.", "Faculty Name", "Dept.", "Sem.", "Branch", "Division", "Roll No", "Relationship"]));
+        dataC.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.dept, item.sem, item.branch, item.div, item.roll, item.relationship])));
+        rows.push(csvRow([headerConfig.sigC_left, "", "", "", "", "", "", headerConfig.sigC_right]));
+        rows.push("");
+      }
+
+      if (currentView === 'formatD' || currentView === 'all') {
+        addHeader("Format D: Physically Handicapped Students Information");
+        rows.push(csvRow(["Sl.", "Name of the Student", "USN", "Sem.", "Branch", "Division if any", "Roll No"]));
+        dataD.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.usn, item.sem, item.branch, item.div, item.roll])));
+        rows.push(csvRow([headerConfig.sigD_left, "", "", "", "", "", headerConfig.sigD_right]));
+      }
+
       const csvText = "\uFEFF" + rows.join("\r\n");
       const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.download = `BEC_Bagalkote_CIE_${currentView}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      link.href = url; link.download = `BEC_Bagalkote_CIE_${currentView}.csv`;
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast("CSV file successfully generated");
     }
 
     // ==========================================
-    // COPY TO CLIPBOARD (Word & Sheets Friendly)
+    // COPY TO CLIPBOARD
     // ==========================================
     function buildTSV() {
       let tsv = "";
+      const addHeader = (title) => {
+        tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\n${title}\n\n`;
+      };
+
       if (currentView === 'formatA' || currentView === 'all') {
-        tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
-        tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat A: Faculty Information (UG)\n\n`;
-        tsv += "Sl No\tName of the faculty\tMobile No\tDesignation\tQualification\tTeaching Experience\n";
-        dataA.forEach((item, i) => {
-          tsv += `${i + 1}\t${item.name}\t${item.phone}\t${item.designation}\t${item.qualification}\t${item.exp}\n`;
-        });
-        tsv += `\n${headerConfig.sigA_left}\t\t\t\t\t${headerConfig.sigA_right}\n\n`;
+        addHeader("Format A: Faculty Information (UG)");
+        tsv += "Sl No\tName of the faculty\tMobile No\tDesignation\tTeaching Experience\n";
+        dataA.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.phone}\t${item.designation}\t${item.exp}\n`);
+        tsv += `\n${headerConfig.sigA_left}\t\t\t\t${headerConfig.sigA_right}\n\n`;
       }
       if (currentView === 'formatB' || currentView === 'all') {
-        tsv += `${headerConfig.sangha}\n${headerConfig.college}\n${headerConfig.dept}\n`;
-        tsv += `${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})\nFormat B: Subject wise Student Strength Information\n\n`;
+        addHeader("Format B: Subject wise Student Strength Information");
         tsv += "Sl No\tSem\tDiv\tSubjects Title\tSubject code\tName of the faculty in-charge\tNumber of Re-registered Students\n";
-        dataB.forEach((item, i) => {
-          tsv += `${i + 1}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`;
-        });
-        tsv += `\n${headerConfig.sigB_left}\t\t\t\t\t${headerConfig.sigB_right}\n`;
+        dataB.forEach((item, i) => tsv += `${i + 1}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`);
+        tsv += `\n${headerConfig.sigB_left}\t\t\t\t\t${headerConfig.sigB_right}\n\n`;
+      }
+      if (currentView === 'formatC' || currentView === 'all') {
+        addHeader("Format C: Faculty Information having Blood Relationship with Students");
+        tsv += "Sl.\tFaculty Name\tDept.\tSem.\tBranch\tDivision if any\tRoll No\tRelationship\n";
+        dataC.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.dept}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\t${item.relationship}\n`);
+        tsv += `\n${headerConfig.sigC_left}\t\t\t\t\t\t${headerConfig.sigC_right}\n\n`;
+      }
+      if (currentView === 'formatD' || currentView === 'all') {
+        addHeader("Format D: Physically Handicapped Students Information");
+        tsv += "Sl.\tName of the Student\tUSN\tSem.\tBranch\tDivision if any\tRoll No\n";
+        dataD.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.usn}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\n`);
+        tsv += `\n${headerConfig.sigD_left}\t\t\t\t\t\t${headerConfig.sigD_right}\n`;
       }
       return tsv;
     }
@@ -1231,14 +1255,9 @@
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(tsv);
         } else {
-          // Fallback for non-secure contexts (e.g. file://)
           const ta = document.createElement('textarea');
-          ta.value = tsv;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
+          ta.value = tsv; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select(); document.execCommand('copy');
           document.body.removeChild(ta);
         }
         showToast("Tab-delimited table copied! Paste into Word or Excel.");
@@ -1251,28 +1270,20 @@
     // RESET TO DEFAULTS
     // ==========================================
     function resetDefaultsModal() {
-      if (!confirm("Reset all data and headers back to the original BEC Bagalkote template? This cannot be undone.")) {
-        return;
-      }
+      if (!confirm("Reset all data and headers back to the original template? This cannot be undone.")) return;
       dataA = JSON.parse(JSON.stringify(initialFormatA));
       dataB = JSON.parse(JSON.stringify(initialFormatB));
+      dataC = JSON.parse(JSON.stringify(initialFormatC));
+      dataD = JSON.parse(JSON.stringify(initialFormatD));
       Object.assign(headerConfig, defaultHeaderConfig);
-      persistData();
-      syncHeaders();
-      renderFormatA();
-      renderFormatB();
-      showToast("Restored original BEC Bagalkote template data");
+      persistData(); syncHeaders(); renderFormatA(); renderFormatB(); renderFormatC(); renderFormatD();
+      showToast("Restored original template data");
     }
 
     // Helper: Escape HTML
     function escapeHTML(str) {
       if (str == null) return '';
-      return str.toString()
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+      return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
     // Toast
@@ -1280,20 +1291,11 @@
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-message');
       const icon = document.getElementById('toast-icon');
-
       text.textContent = msg;
-      icon.className = type === "error"
-        ? "fa-solid fa-circle-exclamation text-rose-400 text-base"
-        : "fa-solid fa-circle-check text-emerald-400 text-base";
-
-      toast.classList.remove('translate-y-24', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
+      icon.className = type === "error" ? "fa-solid fa-circle-exclamation text-rose-400 text-base" : "fa-solid fa-circle-check text-emerald-400 text-base";
+      toast.classList.remove('translate-y-24', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-24', 'opacity-0');
-      }, 2500);
+      showToast._t = setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-24', 'opacity-0'); }, 2500);
     }
 
     // Initialize
@@ -1301,8 +1303,9 @@
       syncHeaders();
       renderFormatA();
       renderFormatB();
-      switchView('all');        // sets print-both class + tab styling
-      updateSummaryMetrics();
+      renderFormatC();
+      renderFormatD();
+      switchView('all');
     };
   </script>
 </body>
