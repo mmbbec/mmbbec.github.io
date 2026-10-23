@@ -41,7 +41,6 @@
     .editable-header-field:focus { outline: none; border-bottom: 2px solid #2563eb; background-color: #eff6ff; }
     @media print { .editable-header-field { border-bottom: none !important; padding: 0 !important; } }
 
-    /* Login screen animation */
     @keyframes loginFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .login-card { animation: loginFadeIn 0.4s ease-out; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
@@ -51,7 +50,7 @@
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
   <!-- ============================================================= -->
-  <!-- LOGIN OVERLAY  (blocks app until authenticated)               -->
+  <!-- LOGIN OVERLAY                                                  -->
   <!-- ============================================================= -->
   <div id="loginOverlay" class="no-print fixed inset-0 z-[100] bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4">
     <div class="login-card bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-slate-200">
@@ -70,7 +69,6 @@
               class="w-full pl-9 pr-3 py-2.5 text-sm border border-slate-300 rounded-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
           </div>
         </div>
-
         <div>
           <label for="loginPassword" class="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
           <div class="relative">
@@ -83,16 +81,12 @@
             </button>
           </div>
         </div>
-
         <div id="loginError" class="hidden text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-start gap-2">
           <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
           <span id="loginErrorMessage">Invalid email or password.</span>
         </div>
-
-        <button type="submit"
-          class="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-right-to-bracket"></i>
-          <span>Sign In</span>
+        <button type="submit" class="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-right-to-bracket"></i><span>Sign In</span>
         </button>
       </form>
 
@@ -105,14 +99,13 @@
     </div>
   </div>
 
-  <!-- Toast (lives outside appRoot so it works on the login page too) -->
   <div id="toast" class="fixed bottom-6 right-6 z-[200] transform transition-all duration-300 translate-y-24 opacity-0 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm font-medium pointer-events-none">
     <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
     <span id="toast-message">Notification message</span>
   </div>
 
   <!-- ============================================================= -->
-  <!-- APP (hidden until login)                                       -->
+  <!-- APP                                                            -->
   <!-- ============================================================= -->
   <div id="appRoot" class="hidden min-h-screen flex flex-col">
 
@@ -128,25 +121,20 @@
             <p class="text-xs text-slate-400">Continuous Internal Evaluation System (Branch-Synced)</p>
           </div>
         </div>
-
         <div class="flex items-center space-x-2">
-          <!-- Logged-in user badge -->
           <div class="hidden md:flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700" title="Logged in as">
             <i class="fa-solid fa-user-circle text-blue-400 text-sm"></i>
             <span id="currentUser" class="text-[11px] text-slate-300 font-mono max-w-[160px] truncate">—</span>
           </div>
-
-          <button onclick="window.print()" title="Prints on A4 Landscape" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
+          <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition">
             <i class="fa-solid fa-print"></i><span>Print / PDF</span>
           </button>
           <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition">
             <i class="fa-solid fa-file-excel text-emerald-400"></i><span class="hidden sm:inline">Export</span> CSV
           </button>
-          <button onclick="copyToClipboardFormatted()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition" title="Copy table to paste directly into MS Word">
-            <i class="fa-solid fa-copy text-blue-400"></i><span class="hidden md:inline">Copy for Word</span>
+          <button onclick="copyToClipboardFormatted()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-copy text-blue-400"></i><span class="hidden md:inline">Copy</span>
           </button>
-
-          <!-- Logout -->
           <button onclick="handleLogout()" title="Sign out" class="px-2.5 py-1.5 rounded-lg bg-rose-900/40 hover:bg-rose-900/60 border border-rose-800 text-rose-200 text-xs sm:text-sm flex items-center gap-1.5 transition">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="hidden sm:inline">Logout</span>
@@ -154,6 +142,25 @@
         </div>
       </div>
     </header>
+
+    <!-- ========================================================= -->
+    <!-- ACTIVE DEPARTMENT BAR  (NEW)                               -->
+    <!-- ========================================================= -->
+    <div class="no-print bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-building-columns text-lg"></i>
+          <label for="globalDeptSelector" class="text-[11px] font-bold uppercase tracking-wider">Active Department:</label>
+          <select id="globalDeptSelector" onchange="setDepartment(this.value)"
+            class="text-sm font-bold px-3 py-1.5 bg-white text-blue-800 rounded-md shadow-sm border-0 focus:outline-none focus:ring-2 focus:ring-yellow-300 cursor-pointer">
+          </select>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-medium">
+          <i class="fa-solid fa-circle-info"></i>
+          <span id="deptStatusText">Showing all departments</span>
+        </div>
+      </div>
+    </div>
 
     <section class="no-print bg-white border-b border-slate-200 shadow-xs">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -163,16 +170,16 @@
               <i class="fa-solid fa-layer-group mr-1.5"></i> All Formats
             </button>
             <button id="tab-formatA" onclick="switchView('formatA')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format A (Faculty)</button>
-            <button id="tab-formatB" onclick="switchView('formatB')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format B (Subjects & Strength)</button>
+            <button id="tab-formatB" onclick="switchView('formatB')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format B (Subjects)</button>
             <button id="tab-formatC" onclick="switchView('formatC')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format C (Blood Relation)</button>
-            <button id="tab-formatD" onclick="switchView('formatD')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format D (PH Students)</button>
+            <button id="tab-formatD" onclick="switchView('formatD')" class="tab-btn px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition">Format D (PH)</button>
           </div>
           <div class="flex items-center flex-wrap gap-2 text-xs">
             <button onclick="addFacultyRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-semibold flex items-center gap-1.5 transition">
               <i class="fa-solid fa-user-plus text-xs"></i> + Add Faculty (A)
             </button>
             <button onclick="addDivisionRowModal()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-semibold flex items-center gap-1.5 shadow-sm transition">
-              <i class="fa-solid fa-plus text-xs"></i> + Add Subject / Branch (B)
+              <i class="fa-solid fa-plus text-xs"></i> + Add Subject (B)
             </button>
             <button onclick="addRowC()" class="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 font-semibold flex items-center gap-1.5 transition">
               <i class="fa-solid fa-plus text-xs"></i> Add Row (C)
@@ -256,7 +263,7 @@
                 <tr class="text-center align-middle">
                   <th class="w-10 py-2.5 px-2">Sl No</th>
                   <th class="w-14 py-2.5 px-1">Sem</th>
-                  <th class="w-28 py-2.5 px-2">Branch</th>
+                  <th class="w-24 py-2.5 px-2">Branch</th>
                   <th class="w-12 py-2.5 px-1">Div</th>
                   <th class="py-2.5 px-3">Subjects Title<div class="no-print text-[10px] font-normal text-blue-600">Preset auto-filtered by Branch</div></th>
                   <th class="w-24 py-2.5 px-2">Subject Code</th>
@@ -433,25 +440,20 @@
 
   <script>
     // ================================================================
-    // AUTH CONFIG
+    // AUTH
     // ================================================================
     const AUTH_EMAIL = "bechod@gmail.com";
     const AUTH_PASSWORD = "1234";
     const AUTH_KEY = "bec_cie_auth";
     const USER_KEY = "bec_cie_user";
 
-    function isAuthenticated() {
-      return localStorage.getItem(AUTH_KEY) === "true";
-    }
+    function isAuthenticated() { return localStorage.getItem(AUTH_KEY) === "true"; }
 
     function showApp() {
       document.getElementById("loginOverlay").classList.add("hidden");
       document.getElementById("appRoot").classList.remove("hidden");
       const user = localStorage.getItem(USER_KEY);
-      if (user) {
-        const el = document.getElementById("currentUser");
-        if (el) el.textContent = user;
-      }
+      if (user) document.getElementById("currentUser").textContent = user;
     }
 
     function showLogin() {
@@ -463,13 +465,8 @@
     function togglePasswordVisibility() {
       const pwd = document.getElementById("loginPassword");
       const eye = document.getElementById("passwordEye");
-      if (pwd.type === "password") {
-        pwd.type = "text";
-        eye.className = "fa-solid fa-eye-slash text-sm";
-      } else {
-        pwd.type = "password";
-        eye.className = "fa-solid fa-eye text-sm";
-      }
+      if (pwd.type === "password") { pwd.type = "text"; eye.className = "fa-solid fa-eye-slash text-sm"; }
+      else { pwd.type = "password"; eye.className = "fa-solid fa-eye text-sm"; }
     }
 
     function handleLogin(e) {
@@ -480,11 +477,7 @@
       const errMsgEl = document.getElementById("loginErrorMessage");
       const formCard = document.querySelector(".login-card");
 
-      const isValid =
-        email.toLowerCase() === AUTH_EMAIL.toLowerCase() &&
-        pass === AUTH_PASSWORD;
-
-      if (isValid) {
+      if (email.toLowerCase() === AUTH_EMAIL.toLowerCase() && pass === AUTH_PASSWORD) {
         localStorage.setItem(AUTH_KEY, "true");
         localStorage.setItem(USER_KEY, email);
         errEl.classList.add("hidden");
@@ -499,7 +492,7 @@
         document.getElementById("loginPassword").value = "";
         document.getElementById("loginPassword").focus();
         formCard.classList.remove("shake");
-        void formCard.offsetWidth; // reflow to restart animation
+        void formCard.offsetWidth;
         formCard.classList.add("shake");
       }
     }
@@ -535,6 +528,11 @@
       { code: "MCA",  name: "Master of Computer Applications" }
     ];
 
+    function branchName(code) {
+      const b = BRANCH_LIST.find(x => x.code === code);
+      return b ? b.name : code;
+    }
+
     const BRANCH_COURSE_CATALOG = {
       "MATH": {
         "1": [
@@ -553,8 +551,7 @@
           { title: "Mathematics for Computer Science", code: "1BMAS301C", label: "CSE Stream — Mathematics for CS (1BMAS301C)" },
           { title: "Mathematics for Civil Engineering", code: "1BMAC301C", label: "Civil Stream — Mathematics for CV (1BMAC301C)" },
           { title: "Mathematics for Electrical Engineering", code: "1BMAE301C", label: "EEE Stream — Mathematics for EE (1BMAE301C)" },
-          { title: "Mathematics for Mechanical Engineering", code: "1BMAM301C", label: "Mech Stream — Mathematics for ME (1BMAM301C)" },
-          { title: "Bridge Course Mathematics-I", code: "BMAB300M", label: "Bridge Course Mathematics-I (BMAB300M)" }
+          { title: "Mathematics for Mechanical Engineering", code: "1BMAM301C", label: "Mech Stream — Mathematics for ME (1BMAM301C)" }
         ],
         "4": [
           { title: "Complex Analysis and Probability", code: "1BMAS401C", label: "Complex Analysis & Probability (1BMAS401C)" },
@@ -803,6 +800,8 @@
     ];
 
     let currentView = 'all';
+    let currentDepartment = localStorage.getItem('bec_cie_currentDept') || 'MATH';
+    let lastSpecificDepartment = localStorage.getItem('bec_cie_lastDept') || 'MATH';
     let dataA = loadFromStorage('bec_cie_formatA_v6', initialFormatA);
     let dataB = loadFromStorage('bec_cie_formatB_v6', initialFormatB);
     let dataC = loadFromStorage('bec_cie_formatC_v6', initialFormatC);
@@ -846,29 +845,91 @@
       });
     }
 
-    // -------- FORMAT A --------
+    // ================================================================
+    // ⭐ SET DEPARTMENT — the core new feature
+    // ================================================================
+    function setDepartment(code) {
+      currentDepartment = code;
+      localStorage.setItem('bec_cie_currentDept', code);
+
+      if (code === 'ALL') {
+        headerConfig.dept = "ALL DEPARTMENTS";
+        document.getElementById('deptStatusText').textContent = "Showing all departments — dropdowns show every branch";
+      } else {
+        lastSpecificDepartment = code;
+        localStorage.setItem('bec_cie_lastDept', code);
+        headerConfig.dept = "DEPARTMENT OF " + branchName(code).toUpperCase();
+        document.getElementById('deptStatusText').textContent =
+          `Showing ${branchName(code)} only — staff & subjects auto-filtered`;
+      }
+
+      persistData();
+      syncHeaders();
+      renderFormatA();
+      renderFormatB();
+      renderFormatC();
+      renderFormatD();
+
+      showToast(code === 'ALL' ? "Switched to All Departments" : `Switched to ${code} — staff & subjects filtered`);
+    }
+
+    // Populate department selector
+    function populateDeptSelector() {
+      const sel = document.getElementById('globalDeptSelector');
+      if (!sel) return;
+      sel.innerHTML = '<option value="ALL">All Departments</option>';
+      BRANCH_LIST.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.code;
+        opt.textContent = `${b.code} — ${b.name}`;
+        sel.appendChild(opt);
+      });
+      sel.value = currentDepartment;
+    }
+
+    // Helper to get the effective dept for adds when current is 'ALL'
+    function effectiveDept() {
+      return currentDepartment === 'ALL' ? lastSpecificDepartment : currentDepartment;
+    }
+
+    // ==========================================
+    // FORMAT A
+    // ==========================================
     function renderFormatA() {
       const tbody = document.getElementById('tbody-formatA');
       tbody.innerHTML = '';
-      dataA.forEach((item, index) => {
+
+      const indexedData = dataA.map((item, idx) => ({ item, origIdx: idx }));
+      const filtered = currentDepartment === 'ALL'
+        ? indexedData
+        : indexedData.filter(({ item }) => (item.branch || 'MATH') === currentDepartment);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 italic text-xs">
+          No faculty in ${branchName(currentDepartment)} yet. Click "+ Add Faculty (A)" to add.
+        </td></tr>`;
+        return;
+      }
+
+      filtered.forEach(({ item, origIdx }, displayIdx) => {
         const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+        tr.className = displayIdx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
         let branchOptionsHTML = '';
-        BRANCH_LIST.forEach(b => { branchOptionsHTML += `<option value="${b.code}" ${item.branch === b.code ? 'selected' : ''}>${b.code}</option>`; });
+        BRANCH_LIST.forEach(b => {
+          branchOptionsHTML += `<option value="${b.code}" ${item.branch === b.code ? 'selected' : ''}>${b.code}</option>`;
+        });
         tr.innerHTML = `
-          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900" title="Click to edit name">${escapeHTML(item.name)}</td>
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${displayIdx + 1}</td>
+          <td contenteditable="true" onblur="updateFieldA(${origIdx}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
           <td class="py-2 px-2 text-center">
-            <select class="print-as-text font-bold text-blue-700 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5" onchange="updateFieldA(${index}, 'branch', this.value)">${branchOptionsHTML}</select>
+            <select class="print-as-text font-bold text-blue-700 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5" onchange="updateFieldA(${origIdx}, 'branch', this.value)">${branchOptionsHTML}</select>
           </td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'phone', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono text-slate-700" title="Click to edit phone">${escapeHTML(item.phone)}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'designation', this.innerText)" class="editable-cell py-2 px-3 text-slate-800" title="Click to edit designation">${escapeHTML(item.designation)}</td>
-          <td contenteditable="true" onblur="updateFieldA(${index}, 'exp', this.innerText)" class="editable-cell py-2 px-2 text-center" title="Click to edit experience">${escapeHTML(item.exp)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${origIdx}, 'phone', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono text-slate-700">${escapeHTML(item.phone)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${origIdx}, 'designation', this.innerText)" class="editable-cell py-2 px-3 text-slate-800">${escapeHTML(item.designation)}</td>
+          <td contenteditable="true" onblur="updateFieldA(${origIdx}, 'exp', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.exp)}</td>
           <td class="no-print action-col py-2 px-2 text-center">
             <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowA(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-up text-xs"></i></button>
-              <button onclick="moveRowA(${index}, 1)" ${index === dataA.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-down text-xs"></i></button>
-              <button onclick="deleteRowA(${index})" title="Delete Faculty" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              <button onclick="deleteRowA(${origIdx})" title="Delete Faculty" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
             </div>
           </td>`;
         tbody.appendChild(tr);
@@ -885,19 +946,11 @@
         const oldLower = oldName.trim().toLowerCase();
         dataB.forEach(row => { if (row.faculty && row.faculty.trim().toLowerCase() === oldLower) row.faculty = newVal; });
       }
-      persistData(); renderFormatB();
+      persistData(); renderFormatB(); renderFormatA();
       showToast(key === 'branch' ? "Faculty department updated" : "Faculty details saved");
     }
 
-    function moveRowA(idx, step) {
-      const target = idx + step;
-      if (target < 0 || target >= dataA.length) return;
-      const temp = dataA[idx]; dataA[idx] = dataA[target]; dataA[target] = temp;
-      persistData(); renderFormatA(); renderFormatB();
-    }
-
     function deleteRowA(idx) {
-      if (dataA.length <= 1) return showToast("At least one faculty member is required", "error");
       if (!confirm(`Delete faculty "${dataA[idx].name}"?`)) return;
       dataA.splice(idx, 1);
       persistData(); renderFormatA(); renderFormatB();
@@ -905,38 +958,67 @@
     }
 
     function addFacultyRow() {
-      dataA.push({ sl: dataA.length + 1, name: "New Faculty Member", branch: "MATH", phone: "9876543210", designation: "Assistant Professor", exp: "01 Years" });
+      const dept = effectiveDept();
+      dataA.push({
+        sl: dataA.length + 1, name: "New Faculty Member", branch: dept,
+        phone: "9876543210", designation: "Assistant Professor", exp: "01 Years"
+      });
       persistData(); renderFormatA(); renderFormatB();
       if (currentView !== 'all') switchView('formatA');
-      showToast("New faculty member added");
+      showToast(`New ${dept} faculty member added`);
     }
 
-    // -------- FORMAT B --------
+    // ==========================================
+    // FORMAT B
+    // ==========================================
     function renderFormatB() {
       const tbody = document.getElementById('tbody-formatB');
       tbody.innerHTML = '';
-      dataB.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
 
-        const rowBranch = item.branch || "MATH";
-        let branchOpts = '';
-        BRANCH_LIST.forEach(b => { branchOpts += `<option value="${b.code}" ${rowBranch === b.code ? 'selected' : ''}>${b.code}</option>`; });
-        const branchSelectHTML = `<select class="print-as-text font-bold text-blue-700 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs" onchange="updateRowBranch(${index}, this.value)">${branchOpts}</select>`;
+      const indexedData = dataB.map((item, idx) => ({ item, origIdx: idx }));
+      const filtered = currentDepartment === 'ALL'
+        ? indexedData
+        : indexedData.filter(({ item }) => (item.branch || 'MATH') === currentDepartment);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400 italic text-xs">
+          No subjects in ${branchName(currentDepartment)} yet. Click "+ Add Subject (B)" to add.
+        </td></tr>`;
+        return;
+      }
+
+      filtered.forEach(({ item, origIdx }, displayIdx) => {
+        const tr = document.createElement('tr');
+        tr.className = displayIdx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+
+        // When a specific dept is active, force this row's context to that dept
+        const rowBranch = currentDepartment === 'ALL' ? (item.branch || 'MATH') : currentDepartment;
+
+        // Branch column — dropdown in ALL mode, static text in single-dept mode
+        let branchCellHTML;
+        if (currentDepartment === 'ALL') {
+          let branchOpts = '';
+          BRANCH_LIST.forEach(b => { branchOpts += `<option value="${b.code}" ${rowBranch === b.code ? 'selected' : ''}>${b.code}</option>`; });
+          branchCellHTML = `<select class="print-as-text font-bold text-blue-700 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs" onchange="updateRowBranch(${origIdx}, this.value)">${branchOpts}</select>`;
+        } else {
+          branchCellHTML = `<span class="font-bold text-blue-700">${rowBranch}</span>`;
+        }
 
         const semOptions = [1,2,3,4,5,6,7,8]
           .map(s => `<option value="${s}" ${item.sem === String(s) ? 'selected' : ''}>${s}</option>`)
           .join('');
-        const semSelectHTML = `<select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs" onchange="updateRowSem(${index}, this.value)">${semOptions}</select>`;
+        const semSelectHTML = `<select class="print-as-text font-bold text-slate-800 bg-transparent text-center border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs" onchange="updateRowSem(${origIdx}, this.value)">${semOptions}</select>`;
 
+        // ⭐ Subject presets — ONLY from current department's catalog
         const branchCatalog = (BRANCH_COURSE_CATALOG[rowBranch] && BRANCH_COURSE_CATALOG[rowBranch][item.sem]) ? BRANCH_COURSE_CATALOG[rowBranch][item.sem] : [];
         let courseOptionsHTML = `<option value="">-- Choose ${rowBranch} Preset --</option>`;
         branchCatalog.forEach(c => {
           const isSelected = item.code === c.code ? 'selected' : '';
           courseOptionsHTML += `<option value="${escapeHTML(c.code)}" ${isSelected}>${escapeHTML(c.label)}</option>`;
         });
-        const coursePresetSelectHTML = `<div class="no-print mt-1 course-preset-selector"><select class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 w-full cursor-pointer hover:bg-blue-100" onchange="applyCoursePresetToRow(${index}, this.value)">${courseOptionsHTML}</select></div>`;
+        const coursePresetSelectHTML = `<div class="no-print mt-1 course-preset-selector"><select class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 w-full cursor-pointer hover:bg-blue-100" onchange="applyCoursePresetToRow(${origIdx}, this.value)">${courseOptionsHTML}</select></div>`;
 
+        // ⭐ Faculty — ONLY from current department's staff
         let branchFaculty = dataA.filter(f => (f.branch || 'MATH') === rowBranch);
         if (branchFaculty.length === 0) branchFaculty = dataA;
         let facultyOptionsHTML = `<option value="">— Select ${rowBranch} Faculty —</option>`;
@@ -946,26 +1028,22 @@
         });
         const isCustomFaculty = item.faculty && !branchFaculty.some(f => f.name.toLowerCase() === item.faculty.trim().toLowerCase());
         if (isCustomFaculty) facultyOptionsHTML += `<option value="${escapeHTML(item.faculty)}" selected>${escapeHTML(item.faculty)} (Other Dept)</option>`;
-        const facultySelectHTML = `<select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full" onchange="updateFieldB(${index}, 'faculty', this.value)">${facultyOptionsHTML}</select>`;
+        const facultySelectHTML = `<select class="print-as-text font-semibold text-slate-800 bg-transparent border-0 cursor-pointer focus:ring-1 focus:ring-blue-500 rounded py-0.5 text-xs sm:text-sm w-full" onchange="updateFieldB(${origIdx}, 'faculty', this.value)">${facultyOptionsHTML}</select>`;
 
         tr.innerHTML = `
-          <td class="text-center font-bold py-2.5 px-2 text-slate-700">${index + 1}</td>
+          <td class="text-center font-bold py-2.5 px-2 text-slate-700">${displayIdx + 1}</td>
           <td class="text-center py-2.5 px-1">${semSelectHTML}</td>
-          <td class="text-center py-2.5 px-2">${branchSelectHTML}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'div', this.innerText)" class="editable-cell py-2.5 px-1 text-center font-bold text-blue-700" title="Click to edit Division">${escapeHTML(item.div)}</td>
+          <td class="text-center py-2.5 px-2">${branchCellHTML}</td>
+          <td contenteditable="true" onblur="updateFieldB(${origIdx}, 'div', this.innerText)" class="editable-cell py-2.5 px-1 text-center font-bold text-blue-700">${escapeHTML(item.div)}</td>
           <td class="py-2.5 px-3">
-            <div contenteditable="true" onblur="updateFieldB(${index}, 'title', this.innerText)" class="editable-cell font-medium text-slate-900" title="Click to edit Subject Title">${escapeHTML(item.title)}</div>
+            <div contenteditable="true" onblur="updateFieldB(${origIdx}, 'title', this.innerText)" class="editable-cell font-medium text-slate-900">${escapeHTML(item.title)}</div>
             ${coursePresetSelectHTML}
           </td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-semibold text-slate-800" title="Click to edit Subject Code">${escapeHTML(item.code)}</td>
+          <td contenteditable="true" onblur="updateFieldB(${origIdx}, 'code', this.innerText)" class="editable-cell py-2.5 px-2 font-mono text-center font-semibold text-slate-800">${escapeHTML(item.code)}</td>
           <td class="py-2.5 px-2">${facultySelectHTML}</td>
-          <td contenteditable="true" onblur="updateFieldB(${index}, 'count', this.innerText, this)" class="editable-cell py-2.5 px-2 text-center font-mono font-bold text-slate-900 bg-amber-50/40" title="Format: '65' or '65+1'">${escapeHTML(item.count)}</td>
+          <td contenteditable="true" onblur="updateFieldB(${origIdx}, 'count', this.innerText, this)" class="editable-cell py-2.5 px-2 text-center font-mono font-bold text-slate-900 bg-amber-50/40">${escapeHTML(item.count)}</td>
           <td class="no-print action-col py-2 px-1 text-center">
-            <div class="flex items-center justify-center space-x-1">
-              <button onclick="moveRowB(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move Up" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-up text-xs"></i></button>
-              <button onclick="moveRowB(${index}, 1)" ${index === dataB.length - 1 ? 'disabled' : ''} title="Move Down" class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-25"><i class="fa-solid fa-arrow-down text-xs"></i></button>
-              <button onclick="deleteRowB(${index})" title="Delete Division" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
-            </div>
+            <button onclick="deleteRowB(${origIdx})" title="Delete Division" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
           </td>`;
         tbody.appendChild(tr);
       });
@@ -1023,77 +1101,104 @@
       }
     }
 
-    function moveRowB(idx, step) {
-      const target = idx + step;
-      if (target < 0 || target >= dataB.length) return;
-      const temp = dataB[idx]; dataB[idx] = dataB[target]; dataB[target] = temp;
-      persistData(); renderFormatB();
-    }
-
     function deleteRowB(idx) {
-      if (dataB.length <= 1) return showToast("At least one division entry is required", "error");
       if (!confirm(`Delete division "${dataB[idx].div}"?`)) return;
       dataB.splice(idx, 1);
       persistData(); renderFormatB();
     }
 
-    // -------- FORMAT C & D --------
+    // ==========================================
+    // FORMAT C
+    // ==========================================
     function renderFormatC() {
       const tbody = document.getElementById('tbody-formatC');
       tbody.innerHTML = '';
-      dataC.forEach((item, index) => {
+
+      const indexedData = dataC.map((item, idx) => ({ item, origIdx: idx }));
+      const filtered = currentDepartment === 'ALL'
+        ? indexedData
+        : indexedData.filter(({ item }) => (item.dept || 'MATH') === currentDepartment);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400 italic text-xs">
+          No blood-relation entries in ${branchName(currentDepartment)} yet. Click "Add Row (C)" to add.
+        </td></tr>`;
+        return;
+      }
+
+      filtered.forEach(({ item, origIdx }, displayIdx) => {
         const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+        tr.className = displayIdx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
         tr.innerHTML = `
-          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'dept', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.dept)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
-          <td contenteditable="true" onblur="updateFieldC(${index}, 'relationship', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.relationship)}</td>
-          <td class="no-print action-col py-2 px-2 text-center"><button onclick="deleteRowC(${index})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button></td>`;
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${displayIdx + 1}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'dept', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.dept)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
+          <td contenteditable="true" onblur="updateFieldC(${origIdx}, 'relationship', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.relationship)}</td>
+          <td class="no-print action-col py-2 px-2 text-center"><button onclick="deleteRowC(${origIdx})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button></td>`;
         tbody.appendChild(tr);
       });
     }
     function updateFieldC(index, key, val) { if (!dataC[index]) return; dataC[index][key] = (val || '').toString().trim(); persistData(); }
     function addRowC() {
-      dataC.push({ sl: dataC.length + 1, name: "Faculty Name", dept: "MATH", sem: "2", branch: "CSE", div: "A", roll: "01", relationship: "Relation" });
+      const dept = effectiveDept();
+      dataC.push({ sl: dataC.length + 1, name: "Faculty Name", dept: dept, sem: "2", branch: dept, div: "A", roll: "01", relationship: "Relation" });
       persistData(); renderFormatC();
       if (currentView !== 'all') switchView('formatC');
-      showToast("Row added to Format C");
+      showToast(`Row added to Format C (${dept})`);
     }
     function deleteRowC(idx) { if (!confirm("Delete this row from Format C?")) return; dataC.splice(idx, 1); persistData(); renderFormatC(); }
 
+    // ==========================================
+    // FORMAT D
+    // ==========================================
     function renderFormatD() {
       const tbody = document.getElementById('tbody-formatD');
       tbody.innerHTML = '';
-      dataD.forEach((item, index) => {
+
+      const indexedData = dataD.map((item, idx) => ({ item, origIdx: idx }));
+      const filtered = currentDepartment === 'ALL'
+        ? indexedData
+        : indexedData.filter(({ item }) => (item.branch || 'MATH') === currentDepartment);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 italic text-xs">
+          No PH-student entries in ${branchName(currentDepartment)} yet. Click "Add Row (D)" to add.
+        </td></tr>`;
+        return;
+      }
+
+      filtered.forEach(({ item, origIdx }, displayIdx) => {
         const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
+        tr.className = displayIdx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60';
         tr.innerHTML = `
-          <td class="text-center font-bold py-2 px-2 text-slate-700">${index + 1}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'usn', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono">${escapeHTML(item.usn)}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
-          <td contenteditable="true" onblur="updateFieldD(${index}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
-          <td class="no-print action-col py-2 px-2 text-center"><button onclick="deleteRowD(${index})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button></td>`;
+          <td class="text-center font-bold py-2 px-2 text-slate-700">${displayIdx + 1}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'name', this.innerText)" class="editable-cell py-2 px-3 font-semibold text-slate-900">${escapeHTML(item.name)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'usn', this.innerText)" class="editable-cell py-2 px-3 text-center font-mono">${escapeHTML(item.usn)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'sem', this.innerText)" class="editable-cell py-2 px-2 text-center">${escapeHTML(item.sem)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'branch', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.branch)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'div', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.div)}</td>
+          <td contenteditable="true" onblur="updateFieldD(${origIdx}, 'roll', this.innerText)" class="editable-cell py-2 px-3 text-center">${escapeHTML(item.roll)}</td>
+          <td class="no-print action-col py-2 px-2 text-center"><button onclick="deleteRowD(${origIdx})" title="Delete Row" class="p-1 text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can text-xs"></i></button></td>`;
         tbody.appendChild(tr);
       });
     }
     function updateFieldD(index, key, val) { if (!dataD[index]) return; dataD[index][key] = (val || '').toString().trim(); persistData(); }
     function addRowD() {
-      dataD.push({ sl: dataD.length + 1, name: "Student Name", usn: "2BA23CS001", sem: "2", branch: "CSE", div: "A", roll: "01" });
+      const dept = effectiveDept();
+      dataD.push({ sl: dataD.length + 1, name: "Student Name", usn: "2BA23CS001", sem: "2", branch: dept, div: "A", roll: "01" });
       persistData(); renderFormatD();
       if (currentView !== 'all') switchView('formatD');
-      showToast("Row added to Format D");
+      showToast(`Row added to Format D (${dept})`);
     }
     function deleteRowD(idx) { if (!confirm("Delete this row from Format D?")) return; dataD.splice(idx, 1); persistData(); renderFormatD(); }
 
-    // -------- MODAL --------
+    // ==========================================
+    // MODAL
+    // ==========================================
     function addDivisionRowModal() {
       const modal = document.getElementById('addModal');
       const branchSel = document.getElementById('modal-branch');
@@ -1104,7 +1209,14 @@
         opt.innerText = `${b.code} — ${b.name}`;
         branchSel.appendChild(opt);
       });
-      document.getElementById('modal-div').value = nextDivisionLetter(branchSel.value);
+
+      // Preselect current department if a specific one is active
+      const targetDept = effectiveDept();
+      branchSel.value = targetDept;
+      // Lock branch selector when a single department is active
+      branchSel.disabled = (currentDepartment !== 'ALL');
+
+      document.getElementById('modal-div').value = nextDivisionLetter(targetDept);
       document.getElementById('modal-count').value = "60";
       onModalBranchOrSemChange();
       modal.classList.remove('hidden');
@@ -1184,7 +1296,9 @@
       return '';
     }
 
-    // -------- VIEW SWITCH --------
+    // ==========================================
+    // VIEW SWITCH
+    // ==========================================
     function switchView(view) {
       currentView = view;
       const secs = {
@@ -1204,7 +1318,9 @@
       document.body.classList.toggle('print-all', view === 'all');
     }
 
-    // -------- EXPORT / COPY --------
+    // ==========================================
+    // EXPORT / COPY
+    // ==========================================
     function csvCell(v) { const s = (v == null ? '' : String(v)); return '"' + s.replace(/"/g, '""') + '"'; }
     function csvRow(arr) { return arr.map(csvCell).join(','); }
 
@@ -1217,63 +1333,99 @@
         rows.push(csvRow([`${headerConfig.cie} (${headerConfig.ay} - ${headerConfig.semType})`]));
         rows.push(csvRow([title]));
       };
+      const deptFilter = (item, field) => currentDepartment === 'ALL' || (item[field] || 'MATH') === currentDepartment;
+
       if (currentView === 'formatA' || currentView === 'all') {
         addHeader("Format A: Faculty Information (UG)");
         rows.push(csvRow(["Sl No", "Name of the faculty", "Branch", "Mobile No", "Designation", "Teaching Experience"]));
-        dataA.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.branch || 'MATH', item.phone, item.designation, item.exp])));
+        let n = 1;
+        dataA.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          rows.push(csvRow([n++, item.name, item.branch || 'MATH', item.phone, item.designation, item.exp]));
+        });
         rows.push(csvRow([headerConfig.sigA_left, "", "", "", "", headerConfig.sigA_right]));
         rows.push("");
       }
       if (currentView === 'formatB' || currentView === 'all') {
         addHeader("Format B: Subject wise Student Strength Information");
         rows.push(csvRow(["Sl No", "Branch", "Sem", "Div", "Subjects Title", "Subject Code", "Faculty In-Charge", "Regular + RR"]));
-        dataB.forEach((item, i) => rows.push(csvRow([i + 1, item.branch || 'MATH', item.sem, item.div, item.title, item.code, item.faculty, item.count])));
+        let n = 1;
+        dataB.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          rows.push(csvRow([n++, item.branch || 'MATH', item.sem, item.div, item.title, item.code, item.faculty, item.count]));
+        });
         rows.push(csvRow([headerConfig.sigB_left, "", "", "", "", "", "", headerConfig.sigB_right]));
         rows.push("");
       }
       if (currentView === 'formatC' || currentView === 'all') {
         addHeader("Format C: Faculty Blood Relationship");
         rows.push(csvRow(["Sl.", "Faculty Name", "Dept.", "Sem.", "Branch", "Division", "Roll No", "Relationship"]));
-        dataC.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.dept, item.sem, item.branch, item.div, item.roll, item.relationship])));
+        let n = 1;
+        dataC.forEach(item => {
+          if (!deptFilter(item, 'dept')) return;
+          rows.push(csvRow([n++, item.name, item.dept, item.sem, item.branch, item.div, item.roll, item.relationship]));
+        });
         rows.push(csvRow([headerConfig.sigC_left, "", "", "", "", "", "", headerConfig.sigC_right]));
         rows.push("");
       }
       if (currentView === 'formatD' || currentView === 'all') {
         addHeader("Format D: PH Students Information");
         rows.push(csvRow(["Sl.", "Name of the Student", "USN", "Sem.", "Branch", "Division", "Roll No"]));
-        dataD.forEach((item, i) => rows.push(csvRow([i + 1, item.name, item.usn, item.sem, item.branch, item.div, item.roll])));
+        let n = 1;
+        dataD.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          rows.push(csvRow([n++, item.name, item.usn, item.sem, item.branch, item.div, item.roll]));
+        });
         rows.push(csvRow([headerConfig.sigD_left, "", "", "", "", "", headerConfig.sigD_right]));
       }
+
       const csvText = "\uFEFF" + rows.join("\r\n");
       const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url; link.download = `BEC_Bagalkote_CIE_${currentView}.csv`;
+      link.href = url; link.download = `BEC_Bagalkote_CIE_${currentView}_${currentDepartment}.csv`;
       document.body.appendChild(link); link.click(); document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast("CSV file successfully generated");
     }
 
     function buildTSV() {
+      const deptFilter = (item, field) => currentDepartment === 'ALL' || (item[field] || 'MATH') === currentDepartment;
       let tsv = "";
       if (currentView === 'formatA' || currentView === 'all') {
         tsv += "Format A: Faculty Information (UG)\nSl No\tName of the faculty\tBranch\tMobile No\tDesignation\tTeaching Experience\n";
-        dataA.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.branch || 'MATH'}\t${item.phone}\t${item.designation}\t${item.exp}\n`);
+        let n = 1;
+        dataA.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          tsv += `${n++}\t${item.name}\t${item.branch || 'MATH'}\t${item.phone}\t${item.designation}\t${item.exp}\n`;
+        });
         tsv += "\n";
       }
       if (currentView === 'formatB' || currentView === 'all') {
         tsv += "Format B: Subject wise Student Strength Information\nSl No\tBranch\tSem\tDiv\tSubjects Title\tSubject code\tFaculty in-charge\tStudents\n";
-        dataB.forEach((item, i) => tsv += `${i + 1}\t${item.branch || 'MATH'}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`);
+        let n = 1;
+        dataB.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          tsv += `${n++}\t${item.branch || 'MATH'}\t${item.sem}\t${item.div}\t${item.title}\t${item.code}\t${item.faculty}\t${item.count}\n`;
+        });
         tsv += "\n";
       }
       if (currentView === 'formatC' || currentView === 'all') {
         tsv += "Format C: Faculty Blood Relationship\nSl.\tFaculty Name\tDept.\tSem.\tBranch\tDivision\tRoll No\tRelationship\n";
-        dataC.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.dept}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\t${item.relationship}\n`);
+        let n = 1;
+        dataC.forEach(item => {
+          if (!deptFilter(item, 'dept')) return;
+          tsv += `${n++}\t${item.name}\t${item.dept}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\t${item.relationship}\n`;
+        });
         tsv += "\n";
       }
       if (currentView === 'formatD' || currentView === 'all') {
         tsv += "Format D: PH Students Information\nSl.\tName of the Student\tUSN\tSem.\tBranch\tDivision\tRoll No\n";
-        dataD.forEach((item, i) => tsv += `${i + 1}\t${item.name}\t${item.usn}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\n`);
+        let n = 1;
+        dataD.forEach(item => {
+          if (!deptFilter(item, 'branch')) return;
+          tsv += `${n++}\t${item.name}\t${item.usn}\t${item.sem}\t${item.branch}\t${item.div}\t${item.roll}\n`;
+        });
         tsv += "\n";
       }
       return tsv;
@@ -1301,7 +1453,13 @@
       dataC = JSON.parse(JSON.stringify(initialFormatC));
       dataD = JSON.parse(JSON.stringify(initialFormatD));
       Object.assign(headerConfig, defaultHeaderConfig);
-      persistData(); syncHeaders(); renderFormatA(); renderFormatB(); renderFormatC(); renderFormatD();
+      currentDepartment = 'MATH';
+      lastSpecificDepartment = 'MATH';
+      localStorage.setItem('bec_cie_currentDept', 'MATH');
+      localStorage.setItem('bec_cie_lastDept', 'MATH');
+      populateDeptSelector();
+      persistData(); syncHeaders();
+      renderFormatA(); renderFormatB(); renderFormatC(); renderFormatD();
       showToast("Template reset to original defaults");
     }
 
@@ -1321,10 +1479,11 @@
       showToast._t = setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-24', 'opacity-0'); }, 2500);
     }
 
-    // ================================================================
+    // ==========================================
     // BOOT
-    // ================================================================
+    // ==========================================
     window.addEventListener("DOMContentLoaded", function () {
+      populateDeptSelector();
       syncHeaders();
       renderFormatA();
       renderFormatB();
@@ -1332,11 +1491,15 @@
       renderFormatD();
       switchView('all');
 
-      if (isAuthenticated()) {
-        showApp();
+      // Update status text on load
+      if (currentDepartment === 'ALL') {
+        document.getElementById('deptStatusText').textContent = "Showing all departments — dropdowns show every branch";
       } else {
-        showLogin();
+        document.getElementById('deptStatusText').textContent = `Showing ${branchName(currentDepartment)} only — staff & subjects auto-filtered`;
       }
+
+      if (isAuthenticated()) showApp();
+      else showLogin();
     });
   </script>
 </body>
