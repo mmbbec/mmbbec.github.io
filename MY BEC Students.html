@@ -85,6 +85,7 @@
     .btn.secondary:hover { background: var(--red-light); }
     .btn:focus-visible,
     .semester:focus-visible,
+    .tab:focus-visible,
     .skip-link:focus-visible {
       outline: 3px solid #fca5a5;
       outline-offset: 2px;
@@ -119,11 +120,42 @@
     .semester span { display: block; font-size: 1.5rem; margin-bottom: 5px; }
     .semester.active { background: var(--red-light); border-color: var(--red); color: var(--red-dark); }
 
+    /* ---- Subject tabs (per semester) ---- */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 16px;
+      padding: 0 0 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-weight: 700;
+      font-size: .9rem;
+      line-height: 1.2;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+    .tab:hover { background: var(--red-light); border-color: #fecaca; color: var(--red-dark); }
+    .tab[aria-selected="true"] {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+    .tab-panel:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 4px;
+      border-radius: 12px;
+    }
+
     .subject {
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 16px;
-      margin-top: 12px;
       background: #fff;
     }
     .subject-code { margin: 0; color: var(--red); font-size: .9rem; font-weight: 700; }
@@ -195,6 +227,7 @@
       .semester { padding: 14px 5px; font-size: .92rem; }
       .semester span { font-size: 1.25rem; }
       .pdf-frame { min-height: 360px; height: 65vh; }
+      .tab { padding: 8px 13px; font-size: .85rem; }
     }
     @media (max-width: 420px) {
       .material-row { flex-direction: column; align-items: stretch; }
@@ -213,7 +246,7 @@
     <p>Student Learning Portal</p>
   </header>
 
-  <main id="main" class="wrap">
+  <main id="main" class="wrap" tabindex="-1">
     <section id="portalPanel">
       <section class="panel">
         <h2 style="margin-bottom:4px">Learning Materials</h2>
@@ -232,7 +265,7 @@
 
       <section class="panel" aria-labelledby="materialsHeading">
         <h2 id="materialsHeading" tabindex="-1">First Semester</h2>
-        <p class="muted small">Select “View” to open the PDF in the viewer below.</p>
+        <p class="muted small">Use the tabs to switch subject code, then select “View” to open the PDF below.</p>
         <p id="materialsStatus" class="message" role="status"></p>
         <div id="subjects"></div>
       </section>
@@ -273,7 +306,8 @@
         fourth: "Fourth Semester"
       });
 
-      // Paths are relative to this HTML file.
+      // Paths are relative to this HTML file (or absolute http/https URLs).
+      // Each subject becomes one tab inside its semester.
       const MATERIALS = {
         first: [
           {
@@ -288,24 +322,29 @@
               { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
               { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
             ]
-          },
-          
-        second: [
-          // Add second-semester subjects here in the same format.
+          }
         ],
+
+        second: [
+          // Add second-semester subjects here in the same format:
+          // { code: "1BMAC201C", title: "...", items: [ { title: "...", type: "PDF", path: "..." } ] }
+        ],
+
         third: [
-           {
+          {
             code: "1BMAS301C",
-            title: "Mathematics for Computer Science Stream ",
+            title: "Mathematics for Computer Science Stream",
             items: [
               { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem3-cse.pdf" },
               { title: "Curve Fitting", type: "PDF", path: "https://drive.google.com/file/d/15IQAg-AKFqHVLd6urdy33P-jhzyxPCWj/view?usp=drivesdk" },
               { title: "Correlation and Regression", type: "PDF", path: "https://drive.google.com/file/d/1t_pQ5eWjXEKlyybnU93iH3rBHwt2GQ1k/view?usp=drivesdk" },
-              { title: "Discrete & Continupus Random variable", type: "PDF", path: "https://drive.google.com/file/d/1WgwYviAOcmw6IylrIGzJ0AOXAxWorlhj/view?usp=drivesdk" },
+              { title: "Discrete & Continuous Random Variable", type: "PDF", path: "https://drive.google.com/file/d/1WgwYviAOcmw6IylrIGzJ0AOXAxWorlhj/view?usp=drivesdk" },
               { title: "Binomial and Poisson Distribution", type: "PDF", path: "https://drive.google.com/file/d/1Z-Lxu_xFEyBHQgYC-on0DNEWs0IX45YC/view?usp=drivesdk" },
-              { title: "Normal Distributions", type: "PDF", path: "https://drive.google.com/file/d/127Mws9q2UTb2ltNCVg_ISWUSbHgHvKkY/view?usp=drivesdk" },
-              ]
-           }.
+              { title: "Normal Distributions", type: "PDF", path: "https://drive.google.com/file/d/127Mws9q2UTb2ltNCVg_ISWUSbHgHvKkY/view?usp=drivesdk" }
+            ]
+          }
+        ],
+
         fourth: [
           // Add fourth-semester subjects here in the same format.
         ]
@@ -372,6 +411,8 @@
         }
       }
 
+      /* ---------------- Semester selection ---------------- */
+
       function selectSemester(name) {
         currentSemester = Object.prototype.hasOwnProperty.call(MATERIALS, name) ? name : "first";
 
@@ -382,6 +423,87 @@
         });
 
         renderSemester(currentSemester);
+      }
+
+      /* ---------------- Tabs (one per subject code) ---------------- */
+
+      function activateTab(tab, moveFocus) {
+        const tablist = tab.parentElement;
+        if (!tablist) return;
+
+        Array.from(tablist.querySelectorAll('[role="tab"]')).forEach(function (other) {
+          const isSelected = other === tab;
+          other.setAttribute("aria-selected", isSelected ? "true" : "false");
+          other.tabIndex = isSelected ? 0 : -1;
+
+          const panel = document.getElementById(other.getAttribute("aria-controls"));
+          if (panel) panel.hidden = !isSelected;
+        });
+
+        if (moveFocus) tab.focus();
+      }
+
+      function handleTabKeydown(event) {
+        const tablist = event.currentTarget;
+        const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+        const currentIndex = tabs.indexOf(document.activeElement);
+        if (currentIndex === -1) return;
+
+        let nextIndex = -1;
+        if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
+        else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        else if (event.key === "Home") nextIndex = 0;
+        else if (event.key === "End") nextIndex = tabs.length - 1;
+
+        if (nextIndex !== -1) {
+          event.preventDefault();
+          activateTab(tabs[nextIndex], true);
+        }
+      }
+
+      function buildSubjectCard(subject) {
+        const card = document.createElement("article");
+        card.className = "subject";
+
+        const code = document.createElement("p");
+        code.className = "subject-code";
+        code.textContent = subject.code;
+
+        const title = document.createElement("h3");
+        title.textContent = subject.title;
+
+        const list = document.createElement("div");
+        list.className = "materials";
+
+        (subject.items || []).forEach(function (item) {
+          const row = document.createElement("div");
+          row.className = "material-row";
+
+          const info = document.createElement("div");
+          const name = document.createElement("strong");
+          name.textContent = item.title;
+
+          const kind = document.createElement("p");
+          kind.className = "kind";
+          kind.textContent = item.type || "Document";
+
+          info.append(name, kind);
+
+          const viewBtn = document.createElement("button");
+          viewBtn.type = "button";
+          viewBtn.className = "btn secondary";
+          viewBtn.textContent = "View";
+          viewBtn.setAttribute("aria-label", "View " + item.title + " (" + subject.code + ")");
+          viewBtn.addEventListener("click", function () {
+            openPdf(item, subject, viewBtn);
+          });
+
+          row.append(info, viewBtn);
+          list.appendChild(row);
+        });
+
+        card.append(code, title, list);
+        return card;
       }
 
       function renderSemester(semester) {
@@ -399,55 +521,51 @@
           return;
         }
 
-        const fragment = document.createDocumentFragment();
+        const tablist = document.createElement("div");
+        tablist.className = "tabs";
+        tablist.setAttribute("role", "tablist");
+        tablist.setAttribute("aria-label", "Subjects in " + (SEMESTER_NAMES[semester] || "semester"));
+        tablist.addEventListener("keydown", handleTabKeydown);
 
-        subjects.forEach(function (subject) {
-          const card = document.createElement("article");
-          card.className = "subject";
+        const panels = document.createDocumentFragment();
 
-          const code = document.createElement("p");
-          code.className = "subject-code";
-          code.textContent = subject.code;
+        subjects.forEach(function (subject, index) {
+          const selected = index === 0;
+          const tabId = "tab-" + semester + "-" + index;
+          const panelId = "panel-" + semester + "-" + index;
 
-          const title = document.createElement("h3");
-          title.textContent = subject.title;
-
-          const list = document.createElement("div");
-          list.className = "materials";
-
-          (subject.items || []).forEach(function (item) {
-            const row = document.createElement("div");
-            row.className = "material-row";
-
-            const info = document.createElement("div");
-            const name = document.createElement("strong");
-            name.textContent = item.title;
-
-            const kind = document.createElement("p");
-            kind.className = "kind";
-            kind.textContent = item.type || "Document";
-
-            info.append(name, kind);
-
-            const viewBtn = document.createElement("button");
-            viewBtn.type = "button";
-            viewBtn.className = "btn secondary";
-            viewBtn.textContent = "View";
-            viewBtn.setAttribute("aria-label", "View " + item.title + " (" + subject.code + ")");
-            viewBtn.addEventListener("click", function () {
-              openPdf(item, subject, viewBtn);
-            });
-
-            row.append(info, viewBtn);
-            list.appendChild(row);
+          const tab = document.createElement("button");
+          tab.type = "button";
+          tab.className = "tab";
+          tab.id = tabId;
+          tab.setAttribute("role", "tab");
+          tab.setAttribute("aria-controls", panelId);
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+          tab.tabIndex = selected ? 0 : -1;
+          tab.textContent = subject.code;
+          tab.title = subject.title;
+          tab.addEventListener("click", function () {
+            activateTab(tab, false);
           });
 
-          card.append(code, title, list);
-          fragment.appendChild(card);
+          const panel = document.createElement("div");
+          panel.id = panelId;
+          panel.className = "tab-panel";
+          panel.setAttribute("role", "tabpanel");
+          panel.setAttribute("aria-labelledby", tabId);
+          panel.tabIndex = 0;
+          panel.hidden = !selected;
+          panel.appendChild(buildSubjectCard(subject));
+
+          tablist.appendChild(tab);
+          panels.appendChild(panel);
         });
 
-        subjectsEl.appendChild(fragment);
+        subjectsEl.appendChild(tablist);
+        subjectsEl.appendChild(panels);
       }
+
+      /* ---------------- PDF viewer ---------------- */
 
       function openPdf(item, subject, trigger) {
         const rawPath = safePdfPath(item && item.path);
@@ -463,6 +581,7 @@
 
         viewerTitle.textContent = subject.code + " — " + item.title;
         viewerFileName.textContent = fileNameFromPath(rawPath);
+        pdfFrame.title = "PDF document viewer: " + item.title;
 
         window.clearTimeout(loadingTimer);
         viewerStatus.hidden = false;
