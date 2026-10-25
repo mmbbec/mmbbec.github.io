@@ -448,7 +448,7 @@
                  <a href="Advanced-Numerical-Methods-Solver.html" class="profile-btn profile-btn-highlight">📚 Numerical Solver</a>
                  <a href="matrix.html" class="profile-btn profile-btn-highlight">📚 Matrix Solver</a>
                  <a href="Resume.html" class="profile-btn profile-btn-highlight">📚 Resume Builder</a>
-                 <a href="co po calculator.html" class="profile-btn profile-btn-highlight">📚 CO PO Calculator</a>
+                 <a href="co-po-calculator.html" class="profile-btn profile-btn-highlight">📚 CO PO Calculator</a>
                  <a href="gate.html" class="profile-btn profile-btn-highlight">📚 Gate Mathematics</a>
 
 
@@ -480,7 +480,7 @@
         <div class="app-section" data-category="student">
             <div class="section-header">
                 <h3>Student Resources</h3>
-                <span class="section-badge">13 apps</span>
+               <span class="section-badge">5 apps</span>
             </div>
             <div class="app-grid">
 
@@ -1059,17 +1059,29 @@
     });
 })();
 
-/* ─── VISITOR COUNTER (safe) ─── */
+/* ─── VISITOR COUNTER (Global Live Tracking) ─── */
 document.addEventListener('DOMContentLoaded', function () {
     var el = document.getElementById('visitor-count');
-    try {
-        var count = parseInt(localStorage.getItem('visitorCount') || '0', 10);
-        count = count > 0 ? count + 1 : Math.floor(Math.random() * 1500) + 850;
-        localStorage.setItem('visitorCount', count);
-        el.textContent = count.toLocaleString();
-    } catch (e) {
-        el.textContent = '—';
-    }
+    if (!el) return;
+
+    // Connects to global counter for mahadevbiradar.in
+    fetch('https://api.counterapi.dev/v1/mahadevbiradar.in/visits/up')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            if (data && data.count) {
+                // Add a base offset if you want to start from your existing visitor estimate
+                var totalVisitors = data.count + 1250; 
+                el.textContent = totalVisitors.toLocaleString();
+            } else {
+                el.textContent = '1,250+';
+            }
+        })
+        .catch(function () {
+            // Fallback display if network blocks API
+            el.textContent = '1,250+';
+        });
 });
 
 /* ─── CONTACT FORM (demo behaviour; swap to real endpoint) ─── */
