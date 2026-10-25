@@ -125,7 +125,7 @@
 
     .semester-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
     .semester {
@@ -211,7 +211,7 @@
     footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 8px 0 22px; }
 
     @media (max-width: 540px) {
-      .semester-grid { gap: 7px; }
+      .semester-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
       .semester { padding: 14px 5px; font-size: .92rem; }
       .semester span { font-size: 1.25rem; }
       .pdf-frame { min-height: 360px; height: 65vh; }
@@ -255,11 +255,6 @@
         <button class="btn full" type="submit">Login</button>
         <p id="loginMessage" class="message" role="alert"></p>
       </form>
-
-      <div class="notice">
-        <strong>Demo only.</strong> This is a static page, so the credentials below are visible in the
-        page source and there is no real authentication. Never use a real or reused password.
-      </div>
     </section>
 
     <section id="portalPanel" hidden>
@@ -279,6 +274,7 @@
           <button class="semester active" data-semester="first" type="button" aria-pressed="true"><span aria-hidden="true">📘</span>First</button>
           <button class="semester" data-semester="second" type="button" aria-pressed="false"><span aria-hidden="true">📗</span>Second</button>
           <button class="semester" data-semester="third" type="button" aria-pressed="false"><span aria-hidden="true">📙</span>Third</button>
+          <button class="semester" data-semester="fourth" type="button" aria-pressed="false"><span aria-hidden="true">📕</span>Fourth</button>
         </div>
       </section>
 
@@ -314,7 +310,7 @@
     </section>
   </main>
 
-  <footer>Student Learning Portal · Replace the sample materials with your own PDF paths.</footer>
+  <footer>Student Learning Portal · Engineering Mathematics</footer>
 
   <script>
     (function () {
@@ -322,20 +318,29 @@
 
       /* ------------------------------------------------------------------
          SETUP
-         1. Change DEMO_CREDENTIALS below (visible in source — demo only).
-         2. Upload your PDFs to the repository.
-         3. Edit MATERIALS so each path matches a real file.
-            Remove `sample: true` once a real path is in place.
+         1. Upload your PDFs and edit MATERIALS below.
+         2. Each item needs: title, type, path (relative path or https URL).
+         3. Google Drive links are converted to /preview automatically —
+            the file must be shared as "Anyone with the link".
       ------------------------------------------------------------------ */
-      const DEMO_CREDENTIALS = Object.freeze({
-        username: "student@gmail.com",
-        password: "1234"
+
+      // Stored encoded so the credentials are not sitting in plain text.
+      // NOTE: this is obfuscation, not security — a static page can never
+      // hold a real secret. Use server-side authentication for real privacy.
+      const AUTH = Object.freeze({
+        user: "c3R1ZGVudEBnbWFpbC5jb20=", // base64
+        pass: "MTIzNA=="                  // base64
       });
+
+      function decode(value) {
+        try { return window.atob(value); } catch (error) { return ""; }
+      }
 
       const SEMESTER_NAMES = Object.freeze({
         first: "First Semester",
         second: "Second Semester",
-        third: "Third Semester"
+        third: "Third Semester",
+        fourth: "Fourth Semester"
       });
 
       // Paths are relative to this HTML file.
@@ -346,43 +351,29 @@
             title: "Engineering Mathematics – Subject 1",
             items: [
               { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
-              { title: "Ploar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
-              { title: "Taylor's & Maclaurins series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" }
-              { title: "Partial Differentitation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" }
+              { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
+              { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
+              { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
               { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" }
-
-                          ]
+            ]
           },
           {
             code: "1BMAS101C",
             title: "Engineering Mathematics – Subject 2",
             items: [
-              { title: "Syllabus", type: "PDF", path: "notes/1BMAC101C/syllabus.pdf" },
-              { title: "Notes – Unit 1", type: "PDF", path: "notes/1BMAC101C/notes-unit-1.pdf" }
+              { title: "Syllabus", type: "PDF", path: "notes/1BMAS101C/syllabus.pdf" },
+              { title: "Notes – Unit 1", type: "PDF", path: "notes/1BMAS101C/notes-unit-1.pdf" }
             ]
           }
         ],
         second: [
-          {
-            code: "ADD-SUBJECT-CODE",
-            title: "Second Semester Subject – replace this sample",
-            sample: true,
-            items: [
-              { title: "Syllabus", type: "PDF", path: "notes/second/subject-code/syllabus.pdf", sample: true },
-              { title: "Notes – Unit 1", type: "PDF", path: "notes/second/subject-code/notes-unit-1.pdf", sample: true }
-            ]
-          }
+          // Add second-semester subjects here in the same format.
         ],
         third: [
-          {
-            code: "ADD-SUBJECT-CODE",
-            title: "Third Semester Subject – replace this sample",
-            sample: true,
-            items: [
-              { title: "Syllabus", type: "PDF", path: "notes/third/subject-code/syllabus.pdf", sample: true },
-              { title: "Notes – Unit 1", type: "PDF", path: "notes/third/subject-code/notes-unit-1.pdf", sample: true }
-            ]
-          }
+          // Add third-semester subjects here in the same format.
+        ],
+        fourth: [
+          // Add fourth-semester subjects here in the same format.
         ]
       };
 
@@ -408,9 +399,9 @@
 
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-      let currentSemester  = "first";
+      let currentSemester   = "first";
       let lastViewerTrigger = null;
-      let loadingTimer     = 0;
+      let loadingTimer      = 0;
 
       /* ---------------------------- Helpers ---------------------------- */
       function setMaterialsStatus(text) {
@@ -432,6 +423,19 @@
           }
         }
         return raw;
+      }
+
+      /** Turn Google Drive share links into embeddable /preview links. */
+      function toEmbeddable(path) {
+        let match = path.match(/^https?:\/\/drive\.google\.com\/file\/d\/([^/?#]+)/i);
+        if (match) {
+          return "https://drive.google.com/file/d/" + match[1] + "/preview";
+        }
+        match = path.match(/^https?:\/\/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([^&#]+)/i);
+        if (match) {
+          return "https://drive.google.com/file/d/" + match[1] + "/preview";
+        }
+        return path;
       }
 
       function fileNameFromPath(path) {
@@ -524,25 +528,19 @@
 
       /* ---------------------------- Viewer ----------------------------- */
       function openPdf(item, subject, trigger) {
-        if (!item || item.sample) {
-          setMaterialsStatus(
-            "“" + (item ? item.title : "This item") + "” is a sample entry. " +
-            "Replace its path in the MATERIALS object with a real PDF path."
-          );
+        const rawPath = safePdfPath(item && item.path);
+        if (!rawPath) {
+          setMaterialsStatus("“" + (item ? item.title : "This item") + "” has a missing or invalid file path.");
           return;
         }
 
-        const path = safePdfPath(item.path);
-        if (!path) {
-          setMaterialsStatus("This document has a missing or invalid file path.");
-          return;
-        }
+        const path = toEmbeddable(rawPath);
 
         setMaterialsStatus("");
         lastViewerTrigger = trigger || null;
 
         viewerTitle.textContent = subject.code + " — " + item.title;
-        viewerFileName.textContent = fileNameFromPath(path);
+        viewerFileName.textContent = fileNameFromPath(rawPath);
 
         // Show a "loading" layer, but never let it block the PDF for long.
         window.clearTimeout(loadingTimer);
@@ -589,8 +587,8 @@
         const password = passwordInput.value;
 
         const ok =
-          username === DEMO_CREDENTIALS.username.toLowerCase() &&
-          password === DEMO_CREDENTIALS.password;
+          username === decode(AUTH.user).toLowerCase() &&
+          password === decode(AUTH.pass);
 
         if (!ok) {
           loginMessage.textContent = "Incorrect username or password. Please try again.";
