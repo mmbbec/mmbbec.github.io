@@ -11,11 +11,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- =============== KaTeX (Numerical Lab) =============== -->
+<!-- =============== KaTeX =============== -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
-<!-- =============== Tailwind (Numerical Lab) =============== -->
+<!-- =============== Tailwind =============== -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -40,7 +40,7 @@ tailwind.config = {
 };
 </script>
 
-<!-- =============== React (Numerical Lab) =============== -->
+<!-- =============== React =============== -->
 <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
@@ -152,7 +152,6 @@ html[data-theme="dark"] #stats-app{
 #stats-app ::selection{ background: var(--brand); color:#fff; }
 #stats-app :focus-visible{ outline:2px solid var(--brand); outline-offset:2px; border-radius:6px; }
 
-/* --- Stats class-based styles (unchanged, scoped naturally by inheritance) --- */
 #stats-app .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-feature-settings:'tnum'}
 #stats-app .shell{display:flex;min-height:100vh}
 #stats-app .sidebar{width:274px;flex:0 0 274px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:50;}
@@ -531,6 +530,38 @@ function Tabs({ tabs, active, onChange }) {
           </button>
         );
       })}
+    </div>
+  );
+}
+
+/* ============================================================
+   SolverTitle — unified, dynamic page title for every solver
+   ============================================================ */
+function SolverTitle({ index, title, subtitle, chips = [], tabs, activeTab, onTabChange }) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-sky-400" />
+      <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-indigo-400/20 blur-3xl" />
+      <div className="relative px-4 sm:px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-indigo-500">Module {index}</span>
+            <span className="h-px w-8 bg-gradient-to-r from-indigo-500 to-sky-400" />
+          </div>
+          <h2 className="mt-1 text-xl sm:text-[26px] font-extrabold tracking-tight text-slate-900 leading-tight">{title}</h2>
+          <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+          {chips.filter(Boolean).length > 0 && (
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {chips.filter(Boolean).map((c, i) => (
+                <span key={i} className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100 whitespace-nowrap">{c}</span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="sm:shrink-0 max-w-full overflow-x-auto">
+          {tabs && <Tabs tabs={tabs} active={activeTab} onChange={onTabChange} />}
+        </div>
+      </div>
     </div>
   );
 }
@@ -935,17 +966,15 @@ function RootSolver() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 01</span>
-            <span className="h-px w-8 bg-indigo-200" />
-          </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Root Finding</h2>
-          <p className="text-xs text-slate-500 mt-1">Solve <span className="font-mono text-slate-700">f(x) = 0</span> with six schemes.</p>
-        </div>
-        <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
-      </div>
+      <SolverTitle
+        index="01"
+        title="Root Finding"
+        subtitle={<>Solve <span className="font-mono text-slate-700">f(x) = 0</span> with six classical schemes.</>}
+        chips={[meta.short, meta.order, meta.needs]}
+        tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]}
+        activeTab={tab}
+        onTabChange={setTab}
+      />
       {tab === "theory" && (
         <div className="grid sm:grid-cols-2 gap-3">
           {Object.entries(METHODS).map(([key, m]) => (
@@ -1129,14 +1158,15 @@ function LinearSolver() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2"><span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 02</span><span className="h-px w-8 bg-indigo-200" /></div>
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Linear Systems</h2>
-          <p className="text-xs text-slate-500 mt-1">Solve <span className="font-mono text-slate-700">Ax = b</span>.</p>
-        </div>
-        <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
-      </div>
+      <SolverTitle
+        index="02"
+        title="Linear Systems"
+        subtitle={<>Solve <span className="font-mono text-slate-700">Ax = b</span> by direct or iterative elimination.</>}
+        chips={[meta.short, meta.order]}
+        tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]}
+        activeTab={tab}
+        onTabChange={setTab}
+      />
       {tab === "theory" && (
         <div className="grid sm:grid-cols-2 gap-3">
           {Object.entries(LINEAR_METHODS).map(([key, m]) => (
@@ -1296,14 +1326,15 @@ function IntegSolver() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2"><span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 03</span><span className="h-px w-8 bg-indigo-200" /></div>
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Numerical Integration</h2>
-          <p className="text-xs text-slate-500 mt-1">Approximate <span className="font-mono text-slate-700">∫ f dx</span>.</p>
-        </div>
-        <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
-      </div>
+      <SolverTitle
+        index="03"
+        title="Numerical Integration"
+        subtitle={<>Approximate <span className="font-mono text-slate-700">∫ f(x) dx</span> with quadrature rules.</>}
+        chips={[meta.short, meta.order]}
+        tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]}
+        activeTab={tab}
+        onTabChange={setTab}
+      />
       {tab === "theory" && (
         <div className="grid sm:grid-cols-2 gap-3">
           {Object.entries(INTEG_METHODS).map(([key, m]) => (
@@ -1431,14 +1462,15 @@ function ODESolver() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2"><span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 04</span><span className="h-px w-8 bg-indigo-200" /></div>
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">ODE Solvers</h2>
-          <p className="text-xs text-slate-500 mt-1">Solve <span className="font-mono text-slate-700">dy/dx = f(x, y)</span>.</p>
-        </div>
-        <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
-      </div>
+      <SolverTitle
+        index="04"
+        title="ODE Solvers"
+        subtitle={<>Solve <span className="font-mono text-slate-700">dy/dx = f(x, y)</span> step by step.</>}
+        chips={[meta.short, meta.order]}
+        tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]}
+        activeTab={tab}
+        onTabChange={setTab}
+      />
       {tab === "theory" && (
         <div className="grid sm:grid-cols-2 gap-3">
           {Object.entries(ODE_METHODS).map(([key, m]) => (
@@ -1511,8 +1543,22 @@ function ODESolver() {
 }
 
 /* ---------- APP SHELL ---------- */
+const MODULE_TITLES = {
+  root: "Root Finding",
+  linear: "Linear Systems",
+  integ: "Numerical Integration",
+  ode: "ODE Solvers",
+};
+
 function App() {
   const [activeModule, setActiveModule] = useState("root");
+
+  useEffect(() => {
+    if (document.getElementById('numerical-app')?.style.display !== 'none') {
+      document.title = `Numerical Lab Studio · ${MODULE_TITLES[activeModule] || "Solver"}`;
+    }
+  }, [activeModule]);
+
   const navItems = [
     { key: "root", label: "Root Finding", symbol: "f(x)=0", icon: <path d="M12 3v18M3 12h18M12 3a9 9 0 010 18" /> },
     { key: "linear", label: "Linear Systems", symbol: "Ax=b", icon: <path d="M4 6h16M4 12h16M4 18h16M9 3v18" /> },
@@ -1564,6 +1610,7 @@ function App() {
                 const active = activeModule === item.key;
                 return (
                   <button key={item.key} onClick={() => setActiveModule(item.key)}
+                    data-module-active={active ? "true" : undefined}
                     className={`group shrink-0 md:w-full text-left px-3 py-2.5 rounded-xl border flex items-center gap-2.5 transition-all duration-200 ${active ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white border-slate-900 shadow-lg shadow-slate-900/15" : "bg-white/70 text-slate-600 border-slate-200/80 hover:border-indigo-200 hover:bg-white"}`}>
                     <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${active ? "bg-white/15 text-indigo-200" : "bg-slate-100 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500"}`}>
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
@@ -3073,7 +3120,6 @@ document.documentElement.setAttribute('data-theme', state.theme);
 $('#themeBtn').innerHTML = state.theme === 'dark' ? I.sun : I.moon;
 renderAll();
 
-/* Expose rerender for app switching */
 window.__statsRerender = renderAll;
 </script>
 
@@ -3088,7 +3134,7 @@ window.__statsRerender = renderAll;
     if (appName === 'stats'){
       numApp.style.display = 'none';
       statsApp.style.display = '';
-      // Trigger resize so any Canvas visualizations resize properly
+      document.title = 'Statistics Dashboard · Engineering Mathematics';
       requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
         if (window.__statsRerender) window.__statsRerender();
@@ -3096,6 +3142,7 @@ window.__statsRerender = renderAll;
     } else {
       statsApp.style.display = 'none';
       numApp.style.display = '';
+      document.title = 'Numerical Lab Studio · Solver';
     }
     switcher.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.app === appName));
     try { localStorage.setItem('app.active', appName); } catch(e) {}
@@ -3106,7 +3153,6 @@ window.__statsRerender = renderAll;
     if (btn) show(btn.dataset.app);
   });
 
-  // Restore last active app
   let saved = 'num';
   try { saved = localStorage.getItem('app.active') || 'num'; } catch(e) {}
   show(saved);
