@@ -1,593 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Classroom Portal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#991b1b">
+  <meta name="description" content="Semester-wise learning materials for Engineering Mathematics students.">
+  <title>Engineering Mathematics | Student Learning Portal</title>
+  <style>
+    :root {
+      --red: #991b1b;
+      --red-dark: #7f1d1d;
+      --red-light: #fef2f2;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --paper: #ffffff;
+      --bg: #f5f6f8;
+      --green: #166534;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -80px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--red-dark);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, .18);
+      transition: top .18s ease;
+    }
+    .skip-link:focus { top: 12px; }
+
+    .topbar {
+      background: var(--red);
+      color: #fff;
+      padding: 24px 18px;
+      text-align: center;
+    }
+    .topbar h1 { margin: 0; font-size: clamp(1.35rem, 4vw, 2rem); }
+    .topbar p { margin: 7px 0 0; opacity: .9; }
+
+    .wrap { width: min(1000px, calc(100% - 28px)); margin: 24px auto 40px; }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: clamp(16px, 3vw, 26px);
+      box-shadow: 0 5px 20px rgba(15, 23, 42, .04);
+      margin-bottom: 18px;
+    }
+
+    h2 { margin: 0 0 14px; font-size: 1.25rem; }
+    h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    h2:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 4px; }
+
+    .muted { color: var(--muted); }
+    .small { font-size: .88rem; }
+
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    input {
+      display: block;
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: #fff;
+      color: inherit;
+    }
+    input:focus { outline: 2px solid #fecaca; border-color: var(--red); }
+
+    .input-row { display: flex; gap: 8px; align-items: stretch; }
+    .input-row input { flex: 1 1 auto; min-width: 0; }
+    .input-row .btn { flex: 0 0 auto; }
+
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 16px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 700;
+    }
+    .btn:hover { background: var(--red-dark); }
+    .btn.secondary { background: #fff; color: var(--red); border: 1px solid #fecaca; }
+    .btn.secondary:hover { background: var(--red-light); }
+    .btn:focus-visible,
+    .semester:focus-visible,
+    .skip-link:focus-visible {
+      outline: 3px solid #fca5a5;
+      outline-offset: 2px;
+    }
+
+    .full { width: 100%; margin-top: 16px; }
+
+    .message { margin: 12px 0 0; color: var(--red-dark); font-weight: 700; }
+    .message:empty { display: none; }
+
+    .notice {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: .9rem;
+      margin-top: 16px;
+    }
+
+    .semester-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .semester {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 10px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .semester span { display: block; font-size: 1.5rem; margin-bottom: 5px; }
+    .semester.active { background: var(--red-light); border-color: var(--red); color: var(--red-dark); }
+
+    .subject {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+      background: #fff;
+    }
+    .subject-code { margin: 0; color: var(--red); font-size: .9rem; font-weight: 700; }
+    .subject h3 { margin: 4px 0 0; }
+
+    .materials { display: grid; gap: 8px; margin-top: 14px; }
+    .material-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 11px 12px;
+      background: #fff;
+    }
+    .material-row:hover { background: #fafafa; border-color: #fca5a5; }
+    .kind { margin: 2px 0 0; color: var(--muted); font-size: .82rem; }
+
+    .viewer {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .viewer-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--line);
+    }
+    .viewer-body { position: relative; }
+    .viewer-status {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background: #f3f4f6;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .pdf-frame {
+      width: 100%;
+      height: min(72vh, 760px);
+      min-height: 420px;
+      border: 0;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .empty {
+      border: 1px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 22px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 8px 0 22px; }
+
+    @media (max-width: 540px) {
+      .semester-grid { gap: 7px; }
+      .semester { padding: 14px 5px; font-size: .92rem; }
+      .semester span { font-size: 1.25rem; }
+      .pdf-frame { min-height: 360px; height: 65vh; }
+    }
+    @media (max-width: 420px) {
+      .material-row { flex-direction: column; align-items: stretch; }
+      .material-row .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <h1>Engineering Mathematics</h1>
+    <p>Student Learning Portal</p>
+  </header>
+
+  <main id="main" class="wrap">
+    <section id="loginPanel" class="panel" aria-labelledby="loginHeading">
+      <h2 id="loginHeading">Student Login</h2>
+      <p class="muted small">Log in to view semester-wise learning materials.</p>
+
+      <form id="loginForm" novalidate="false">
+        <label for="username">Username / Email</label>
+        <input id="username" name="username" type="email" autocomplete="username"
+               inputmode="email" autocapitalize="none" spellcheck="false"
+               placeholder="Enter student email" required>
+
+        <label for="password">Password</label>
+        <div class="input-row">
+          <input id="password" name="password" type="password"
+                 autocomplete="current-password" placeholder="Enter password" required>
+          <button id="togglePassword" class="btn secondary" type="button"
+                  aria-pressed="false" aria-controls="password">Show</button>
+        </div>
+
+        <button class="btn full" type="submit">Login</button>
+        <p id="loginMessage" class="message" role="alert"></p>
+      </form>
+
+      <div class="notice">
+        <strong>Demo only.</strong> This is a static page, so the credentials below are visible in the
+        page source and there is no real authentication. Never use a real or reused password.
+      </div>
+    </section>
+
+    <section id="portalPanel" hidden>
+      <section class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:4px">Learning Materials</h2>
+            <p class="muted small" style="margin:0">Choose a semester, then open a subject material.</p>
+          </div>
+          <button id="logoutBtn" class="btn secondary" type="button">Logout</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="semesterHeading">
+        <h2 id="semesterHeading">Select Semester</h2>
+        <div class="semester-grid" role="group" aria-labelledby="semesterHeading">
+          <button class="semester active" data-semester="first" type="button" aria-pressed="true"><span aria-hidden="true">📘</span>First</button>
+          <button class="semester" data-semester="second" type="button" aria-pressed="false"><span aria-hidden="true">📗</span>Second</button>
+          <button class="semester" data-semester="third" type="button" aria-pressed="false"><span aria-hidden="true">📙</span>Third</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="materialsHeading">
+        <h2 id="materialsHeading" tabindex="-1">First Semester</h2>
+        <p class="muted small">Select “View” to open the PDF in the viewer below.</p>
+        <p id="materialsStatus" class="message" role="status"></p>
+        <div id="subjects"></div>
+      </section>
+
+      <section id="viewerSection" class="panel" hidden aria-labelledby="viewerTitle">
+        <h2 id="viewerTitle">PDF Viewer</h2>
+        <p class="muted small">If the PDF does not display, check the file path and whether the file is publicly accessible.</p>
+
+        <div class="viewer">
+          <div class="viewer-head">
+            <strong id="viewerFileName">Selected document</strong>
+            <button id="closeViewerBtn" class="btn secondary" type="button">Close viewer</button>
+          </div>
+          <div class="viewer-body">
+            <p id="viewerStatus" class="viewer-status">Loading document…</p>
+            <iframe id="pdfFrame" class="pdf-frame" title="PDF document viewer"
+                    referrerpolicy="no-referrer" loading="lazy"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <div class="notice">
+        Viewing-only interface: this page omits a Download button, but it cannot prevent direct file
+        access, browser saving, screenshots, printing, or copying. For genuinely private documents,
+        use authenticated hosting instead of public static hosting.
+      </div>
+    </section>
+  </main>
+
+  <footer>Student Learning Portal · Replace the sample materials with your own PDF paths.</footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ------------------------------------------------------------------
+         SETUP
+         1. Change DEMO_CREDENTIALS below (visible in source — demo only).
+         2. Upload your PDFs to the repository.
+         3. Edit MATERIALS so each path matches a real file.
+            Remove `sample: true` once a real path is in place.
+      ------------------------------------------------------------------ */
+      const DEMO_CREDENTIALS = Object.freeze({
+        username: "student@gmail.com",
+        password: "1234"
+      });
+
+      const SEMESTER_NAMES = Object.freeze({
+        first: "First Semester",
+        second: "Second Semester",
+        third: "Third Semester"
+      });
+
+      // Paths are relative to this HTML file.
+      const MATERIALS = {
+        first: [
+          {
+            code: "1BMAS101C",
+            title: "Engineering Mathematics – Subject 1",
+            items: [
+              { title: "Syllabus", type: "PDF", path: "notes/1BMAS101C/syllabus.pdf" },
+              { title: "Notes – Unit 1", type: "PDF", path: "notes/1BMAS101C/notes-unit-1.pdf" },
+              { title: "Question Paper", type: "PDF", path: "notes/1BMAS101C/question-paper.pdf" }
+            ]
+          },
+          {
+            code: "1BMAC101C",
+            title: "Engineering Mathematics – Subject 2",
+            items: [
+              { title: "Syllabus", type: "PDF", path: "notes/1BMAC101C/syllabus.pdf" },
+              { title: "Notes – Unit 1", type: "PDF", path: "notes/1BMAC101C/notes-unit-1.pdf" }
+            ]
+          }
+        ],
+        second: [
+          {
+            code: "ADD-SUBJECT-CODE",
+            title: "Second Semester Subject – replace this sample",
+            sample: true,
+            items: [
+              { title: "Syllabus", type: "PDF", path: "notes/second/subject-code/syllabus.pdf", sample: true },
+              { title: "Notes – Unit 1", type: "PDF", path: "notes/second/subject-code/notes-unit-1.pdf", sample: true }
+            ]
+          }
+        ],
+        third: [
+          {
+            code: "ADD-SUBJECT-CODE",
+            title: "Third Semester Subject – replace this sample",
+            sample: true,
+            items: [
+              { title: "Syllabus", type: "PDF", path: "notes/third/subject-code/syllabus.pdf", sample: true },
+              { title: "Notes – Unit 1", type: "PDF", path: "notes/third/subject-code/notes-unit-1.pdf", sample: true }
+            ]
+          }
+        ]
+      };
+
+      /* ------------------------- DOM references ------------------------- */
+      const loginPanel       = document.getElementById("loginPanel");
+      const portalPanel      = document.getElementById("portalPanel");
+      const loginForm        = document.getElementById("loginForm");
+      const loginMessage     = document.getElementById("loginMessage");
+      const usernameInput    = document.getElementById("username");
+      const passwordInput    = document.getElementById("password");
+      const togglePassword   = document.getElementById("togglePassword");
+      const logoutBtn        = document.getElementById("logoutBtn");
+      const semesterButtons  = Array.from(document.querySelectorAll(".semester"));
+      const materialsHeading = document.getElementById("materialsHeading");
+      const materialsStatus  = document.getElementById("materialsStatus");
+      const subjectsEl       = document.getElementById("subjects");
+      const viewerSection    = document.getElementById("viewerSection");
+      const viewerTitle      = document.getElementById("viewerTitle");
+      const viewerFileName   = document.getElementById("viewerFileName");
+      const viewerStatus     = document.getElementById("viewerStatus");
+      const pdfFrame         = document.getElementById("pdfFrame");
+      const closeViewerBtn   = document.getElementById("closeViewerBtn");
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      let currentSemester  = "first";
+      let lastViewerTrigger = null;
+      let loadingTimer     = 0;
+
+      /* ---------------------------- Helpers ---------------------------- */
+      function setMaterialsStatus(text) {
+        materialsStatus.textContent = text || "";
+      }
+
+      /** Only allow relative paths or http(s) URLs — blocks javascript:, data:, etc. */
+      function safePdfPath(value) {
+        const raw = String(value == null ? "" : value).trim();
+        if (!raw) return null;
+
+        const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(raw);
+        if (hasScheme || raw.startsWith("//")) {
+          try {
+            const url = new URL(raw, document.baseURI);
+            return (url.protocol === "https:" || url.protocol === "http:") ? url.href : null;
+          } catch (error) {
+            return null;
+          }
+        }
+        return raw;
+      }
+
+      function fileNameFromPath(path) {
+        try {
+          const withoutQuery = path.split(/[?#]/)[0];
+          const name = withoutQuery.split("/").pop();
+          return decodeURIComponent(name || "document.pdf");
+        } catch (error) {
+          return "document.pdf";
         }
       }
-    }
-  };
-</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-  *, *::before, *::after { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-  html, body { min-height: 100%; }
-  body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
-
-  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
-  .card-hover:hover { border-color: #a5b4fc !important; box-shadow: 0 4px 24px rgba(79,70,229,0.08); }
-  .btn-primary-grad { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border: none; }
-  .btn-primary-grad:hover { background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%); }
-  .pill-mono { background: #f1f5f9; border: 1px solid #e2e8f0; font-family: "JetBrains Mono", monospace; font-size: 12px; }
-  .dark .pill-mono { background: #1e293b; border-color: #334155; color: #e2e8f0; }
-
-  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; }
-  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-
-  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
-  .toast-in { animation: toastIn .3s cubic-bezier(.22, 1, .36, 1) both; }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .fade-up { animation: fadeUp .35s cubic-bezier(.22, 1, .36, 1) both; }
-
-  .att-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
-  .dark .att-bar { background: #334155; }
-  .att-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4f46e5, #8b5cf6); transition: width .5s ease; }
-  .att-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #f97316); }
-  .att-bar-fill.bad { background: linear-gradient(90deg, #dc2626, #ef4444); }
-</style>
-</head>
-
-<body class="min-h-screen bg-[#f8fafc] text-slate-900 dark:bg-[#0f172a] dark:text-slate-100 transition-colors">
-
-<!-- ================= NAV ================= -->
-<nav class="sticky top-0 z-40 backdrop-blur-xl border-b bg-white/80 border-slate-200 dark:bg-[#0f172a]/80 dark:border-slate-800">
-  <div class="max-w-[1280px] mx-auto px-4 md:px-6 h-[64px] flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-[#4f46e5] flex items-center justify-center text-white">
-        <i class="bi bi-mortarboard-fill text-[16px]"></i>
-      </div>
-      <div class="leading-tight">
-        <div class="font-semibold text-[14px] tracking-tight">Student Portal</div>
-        <div class="text-[11px] text-slate-500 -mt-0.5">Classroom Access</div>
-      </div>
-      <div id="navBreadcrumb" class="hidden md:flex items-center gap-2 ml-6 pl-6 border-l border-slate-200 dark:border-slate-800">
-        <span class="text-[12px] text-slate-500">Student</span>
-        <span class="text-slate-300 dark:text-slate-600">/</span>
-        <span class="text-[12px] font-medium">My Classes</span>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <button id="themeToggle" class="w-9 h-9 rounded-full border flex items-center justify-center bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300" aria-label="Toggle theme">
-        <i id="themeIcon" class="bi bi-moon text-[14px]"></i>
-      </button>
-      <button id="switchClassBtn" class="hidden text-[12px] px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-        Switch class
-      </button>
-    </div>
-  </div>
-</nav>
-
-<!-- ================= CODE ENTRY VIEW ================= -->
-<div id="codeView" class="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
-  <div class="w-full max-w-[460px] rounded-[20px] border shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 fade-up">
-    <div class="p-8">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-11 h-11 rounded-xl bg-[#4f46e5] flex items-center justify-center text-white">
-          <i class="bi bi-mortarboard-fill text-[18px]"></i>
-        </div>
-        <div>
-          <h1 class="text-[18px] font-semibold tracking-tight">BEC Bagalkote Student Portal</h1>
-          <p class="text-[13px] text-slate-500">Enter your class code to begin</p>
-        </div>
-      </div>
-
-      <label class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1.5 block">Class Code</label>
-      <input id="codeInput" type="text" placeholder="CSE5A-DS23" autocomplete="off"
-        class="w-full h-14 px-4 rounded-2xl border border-slate-200 bg-white text-[18px] mono tracking-[0.2em] text-center uppercase outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-indigo-950 mb-3">
-
-      <button id="codeContinueBtn"
-        class="w-full h-12 rounded-2xl btn-primary-grad text-white font-medium text-[15px] shadow-[0_4px_12px_rgba(79,70,229,0.25)] flex items-center justify-center gap-2">
-        <i class="bi bi-arrow-right"></i> Continue
-      </button>
-
-      <p class="text-[11px] text-slate-500 text-center mt-4">
-        Ask your faculty for the code. Example: <span class="mono">CSE5A-DS23</span>
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- ================= DASHBOARD ================= -->
-<div id="dashView" class="hidden">
-  <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
-
-    <div class="mb-6">
-      <div class="flex items-center gap-2 text-[12px] text-slate-500 mb-2">
-        <span>Student</span>
-        <i class="bi bi-chevron-right text-[10px]"></i>
-        <span class="text-slate-900 dark:text-slate-100 font-medium">My Classes</span>
-      </div>
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 id="welcomeTitle" class="text-[24px] md:text-[28px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">Welcome</h1>
-          <p class="text-[13px] text-slate-500 mt-1">Materials, notices and your attendance — for the class you joined.</p>
-        </div>
-        <button id="joinAnotherBtn" class="h-10 px-4 rounded-xl btn-primary-grad text-white text-[13px] font-medium flex items-center gap-2 shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
-          <i class="bi bi-box-arrow-in-right"></i> Join another class
-        </button>
-      </div>
-    </div>
-
-    <div id="recentClassesRow" class="mb-6 hidden">
-      <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-2">Recent classes</div>
-      <div id="recentClassesList" class="flex flex-wrap gap-2"></div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div>
-          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Class</div>
-          <div id="statClassCode" class="text-[16px] font-semibold mono truncate">—</div>
-          <div class="text-[12px] text-slate-500 mt-0.5">Current class code</div>
-        </div>
-        <div class="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-950 dark:border-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-          <i class="bi bi-collection"></i>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="min-w-0 flex-1">
-          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Subject</div>
-          <div id="statSubject" class="text-[16px] font-semibold truncate">—</div>
-          <div id="statFaculty" class="text-[12px] text-slate-500 mt-0.5 truncate">—</div>
-        </div>
-        <div class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0">
-          <i class="bi bi-person-badge"></i>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border p-5 flex items-center justify-between bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="min-w-0 flex-1">
-          <div class="text-[11px] font-semibold tracking-widest uppercase text-slate-500 mb-1">Sessions Held</div>
-          <div id="statOverallAtt" class="text-[22px] font-semibold">—</div>
-          <div class="text-[12px] text-slate-500 mt-0.5">Total attendance entries</div>
-        </div>
-        <div class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 dark:bg-emerald-950 dark:border-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
-          <i class="bi bi-graph-up-arrow"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
-
-      <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-        <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <h2 class="text-[13px] font-semibold tracking-tight">Class details</h2>
-          <span id="classCountPill" class="pill-mono px-2.5 py-1 rounded-full text-[11px]">—</span>
-        </div>
-        <div id="classInfoList" class="p-5 space-y-3 text-[13px]"></div>
-      </div>
-
-      <div class="space-y-6">
-        <div id="classDetailsCard" class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800 overflow-hidden"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center">
-                  <i class="bi bi-journal-text text-[13px]"></i>
-                </div>
-                <h3 class="text-[13px] font-semibold">Materials & Notices</h3>
-              </div>
-              <span id="postsCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[11px]">0</span>
-            </div>
-            <div id="postsList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-[440px] overflow-auto scrollbar-thin"></div>
-          </div>
-
-          <div class="rounded-2xl border bg-white border-slate-200 dark:bg-[#1e293b] dark:border-slate-800">
-            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex items-center justify-center">
-                  <i class="bi bi-calendar-check text-[13px]"></i>
-                </div>
-                <h3 class="text-[13px] font-semibold">Attendance records</h3>
-              </div>
-              <span id="attCountPill" class="pill-mono px-2 py-0.5 rounded-full text-[11px]">0</span>
-            </div>
-            <div id="attList" class="divide-y divide-slate-100 dark:divide-slate-800 max-h-[440px] overflow-auto scrollbar-thin"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
-      <i class="bi bi-lightning-charge-fill text-amber-500"></i>
-      Connected to Supabase • Live data
-    </div>
-  </div>
-</div>
-
-<!-- ================= TOASTS ================= -->
-<div id="toastStack" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
-
-<script>
-/* ============================================================
-   SUPABASE CONFIGURATION
-   ============================================================ */
-const SUPABASE_URL = "https://jxxudzkstpkbcbasqmdp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4eHVkemtzdHBrYmNiYXNxbWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNzQ0ODIsImV4cCI6MjEwNjg1MDQ4Mn0.hZ7CZjEXRF9Qsrid_zNQvFt2DsLggpfUBHFbbdM4_SI";
-
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ==================== STATE ==================== */
-const state = {
-  theme: 'light',
-  currentClass: null,
-  posts: [],
-  attendance: [],
-  recentCodes: [],
-  loading: false
-};
-
-const $ = (id) => document.getElementById(id);
-
-const RECENT_KEY = 'student-recent-classes';
-
-/* ==================== UTILS ==================== */
-function escapeHtml(v) {
-  if (v === null || v === undefined) return '';
-  return String(v).replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
-}
-
-function safeUrl(v) {
-  if (!v) return '#';
-  try {
-    const u = new URL(v, window.location.href);
-    return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '#';
-  } catch (e) {
-    return String(v).startsWith('http') ? v : '#';
-  }
-}
-
-/* ==================== TOASTS ==================== */
-function showToast(msg, type = 'info') {
-  const stack = $('toastStack');
-  const icons = { success: 'bi-check-circle-fill text-emerald-500',
-                  error: 'bi-x-circle-fill text-red-500',
-                  info: 'bi-info-circle-fill text-slate-400' };
-  const borders = { success: 'border-emerald-200 dark:border-emerald-900',
-                    error: 'border-red-200 dark:border-red-900',
-                    info: 'border-slate-200 dark:border-slate-700' };
-
-  const el = document.createElement('div');
-  el.className = `toast-in pointer-events-auto min-w-[280px] max-w-[380px] rounded-xl border px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex items-start gap-2.5 text-[13px] bg-white dark:bg-[#1e293b] dark:text-slate-100 ${borders[type] || borders.info}`;
-  el.innerHTML = `
-    <i class="bi ${icons[type] || icons.info} mt-0.5"></i>
-    <span class="flex-1 leading-snug">${escapeHtml(msg)}</span>
-  `;
-  stack.appendChild(el);
-
-  setTimeout(() => {
-    el.style.transition = 'opacity .3s, transform .3s';
-    el.style.opacity = '0';
-    el.style.transform = 'translateX(20px)';
-    setTimeout(() => el.remove(), 320);
-  }, 3500);
-}
-
-/* ==================== THEME ==================== */
-function applyTheme(theme) {
-  state.theme = theme;
-  document.documentElement.classList.toggle('dark', theme === 'dark');
-  $('themeIcon').className = `bi ${theme === 'dark' ? 'bi-sun' : 'bi-moon'} text-[14px]`;
-  try { localStorage.setItem('student-theme', theme); } catch (e) {}
-}
-
-/* ==================== RECENT CLASSES ==================== */
-function loadRecent() {
-  try {
-    const raw = localStorage.getItem(RECENT_KEY);
-    state.recentCodes = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(state.recentCodes)) state.recentCodes = [];
-  } catch (e) { state.recentCodes = []; }
-}
-function saveRecent(code) {
-  if (!code) return;
-  state.recentCodes = [code, ...state.recentCodes.filter(c => c !== code)].slice(0, 8);
-  try { localStorage.setItem(RECENT_KEY, JSON.stringify(state.recentCodes)); } catch (e) {}
-}
-
-/* ==================== NAV HELPERS ==================== */
-function showCodeView() {
-  $('dashView').classList.add('hidden');$('codeView').classList.remove('hidden');
-  $('switchClassBtn').classList.add('hidden');$('navBreadcrumb').classList.add('hidden');
-  setTimeout(() => $('codeInput').focus(), 50);
-}
-
-function showDashView() {
-  $('codeView').classList.add('hidden');
-  $('dashView').classList.remove('hidden');$('switchClassBtn').classList.remove('hidden');
-  $('navBreadcrumb').classList.remove('hidden');$('dashView').classList.remove('fade-up');
-  void $('dashView').offsetWidth;
-  $('dashView').classList.add('fade-up');
-}
-
-/* ==================== LOAD A CLASS ==================== */
-async function loadClassByCode(rawCode) {
-  const code = (rawCode || '').trim().toUpperCase();
-  if (!code) { showToast('Enter a class code', 'error'); return; }
-
-  const btn = $('codeContinueBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Loading…';
-
-  state.loading = true;
-  try {
-    const { data: cls, error: cErr } = await db.from('classes')
-      .select('*')
-      .eq('class_code', code)
-      .maybeSingle();
-    if (cErr) throw cErr;
-    if (!cls) throw new Error('Class code not found. Ask your faculty.');
-
-    state.currentClass = {
-      id: cls.id,
-      classCode: cls.class_code,
-      teacherEmail: cls.teacher_email,
-      teacherName: cls.teacher_name,
-      subject: cls.subject,
-      branch: cls.branch,
-      semester: cls.semester,
-      division: cls.division,
-      createdAt: cls.created_at ? new Date(cls.created_at).toLocaleDateString() : '—'
-    };
-
-    saveRecent(code);
-    renderRecent();
-
-    const [postsRes, attRes] = await Promise.all([
-      db.from('posts').select('*').eq('class_code', code).order('created_at', { ascending: false }),
-      db.from('attendance').select('*').eq('class_code', code).order('created_at', { ascending: false })
-    ]);
-    if (postsRes.error) throw postsRes.error;
-    if (attRes.error) throw attRes.error;
-
-    state.posts = (postsRes.data || []).map(p => ({
-      id: p.id,
-      category: p.category || 'General',
-      title: p.title || 'Untitled',
-      link: p.link || '',
-      description: p.description || '',
-      createdAt: p.created_at ? new Date(p.created_at).toLocaleDateString() : ''
-    }));
-
-    state.attendance = (attRes.data || []).map(a => ({
-      id: a.id,
-      date: a.date || '',
-      topic: a.topic || 'No topic',
-      totalCount: Number(a.total_count ?? a.totalCount ?? 60),
-      presentCount: Number(a.present_count ?? a.presentCount ?? 0),
-      absentCount: Number(a.absent_count ?? a.absentCount ?? 0),
-      absentRolls: a.absent_rolls ?? a.absentRolls ?? 'None',
-      remarks: a.remarks || ''
-    }));
-
-    // Reset loading BEFORE calling render functions
-    state.loading = false;
-    renderAll();
-    showDashView();
-    showToast(`Loaded ${code} — ${cls.subject}`, 'success');
-  } catch (err) {
-    state.loading = false;
-    showToast(err.message, 'error');
-  } finally {
-    state.loading = false;
-    btn.disabled = false;
-    btn.innerHTML = '<i class="bi bi-arrow-right"></i> Continue';
-  }
-}
-
-/* ==================== RENDERERS ==================== */
-function renderAll() {
-  renderHeader();
-  renderClassInfo();
-  renderClassDetails();
-  renderRecent();
-  renderPosts();
-  renderAttendance();
-  updateStats();
-}
-
-function renderHeader() {
-  const c = state.currentClass;
-  if (!c) return;
-  $('welcomeTitle').textContent = `${c.subject} • ${c.classCode}`;
-}
-
-function renderClassInfo() {
-  const c = state.currentClass;
-  const wrap = $('classInfoList');
-  if (!c) { wrap.innerHTML = ''; $('classCountPill').textContent = '—'; return; }$('classCountPill').textContent = c.classCode;
-  wrap.innerHTML = `
-    <div class="flex items-center justify-between"><span class="text-slate-500">Code</span><span class="mono font-medium">${escapeHtml(c.classCode)}</span></div>
-    <div class="flex items-center justify-between"><span class="text-slate-500">Branch</span><span class="font-medium">${escapeHtml(c.branch || '—')}</span></div>
-    <div class="flex items-center justify-between"><span class="text-slate-500">Semester</span><span class="font-medium">${escapeHtml(c.semester || '—')}</span></div>
-    <div class="flex items-center justify-between"><span class="text-slate-500">Division</span><span class="font-medium">${escapeHtml(c.division || '—')}</span></div>
-    <div class="flex items-center justify-between"><span class="text-slate-500">Faculty</span><span class="font-medium">${escapeHtml(c.teacherName || '—')}</span></div>
-    <div class="flex items-center justify-between"><span class="text-slate-500">Created</span><span class="font-medium">${escapeHtml(c.createdAt || '—')}</span></div>
-  `;
-}
-
-function renderClassDetails() {
-  const c = state.currentClass;
-  const card = $('classDetailsCard');
-  if (!c) {
-    card.innerHTML = `<div class="p-10 text-center text-slate-500 text-[13px]">Enter a class code to view details</div>`;
-    return;
-  }
-  card.innerHTML = `
-    <div class="h-1 w-full bg-gradient-to-r from-indigo-600 to-violet-500"></div>
-    <div class="p-5 md:p-6">
-      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 mb-2 flex-wrap">
-            <span class="pill-mono px-2.5 py-1 rounded-full text-[12px] font-medium">${escapeHtml(c.classCode)}</span>
-            <span class="text-[12px] text-slate-500">${escapeHtml(c.branch)} • Sem ${escapeHtml(c.semester)} • Div ${escapeHtml(c.division)}</span>
-          </div>
-          <h2 class="text-[20px] font-semibold tracking-tight">${escapeHtml(c.subject)}</h2>
-          <p class="text-[13px] text-slate-500 mt-1">Faculty: ${escapeHtml(c.teacherName || '—')}</p>
-        </div>
-        <div class="flex gap-2 flex-wrap">
-          <button id="refreshBtn" class="h-9 px-4 rounded-xl border text-[13px] font-medium flex items-center gap-1.5 border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
-            <i class="bi bi-arrow-clockwise"></i> Refresh
-          </button>
-        </div>
-      </div>
-    </div>`;
-  $('refreshBtn').addEventListener('click', () => loadClassByCode(c.classCode));
-}
-
-function renderRecent() {
-  const row = $('recentClassesRow');
-  const list = $('recentClassesList');
-  if (!state.recentCodes.length) { row.classList.add('hidden'); return; }
-  row.classList.remove('hidden');
-  list.innerHTML = state.recentCodes.map(code => {
-    const isActive = state.currentClass && state.currentClass.classCode === code;
-    return `<button data-recent="${escapeHtml(code)}"
-      class="pill-mono px-3 py-1.5 rounded-full transition ${isActive ? 'border-indigo-300 bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:border-indigo-800 dark:text-indigo-300' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}">
-      ${escapeHtml(code)}
-    </button>`;
-  }).join('');
-  list.querySelectorAll('[data-recent]').forEach(btn => {
-    btn.addEventListener('click', () => loadClassByCode(btn.dataset.recent));
-  });
-}
-
-function updateStats() {
-  const c = state.currentClass;
-  $('statClassCode').textContent = c ? c.classCode : '—';
-  $('statSubject').textContent   = c ? (c.subject || '—') : '—';
-  $('statFaculty').textContent   = c ? (c.teacherName || '—') : '—';
-  $('statOverallAtt').textContent = state.attendance.length ? `${state.attendance.length}` : '—';
-}
-
-function categoryClass(cat) {
-  if (cat === 'Assignment') return 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950 dark:border-amber-900 dark:text-amber-300';
-  if (cat === 'Material')   return 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950 dark:border-indigo-900 dark:text-indigo-300';
-  if (cat === 'Notice')     return 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300';
-  if (cat === 'Link')       return 'bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950 dark:border-sky-900 dark:text-sky-300';
-  return 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300';
-}
-
-function renderPosts() {
-  const wrap = $('postsList');$('postsCountPill').textContent = state.posts.length;
-  if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
-  if (!state.posts.length) {
-    wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No materials yet</div>`;
-    return;
-  }
-  wrap.innerHTML = state.posts.map((p) => {
-    const url = p.link ? safeUrl(p.link) : '';
-    return `
-      <div class="p-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition">
-        <div class="flex items-center gap-2 mb-1 flex-wrap">
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${categoryClass(p.category)}">${escapeHtml(p.category || 'General')}</span>
-          <span class="text-[11px] text-slate-400">${escapeHtml(p.createdAt || '')}</span>
-        </div>
-        <div class="text-[13px] font-medium">${escapeHtml(p.title)}</div>
-        ${p.description ? `<div class="text-[12px] text-slate-500 line-clamp-2 mt-0.5">${escapeHtml(p.description)}</div>` : ''}
-        ${url && url !== '#' ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 text-[11px] text-indigo-600 hover:underline dark:text-indigo-400"><i class="bi bi-box-arrow-up-right"></i> Open link</a>` : ''}
-      </div>`;
-  }).join('');
-}
-
-function renderAttendance() {
-  const wrap = $('attList');$('attCountPill').textContent = state.attendance.length;
-  if (state.loading) { wrap.innerHTML = `<div class="p-6 text-[12px] text-slate-500">Loading…</div>`; return; }
-  if (!state.attendance.length) {
-    wrap.innerHTML = `<div class="p-8 text-center text-[12px] text-slate-500">No attendance records yet</div>`;
-    return;
-  }
-  wrap.innerHTML = state.attendance.map((a) => {
-    const total = Number(a.totalCount) || 0;
-    const present = Number(a.presentCount) || 0;
-    const absent = Number(a.absentCount) || 0;
-    const pct = total ? Math.round((present / total) * 100) : 0;
-    const fillClass = pct >= 75 ? '' : (pct >= 50 ? 'warn' : 'bad');
-    return `
-      <div class="p-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition">
-        <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
-          <div class="flex items-center gap-2">
-            <span class="text-[12px] font-medium">${escapeHtml(a.date || '')}</span>
-            <span class="text-[11px] text-slate-500">• ${escapeHtml(a.topic || 'No topic')}</span>
-          </div>
-          <span class="text-[11px] font-medium ${pct >= 75 ? 'text-emerald-600 dark:text-emerald-400' : (pct >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400')}">${pct}%</span>
-        </div>
-        <div class="att-bar mb-1.5"><div class="att-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-900 dark:text-emerald-300">${present}/${total} present</span>
-          ${absent > 0 ? `<span class="text-[11px] px-2 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 dark:bg-red-950 dark:border-red-900 dark:text-red-300">${absent} absent</span>` : ''}
-        </div>
-        ${a.remarks ? `<div class="text-[11px] text-slate-500 mt-1.5 truncate">${escapeHtml(a.remarks)}</div>` : ''}
-      </div>`;
-  }).join('');
-}
-
-/* ==================== EVENTS ==================== */
-$('codeContinueBtn').addEventListener('click', () => loadClassByCode($('codeInput').value));$('codeInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') loadClassByCode($('codeInput').value);
-});
-$('codeInput').addEventListener('input', (e) => {
-  e.target.value = e.target.value.toUpperCase();
-});
-
-$('switchClassBtn').addEventListener('click', () => {$('codeInput').value = '';
-  showCodeView();
-});
-
-$('joinAnotherBtn').addEventListener('click', () => {$('codeInput').value = '';
-  showCodeView();
-});
-
-$('themeToggle').addEventListener('click', () => {
-  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
-});
-
-/* ==================== INIT ==================== */
-(function init() {
-  let theme = 'light';
-  try { theme = localStorage.getItem('student-theme') || 'light'; } catch (e) {}
-  applyTheme(theme);
-
-  loadRecent();
-  renderRecent();
-
-  showCodeView();
-})();
-</script>
 
+      /* --------------------------- Rendering --------------------------- */
+      function selectSemester(name) {
+        currentSemester = Object.prototype.hasOwnProperty.call(MATERIALS, name) ? name : "first";
+
+        semesterButtons.forEach(function (btn) {
+          const isActive = btn.dataset.semester === currentSemester;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+
+        renderSemester(currentSemester);
+      }
+
+      function renderSemester(semester) {
+        materialsHeading.textContent = SEMESTER_NAMES[semester] || "Semester Materials";
+        subjectsEl.replaceChildren();
+        setMaterialsStatus("");
+
+        const subjects = MATERIALS[semester] || [];
+
+        if (subjects.length === 0) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = "No subjects have been added for this semester yet.";
+          subjectsEl.appendChild(empty);
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        subjects.forEach(function (subject) {
+          const card = document.createElement("article");
+          card.className = "subject";
+
+          const code = document.createElement("p");
+          code.className = "subject-code";
+          code.textContent = subject.code;
+
+          const title = document.createElement("h3");
+          title.textContent = subject.title;
+
+          const list = document.createElement("div");
+          list.className = "materials";
+
+          (subject.items || []).forEach(function (item) {
+            const row = document.createElement("div");
+            row.className = "material-row";
+
+            const info = document.createElement("div");
+            const name = document.createElement("strong");
+            name.textContent = item.title;
+
+            const kind = document.createElement("p");
+            kind.className = "kind";
+            kind.textContent = item.type || "Document";
+
+            info.append(name, kind);
+
+            const viewBtn = document.createElement("button");
+            viewBtn.type = "button";
+            viewBtn.className = "btn secondary";
+            viewBtn.textContent = "View";
+            viewBtn.setAttribute("aria-label", "View " + item.title + " (" + subject.code + ")");
+            viewBtn.addEventListener("click", function () {
+              openPdf(item, subject, viewBtn);
+            });
+
+            row.append(info, viewBtn);
+            list.appendChild(row);
+          });
+
+          card.append(code, title, list);
+          fragment.appendChild(card);
+        });
+
+        subjectsEl.appendChild(fragment);
+      }
+
+      /* ---------------------------- Viewer ----------------------------- */
+      function openPdf(item, subject, trigger) {
+        if (!item || item.sample) {
+          setMaterialsStatus(
+            "“" + (item ? item.title : "This item") + "” is a sample entry. " +
+            "Replace its path in the MATERIALS object with a real PDF path."
+          );
+          return;
+        }
+
+        const path = safePdfPath(item.path);
+        if (!path) {
+          setMaterialsStatus("This document has a missing or invalid file path.");
+          return;
+        }
+
+        setMaterialsStatus("");
+        lastViewerTrigger = trigger || null;
+
+        viewerTitle.textContent = subject.code + " — " + item.title;
+        viewerFileName.textContent = fileNameFromPath(path);
+
+        // Show a "loading" layer, but never let it block the PDF for long.
+        window.clearTimeout(loadingTimer);
+        viewerStatus.hidden = false;
+        loadingTimer = window.setTimeout(function () {
+          viewerStatus.hidden = true;
+        }, 2000);
+
+        pdfFrame.src = path;
+        viewerSection.hidden = false;
+
+        viewerSection.scrollIntoView({
+          behavior: reduceMotion.matches ? "auto" : "smooth",
+          block: "start"
+        });
+        closeViewerBtn.focus({ preventScroll: true });
+      }
+
+      function closeViewer(options) {
+        const opts = options || {};
+        window.clearTimeout(loadingTimer);
+
+        pdfFrame.src = "about:blank";
+        viewerStatus.hidden = false;
+        viewerSection.hidden = true;
+
+        if (opts.restoreFocus !== false && lastViewerTrigger && document.contains(lastViewerTrigger)) {
+          lastViewerTrigger.focus({ preventScroll: true });
+        }
+        lastViewerTrigger = null;
+      }
+
+      pdfFrame.addEventListener("load", function () {
+        if (viewerSection.hidden) return;
+        window.clearTimeout(loadingTimer);
+        viewerStatus.hidden = true;
+      });
+
+      /* ---------------------------- Login ------------------------------ */
+      loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const username = usernameInput.value.trim().toLowerCase();
+        const password = passwordInput.value;
+
+        const ok =
+          username === DEMO_CREDENTIALS.username.toLowerCase() &&
+          password === DEMO_CREDENTIALS.password;
+
+        if (!ok) {
+          loginMessage.textContent = "Incorrect username or password. Please try again.";
+          passwordInput.select();
+          passwordInput.focus();
+          return;
+        }
+
+        loginMessage.textContent = "";
+        loginForm.reset();
+
+        loginPanel.hidden = true;
+        portalPanel.hidden = false;
+
+        selectSemester(currentSemester);
+        materialsHeading.focus({ preventScroll: true });
+      });
+
+      // Clear the error as soon as the student starts typing again.
+      loginForm.addEventListener("input", function () {
+        if (loginMessage.textContent) loginMessage.textContent = "";
+      });
+
+      togglePassword.addEventListener("click", function () {
+        const show = passwordInput.type === "password";
+        passwordInput.type = show ? "text" : "password";
+        togglePassword.textContent = show ? "Hide" : "Show";
+        togglePassword.setAttribute("aria-pressed", show ? "true" : "false");
+        passwordInput.focus();
+      });
+
+      logoutBtn.addEventListener("click", function () {
+        closeViewer({ restoreFocus: false });
+        portalPanel.hidden = true;
+        loginPanel.hidden = false;
+        loginMessage.textContent = "";
+        usernameInput.focus();
+      });
+
+      /* ------------------------- Semester switch ----------------------- */
+      semesterButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          if (button.dataset.semester === currentSemester) return;
+          closeViewer({ restoreFocus: false });
+          selectSemester(button.dataset.semester);
+        });
+      });
+
+      /* ---------------------------- Globals ---------------------------- */
+      closeViewerBtn.addEventListener("click", function () {
+        closeViewer();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !viewerSection.hidden) {
+          event.preventDefault();
+          closeViewer();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
