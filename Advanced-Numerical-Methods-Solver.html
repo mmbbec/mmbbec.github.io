@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Numerical Lab Studio — Advanced Numerical Methods</title>
-  <meta name="description" content="Interactive numerical methods laboratory: root finding, plotting and convergence analysis. Developed by Dr Mahadev Biradar." />
+  <meta name="description" content="Interactive numerical methods laboratory: root finding, linear systems, integration, ODEs. Developed by Dr Mahadev Biradar." />
 
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -18,14 +17,8 @@
           },
           keyframes: {
             fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
-            slideUp: {
-              '0%': { opacity: 0, transform: 'translateY(10px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' },
-            },
-            shimmer: {
-              '0%,100%': { opacity: 0.55 },
-              '50%': { opacity: 1 },
-            },
+            slideUp: { '0%': { opacity: 0, transform: 'translateY(10px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            shimmer: { '0%,100%': { opacity: 0.55 }, '50%': { opacity: 1 } },
           },
           animation: {
             'fade-in': 'fadeIn .35s ease-out both',
@@ -37,23 +30,15 @@
     };
   </script>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- KaTeX (beautiful math typesetting) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
-  <!-- React 18 UMD -->
   <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
-
-  <!-- Babel Standalone -->
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 
   <style>
@@ -92,58 +77,40 @@
     const { createRoot } = ReactDOM;
 
     /* ===============================================================
-       1. MATH COMPILER (safe expression → JS function)
+       1. MATH COMPILER
        =============================================================== */
     function sanitizeExpression(expr) {
       if (!expr) return "0";
       let s = String(expr).trim().toLowerCase();
-
       s = s.replace(/\bpi\b/g, "Math.PI").replace(/\be\b/g, "Math.E");
       s = s.replace(/\^/g, "**");
-
-      // Implicit multiplication: 2x -> 2*x, 3( -> 3*(, )x -> )*x
       s = s.replace(/(\d)([a-zA-Z(])/g, "$1*$2");
       s = s.replace(/(\))([0-9a-zA-Z(])/g, "$1*$2");
-
-      const funcs = ["sin", "cos", "tan", "asin", "acos", "atan", "exp", "sqrt", "abs", "floor", "ceil", "round"];
-      funcs.forEach((fn) => {
-        s = s.replace(new RegExp(`\\b${fn}\\b`, "g"), `Math.${fn}`);
-      });
-
-      s = s.replace(/\bln\b/g, "Math.log");
-      s = s.replace(/\blog10\b/g, "Math.log10");
-      s = s.replace(/\blog\b/g, "Math.log");
-
+      const funcs = ["sin","cos","tan","asin","acos","atan","exp","sqrt","abs","floor","ceil","round","sinh","cosh","tanh"];
+      funcs.forEach((fn) => { s = s.replace(new RegExp(`\\b${fn}\\b`, "g"), `Math.${fn}`); });
+      s = s.replace(/\bln\b/g, "Math.log").replace(/\blog10\b/g, "Math.log10").replace(/\blog\b/g, "Math.log");
       return s;
     }
-
     function compileUnary(expr) {
       const sanitized = sanitizeExpression(expr);
       try {
         const fn = new Function("x", `"use strict"; return (${sanitized});`);
         fn(1);
-        return (x) => {
-          try {
-            const v = fn(x);
-            return Number.isFinite(v) ? v : NaN;
-          } catch { return NaN; }
-        };
-      } catch {
-        return () => NaN;
-      }
+        return (x) => { try { const v = fn(x); return Number.isFinite(v) ? v : NaN; } catch { return NaN; } };
+      } catch { return () => NaN; }
+    }
+    function compileBinary(expr) {
+      const sanitized = sanitizeExpression(expr);
+      try {
+        const fn = new Function("x", "y", `"use strict"; return (${sanitized});`);
+        fn(1, 1);
+        return (x, y) => { try { const v = fn(x, y); return Number.isFinite(v) ? v : NaN; } catch { return NaN; } };
+      } catch { return () => NaN; }
     }
 
     /* ===============================================================
-       2. SMALL UTILITIES
+       2. UTILITIES
        =============================================================== */
-    function fmtNum(v, digits = 6) {
-      if (typeof v !== "number") return String(v);
-      if (!Number.isFinite(v)) return "NaN";
-      const a = Math.abs(v);
-      if (a !== 0 && (a < 1e-4 || a >= 1e5)) return v.toExponential(4);
-      return v.toFixed(digits);
-    }
-
     function niceTicks(min, max, count = 5) {
       const span = max - min;
       if (!(span > 0)) return [min];
@@ -156,14 +123,12 @@
       for (let v = start; v <= max + step * 1e-9; v += step) ticks.push(+v.toFixed(10));
       return ticks;
     }
-
     function fmtTick(v) {
       if (v === 0) return "0";
       const a = Math.abs(v);
       if (a >= 1e4 || a < 1e-3) return v.toExponential(1);
       return String(Math.round(v * 1000) / 1000);
     }
-
     function downloadCSV(rows, filename) {
       if (!rows || !rows.length) return;
       const keys = Object.keys(rows[0]);
@@ -171,27 +136,31 @@
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+    function parseMatrix(str) {
+      const lines = str.trim().split(/[\n;]+/).filter((l) => l.trim());
+      const rows = lines.map((l) => l.trim().split(/[\s,]+/).map(Number));
+      const n = rows.length;
+      if (n === 0) throw new Error("Empty matrix input.");
+      for (const r of rows) {
+        if (r.length !== n + 1) throw new Error(`Each row must have exactly ${n + 1} numbers (${n} coefficients + 1 RHS).`);
+        if (r.some((v) => !Number.isFinite(v))) throw new Error("All matrix entries must be numeric.");
+      }
+      return { A: rows.map((r) => r.slice(0, n)), b: rows.map((r) => r[n]), n };
     }
 
     /* ===============================================================
-       3. REUSABLE UI COMPONENTS
+       3. UI COMPONENTS
        =============================================================== */
     function Tex({ children, display = false, className = "" }) {
       const html = useMemo(() => {
         if (typeof katex === "undefined") return null;
-        try {
-          return katex.renderToString(String(children), { throwOnError: false, displayMode: display });
-        } catch {
-          return null;
-        }
+        try { return katex.renderToString(String(children), { throwOnError: false, displayMode: display }); }
+        catch { return null; }
       }, [children, display]);
-
       if (!html) return <span className={className}>{children}</span>;
       return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
     }
@@ -202,40 +171,14 @@
           {tabs.map((t) => {
             const isActive = active === t.key;
             return (
-              <button
-                key={t.key}
-                onClick={() => onChange(t.key)}
+              <button key={t.key} onClick={() => onChange(t.key)}
                 className={`px-4 py-1.5 rounded-lg text-[11px] font-bold tracking-wider transition-all duration-200 ${
-                  isActive
-                    ? "bg-gradient-to-br from-slate-900 to-slate-700 text-white shadow-sm"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
-                }`}
-              >
+                  isActive ? "bg-gradient-to-br from-slate-900 to-slate-700 text-white shadow-sm" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                }`}>
                 {t.label.toUpperCase()}
               </button>
             );
           })}
-        </div>
-      );
-    }
-
-    function StepCard({ step, label, children, tone = "indigo" }) {
-      const tones = {
-        indigo: "bg-indigo-50 text-indigo-700 ring-indigo-100",
-        emerald: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-        slate: "bg-slate-100 text-slate-600 ring-slate-200",
-      };
-      return (
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-4 card-shadow hover:border-indigo-200 transition-colors">
-          <div className="flex items-center gap-2 mb-2">
-            {step && (
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide ring-1 ${tones[tone] || tones.indigo}`}>
-                {step}
-              </span>
-            )}
-            <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">{label}</span>
-          </div>
-          <div className="text-xs leading-relaxed text-slate-600">{children}</div>
         </div>
       );
     }
@@ -247,14 +190,9 @@
             <span>{label}</span>
             {hint && <span className="text-[10px] font-normal text-slate-400 mono">{hint}</span>}
           </label>
-          <input
-            type={type}
-            step={step}
-            value={value}
-            placeholder={placeholder}
+          <input type={type} step={step} value={value} placeholder={placeholder}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs mono bg-white/70 text-slate-800 placeholder:text-slate-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all"
-          />
+            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs mono bg-white/70 text-slate-800 placeholder:text-slate-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all" />
         </div>
       );
     }
@@ -278,32 +216,20 @@
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">{title}</span>
               <span className="text-[10px] font-mono text-slate-400">({rows.length} rows)</span>
             </div>
-            <button
-              onClick={() => downloadCSV(rows, filename)}
-              className="text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-indigo-600 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/60 transition"
-            >
+            <button onClick={() => downloadCSV(rows, filename)}
+              className="text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-indigo-600 px-2.5 py-1 rounded-lg border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/60 transition">
               Export CSV
             </button>
           </div>
           <div className="overflow-auto max-h-[340px] custom-scroll">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 bg-slate-100/95 backdrop-blur border-b border-slate-200 z-10">
-                <tr>
-                  {keys.map((k) => (
-                    <th key={k} className="px-3 py-2 font-bold text-slate-600 mono text-[10px] uppercase tracking-wider whitespace-nowrap">
-                      {k}
-                    </th>
-                  ))}
-                </tr>
+                <tr>{keys.map((k) => (<th key={k} className="px-3 py-2 font-bold text-slate-600 mono text-[10px] uppercase tracking-wider whitespace-nowrap">{k}</th>))}</tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {rows.map((r, i) => (
                   <tr key={i} className="hover:bg-indigo-50/40 transition-colors odd:bg-white even:bg-slate-50/40">
-                    {keys.map((k) => (
-                      <td key={k} className="px-3 py-1.5 mono text-[11px] text-slate-600 whitespace-nowrap">
-                        <NumCell v={r[k]} />
-                      </td>
-                    ))}
+                    {keys.map((k) => (<td key={k} className="px-3 py-1.5 mono text-[11px] text-slate-600 whitespace-nowrap"><NumCell v={r[k]} /></td>))}
                   </tr>
                 ))}
               </tbody>
@@ -314,12 +240,7 @@
     }
 
     function StatTile({ label, value, accent = "indigo", sub }) {
-      const accents = {
-        indigo: "from-indigo-500 to-violet-500",
-        emerald: "from-emerald-500 to-teal-500",
-        sky: "from-sky-500 to-cyan-500",
-        amber: "from-amber-500 to-orange-500",
-      };
+      const accents = { indigo: "from-indigo-500 to-violet-500", emerald: "from-emerald-500 to-teal-500", sky: "from-sky-500 to-cyan-500", amber: "from-amber-500 to-orange-500" };
       return (
         <div className="relative rounded-2xl border border-slate-200 bg-white p-3 card-shadow overflow-hidden">
           <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${accents[accent] || accents.indigo}`} />
@@ -338,9 +259,7 @@
       useEffect(() => {
         const el = ref.current;
         if (!el) return;
-        const ro = new ResizeObserver((entries) => {
-          for (const e of entries) setW(Math.round(e.contentRect.width));
-        });
+        const ro = new ResizeObserver((entries) => { for (const e of entries) setW(Math.round(e.contentRect.width)); });
         ro.observe(el);
         return () => ro.disconnect();
       }, [ref]);
@@ -356,208 +275,103 @@
         if (!canvas || !w) return;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
-
         const dpr = window.devicePixelRatio || 1;
-        const W = w;
-        const H = height;
+        const W = w, H = height;
         canvas.width = Math.round(W * dpr);
         canvas.height = Math.round(H * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const padL = 48, padR = 18, padT = 16, padB = 30;
-
-        // ---- Determine y range ----
         const ys = [];
-        if (f) {
-          for (let i = 0; i <= 300; i++) {
-            const x = xMin + (i / 300) * (xMax - xMin);
-            const y = f(x);
-            if (Number.isFinite(y)) ys.push(y);
-          }
-        }
+        if (f) for (let i = 0; i <= 300; i++) { const x = xMin + (i / 300) * (xMax - xMin); const y = f(x); if (Number.isFinite(y)) ys.push(y); }
         points.forEach((p) => Number.isFinite(p.y) && ys.push(p.y));
         extraSeries.forEach((s) => s.pts.forEach((p) => Number.isFinite(p.y) && ys.push(p.y)));
-
         let yMin = ys.length ? Math.min(...ys) : -2;
         let yMax = ys.length ? Math.max(...ys) : 2;
         if (yMin === yMax) { yMin -= 1; yMax += 1; }
         const pad = (yMax - yMin) * 0.16 || 0.5;
-        yMin -= pad;
-        yMax += pad;
-
+        yMin -= pad; yMax += pad;
         const spanX = xMax - xMin || 1;
         const mapX = (x) => padL + ((x - xMin) / spanX) * (W - padL - padR);
         const mapY = (y) => H - padB - ((y - yMin) / (yMax - yMin)) * (H - padT - padB);
 
         ctx.clearRect(0, 0, W, H);
-
-        // ---- Plot background ----
         const bg = ctx.createLinearGradient(0, padT, 0, H - padB);
-        bg.addColorStop(0, "rgba(248,250,252,0.85)");
-        bg.addColorStop(1, "rgba(255,255,255,0.4)");
-        ctx.fillStyle = bg;
-        ctx.fillRect(padL, padT, W - padL - padR, H - padT - padB);
+        bg.addColorStop(0, "rgba(248,250,252,0.85)"); bg.addColorStop(1, "rgba(255,255,255,0.4)");
+        ctx.fillStyle = bg; ctx.fillRect(padL, padT, W - padL - padR, H - padT - padB);
 
-        // ---- Grid ----
         const yTicks = niceTicks(yMin, yMax, 5);
         const xTicks = niceTicks(xMin, xMax, 6);
-
         ctx.save();
-        ctx.beginPath();
-        ctx.rect(padL, padT, W - padL - padR, H - padT - padB);
-        ctx.clip();
-
-        ctx.setLineDash([4, 5]);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#e2e8f0";
-        yTicks.forEach((t) => {
-          const y = mapY(t);
-          ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-        });
-        xTicks.forEach((t) => {
-          const x = mapX(t);
-          ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, H - padB); ctx.stroke();
-        });
+        ctx.beginPath(); ctx.rect(padL, padT, W - padL - padR, H - padT - padB); ctx.clip();
+        ctx.setLineDash([4, 5]); ctx.lineWidth = 1; ctx.strokeStyle = "#e2e8f0";
+        yTicks.forEach((t) => { const y = mapY(t); ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); });
+        xTicks.forEach((t) => { const x = mapX(t); ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, H - padB); ctx.stroke(); });
         ctx.setLineDash([]);
 
-        // ---- Axes ----
-        ctx.strokeStyle = "#94a3b8";
-        ctx.lineWidth = 1.2;
-        if (yMin <= 0 && 0 <= yMax) {
-          const y0 = mapY(0);
-          ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(W - padR, y0); ctx.stroke();
-        }
-        if (xMin <= 0 && 0 <= xMax) {
-          const x0 = mapX(0);
-          ctx.beginPath(); ctx.moveTo(x0, padT); ctx.lineTo(x0, H - padB); ctx.stroke();
-        }
+        ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 1.2;
+        if (yMin <= 0 && 0 <= yMax) { const y0 = mapY(0); ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(W - padR, y0); ctx.stroke(); }
+        if (xMin <= 0 && 0 <= xMax) { const x0 = mapX(0); ctx.beginPath(); ctx.moveTo(x0, padT); ctx.lineTo(x0, H - padB); ctx.stroke(); }
 
-        // ---- Shaded area under curve ----
-        if (f && shade && yMin <= 0 && 0 <= yMax) {
+        if (f && shade) {
           ctx.beginPath();
           ctx.moveTo(mapX(xMin), mapY(0));
-          for (let i = 0; i <= 320; i++) {
-            const x = xMin + (i / 320) * spanX;
-            const y = f(x);
-            if (Number.isFinite(y)) ctx.lineTo(mapX(x), mapY(y));
-          }
-          ctx.lineTo(mapX(xMax), mapY(0));
-          ctx.closePath();
+          for (let i = 0; i <= 320; i++) { const x = xMin + (i / 320) * spanX; const y = f(x); if (Number.isFinite(y)) ctx.lineTo(mapX(x), mapY(y)); }
+          ctx.lineTo(mapX(xMax), mapY(0)); ctx.closePath();
           const g = ctx.createLinearGradient(0, mapY(Math.max(...ys, 0)), 0, mapY(0));
-          g.addColorStop(0, "rgba(99,102,241,0.20)");
-          g.addColorStop(1, "rgba(99,102,241,0.02)");
-          ctx.fillStyle = g;
-          ctx.fill();
+          g.addColorStop(0, "rgba(99,102,241,0.22)"); g.addColorStop(1, "rgba(99,102,241,0.02)");
+          ctx.fillStyle = g; ctx.fill();
         }
 
-        // ---- Extra series ----
         extraSeries.forEach((s) => {
-          ctx.beginPath();
-          ctx.strokeStyle = s.color || "#0ea5e9";
-          ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.strokeStyle = s.color || "#0ea5e9"; ctx.lineWidth = 1.8;
           ctx.setLineDash(s.dashed ? [6, 4] : []);
           let started = false;
           s.pts.forEach((p) => {
             if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) { started = false; return; }
             const px = mapX(p.x), py = mapY(p.y);
-            if (!started) { ctx.moveTo(px, py); started = true; }
-            else ctx.lineTo(px, py);
+            if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
           });
-          ctx.stroke();
-          ctx.setLineDash([]);
+          ctx.stroke(); ctx.setLineDash([]);
         });
 
-        // ---- Main curve ----
         if (f) {
           const stroke = ctx.createLinearGradient(padL, 0, W - padR, 0);
-          stroke.addColorStop(0, "#4f46e5");
-          stroke.addColorStop(0.55, "#6366f1");
-          stroke.addColorStop(1, "#0ea5e9");
-
-          ctx.beginPath();
-          ctx.strokeStyle = stroke;
-          ctx.lineWidth = 2.4;
-          ctx.lineJoin = "round";
-          ctx.lineCap = "round";
+          stroke.addColorStop(0, "#4f46e5"); stroke.addColorStop(0.55, "#6366f1"); stroke.addColorStop(1, "#0ea5e9");
+          ctx.beginPath(); ctx.strokeStyle = stroke; ctx.lineWidth = 2.4; ctx.lineJoin = "round"; ctx.lineCap = "round";
           let started = false;
           for (let i = 0; i <= 420; i++) {
-            const x = xMin + (i / 420) * spanX;
-            const y = f(x);
+            const x = xMin + (i / 420) * spanX; const y = f(x);
             if (!Number.isFinite(y)) { started = false; continue; }
             const px = mapX(x), py = mapY(y);
-            if (!started) { ctx.moveTo(px, py); started = true; }
-            else ctx.lineTo(px, py);
+            if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
           }
           ctx.stroke();
         }
 
-        // ---- Highlighted points ----
         points.forEach((p) => {
           if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
           const px = mapX(p.x), py = mapY(p.y);
-
-          // dashed drop line to x-axis
-          if (yMin <= 0 && 0 <= yMax) {
-            ctx.setLineDash([3, 4]);
-            ctx.strokeStyle = "rgba(99,102,241,0.45)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(px, py);
-            ctx.lineTo(px, mapY(0));
-            ctx.stroke();
-            ctx.setLineDash([]);
-          }
-
-          // glow
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(99,102,241,0.18)";
-          ctx.arc(px, py, 11, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.fillStyle = "#4f46e5";
-          ctx.arc(px, py, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
+          ctx.beginPath(); ctx.fillStyle = "rgba(99,102,241,0.18)"; ctx.arc(px, py, 11, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.fillStyle = "#4f46e5"; ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2; ctx.stroke();
           if (p.label) {
             ctx.font = "600 10px Fira Code, monospace";
             const tw = ctx.measureText(p.label).width;
             const bx = Math.min(px + 10, W - padR - tw - 12);
             const by = Math.max(py - 26, padT + 2);
-            ctx.fillStyle = "rgba(255,255,255,0.94)";
-            ctx.strokeStyle = "rgba(199,210,254,0.9)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.roundRect(bx - 5, by - 2, tw + 10, 16, 5);
-            ctx.fill();
-            ctx.stroke();
-            ctx.fillStyle = "#312e81";
-            ctx.fillText(p.label, bx, by + 10);
+            ctx.fillStyle = "rgba(255,255,255,0.94)"; ctx.strokeStyle = "rgba(199,210,254,0.9)"; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.roundRect(bx - 5, by - 2, tw + 10, 16, 5); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = "#312e81"; ctx.fillText(p.label, bx, by + 10);
           }
         });
-
         ctx.restore();
 
-        // ---- Tick labels ----
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "10px Fira Code, monospace";
-        ctx.textAlign = "right";
-        ctx.textBaseline = "middle";
-        yTicks.forEach((t) => {
-          const y = mapY(t);
-          if (y < padT || y > H - padB) return;
-          ctx.fillText(fmtTick(t), padL - 8, y);
-        });
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        xTicks.forEach((t) => {
-          const x = mapX(t);
-          if (x < padL || x > W - padR) return;
-          ctx.fillText(fmtTick(t), x, H - padB + 8);
-        });
+        ctx.fillStyle = "#94a3b8"; ctx.font = "10px Fira Code, monospace";
+        ctx.textAlign = "right"; ctx.textBaseline = "middle";
+        yTicks.forEach((t) => { const y = mapY(t); if (y < padT || y > H - padB) return; ctx.fillText(fmtTick(t), padL - 8, y); });
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        xTicks.forEach((t) => { const x = mapX(t); if (x < padL || x > W - padR) return; ctx.fillText(fmtTick(t), x, H - padB + 8); });
       }, [w, f, xMin, xMax, points, extraSeries, shade, height]);
 
       return (
@@ -574,9 +388,6 @@
       );
     }
 
-    /* ===============================================================
-       5. CONVERGENCE CHART (log-scale error decay)
-       =============================================================== */
     function ConvergenceChart({ data, height = 160 }) {
       const canvasRef = useRef(null);
       const w = useCanvasWidth(canvasRef);
@@ -586,93 +397,53 @@
         if (!canvas || !w || !data || data.length === 0) return;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
-
         const dpr = window.devicePixelRatio || 1;
         const W = w, H = height;
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const padL = 48, padR = 16, padT = 16, padB = 26;
-
-        const pts = data.map((d, i) => ({
-          i: i + 1,
-          v: Math.log10(Math.max(Math.abs(d.err ?? d.Error ?? 0), 1e-16)),
-        }));
-
+        const pts = data.map((d, i) => ({ i: i + 1, v: Math.log10(Math.max(Math.abs(d.err ?? d.Error ?? 0), 1e-16)) }));
         let lo = Math.min(...pts.map((p) => p.v));
         let hi = Math.max(...pts.map((p) => p.v));
         if (lo === hi) { lo -= 1; hi += 1; }
-        const padY = (hi - lo) * 0.18;
-        lo -= padY; hi += padY;
+        const padY = (hi - lo) * 0.18; lo -= padY; hi += padY;
 
         const n = pts.length;
         const mapX = (i) => padL + (n <= 1 ? 0 : ((i - 1) / (n - 1)) * (W - padL - padR));
         const mapY = (v) => H - padB - ((v - lo) / (hi - lo)) * (H - padT - padB);
-
         ctx.clearRect(0, 0, W, H);
 
-        // grid
-        ctx.setLineDash([4, 5]);
-        ctx.strokeStyle = "#e2e8f0";
-        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 5]); ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 1;
         const gridVals = niceTicks(lo, hi, 4);
-        ctx.font = "9px Fira Code, monospace";
-        ctx.fillStyle = "#94a3b8";
-        ctx.textAlign = "right";
-        ctx.textBaseline = "middle";
+        ctx.font = "9px Fira Code, monospace"; ctx.fillStyle = "#94a3b8"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
         gridVals.forEach((v) => {
-          const y = mapY(v);
-          if (y < padT || y > H - padB) return;
+          const y = mapY(v); if (y < padT || y > H - padB) return;
           ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
           ctx.fillText(`1e${Math.round(v)}`, padL - 6, y);
         });
         ctx.setLineDash([]);
 
-        // area
         ctx.beginPath();
         ctx.moveTo(mapX(pts[0].i), H - padB);
         pts.forEach((p) => ctx.lineTo(mapX(p.i), mapY(p.v)));
-        ctx.lineTo(mapX(pts[n - 1].i), H - padB);
-        ctx.closePath();
+        ctx.lineTo(mapX(pts[n - 1].i), H - padB); ctx.closePath();
         const grad = ctx.createLinearGradient(0, padT, 0, H - padB);
-        grad.addColorStop(0, "rgba(16,185,129,0.28)");
-        grad.addColorStop(1, "rgba(16,185,129,0.02)");
-        ctx.fillStyle = grad;
-        ctx.fill();
+        grad.addColorStop(0, "rgba(16,185,129,0.28)"); grad.addColorStop(1, "rgba(16,185,129,0.02)");
+        ctx.fillStyle = grad; ctx.fill();
 
-        // line
-        ctx.beginPath();
-        ctx.strokeStyle = "#10b981";
-        ctx.lineWidth = 2;
-        ctx.lineJoin = "round";
-        pts.forEach((p, idx) => {
-          const x = mapX(p.i), y = mapY(p.v);
-          if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        });
+        ctx.beginPath(); ctx.strokeStyle = "#10b981"; ctx.lineWidth = 2; ctx.lineJoin = "round";
+        pts.forEach((p, idx) => { const x = mapX(p.i), y = mapY(p.v); if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); });
         ctx.stroke();
 
-        // dots
         pts.forEach((p) => {
           const x = mapX(p.i), y = mapY(p.v);
-          ctx.beginPath();
-          ctx.fillStyle = "#ffffff";
-          ctx.strokeStyle = "#10b981";
-          ctx.lineWidth = 1.8;
-          ctx.arc(x, y, 3, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
+          ctx.beginPath(); ctx.fillStyle = "#ffffff"; ctx.strokeStyle = "#10b981"; ctx.lineWidth = 1.8;
+          ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         });
-
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "9px sans-serif";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        ctx.fillText("iteration", padL, H - padB + 8);
       }, [w, data, height]);
 
       if (!data || !data.length) return null;
-
       return (
         <div className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden card-shadow">
           <div className="px-4 py-2.5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-emerald-50/60 to-white">
@@ -685,54 +456,17 @@
     }
 
     /* ===============================================================
-       6. METHOD METADATA
+       5. ROOT FINDING MODULE (6 methods)
        =============================================================== */
     const METHODS = {
-      bisection: {
-        label: "Bisection Method",
-        short: "Bisection",
-        order: "Linear · O(2⁻ᵏ)",
-        needs: "Sign change on [a, b]",
-        formula: "x_m = \\frac{a+b}{2}",
-        desc: "Repeatedly halves a bracketing interval. Convergence is guaranteed by the Intermediate Value Theorem, but the rate is slow.",
-      },
-      newton: {
-        label: "Newton–Raphson Method",
-        short: "Newton–Raphson",
-        order: "Quadratic · O(eₖ²)",
-        needs: "f′(x) ≠ 0 near the root",
-        formula: "x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}",
-        desc: "Uses the tangent line at the current iterate. Extremely fast near a simple root, but sensitive to the initial guess.",
-      },
-      secant: {
-        label: "Secant Method",
-        short: "Secant",
-        order: "Superlinear · φ ≈ 1.618",
-        needs: "Two initial guesses",
-        formula: "x_{n+1} = x_n - f(x_n)\\,\\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}",
-        desc: "Replaces the analytic derivative with a finite difference. Almost as fast as Newton, without derivative evaluation.",
-      },
-      regula: {
-        label: "Regula Falsi (False Position)",
-        short: "Regula Falsi",
-        order: "Linear · bracketed",
-        needs: "Sign change on [a, b]",
-        formula: "c = \\frac{a\\,f(b) - b\\,f(a)}{f(b) - f(a)}",
-        desc: "Interpolates the secant line through the bracket endpoints. Always converges, though it may stall at one endpoint.",
-      },
-      fixed: {
-        label: "Fixed Point Iteration",
-        short: "Fixed Point",
-        order: "Linear · |g′| < 1",
-        needs: "Contraction mapping g",
-        formula: "x_{n+1} = g(x_n)",
-        desc: "Rewrites f(x) = 0 as x = g(x). Converges whenever g is a contraction on the working interval.",
-      },
+      bisection: { label: "Bisection Method", short: "Bisection", order: "Linear · O(2⁻ᵏ)", needs: "Sign change on [a, b]", formula: "x_m = \\frac{a+b}{2}", desc: "Repeatedly halves a bracketing interval. Convergence is guaranteed by the Intermediate Value Theorem, but the rate is slow." },
+      newton: { label: "Newton–Raphson Method", short: "Newton–Raphson", order: "Quadratic · O(eₖ²)", needs: "f′(x) ≠ 0 near the root", formula: "x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}", desc: "Uses the tangent line at the current iterate. Extremely fast near a simple root, but sensitive to the initial guess." },
+      secant: { label: "Secant Method", short: "Secant", order: "Superlinear · φ ≈ 1.618", needs: "Two initial guesses", formula: "x_{n+1} = x_n - f(x_n)\\,\\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}", desc: "Replaces the analytic derivative with a finite difference. Almost as fast as Newton, without derivative evaluation." },
+      regula: { label: "Regula Falsi (False Position)", short: "Regula Falsi", order: "Linear · bracketed", needs: "Sign change on [a, b]", formula: "c = \\frac{a\\,f(b) - b\\,f(a)}{f(b) - f(a)}", desc: "Interpolates the secant line through the bracket endpoints. Always converges, though it may stall at one endpoint." },
+      fixed: { label: "Fixed Point Iteration", short: "Fixed Point", order: "Linear · |g′| < 1", needs: "Contraction mapping g", formula: "x_{n+1} = g(x_n)", desc: "Rewrites f(x) = 0 as x = g(x). Converges whenever g is a contraction on the working interval." },
+      muller: { label: "Muller's Method", short: "Muller", order: "Quadratic · ~1.84", needs: "Three initial guesses", formula: "x_{n+1} = x_n - \\frac{2c}{b \\pm \\sqrt{b^2 - 4ac}}", desc: "Uses quadratic interpolation through three points. Handles complex roots and converges fast, often faster than Secant." },
     };
 
-    /* ===============================================================
-       7. ROOT FINDER MODULE
-       =============================================================== */
     function RootSolver() {
       const [expr, setExpr] = useState("x^3 - x - 2");
       const [method, setMethod] = useState("bisection");
@@ -740,6 +474,7 @@
       const [b, setB] = useState(2);
       const [x0, setX0] = useState(1.5);
       const [x1, setX1] = useState(2);
+      const [x2, setX2] = useState(2.5);
       const [gExpr, setGExpr] = useState("(x + 2)^(1/3)");
       const [tol, setTol] = useState(1e-5);
       const [maxIter, setMaxIter] = useState(50);
@@ -751,17 +486,15 @@
       const meta = METHODS[method];
 
       const solve = useCallback(() => {
-        setError("");
-        setResult(null);
+        setError(""); setResult(null);
         const its = [];
         let root = null, lastErr = 0;
-
         try {
           if (method === "bisection") {
             let lo = a, hi = b;
             let flo = f(lo), fhi = f(hi);
             if (!Number.isFinite(flo) || !Number.isFinite(fhi)) throw new Error("Function evaluation returned a non-finite value.");
-            if (flo * fhi > 0) throw new Error(`f(a) and f(b) share the same sign (f(a)=${flo.toFixed(4)}, f(b)=${fhi.toFixed(4)}). The Intermediate Value Theorem is not satisfied.`);
+            if (flo * fhi > 0) throw new Error(`f(a) and f(b) share the same sign (f(a)=${flo.toFixed(4)}, f(b)=${fhi.toFixed(4)}).`);
             let prev = null;
             for (let k = 1; k <= maxIter; k++) {
               const mid = (lo + hi) / 2;
@@ -778,9 +511,8 @@
             const df = (x) => (f(x + h) - f(x - h)) / (2 * h);
             let x = x0;
             for (let k = 1; k <= maxIter; k++) {
-              const fx = f(x);
-              const dfx = df(x);
-              if (!Number.isFinite(dfx) || Math.abs(dfx) < 1e-12) throw new Error("Derivative f′(x) ≈ 0. Newton–Raphson cannot proceed from this guess.");
+              const fx = f(x); const dfx = df(x);
+              if (!Number.isFinite(dfx) || Math.abs(dfx) < 1e-12) throw new Error("Derivative f′(x) ≈ 0. Newton–Raphson cannot proceed.");
               const xn = x - fx / dfx;
               const err = Math.abs(xn - x);
               its.push({ Iter: k, x_n: x, "f(x)": fx, "f'(x)": dfx, x_next: xn, Error: err });
@@ -792,7 +524,7 @@
             for (let k = 1; k <= maxIter; k++) {
               const fp = f(xp), fc = f(xc);
               if (!Number.isFinite(fc) || !Number.isFinite(fp)) throw new Error("Function evaluation returned a non-finite value.");
-              if (Math.abs(fc - fp) < 1e-12) throw new Error("Zero denominator in the Secant formula — choose different initial guesses.");
+              if (Math.abs(fc - fp) < 1e-12) throw new Error("Zero denominator in the Secant formula.");
               const xn = xc - (fc * (xc - xp)) / (fc - fp);
               const err = Math.abs(xn - xc);
               its.push({ Iter: k, x_prev: xp, x_curr: xc, "f(x_curr)": fc, x_next: xn, Error: err });
@@ -803,7 +535,7 @@
             let lo = a, hi = b;
             let flo = f(lo), fhi = f(hi);
             if (!Number.isFinite(flo) || !Number.isFinite(fhi)) throw new Error("Function evaluation returned a non-finite value.");
-            if (flo * fhi > 0) throw new Error("f(a)·f(b) > 0 — a root bracket is not guaranteed on [a, b].");
+            if (flo * fhi > 0) throw new Error("f(a)·f(b) > 0 — root bracket not guaranteed.");
             let prev = null;
             for (let k = 1; k <= maxIter; k++) {
               const c = (lo * fhi - hi * flo) / (fhi - flo);
@@ -819,21 +551,41 @@
             let x = x0;
             for (let k = 1; k <= maxIter; k++) {
               const gx = g(x);
-              if (!Number.isFinite(gx)) throw new Error("g(x) diverged to non-finite values — the iteration is not a contraction.");
+              if (!Number.isFinite(gx)) throw new Error("g(x) diverged to non-finite values.");
               const err = Math.abs(gx - x);
               its.push({ Iter: k, x_n: x, "g(x_n)": gx, Error: err });
               x = gx; root = gx; lastErr = err;
               if (err < tol) break;
             }
+          } else if (method === "muller") {
+            let p0 = x0, p1 = x1, p2 = x2;
+            for (let k = 1; k <= maxIter; k++) {
+              const f0 = f(p0), f1 = f(p1), f2 = f(p2);
+              if (![f0, f1, f2].every(Number.isFinite)) throw new Error("f() returned a non-finite value.");
+              const h0 = p1 - p0, h1 = p2 - p1;
+              if (Math.abs(h0) < 1e-15 || Math.abs(h1) < 1e-15) throw new Error("Initial points must be distinct.");
+              const d0 = (f1 - f0) / h0, d1 = (f2 - f1) / h1;
+              const aa = (d1 - d0) / (h1 + h0);
+              const bb = aa * h1 + d1;
+              const cc = f2;
+              const disc = bb * bb - 4 * aa * cc;
+              const sq = Math.sqrt(Math.abs(disc));
+              const denom = Math.abs(bb + sq) > Math.abs(bb - sq) ? bb + sq : bb - sq;
+              if (Math.abs(denom) < 1e-15) throw new Error("Muller denominator near zero.");
+              const dx = -2 * cc / denom;
+              const p3 = p2 + dx;
+              const err = Math.abs(dx);
+              its.push({ Iter: k, x_n: p2, "f(x_n)": f2, x_next: p3, Error: err });
+              p0 = p1; p1 = p2; p2 = p3; root = p3; lastErr = err;
+              if (err < tol) break;
+            }
           }
           setResult({ iterations: its, root, lastErr, method });
-        } catch (e) {
-          setError(e.message || "Calculation error.");
-        }
-      }, [method, a, b, x0, x1, gExpr, tol, maxIter, f]);
+        } catch (e) { setError(e.message || "Calculation error."); }
+      }, [method, a, b, x0, x1, x2, gExpr, tol, maxIter, f]);
 
-      const plotXMin = method === "bisection" || method === "regula" ? Math.min(a, b) - 1.5 : x0 - 3;
-      const plotXMax = method === "bisection" || method === "regula" ? Math.max(a, b) + 1.5 : x0 + 3;
+      const plotXMin = (method === "bisection" || method === "regula") ? Math.min(a, b) - 1.5 : Math.min(x0, x1, x2) - 3;
+      const plotXMax = (method === "bisection" || method === "regula") ? Math.max(a, b) + 1.5 : Math.max(x0, x1, x2) + 3;
 
       const plotPoints = useMemo(() => {
         if (result?.root != null && Number.isFinite(f(result.root))) {
@@ -841,12 +593,10 @@
         }
         return [];
       }, [result, f]);
-
       const residual = result?.root != null ? Math.abs(f(result.root)) : NaN;
 
       return (
         <div className="space-y-5 animate-fade-in">
-          {/* Module heading */}
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -854,36 +604,18 @@
                 <span className="h-px w-8 bg-indigo-200" />
               </div>
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Root Finding</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Solve <span className="mono text-slate-700">f(x) = 0</span> with five classical iterative schemes and inspect the convergence behaviour.
-              </p>
+              <p className="text-xs text-slate-500 mt-1">Solve <span className="mono text-slate-700">f(x) = 0</span> with six classical iterative schemes.</p>
             </div>
-            <Tabs
-              tabs={[
-                { key: "solver", label: "Solver" },
-                { key: "theory", label: "Theory" },
-                { key: "formula", label: "Formulas" },
-              ]}
-              active={tab}
-              onChange={setTab}
-            />
+            <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
           </div>
 
-          {/* ---------- THEORY ---------- */}
           {tab === "theory" && (
             <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
               {Object.entries(METHODS).map(([key, m]) => (
-                <div
-                  key={key}
-                  className={`rounded-2xl border bg-white p-4 card-shadow transition-all hover:-translate-y-0.5 hover:card-shadow-lg ${
-                    key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"
-                  }`}
-                >
+                <div key={key} className={`rounded-2xl border bg-white p-4 card-shadow transition-all hover:-translate-y-0.5 hover:card-shadow-lg ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-bold text-slate-900">{m.short}</h3>
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 whitespace-nowrap">
-                      {m.order}
-                    </span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 whitespace-nowrap">{m.order}</span>
                   </div>
                   <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{m.desc}</p>
                   <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5">
@@ -895,149 +627,91 @@
             </div>
           )}
 
-          {/* ---------- FORMULAS ---------- */}
           {tab === "formula" && (
             <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
               {Object.entries(METHODS).map(([key, m]) => (
-                <div
-                  key={key}
-                  className={`rounded-2xl border bg-white overflow-hidden card-shadow transition-all ${
-                    key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"
-                  }`}
-                >
+                <div key={key} className={`rounded-2xl border bg-white overflow-hidden card-shadow transition-all ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
                   <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">{m.short}</span>
                     <span className="text-[9px] mono text-slate-400">{m.needs}</span>
                   </div>
-                  <div className="px-5 py-6 flex items-center justify-center text-slate-800 min-h-[74px]">
-                    <Tex display>{m.formula}</Tex>
-                  </div>
+                  <div className="px-5 py-6 flex items-center justify-center text-slate-800 min-h-[74px]"><Tex display>{m.formula}</Tex></div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* ---------- SOLVER ---------- */}
           {tab === "solver" && (
             <div className="grid lg:grid-cols-12 gap-4 animate-slide-up">
-              {/* Control panel */}
               <div className="lg:col-span-5 space-y-3">
                 <div className="rounded-2xl border border-slate-200 bg-white p-4 card-shadow">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                        <path d="M4 7h10M4 12h16M4 17h7" />
-                      </svg>
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M4 12h16M4 17h7" /></svg>
                     </div>
                     <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">Configuration</span>
                   </div>
-
                   <div className="space-y-3">
-                    <InputField
-                      label="Target Function f(x)"
-                      type="text"
-                      value={expr}
-                      onChange={setExpr}
-                      placeholder="e.g. x^3 - x - 2"
-                      hint="supports ^, sin, ln…"
-                    />
-
+                    <InputField label="Target Function f(x)" type="text" value={expr} onChange={setExpr} placeholder="e.g. x^3 - x - 2" hint="supports ^, sin, ln…" />
                     <div>
                       <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Method</label>
-                      <div className="relative">
-                        <select
-                          value={method}
-                          onChange={(e) => setMethod(e.target.value)}
-                          className="w-full appearance-none border border-slate-200 rounded-xl px-3 py-2 pr-9 text-xs font-medium bg-white/70 text-slate-800 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all cursor-pointer"
-                        >
-                          {Object.entries(METHODS).map(([k, m]) => (
-                            <option key={k} value={k}>{m.label}</option>
-                          ))}
-                        </select>
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </div>
+                      <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium bg-white/70 text-slate-800 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all cursor-pointer">
+                        {Object.entries(METHODS).map(([k, m]) => (<option key={k} value={k}>{m.label}</option>))}
+                      </select>
                     </div>
-
                     {(method === "bisection" || method === "regula") && (
                       <div className="grid grid-cols-2 gap-2">
                         <InputField label="Interval a" value={a} onChange={(v) => setA(parseFloat(v) || 0)} />
                         <InputField label="Interval b" value={b} onChange={(v) => setB(parseFloat(v) || 0)} />
                       </div>
                     )}
-
                     {(method === "newton" || method === "fixed") && (
                       <InputField label="Initial Guess x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />
                     )}
-
                     {method === "secant" && (
                       <div className="grid grid-cols-2 gap-2">
                         <InputField label="Guess x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />
                         <InputField label="Guess x₁" value={x1} onChange={(v) => setX1(parseFloat(v) || 0)} />
                       </div>
                     )}
-
-                    {method === "fixed" && (
-                      <InputField label="Iteration Form g(x)" type="text" value={gExpr} onChange={setGExpr} hint="x = g(x)" />
+                    {method === "muller" && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <InputField label="x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />
+                        <InputField label="x₁" value={x1} onChange={(v) => setX1(parseFloat(v) || 0)} />
+                        <InputField label="x₂" value={x2} onChange={(v) => setX2(parseFloat(v) || 0)} />
+                      </div>
                     )}
-
+                    {method === "fixed" && (<InputField label="Iteration Form g(x)" type="text" value={gExpr} onChange={setGExpr} hint="x = g(x)" />)}
                     <div className="grid grid-cols-2 gap-2">
                       <InputField label="Tolerance ε" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-5)} step="0.00001" />
                       <InputField label="Max Iterations" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 50)} />
                     </div>
                   </div>
-
-                  <button
-                    onClick={solve}
-                    className="mt-4 w-full group relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25 active:scale-[0.99]"
-                  >
+                  <button onClick={solve} className="mt-4 w-full group relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25 active:scale-[0.99]">
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 3l14 9-14 9V3z" />
-                      </svg>
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3l14 9-14 9V3z" /></svg>
                       COMPUTE ROOT
                     </span>
                   </button>
-
                   {error && (
                     <div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3 flex gap-2 animate-fade-in">
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 mt-px" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" />
-                      </svg>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 mt-px" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" /></svg>
                       <span className="leading-relaxed">{error}</span>
                     </div>
                   )}
                 </div>
-
-                {/* Method info card */}
                 <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/50 p-4 card-shadow">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">Active Scheme</span>
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-indigo-600 ring-1 ring-indigo-100">
-                      {meta.order}
-                    </span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-indigo-600 ring-1 ring-indigo-100">{meta.order}</span>
                   </div>
                   <div className="text-[13px] font-bold text-slate-900">{meta.short}</div>
-                  <div className="my-3 flex justify-center text-slate-800 bg-white rounded-xl py-3 border border-indigo-100/70">
-                    <Tex>{meta.formula}</Tex>
-                  </div>
+                  <div className="my-3 flex justify-center text-slate-800 bg-white rounded-xl py-3 border border-indigo-100/70"><Tex>{meta.formula}</Tex></div>
                   <p className="text-[11px] leading-relaxed text-slate-500">{meta.desc}</p>
                 </div>
               </div>
-
-              {/* Output panel */}
               <div className="lg:col-span-7 space-y-3">
-                <FunctionPlot
-                  title={`Plot of y = ${expr || "0"}`}
-                  subtitle={`${meta.short} · x ∈ [${plotXMin.toFixed(2)}, ${plotXMax.toFixed(2)}]`}
-                  f={f}
-                  xMin={plotXMin}
-                  xMax={plotXMax}
-                  points={plotPoints}
-                  shade={false}
-                />
-
+                <FunctionPlot title={`Plot of y = ${expr || "0"}`} subtitle={`${meta.short} · x ∈ [${plotXMin.toFixed(2)}, ${plotXMax.toFixed(2)}]`} f={f} xMin={plotXMin} xMax={plotXMax} points={plotPoints} />
                 {result && (
                   <div className="space-y-3 animate-slide-up">
                     <div className="grid grid-cols-3 gap-2">
@@ -1045,28 +719,17 @@
                       <StatTile label="Iterations" value={result.iterations.length} accent="sky" sub={`max ${maxIter}`} />
                       <StatTile label="Residual |f(x*)|" value={Number.isFinite(residual) ? residual.toExponential(3) : "—"} accent="emerald" sub={`ε = ${tol}`} />
                     </div>
-
                     <ConvergenceChart data={result.iterations} />
-
-                    <ResultTable
-                      rows={result.iterations}
-                      title={`${meta.short} — Iteration Log`}
-                      filename={`${method}-iterations.csv`}
-                    />
+                    <ResultTable rows={result.iterations} title={`${meta.short} — Iteration Log`} filename={`${method}-iterations.csv`} />
                   </div>
                 )}
-
                 {!result && !error && (
                   <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
                     <div className="w-10 h-10 mx-auto rounded-xl bg-slate-100 flex items-center justify-center mb-3">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 17l5-6 4 4 4-7 5 5" />
-                      </svg>
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17l5-6 4 4 4-7 5 5" /></svg>
                     </div>
                     <p className="text-xs font-semibold text-slate-600">No computation yet</p>
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      Configure the function and press <span className="font-bold text-indigo-600">Compute Root</span> to see the iteration table and convergence plot.
-                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">Configure the function and press <span className="font-bold text-indigo-600">Compute Root</span>.</p>
                   </div>
                 )}
               </div>
@@ -1077,59 +740,671 @@
     }
 
     /* ===============================================================
-       8. PLACEHOLDER MODULES
+       6. LINEAR SYSTEMS MODULE (6 methods)
        =============================================================== */
-    const MODULE_INFO = {
-      linear: {
-        title: "Linear Systems",
-        symbol: "Ax = b",
-        blurb: "Solve dense linear systems with direct and iterative techniques, with pivoting and residual diagnostics.",
-        methods: ["Gaussian Elimination", "LU Decomposition", "Gauss–Seidel", "Jacobi Iteration", "SOR"],
-      },
-      integ: {
-        title: "Numerical Integration",
-        symbol: "∫ f dx",
-        blurb: "Approximate definite integrals with composite quadrature rules and automatic error estimation.",
-        methods: ["Trapezoidal Rule", "Simpson's 1/3", "Simpson's 3/8", "Gauss–Legendre", "Romberg"],
-      },
-      ode: {
-        title: "Ordinary Differential Equations",
-        symbol: "dy/dx",
-        blurb: "Integrate initial value problems in time with explicit and implicit single-step schemes.",
-        methods: ["Euler", "Modified Euler", "Runge–Kutta 4", "Adams–Bashforth", "Backward Euler"],
-      },
+    const LINEAR_METHODS = {
+      gauss: { label: "Gaussian Elimination", short: "Gauss Elimination", order: "Direct · O(n³)", needs: "Non-singular A", desc: "Forward elimination with partial pivoting followed by back substitution. Classic direct solver." },
+      gjordan: { label: "Gauss–Jordan Elimination", short: "Gauss–Jordan", order: "Direct · O(n³)", needs: "Non-singular A", desc: "Eliminates above and below each pivot, producing the solution directly in an augmented matrix." },
+      lu: { label: "LU Decomposition (Doolittle)", short: "LU Decomposition", order: "Direct · O(n³)", needs: "Non-zero pivots", desc: "Factorises A = LU, then solves Ly = b and Ux = y. Efficient for multiple right-hand sides." },
+      jacobi: { label: "Jacobi Iteration", short: "Jacobi", order: "Iterative · diag. dominant", needs: "Diagonal dominance", desc: "Updates all components simultaneously from the previous iterate. Simple and easily parallelisable." },
+      gs: { label: "Gauss–Seidel Iteration", short: "Gauss–Seidel", order: "Iterative · diag. dominant", needs: "Diagonal dominance", desc: "Uses freshly updated components within the same sweep. Usually about twice as fast as Jacobi." },
+      sor: { label: "Successive Over-Relaxation (SOR)", short: "SOR", order: "Iterative · 0 < ω < 2", needs: "Choose ω", desc: "Over-relaxes Gauss–Seidel with parameter ω. With optimal ω, convergence can be dramatically faster." },
     };
 
-    function PlaceholderModule({ moduleKey }) {
-      const info = MODULE_INFO[moduleKey];
-      if (!info) return null;
+    function LinearSolver() {
+      const [matrixStr, setMatrixStr] = useState("10 -1 2 6\n-1 11 -1 25\n2 -1 10 -11");
+      const [method, setMethod] = useState("gauss");
+      const [tol, setTol] = useState(1e-8);
+      const [maxIter, setMaxIter] = useState(100);
+      const [omega, setOmega] = useState(1.1);
+      const [x0Str, setX0Str] = useState("");
+      const [tab, setTab] = useState("solver");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+      const meta = LINEAR_METHODS[method];
+
+      const parsed = useMemo(() => { try { return parseMatrix(matrixStr); } catch (e) { return { error: e.message }; } }, [matrixStr]);
+
+      const solve = useCallback(() => {
+        setError(""); setResult(null);
+        try {
+          if (parsed.error) throw new Error(parsed.error);
+          const { A, b, n } = parsed;
+          const its = [];
+          let x = null;
+
+          if (method === "gauss") {
+            const M = A.map((r, i) => [...r, b[i]]);
+            for (let k = 0; k < n; k++) {
+              let p = k;
+              for (let i = k + 1; i < n; i++) if (Math.abs(M[i][k]) > Math.abs(M[p][k])) p = i;
+              if (p !== k) [M[k], M[p]] = [M[p], M[k]];
+              if (Math.abs(M[k][k]) < 1e-15) throw new Error(`Zero pivot at column ${k + 1}. Matrix is singular.`);
+              for (let i = k + 1; i < n; i++) {
+                const factor = M[i][k] / M[k][k];
+                for (let j = k; j <= n; j++) M[i][j] -= factor * M[k][j];
+              }
+              its.push({ Iter: k + 1, Action: `Pivot row ${k + 1}${p !== k ? ` ↔ ${p + 1}` : ""}`, "Pivot a[k][k]": M[k][k] });
+            }
+            x = new Array(n).fill(0);
+            for (let i = n - 1; i >= 0; i--) {
+              let s = M[i][n];
+              for (let j = i + 1; j < n; j++) s -= M[i][j] * x[j];
+              x[i] = s / M[i][i];
+            }
+          } else if (method === "gjordan") {
+            const M = A.map((r, i) => [...r, b[i]]);
+            for (let k = 0; k < n; k++) {
+              let p = k;
+              for (let i = k + 1; i < n; i++) if (Math.abs(M[i][k]) > Math.abs(M[p][k])) p = i;
+              if (p !== k) [M[k], M[p]] = [M[p], M[k]];
+              const pivot = M[k][k];
+              if (Math.abs(pivot) < 1e-15) throw new Error(`Zero pivot at column ${k + 1}.`);
+              for (let j = 0; j <= n; j++) M[k][j] /= pivot;
+              for (let i = 0; i < n; i++) {
+                if (i === k) continue;
+                const f = M[i][k];
+                for (let j = 0; j <= n; j++) M[i][j] -= f * M[k][j];
+              }
+              its.push({ Iter: k + 1, Action: `Normalise row ${k + 1}`, Pivot: pivot });
+            }
+            x = M.map((r) => r[n]);
+          } else if (method === "lu") {
+            const L = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? 1 : 0)));
+            const U = A.map((r) => [...r]);
+            for (let k = 0; k < n; k++) {
+              if (Math.abs(U[k][k]) < 1e-15) throw new Error("Zero pivot — LU without pivoting fails. Try Gaussian with pivoting.");
+              for (let i = k + 1; i < n; i++) {
+                L[i][k] = U[i][k] / U[k][k];
+                for (let j = k; j < n; j++) U[i][j] -= L[i][k] * U[k][j];
+              }
+              its.push({ Iter: k + 1, Action: `Eliminate below column ${k + 1}`, "U[k][k]": U[k][k] });
+            }
+            const y = new Array(n).fill(0);
+            for (let i = 0; i < n; i++) { let s = b[i]; for (let j = 0; j < i; j++) s -= L[i][j] * y[j]; y[i] = s; }
+            x = new Array(n).fill(0);
+            for (let i = n - 1; i >= 0; i--) { let s = y[i]; for (let j = i + 1; j < n; j++) s -= U[i][j] * x[j]; x[i] = s / U[i][i]; }
+          } else if (method === "jacobi" || method === "gs" || method === "sor") {
+            for (let i = 0; i < n; i++) if (Math.abs(A[i][i]) < 1e-15) throw new Error(`Zero diagonal entry at row ${i + 1}. Cannot iterate.`);
+            if (method === "sor" && (omega <= 0 || omega >= 2)) throw new Error("SOR requires 0 < ω < 2.");
+            let xv = new Array(n).fill(0);
+            for (let k = 1; k <= maxIter; k++) {
+              const xOld = [...xv];
+              if (method === "jacobi") {
+                const xn = new Array(n).fill(0);
+                for (let i = 0; i < n; i++) {
+                  let s = b[i];
+                  for (let j = 0; j < n; j++) if (j !== i) s -= A[i][j] * xOld[j];
+                  xn[i] = s / A[i][i];
+                }
+                xv = xn;
+              } else {
+                for (let i = 0; i < n; i++) {
+                  let s = b[i];
+                  for (let j = 0; j < n; j++) if (j !== i) s -= A[i][j] * xv[j];
+                  const gs = s / A[i][i];
+                  xv[i] = method === "sor" ? (1 - omega) * xOld[i] + omega * gs : gs;
+                }
+              }
+              let err = 0;
+              for (let i = 0; i < n; i++) err = Math.max(err, Math.abs(xv[i] - xOld[i]));
+              const row = { Iter: k };
+              xv.forEach((v, i) => (row[`x${i + 1}`] = v));
+              row.Error = err;
+              its.push(row);
+              if (err < tol) break;
+            }
+            x = xv;
+          }
+
+          // Compute residual
+          let res = 0;
+          for (let i = 0; i < n; i++) {
+            let s = 0;
+            for (let j = 0; j < n; j++) s += A[i][j] * x[j];
+            res = Math.max(res, Math.abs(s - b[i]));
+          }
+          setResult({ x, its, residual: res, n });
+        } catch (e) { setError(e.message || "Calculation error."); }
+      }, [parsed, method, tol, maxIter, omega, x0Str]);
+
       return (
         <div className="space-y-5 animate-fade-in">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module</span>
-              <span className="h-px w-8 bg-indigo-200" />
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 02</span>
+                <span className="h-px w-8 bg-indigo-200" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Linear Systems</h2>
+              <p className="text-xs text-slate-500 mt-1">Solve <span className="mono text-slate-700">Ax = b</span> with direct and iterative techniques.</p>
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">{info.title}</h2>
-            <p className="text-xs text-slate-500 mt-1">{info.blurb}</p>
+            <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center card-shadow">
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/25">
-              <span className="text-white mono text-sm font-bold">{info.symbol}</span>
-            </div>
-            <h3 className="text-sm font-bold text-slate-900">Module scaffolded</h3>
-            <p className="text-[11px] text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
-              The numerical engine for this module is registered and ready. The following solvers will be exposed here.
-            </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {info.methods.map((m) => (
-                <span key={m} className="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 ring-1 ring-slate-200">
-                  {m}
-                </span>
+          {tab === "theory" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              {Object.entries(LINEAR_METHODS).map(([key, m]) => (
+                <div key={key} className={`rounded-2xl border bg-white p-4 card-shadow transition-all hover:-translate-y-0.5 hover:card-shadow-lg ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-slate-900">{m.short}</h3>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 whitespace-nowrap">{m.order}</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{m.desc}</p>
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Requires</span>
+                    <span className="text-[10px] mono text-slate-600">{m.needs}</span>
+                  </div>
+                </div>
               ))}
             </div>
+          )}
+
+          {tab === "formula" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Gaussian Elimination</div><Tex display>{"\\left[A \\mid b\\right] \\xrightarrow{\\text{row ops}} \\left[U \\mid c\\right]"}</Tex></div>
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Gauss–Jordan</div><Tex display>{"\\left[A \\mid b\\right] \\to \\left[I \\mid x\\right]"}</Tex></div>
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">LU Decomposition</div><Tex display>{"A = LU \\;\\Rightarrow\\; Ly = b,\\; Ux = y"}</Tex></div>
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Jacobi</div><Tex display>{"x_i^{(k+1)} = \\frac{1}{a_{ii}}\\left(b_i - \\sum_{j \\neq i} a_{ij} x_j^{(k)}\\right)"}</Tex></div>
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Gauss–Seidel</div><Tex display>{"x_i^{(k+1)} = \\frac{1}{a_{ii}}\\left(b_i - \\sum_{j < i} a_{ij} x_j^{(k+1)} - \\sum_{j > i} a_{ij} x_j^{(k)}\\right)"}</Tex></div>
+              <div className="rounded-2xl border bg-white p-5 card-shadow"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">SOR</div><Tex display>{"x_i^{(k+1)} = (1-\\omega) x_i^{(k)} + \\omega\\, x_i^{\\text{GS}}"}</Tex></div>
+            </div>
+          )}
+
+          {tab === "solver" && (
+            <div className="grid lg:grid-cols-12 gap-4 animate-slide-up">
+              <div className="lg:col-span-5 space-y-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 card-shadow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 6h18M3 12h18M3 18h18M9 3v18" /></svg>
+                    </div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">Augmented Matrix [A | b]</span>
+                  </div>
+                  <textarea value={matrixStr} onChange={(e) => setMatrixStr(e.target.value)} rows={5}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs mono bg-white/70 text-slate-800 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all resize-none" />
+                  <div className="mt-2 text-[10px] text-slate-400">
+                    {parsed.error ? <span className="text-rose-500">{parsed.error}</span> : <>Parsed: <span className="mono text-indigo-600">{parsed.n}×{parsed.n}</span> system — last column is <span className="mono">b</span>.</>}
+                  </div>
+                  <div className="mt-3">
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Method</label>
+                    <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all cursor-pointer">
+                      {Object.entries(LINEAR_METHODS).map(([k, m]) => (<option key={k} value={k}>{m.label}</option>))}
+                    </select>
+                  </div>
+                  {(method === "jacobi" || method === "gs" || method === "sor") && (
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <InputField label="Tolerance ε" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-8)} step="0.0000001" />
+                      <InputField label="Max Iterations" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
+                    </div>
+                  )}
+                  {method === "sor" && (<div className="mt-3"><InputField label="Relaxation ω" value={omega} onChange={(v) => setOmega(parseFloat(v) || 1.1)} step="0.05" hint="0 < ω < 2" /></div>)}
+                  <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25 active:scale-[0.99]">
+                    <span className="flex items-center justify-center gap-2">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 3l14 9-14 9V3z" /></svg>
+                      SOLVE SYSTEM
+                    </span>
+                  </button>
+                  {error && (<div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3">⚠ {error}</div>)}
+                </div>
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/50 p-4 card-shadow">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">Active Scheme</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-indigo-600 ring-1 ring-indigo-100">{meta.order}</span>
+                  </div>
+                  <div className="text-[13px] font-bold text-slate-900">{meta.short}</div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{meta.desc}</p>
+                </div>
+              </div>
+              <div className="lg:col-span-7 space-y-3">
+                {result ? (
+                  <div className="space-y-3 animate-slide-up">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 card-shadow">
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Solution Vector</div>
+                      <div className="flex flex-wrap gap-2">
+                        {result.x.map((v, i) => (
+                          <div key={i} className="rounded-xl border border-indigo-100 bg-indigo-50/60 px-3 py-2">
+                            <div className="text-[9px] font-bold uppercase tracking-widest text-indigo-400">x{i + 1}</div>
+                            <div className="mono text-[13px] font-bold text-indigo-800">{v.toExponential(6)}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 text-[10px] text-slate-400">Residual ‖Ax − b‖∞ = <span className="mono text-slate-700">{result.residual.toExponential(3)}</span></div>
+                    </div>
+                    <ResultTable rows={result.its} title={`${meta.short} — Iteration Log`} filename={`${method}-iterations.csv`} />
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
+                    <p className="text-xs font-semibold text-slate-600">No system solved yet</p>
+                    <p className="text-[11px] text-slate-400 mt-1">Enter the augmented matrix and press <span className="font-bold text-indigo-600">Solve System</span>.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ===============================================================
+       7. NUMERICAL INTEGRATION MODULE (7 methods)
+       =============================================================== */
+    const INTEG_METHODS = {
+      trap: { label: "Trapezoidal Rule", short: "Trapezoidal", order: "O(h²)", formula: "\\int_a^b f\\,dx \\approx \\frac{h}{2}\\left[f_0 + 2\\sum_{i=1}^{n-1} f_i + f_n\\right]", desc: "Piecewise linear approximation. Simple, robust, and second-order accurate." },
+      simp13: { label: "Simpson's 1/3 Rule", short: "Simpson 1/3", order: "O(h⁴)", formula: "\\frac{h}{3}\\left[f_0 + 4\\sum_{\\text{odd}} f_i + 2\\sum_{\\text{even}} f_i + f_n\\right]", desc: "Piecewise quadratic interpolation. Requires even n. Fourth-order accurate." },
+      simp38: { label: "Simpson's 3/8 Rule", short: "Simpson 3/8", order: "O(h⁴)", formula: "\\frac{3h}{8}\\left[f_0 + 3(f_1 + f_2) + 2f_3 + \\ldots + f_n\\right]", desc: "Piecewise cubic interpolation. Requires n divisible by 3." },
+      midpoint: { label: "Midpoint Rule", short: "Midpoint", order: "O(h²)", formula: "\\int_a^b f\\,dx \\approx h\\sum_{i=0}^{n-1} f(x_i + h/2)", desc: "Evaluates f at subinterval midpoints. Second-order accurate and requires fewer function calls than trapezoidal." },
+      gl2: { label: "Gauss–Legendre (2-point)", short: "Gauss 2-pt", order: "Exact to degree 3", formula: "\\approx \\frac{b-a}{2}\\left[f(x_1) + f(x_2)\\right]", desc: "Two-point Gaussian quadrature. Exact for polynomials up to degree 3." },
+      gl3: { label: "Gauss–Legendre (3-point)", short: "Gauss 3-pt", order: "Exact to degree 5", formula: "\\approx \\frac{b-a}{2}\\left[\\tfrac{5}{9}f(x_1) + \\tfrac{8}{9}f(x_2) + \\tfrac{5}{9}f(x_3)\\right]", desc: "Three-point Gaussian quadrature. Exact for polynomials up to degree 5." },
+      romberg: { label: "Romberg Integration", short: "Romberg", order: "Accelerated (Richardson)", formula: "R_{k,j} = R_{k,j-1} + \\frac{R_{k,j-1} - R_{k-1,j-1}}{4^{j-1} - 1}", desc: "Repeated Richardson extrapolation of the trapezoidal rule. Usually converges extremely fast." },
+    };
+
+    function IntegSolver() {
+      const [expr, setExpr] = useState("sin(x) + x^2/10");
+      const [method, setMethod] = useState("simp13");
+      const [a, setA] = useState(0);
+      const [b, setB] = useState(Math.PI);
+      const [n, setN] = useState(10);
+      const [levels, setLevels] = useState(5);
+      const [tab, setTab] = useState("solver");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      const f = useMemo(() => compileUnary(expr), [expr]);
+      const meta = INTEG_METHODS[method];
+
+      const solve = useCallback(() => {
+        setError(""); setResult(null);
+        try {
+          let its = [];
+          let value = NaN;
+          let h = (b - a) / n;
+
+          if (method === "trap") {
+            if (n < 1) throw new Error("n must be ≥ 1.");
+            let sum = f(a) + f(b);
+            for (let i = 1; i < n; i++) sum += 2 * f(a + i * h);
+            value = (h / 2) * sum;
+            its.push({ Step: "n", Value: n, h, Result: value });
+          } else if (method === "simp13") {
+            if (n % 2 !== 0) throw new Error("Simpson's 1/3 requires n to be even.");
+            let sum = f(a) + f(b);
+            for (let i = 1; i < n; i++) sum += (i % 2 === 0 ? 2 : 4) * f(a + i * h);
+            value = (h / 3) * sum;
+            its.push({ Step: "n", Value: n, h, Result: value });
+          } else if (method === "simp38") {
+            if (n % 3 !== 0) throw new Error("Simpson's 3/8 requires n divisible by 3.");
+            let sum = f(a) + f(b);
+            for (let i = 1; i < n; i++) sum += (i % 3 === 0 ? 2 : 3) * f(a + i * h);
+            value = (3 * h / 8) * sum;
+            its.push({ Step: "n", Value: n, h, Result: value });
+          } else if (method === "midpoint") {
+            if (n < 1) throw new Error("n must be ≥ 1.");
+            let sum = 0;
+            for (let i = 0; i < n; i++) sum += f(a + (i + 0.5) * h);
+            value = h * sum;
+            its.push({ Step: "n", Value: n, h, Result: value });
+          } else if (method === "gl2") {
+            const c = (b - a) / 2, d = (a + b) / 2;
+            const x1 = -1 / Math.sqrt(3), x2 = 1 / Math.sqrt(3);
+            value = c * (f(c * x1 + d) + f(c * x2 + d));
+            its.push({ Step: "Gauss 2-pt", Value: value, Error: NaN });
+          } else if (method === "gl3") {
+            const c = (b - a) / 2, d = (a + b) / 2;
+            const xs = [-Math.sqrt(3 / 5), 0, Math.sqrt(3 / 5)];
+            const ws = [5 / 9, 8 / 9, 5 / 9];
+            value = c * (ws[0] * f(c * xs[0] + d) + ws[1] * f(c * xs[1] + d) + ws[2] * f(c * xs[2] + d));
+            its.push({ Step: "Gauss 3-pt", Value: value, Error: NaN });
+          } else if (method === "romberg") {
+            if (levels < 1) throw new Error("Levels must be ≥ 1.");
+            const R = [[0.5 * (b - a) * (f(a) + f(b))]];
+            its.push({ Level: 0, "R[0][0]": R[0][0], Error: NaN });
+            let prev = R[0][0];
+            for (let i = 1; i <= levels; i++) {
+              const hI = (b - a) / Math.pow(2, i);
+              let sum = 0;
+              for (let k = 1; k <= Math.pow(2, i - 1); k++) sum += f(a + (2 * k - 1) * hI);
+              const row = [0.5 * R[i - 1][0] + hI * sum];
+              for (let j = 1; j <= i; j++) row.push(row[j - 1] + (row[j - 1] - R[i - 1][j - 1]) / (Math.pow(4, j) - 1));
+              R.push(row);
+              const r = { Level: i, "R[k][0]": row[0], "R[k][k]": row[i], Error: Math.abs(row[i] - prev) };
+              its.push(r);
+              prev = row[i];
+            }
+            value = R[R.length - 1][R[R.length - 1].length - 1];
+          }
+
+          setResult({ value, its, h, n });
+        } catch (e) { setError(e.message || "Calculation error."); }
+      }, [method, a, b, n, levels, f]);
+
+      const plotPoints = useMemo(() => {
+        if (!result) return [];
+        return [{ x: a, y: f(a), label: "a" }, { x: b, y: f(b), label: "b" }];
+      }, [result, a, b, f]);
+
+      return (
+        <div className="space-y-5 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 03</span>
+                <span className="h-px w-8 bg-indigo-200" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Numerical Integration</h2>
+              <p className="text-xs text-slate-500 mt-1">Approximate <span className="mono text-slate-700">∫ f dx</span> with composite quadrature and Romberg extrapolation.</p>
+            </div>
+            <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
           </div>
+
+          {tab === "theory" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              {Object.entries(INTEG_METHODS).map(([key, m]) => (
+                <div key={key} className={`rounded-2xl border bg-white p-4 card-shadow transition-all hover:-translate-y-0.5 ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-slate-900">{m.short}</h3>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 whitespace-nowrap">{m.order}</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{m.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "formula" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              {Object.entries(INTEG_METHODS).map(([key, m]) => (
+                <div key={key} className={`rounded-2xl border bg-white overflow-hidden card-shadow ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
+                  <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/70"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">{m.short}</span></div>
+                  <div className="px-5 py-6 flex items-center justify-center text-slate-800 min-h-[74px]"><Tex display>{m.formula}</Tex></div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "solver" && (
+            <div className="grid lg:grid-cols-12 gap-4 animate-slide-up">
+              <div className="lg:col-span-5 space-y-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 card-shadow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 17l5-6 4 4 4-7 5 5" /></svg>
+                    </div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">Configuration</span>
+                  </div>
+                  <div className="space-y-3">
+                    <InputField label="Integrand f(x)" type="text" value={expr} onChange={setExpr} placeholder="e.g. sin(x) + x^2" hint="supports ^, sin, ln…" />
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Method</label>
+                      <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all cursor-pointer">
+                        {Object.entries(INTEG_METHODS).map(([k, m]) => (<option key={k} value={k}>{m.label}</option>))}
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <InputField label="Lower limit a" value={a} onChange={(v) => setA(parseFloat(v) || 0)} step="0.1" />
+                      <InputField label="Upper limit b" value={b} onChange={(v) => setB(parseFloat(v) || 1)} step="0.1" />
+                    </div>
+                    {(method === "trap" || method === "simp13" || method === "simp38" || method === "midpoint") && (
+                      <InputField label="Subintervals n" value={n} onChange={(v) => setN(parseInt(v) || 1)} hint={method === "simp13" ? "even" : method === "simp38" ? "multiple of 3" : ""} />
+                    )}
+                    {method === "romberg" && (<InputField label="Extrapolation levels" value={levels} onChange={(v) => setLevels(parseInt(v) || 5)} />)}
+                  </div>
+                  <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25 active:scale-[0.99]">
+                    <span className="flex items-center justify-center gap-2">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 3l14 9-14 9V3z" /></svg>
+                      INTEGRATE
+                    </span>
+                  </button>
+                  {error && (<div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3">⚠ {error}</div>)}
+                </div>
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/50 p-4 card-shadow">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">Active Rule</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-indigo-600 ring-1 ring-indigo-100">{meta.order}</span>
+                  </div>
+                  <div className="text-[13px] font-bold text-slate-900">{meta.short}</div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{meta.desc}</p>
+                </div>
+              </div>
+              <div className="lg:col-span-7 space-y-3">
+                <FunctionPlot title={`Integrand y = ${expr || "0"}`} subtitle={`shaded region [${a}, ${b}]`} f={f} xMin={Math.min(a, b) - 0.5} xMax={Math.max(a, b) + 0.5} points={plotPoints} shade={true} />
+                {result && (
+                  <div className="space-y-3 animate-slide-up">
+                    <div className="grid grid-cols-3 gap-2">
+                      <StatTile label="Integral ∫ₐᵇ f dx" value={result.value.toFixed(10)} accent="indigo" sub="approximation" />
+                      <StatTile label="Step size h" value={result.h.toFixed(6)} accent="sky" sub={`n = ${result.n}`} />
+                      <StatTile label="Method" value={meta.short} accent="emerald" sub={meta.order} />
+                    </div>
+                    <ResultTable rows={result.its} title={`${meta.short} — Steps`} filename={`${method}-integral.csv`} />
+                  </div>
+                )}
+                {!result && !error && (
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
+                    <p className="text-xs font-semibold text-slate-600">No integration yet</p>
+                    <p className="text-[11px] text-slate-400 mt-1">Set the integrand and limits, then press <span className="font-bold text-indigo-600">Integrate</span>.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ===============================================================
+       8. ODE MODULE (6 methods)
+       =============================================================== */
+    const ODE_METHODS = {
+      euler: { label: "Euler's Method", short: "Euler", order: "O(h)", formula: "y_{n+1} = y_n + h\\,f(x_n, y_n)", desc: "Forward Euler. First-order accurate; simple but requires small h for accuracy." },
+      heun: { label: "Modified Euler (Heun)", short: "Heun", order: "O(h²)", formula: "y_{n+1} = y_n + \\tfrac{h}{2}\\left[f_n + f(x_{n+1}, \\tilde{y}_{n+1})\\right]", desc: "Predictor–corrector using trapezoidal averaging. Second-order accurate." },
+      rk2: { label: "Midpoint RK2", short: "Midpoint RK2", order: "O(h²)", formula: "y_{n+1} = y_n + h\\,f\\!\\left(x_n + \\tfrac{h}{2}, y_n + \\tfrac{h}{2} f_n\\right)", desc: "Second-order Runge–Kutta using the midpoint slope. Simple and accurate." },
+      rk4: { label: "Classical Runge–Kutta 4", short: "RK4", order: "O(h⁴)", formula: "y_{n+1} = y_n + \\tfrac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)", desc: "Fourth-order Runge–Kutta. The workhorse of ODE integration." },
+      ab4: { label: "Adams–Bashforth 4-step", short: "Adams–Bashforth 4", order: "O(h⁴)", formula: "y_{n+1} = y_n + \\tfrac{h}{24}(55f_n - 59f_{n-1} + 37f_{n-2} - 9f_{n-3})", desc: "Multistep explicit method. Requires 3 bootstrapping steps (RK4 used here)." },
+      beuler: { label: "Backward Euler", short: "Backward Euler", order: "O(h) · implicit", formula: "y_{n+1} = y_n + h\\,f(x_{n+1}, y_{n+1})", desc: "Implicit Euler. Solved by fixed-point iteration at each step. Stable for stiff problems." },
+    };
+
+    function ODESolver() {
+      const [expr, setExpr] = useState("x + y");
+      const [method, setMethod] = useState("rk4");
+      const [x0, setX0] = useState(0);
+      const [y0, setY0] = useState(1);
+      const [xEnd, setXEnd] = useState(1);
+      const [h, setH] = useState(0.1);
+      const [tab, setTab] = useState("solver");
+      const [result, setResult] = useState(null);
+      const [error, setError] = useState("");
+
+      const f = useMemo(() => compileBinary(expr), [expr]);
+      const meta = ODE_METHODS[method];
+
+      const solve = useCallback(() => {
+        setError(""); setResult(null);
+        try {
+          if (!(h > 0)) throw new Error("Step size h must be positive.");
+          if (!(xEnd > x0)) throw new Error("xEnd must be greater than x0.");
+          const its = [];
+          const xs = [x0], ys = [y0];
+          let x = x0, y = y0;
+          its.push({ Iter: 0, x, y });
+
+          while (x < xEnd - 1e-12) {
+            const hStep = Math.min(h, xEnd - x);
+            if (method === "euler") {
+              const slope = f(x, y);
+              y = y + hStep * slope;
+            } else if (method === "heun") {
+              const k1 = f(x, y);
+              const k2 = f(x + hStep, y + hStep * k1);
+              y = y + (hStep / 2) * (k1 + k2);
+            } else if (method === "rk2") {
+              const k1 = f(x, y);
+              const k2 = f(x + hStep / 2, y + (hStep / 2) * k1);
+              y = y + hStep * k2;
+            } else if (method === "rk4") {
+              const k1 = f(x, y);
+              const k2 = f(x + hStep / 2, y + (hStep / 2) * k1);
+              const k3 = f(x + hStep / 2, y + (hStep / 2) * k2);
+              const k4 = f(x + hStep, y + hStep * k3);
+              y = y + (hStep / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+            } else if (method === "ab4") {
+              // Bootstrap with RK4 for first 3 steps, then AB4
+              const nNeeded = Math.ceil((xEnd - x0) / h);
+              if (nNeeded < 4) throw new Error("Adams–Bashforth 4 needs at least 4 steps. Reduce h or increase interval.");
+              // If we haven't bootstrapped 3 steps, use RK4
+              if (xs.length < 4) {
+                const k1 = f(x, y);
+                const k2 = f(x + hStep / 2, y + (hStep / 2) * k1);
+                const k3 = f(x + hStep / 2, y + (hStep / 2) * k2);
+                const k4 = f(x + hStep, y + hStep * k3);
+                y = y + (hStep / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+              } else {
+                const n = xs.length;
+                const f_n = f(xs[n - 1], ys[n - 1]);
+                const f_n1 = f(xs[n - 2], ys[n - 2]);
+                const f_n2 = f(xs[n - 3], ys[n - 3]);
+                const f_n3 = f(xs[n - 4], ys[n - 4]);
+                y = y + (hStep / 24) * (55 * f_n - 59 * f_n1 + 37 * f_n2 - 9 * f_n3);
+              }
+            } else if (method === "beuler") {
+              let yNew = y;
+              let innerIter = 0;
+              const maxInner = 100;
+              for (let j = 0; j < maxInner; j++) {
+                const yNext = y + hStep * f(x + hStep, yNew);
+                innerIter = j + 1;
+                if (Math.abs(yNext - yNew) < 1e-10) { yNew = yNext; break; }
+                yNew = yNext;
+              }
+              y = yNew;
+            }
+            x = x + hStep;
+            xs.push(x); ys.push(y);
+            its.push({ Iter: its.length, x, y });
+          }
+
+          setResult({ its, finalX: x, finalY: y, steps: its.length - 1 });
+        } catch (e) { setError(e.message || "Calculation error."); }
+      }, [method, x0, y0, xEnd, h, f]);
+
+      const solutionPts = useMemo(() => {
+        if (!result) return [];
+        return result.its.map((r) => ({ x: r.x, y: r.y }));
+      }, [result]);
+
+      const finalPoint = useMemo(() => {
+        if (!result) return [];
+        return [{ x: result.finalX, y: result.finalY, label: `y(${result.finalX.toFixed(2)}) ≈ ${result.finalY.toFixed(4)}` }];
+      }, [result]);
+
+      return (
+        <div className="space-y-5 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-indigo-500">Module 04</span>
+                <span className="h-px w-8 bg-indigo-200" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 mt-1">Ordinary Differential Equations</h2>
+              <p className="text-xs text-slate-500 mt-1">Solve <span className="mono text-slate-700">dy/dx = f(x, y)</span> with explicit and implicit single-step schemes.</p>
+            </div>
+            <Tabs tabs={[{ key: "solver", label: "Solver" }, { key: "theory", label: "Theory" }, { key: "formula", label: "Formulas" }]} active={tab} onChange={setTab} />
+          </div>
+
+          {tab === "theory" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              {Object.entries(ODE_METHODS).map(([key, m]) => (
+                <div key={key} className={`rounded-2xl border bg-white p-4 card-shadow transition-all hover:-translate-y-0.5 ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold text-slate-900">{m.short}</h3>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100 whitespace-nowrap">{m.order}</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{m.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "formula" && (
+            <div className="grid sm:grid-cols-2 gap-3 animate-slide-up">
+              {Object.entries(ODE_METHODS).map(([key, m]) => (
+                <div key={key} className={`rounded-2xl border bg-white overflow-hidden card-shadow ${key === method ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200/80"}`}>
+                  <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/70"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">{m.short}</span></div>
+                  <div className="px-5 py-6 flex items-center justify-center text-slate-800 min-h-[74px]"><Tex display>{m.formula}</Tex></div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "solver" && (
+            <div className="grid lg:grid-cols-12 gap-4 animate-slide-up">
+              <div className="lg:col-span-5 space-y-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 card-shadow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 17c3 0 3-10 6-10s3 10 6 10 3-6 6-6" /></svg>
+                    </div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">Configuration</span>
+                  </div>
+                  <div className="space-y-3">
+                    <InputField label="Slope function f(x, y)" type="text" value={expr} onChange={setExpr} placeholder="e.g. x + y" hint="use x and y" />
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Method</label>
+                      <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all cursor-pointer">
+                        {Object.entries(ODE_METHODS).map(([k, m]) => (<option key={k} value={k}>{m.label}</option>))}
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <InputField label="Initial x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} step="0.1" />
+                      <InputField label="Initial y₀" value={y0} onChange={(v) => setY0(parseFloat(v) || 0)} step="0.1" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <InputField label="End x" value={xEnd} onChange={(v) => setXEnd(parseFloat(v) || 1)} step="0.1" />
+                      <InputField label="Step size h" value={h} onChange={(v) => setH(parseFloat(v) || 0.1)} step="0.01" />
+                    </div>
+                  </div>
+                  <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25 active:scale-[0.99]">
+                    <span className="flex items-center justify-center gap-2">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 3l14 9-14 9V3z" /></svg>
+                      INTEGRATE ODE
+                    </span>
+                  </button>
+                  {error && (<div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3">⚠ {error}</div>)}
+                </div>
+                <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/50 p-4 card-shadow">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">Active Scheme</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-indigo-600 ring-1 ring-indigo-100">{meta.order}</span>
+                  </div>
+                  <div className="text-[13px] font-bold text-slate-900">{meta.short}</div>
+                  <p className="text-[11px] leading-relaxed text-slate-500 mt-2">{meta.desc}</p>
+                </div>
+              </div>
+              <div className="lg:col-span-7 space-y-3">
+                {result && (
+                  <FunctionPlot title={`Solution y(x) for y′ = ${expr}`} subtitle={`${meta.short} · h = ${h}`} f={null} xMin={x0 - 0.1} xMax={xEnd + 0.1}
+                    points={finalPoint}
+                    extraSeries={[{ pts: solutionPts, color: "#4f46e5" }]} />
+                )}
+                {result ? (
+                  <div className="space-y-3 animate-slide-up">
+                    <div className="grid grid-cols-3 gap-2">
+                      <StatTile label={`y(${result.finalX.toFixed(3)})`} value={result.finalY.toFixed(8)} accent="indigo" sub="final value" />
+                      <StatTile label="Steps" value={result.steps} accent="sky" sub={`h = ${h}`} />
+                      <StatTile label="Method" value={meta.short} accent="emerald" sub={meta.order} />
+                    </div>
+                    <ResultTable rows={result.its} title={`${meta.short} — Iteration Log`} filename={`${method}-ode.csv`} />
+                  </div>
+                ) : (
+                  !error && (
+                    <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-8 text-center">
+                      <p className="text-xs font-semibold text-slate-600">No ODE solved yet</p>
+                      <p className="text-[11px] text-slate-400 mt-1">Enter f(x, y) and initial data, then press <span className="font-bold text-indigo-600">Integrate ODE</span>.</p>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -1141,39 +1416,17 @@
       const [activeModule, setActiveModule] = useState("root");
 
       const navItems = [
-        {
-          key: "root",
-          label: "Root Finding",
-          symbol: "f(x)=0",
-          icon: <path d="M12 3v18M3 12h18M12 3a9 9 0 010 18" />,
-        },
-        {
-          key: "linear",
-          label: "Linear Systems",
-          symbol: "Ax=b",
-          icon: <path d="M4 6h16M4 12h16M4 18h16M9 3v18" />,
-        },
-        {
-          key: "integ",
-          label: "Numerical Integration",
-          symbol: "∫ f dx",
-          icon: <path d="M7 4h6a3 3 0 010 6H9a3 3 0 000 6h6" />,
-        },
-        {
-          key: "ode",
-          label: "Ordinary Diff. Eq.",
-          symbol: "dy/dx",
-          icon: <path d="M3 17c3 0 3-10 6-10s3 10 6 10 3-6 6-6" />,
-        },
+        { key: "root", label: "Root Finding", symbol: "f(x)=0", icon: <path d="M12 3v18M3 12h18M12 3a9 9 0 010 18" /> },
+        { key: "linear", label: "Linear Systems", symbol: "Ax=b", icon: <path d="M4 6h16M4 12h16M4 18h16M9 3v18" /> },
+        { key: "integ", label: "Numerical Integration", symbol: "∫ f dx", icon: <path d="M7 4h6a3 3 0 010 6H9a3 3 0 000 6h6" /> },
+        { key: "ode", label: "Ordinary Diff. Eq.", symbol: "dy/dx", icon: <path d="M3 17c3 0 3-10 6-10s3 10 6 10 3-6 6-6" /> },
       ];
 
       return (
         <div className="min-h-screen flex flex-col text-slate-800">
-          {/* ---------- HEADER ---------- */}
           <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="py-3 flex items-center justify-between gap-3">
-                {/* Brand */}
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative shrink-0">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
@@ -1182,26 +1435,17 @@
                     <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-[13px] sm:text-sm font-extrabold tracking-tight text-slate-900 leading-tight truncate">
-                      NUMERICAL LAB STUDIO
-                    </h1>
-                    <p className="text-[10px] font-mono text-slate-400 truncate">
-                      Interactive Simulation &amp; Analytical Verification
-                    </p>
+                    <h1 className="text-[13px] sm:text-sm font-extrabold tracking-tight text-slate-900 leading-tight truncate">NUMERICAL LAB STUDIO</h1>
+                    <p className="text-[10px] font-mono text-slate-400 truncate">Interactive Simulation &amp; Analytical Verification</p>
                   </div>
                 </div>
-
-                {/* Right side */}
                 <div className="flex items-center gap-2">
                   <div className="hidden md:flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/70 px-3 py-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-shimmer" />
                     <span className="text-[10px] font-bold tracking-wider text-emerald-700 uppercase">Engine Ready</span>
                   </div>
-
                   <div className="hidden sm:flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/80 pl-1.5 pr-3.5 py-1.5">
-                    <span className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-sm">
-                      MB
-                    </span>
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-[9px] font-extrabold flex items-center justify-center shadow-sm">MB</span>
                     <div className="leading-tight">
                       <div className="text-[8px] font-extrabold uppercase tracking-[0.16em] text-indigo-400">Developed by</div>
                       <div className="text-[11px] font-extrabold text-indigo-900 whitespace-nowrap">Dr Mahadev Biradar</div>
@@ -1212,88 +1456,59 @@
             </div>
           </header>
 
-          {/* ---------- BODY ---------- */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Sidebar */}
             <aside className="md:col-span-3">
               <div className="md:sticky md:top-[86px] space-y-3">
                 <div className="flex items-center justify-between px-2">
                   <span className="text-[10px] font-extrabold tracking-[0.18em] text-slate-400 uppercase">Modules</span>
                   <span className="text-[9px] font-mono text-slate-300">v2.0</span>
                 </div>
-
                 <nav className="flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible custom-scroll pb-1 md:pb-0">
                   {navItems.map((item) => {
                     const active = activeModule === item.key;
                     return (
-                      <button
-                        key={item.key}
-                        onClick={() => setActiveModule(item.key)}
+                      <button key={item.key} onClick={() => setActiveModule(item.key)}
                         className={`group shrink-0 md:w-full text-left px-3 py-2.5 rounded-xl border flex items-center gap-2.5 transition-all duration-200 ${
-                          active
-                            ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white border-slate-900 shadow-lg shadow-slate-900/15"
-                            : "bg-white/70 text-slate-600 border-slate-200/80 hover:border-indigo-200 hover:bg-white hover:-translate-y-px"
-                        }`}
-                      >
-                        <span
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                            active ? "bg-white/15 text-indigo-200" : "bg-slate-100 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500"
-                          }`}
-                        >
-                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                            {item.icon}
-                          </svg>
+                          active ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white border-slate-900 shadow-lg shadow-slate-900/15" : "bg-white/70 text-slate-600 border-slate-200/80 hover:border-indigo-200 hover:bg-white hover:-translate-y-px"
+                        }`}>
+                        <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${active ? "bg-white/15 text-indigo-200" : "bg-slate-100 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500"}`}>
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
                         </span>
                         <span className="flex-1 min-w-0">
                           <span className="block text-[11.5px] font-bold truncate">{item.label}</span>
-                          <span className={`block text-[9.5px] font-mono truncate ${active ? "text-indigo-300" : "text-slate-400"}`}>
-                            {item.symbol}
-                          </span>
+                          <span className={`block text-[9.5px] font-mono truncate ${active ? "text-indigo-300" : "text-slate-400"}`}>{item.symbol}</span>
                         </span>
                         {active && <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0 hidden md:block" />}
                       </button>
                     );
                   })}
                 </nav>
-
-                {/* Sidebar footer card */}
                 <div className="hidden md:block rounded-2xl border border-slate-200/80 bg-white/70 p-3.5 card-shadow">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2l2.4 6.9H22l-6 4.4 2.3 7L12 16l-6.3 4.3 2.3-7-6-4.4h7.6z" />
-                    </svg>
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 6.9H22l-6 4.4 2.3 7L12 16l-6.3 4.3 2.3-7-6-4.4h7.6z" /></svg>
                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">Academic Build</span>
                   </div>
-                  <p className="text-[10.5px] leading-relaxed text-slate-500">
-                    Designed for undergraduate numerical analysis laboratories — every result is reproducible and exportable.
-                  </p>
+                  <p className="text-[10.5px] leading-relaxed text-slate-500">All four classical numerical analysis modules — root finding, linear systems, quadrature, and ODEs — in one reproducible lab.</p>
                 </div>
               </div>
             </aside>
-
-            {/* Main content */}
             <main className="md:col-span-9 min-w-0">
-              {activeModule === "root" ? <RootSolver /> : <PlaceholderModule moduleKey={activeModule} />}
+              {activeModule === "root" && <RootSolver />}
+              {activeModule === "linear" && <LinearSolver />}
+              {activeModule === "integ" && <IntegSolver />}
+              {activeModule === "ode" && <ODESolver />}
             </main>
           </div>
 
-          {/* ---------- FOOTER ---------- */}
           <footer className="mt-auto border-t border-slate-200/80 bg-white/70 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 order-2 sm:order-1">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-sm">
-                    <span className="text-white text-xs font-extrabold leading-none">∇</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    © {new Date().getFullYear()} Numerical Lab Studio · Interactive Simulation &amp; Analytical Verification
-                  </p>
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-sm"><span className="text-white text-xs font-extrabold leading-none">∇</span></div>
+                  <p className="text-[11px] text-slate-500">© {new Date().getFullYear()} Numerical Lab Studio · 24 numerical methods across 4 modules</p>
                 </div>
-
                 <div className="flex items-center gap-2 order-1 sm:order-2 rounded-full border border-indigo-100 bg-indigo-50/70 pl-1.5 pr-4 py-1.5">
-                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-[10px] font-extrabold flex items-center justify-center shadow-sm">
-                    MB
-                  </span>
+                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-[10px] font-extrabold flex items-center justify-center shadow-sm">MB</span>
                   <div className="leading-tight">
                     <div className="text-[8px] font-extrabold uppercase tracking-[0.16em] text-indigo-400">Developed by</div>
                     <div className="text-[11.5px] font-extrabold text-indigo-900">Dr Mahadev Biradar</div>
