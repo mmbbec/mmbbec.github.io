@@ -1,848 +1,1189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta charset="utf-8"/>
-  <title>Engineering Mathematics – Matrix Studio with GeoGebra (VTU Edition)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-
-  <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-    .matrix-brackets { position: relative; padding: 0 8px; }
-    .matrix-brackets::before, .matrix-brackets::after {
-      content: ""; position: absolute; top: 0; bottom: 0; width: 6px;
-      border: 2px solid #334155;
-    }
-    .matrix-brackets::before { left: 0; border-right: none;
-      border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
-    .matrix-brackets::after { right: 0; border-left: none;
-      border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
-
-    .cell-input {
-      width: 46px; height: 34px; text-align: center;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px; font-weight: 600; border-radius: 4px;
-      border: 1px solid #cbd5e1; background-color: #ffffff;
-      transition: all 0.15s ease-in-out;
-    }
-    .cell-input:focus {
-      outline: none; border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59,130,246,.2); background-color: #f8fafc;
-    }
-
-    /* VTU section accent */
-    .vtu-accent { border-left: 3px solid #7c3aed; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineering Mathematics Solver & GeoGebra Script Studio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .tab-btn { transition: all .15s; }
+  .tab-btn.active { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,.35); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .plot-box { width: 100%; height: 380px; }
+  .katex-display { margin: .4em 0 !important; }
+  .code-box { font-family: ui-monospace, 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.55; }
+  input, select { font-family: ui-monospace, ui-monospace, monospace; }
+  .num-in { width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-size: 13px; background: #fff; transition: all .15s; }
+  .num-in:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79,70,229,.18); }
+  .preset-btn { font-size: 11px; padding: 5px 8px; border-radius: 6px;
+                background: #f1f5f9; border: 1px solid #e2e8f0; transition: all .15s; }
+  .preset-btn:hover { background: #e0e7ff; border-color: #a5b4fc; color: #4338ca; }
+  .panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                   letter-spacing: .06em; color: #64748b; }
+  .scroll-x { overflow-x: auto; scrollbar-width: thin; }
+</style>
 </head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
 
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row md:h-screen md:overflow-hidden overflow-y-auto font-sans select-none">
-
-  <!-- ================= SIDEBAR ================= -->
-  <aside id="sidebar" class="w-full md:w-[520px] lg:w-[560px] md:h-full flex flex-col bg-white border-r border-slate-200 shadow-lg z-20 overflow-y-auto">
-    <header class="p-4 border-b border-slate-200 bg-slate-900 text-white flex-shrink-0">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-            <span class="bg-blue-600 text-xs px-2 py-0.5 rounded font-mono">VTU</span>
-            Matrix Studio
-          </h1>
-          <p class="text-xs text-slate-400 mt-0.5">Engineering Mathematics · Linear Algebra Lab</p>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <label class="text-xs text-slate-300 font-medium">Dim:</label>
-          <div class="inline-flex rounded-md shadow-sm" role="group">
-            <button id="btn-dim-2" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-l-md bg-blue-600 text-white transition">2×2</button>
-            <button id="btn-dim-3" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-r-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition">3×3</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="p-4 space-y-5 flex-1 select-text">
-
-      <!-- PRESETS -->
-      <section>
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Engineering Presets</span>
-          <span class="text-[11px] text-slate-400">Click to autofill</span>
-        </div>
-        <div class="grid grid-cols-3 gap-1.5 text-xs">
-          <button onclick="applyPreset('identity')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Identity &amp; Zero</button>
-          <button onclick="applyPreset('rotation')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">90° Rotation</button>
-          <button onclick="applyPreset('shear')"    class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Shear Mapping</button>
-          <button onclick="applyPreset('symmetric')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Symmetric Matrix</button>
-          <button onclick="applyPreset('system')"    class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">2×2 Linear System</button>
-          <button onclick="applyPreset('singular')"  class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Singular (Det=0)</button>
-        </div>
-      </section>
-
-      <!-- MATRIX INPUTS -->
-      <section class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3.5">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-                Matrix A
-              </span>
-              <button onclick="clearMatrix('A')" class="text-[11px] text-slate-400 hover:text-red-600 transition">Clear</button>
-            </div>
-            <div class="flex items-center justify-center">
-              <div id="grid-A" class="matrix-brackets grid gap-1.5"></div>
-            </div>
-          </div>
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
-                Matrix B
-              </span>
-              <button onclick="clearMatrix('B')" class="text-[11px] text-slate-400 hover:text-red-600 transition">Clear</button>
-            </div>
-            <div class="flex items-center justify-center">
-              <div id="grid-B" class="matrix-brackets grid gap-1.5"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2">
-            <label for="scalar-k" class="font-semibold text-slate-600">Scalar \(k\):</label>
-            <input type="number" id="scalar-k" value="2" step="any"
-                   class="w-16 h-7 text-center font-mono font-semibold border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500" />
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-slate-500 font-medium">Vector \(v\):</span>
-            <input type="number" id="vec-x" value="1" placeholder="x" class="w-12 h-7 text-center font-mono text-xs border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500" />
-            <input type="number" id="vec-y" value="1" placeholder="y" class="w-12 h-7 text-center font-mono text-xs border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500" />
-          </div>
-        </div>
-      </section>
-
-      <!-- CORE OPERATIONS -->
-      <section class="space-y-2">
-        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Core Matrix Operations</span>
-
-        <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
-          <button onclick="calculate('add')"   class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">A + B</button>
-          <button onclick="calculate('sub')"   class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">A − B</button>
-          <button onclick="calculate('mulAB')" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition active:scale-95 text-center">A × B</button>
-          <button onclick="calculate('mulBA')" class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">B × A</button>
-        </div>
-
-        <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
-          <button onclick="calculate('det')"        class="p-2 rounded-lg bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-400 text-slate-700 hover:text-rose-700 shadow-sm transition active:scale-95 text-center">det(A)</button>
-          <button onclick="calculate('invA')"       class="p-2 rounded-lg bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-700 shadow-sm transition active:scale-95 text-center">A⁻¹</button>
-          <button onclick="calculate('transposeA')" class="p-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-400 text-slate-700 shadow-sm transition active:scale-95 text-center">Aᵀ &amp; Trace</button>
-          <button onclick="calculate('scalar')"     class="p-2 rounded-lg bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-400 text-slate-700 hover:text-amber-700 shadow-sm transition active:scale-95 text-center">\(k \cdot A\)</button>
-        </div>
-      </section>
-
-      <!-- VTU SYLLABUS METHODS -->
-      <section class="space-y-2 vtu-accent pl-3">
-        <span class="text-[11px] font-bold text-purple-700 uppercase tracking-wider block flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
-          VTU Syllabus Methods
-        </span>
-
-        <div class="grid grid-cols-3 gap-1.5 text-xs font-semibold">
-          <button onclick="calculate('rank')"       class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Rank &amp; Echelon</button>
-          <button onclick="calculate('gaussJordan')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Gauss-Jordan</button>
-          <button onclick="calculate('lu')"         class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">LU Decomp</button>
-          <button onclick="calculate('gaussSeidel')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Gauss-Seidel</button>
-          <button onclick="calculate('cayleyHamilton')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Cayley-Hamilton</button>
-          <button onclick="calculate('diagonalize')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Diagonalize</button>
-          <button onclick="calculate('gramSchmidt')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Gram-Schmidt</button>
-          <button onclick="calculate('quadraticForm')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Quadratic Form</button>
-          <button onclick="calculate('powerMethod')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Power Method</button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-1.5 text-xs font-semibold pt-1">
-          <button onclick="calculate('eigen')"      class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 shadow-sm transition active:scale-95 text-center">Eigenvalues (λ)</button>
-          <button onclick="calculate('transform2D')" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 shadow-sm transition active:scale-95 text-center">2D Transform Grid</button>
-        </div>
-      </section>
-
-      <!-- RESULTS PANEL -->
-      <section class="bg-slate-900 text-slate-100 rounded-xl p-4 shadow-inner border border-slate-800">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            Live Analysis
-          </span>
-          <span id="calc-status" class="text-[10px] bg-blue-900/60 text-blue-300 font-mono px-2 py-0.5 rounded">READY</span>
-        </div>
-        <div id="results-content" class="text-xs space-y-2.5 font-sans leading-relaxed text-slate-300">
-          <p class="text-slate-400 italic">Select any VTU method above to compute and visualize.</p>
-        </div>
-      </section>
-
-      <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-        <strong>💡 VTU Tip:</strong> Rank helps decide consistency; Cayley-Hamilton gives \(A^{-1}\); Gram-Schmidt builds orthonormal bases; Quadratic Form reveals definiteness.
+<!-- HEADER -->
+<header class="bg-slate-900 text-white shadow-lg sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-sm">∫</div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight">Engineering Mathematics <span class="text-indigo-400">Solver</span></h1>
+        <p class="text-[11px] text-slate-400">&amp; GeoGebra Script Studio · 6 core disciplines</p>
       </div>
     </div>
-  </aside>
+    <div class="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+      <span>Live · KaTeX · Plotly · GeoGebra-ready</span>
+    </div>
+  </div>
+</header>
 
-  <!-- GEOGEBRA VIEWPORT -->
-  <main class="flex-1 min-h-[75vh] md:min-h-0 md:h-full relative flex flex-col bg-slate-50">
-    <div class="h-10 bg-white border-b border-slate-200 px-4 flex items-center justify-between text-xs text-slate-600 flex-shrink-0">
-      <div class="flex items-center gap-3">
-        <span class="font-bold text-slate-800 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          GeoGebra Canvas
-        </span>
-        <span id="plot-descriptor" class="hidden sm:inline-block text-slate-500 font-mono text-[11px]">Mode: Vectors &amp; Transformations</span>
+<!-- TABS -->
+<nav class="bg-white border-b border-slate-200 sticky top-[57px] z-20 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 scroll-x">
+    <div class="flex gap-1 py-2 whitespace-nowrap" id="tabnav">
+      <button data-tab="linear"  class="tab-btn active px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">∑ Linear Algebra</button>
+      <button data-tab="calc"    class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">d/dx Differential Calculus</button>
+      <button data-tab="integ"   class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">∫ Integral Calculus</button>
+      <button data-tab="ode"     class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">y′ Differential Equations</button>
+      <button data-tab="vector"  class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">∇ Vector Calculus</button>
+      <button data-tab="laplace" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">ℒ Transforms</button>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- ============================ TAB 1: LINEAR ALGEBRA ============================ -->
+  <section id="tab-linear" class="tab-panel active">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <!-- Inputs -->
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">Matrix A (2×2)</h2>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <input id="lin-a11" type="number" step="any" value="4" class="num-in text-center font-semibold">
+          <input id="lin-a12" type="number" step="any" value="1" class="num-in text-center font-semibold">
+          <input id="lin-a21" type="number" step="any" value="2" class="num-in text-center font-semibold">
+          <input id="lin-a22" type="number" step="any" value="3" class="num-in text-center font-semibold">
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="presetLin('diag')"      class="preset-btn">Diagonal [[4,1],[2,3]]</button>
+            <button onclick="presetLin('rot')"       class="preset-btn">Rotation [[0,-1],[1,0]]</button>
+            <button onclick="presetLin('sym')"       class="preset-btn">Symmetric [[2,-1],[-1,3]]</button>
+            <button onclick="presetLin('sing')"      class="preset-btn">Singular [[2,4],[1,2]]</button>
+            <button onclick="presetLin('shear')"     class="preset-btn">Shear [[1,1.5],[0,1]]</button>
+          </div>
+        </div>
+        <button onclick="computeLinear()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition active:scale-[.99]">
+          Compute & Visualize
+        </button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> determinant = area scaling factor · eigenvalues from characteristic equation λ²−tr·λ+det=0 · eigenvectors show invariant directions.
+        </div>
       </div>
-      <button onclick="resetGeoGebraView()" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-[11px] flex items-center gap-1">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        Reset
-      </button>
-    </div>
-
-    <div id="ggb-container" class="ggb-scale flex-1 w-full relative overflow-hidden">
-      <div id="ggb-element" class="absolute inset-0"></div>
-    </div>
-  </main>
-
-  <script>
-    /* ================= STATE ================= */
-    let currentDim = 2;
-    let ggbAppletInstance = null;
-    let ggbApi = null;
-
-    const state = {
-      A: [[1,2,0],[3,4,0],[0,0,1]],
-      B: [[2,0,0],[1,2,0],[0,0,1]],
-      k: 2
-    };
-
-    /* ================= GRID ================= */
-    function renderGrids() {
-      ['A','B'].forEach(name => {
-        const grid = document.getElementById(`grid-${name}`);
-        grid.innerHTML = '';
-        grid.style.gridTemplateColumns = `repeat(${currentDim}, minmax(0,1fr))`;
-        for (let r = 0; r < currentDim; r++) {
-          for (let c = 0; c < currentDim; c++) {
-            const input = document.createElement('input');
-            input.type = 'number'; input.step = 'any';
-            input.className = 'cell-input';
-            input.value = state[name][r][c];
-            input.dataset.matrix = name;
-            input.dataset.row = r;
-            input.dataset.col = c;
-            input.addEventListener('input', e => {
-              const v = parseFloat(e.target.value);
-              state[name][r][c] = isNaN(v) ? 0 : v;
-            });
-            grid.appendChild(input);
-          }
-        }
-      });
-    }
-
-    function getMatrix(name) {
-      const m = [];
-      for (let r = 0; r < currentDim; r++) {
-        const row = [];
-        for (let c = 0; c < currentDim; c++) {
-          const inp = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
-          const v = parseFloat(inp ? inp.value : 0);
-          row.push(isNaN(v) ? 0 : v);
-        }
-        m.push(row);
-      }
-      return m;
-    }
-
-    function setMatrix(name, m) {
-      for (let r = 0; r < currentDim; r++) {
-        for (let c = 0; c < currentDim; c++) {
-          const v = (m[r] && m[r][c] !== undefined) ? m[r][c] : 0;
-          state[name][r][c] = v;
-          const inp = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
-          if (inp) inp.value = Math.round(v * 1000) / 1000;
-        }
-      }
-    }
-
-    function clearMatrix(name) {
-      const z = currentDim === 2 ? [[0,0],[0,0]] : [[0,0,0],[0,0,0],[0,0,0]];
-      setMatrix(name, z);
-      showStatus('Matrix ' + name + ' cleared');
-    }
-
-    /* ================= DIMENSION ================= */
-    document.getElementById('btn-dim-2').addEventListener('click', () => setDimension(2));
-    document.getElementById('btn-dim-3').addEventListener('click', () => setDimension(3));
-
-    function setDimension(dim) {
-      currentDim = dim;
-      const b2 = document.getElementById('btn-dim-2');
-      const b3 = document.getElementById('btn-dim-3');
-      if (dim === 2) {
-        b2.className = 'px-2.5 py-1 text-xs font-semibold rounded-l-md bg-blue-600 text-white transition';
-        b3.className = 'px-2.5 py-1 text-xs font-semibold rounded-r-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
-      } else {
-        b3.className = 'px-2.5 py-1 text-xs font-semibold rounded-r-md bg-blue-600 text-white transition';
-        b2.className = 'px-2.5 py-1 text-xs font-semibold rounded-l-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
-      }
-      renderGrids();
-      calculate('mulAB');
-    }
-
-    /* ================= PRESETS ================= */
-    function applyPreset(type) {
-      if (type === 'identity') {
-        if (currentDim === 2) {
-          setMatrix('A', [[1,0],[0,1]]); setMatrix('B', [[0,0],[0,0]]);
-        } else {
-          setMatrix('A', [[1,0,0],[0,1,0],[0,0,1]]); setMatrix('B', [[0,0,0],[0,0,0],[0,0,0]]);
-        }
-        calculate('mulAB');
-      } else if (type === 'rotation') {
-        setDimension(2);
-        setMatrix('A', [[0,-1],[1,0]]); setMatrix('B', [[1,0],[0,1]]);
-        document.getElementById('vec-x').value = 2;
-        document.getElementById('vec-y').value = 1;
-        calculate('transform2D');
-      } else if (type === 'shear') {
-        setDimension(2);
-        setMatrix('A', [[1,1.5],[0,1]]); setMatrix('B', [[1,0],[0,1]]);
-        calculate('transform2D');
-      } else if (type === 'symmetric') {
-        if (currentDim === 2) { setMatrix('A', [[2,-1],[-1,3]]); setMatrix('B', [[1,2],[2,5]]); }
-        else { setMatrix('A', [[2,1,0],[1,3,-1],[0,-1,4]]); setMatrix('B', [[1,0,0],[0,1,0],[0,0,1]]); }
-        calculate('det');
-      } else if (type === 'system') {
-        setDimension(2);
-        setMatrix('A', [[2,3],[5,-1]]);
-        setMatrix('B', [[8,0],[3,0]]);
-        calculate('rref');
-      } else if (type === 'singular') {
-        if (currentDim === 2) setMatrix('A', [[2,4],[1,2]]);
-        else                  setMatrix('A', [[1,2,3],[2,4,6],[1,0,1]]);
-        calculate('det');
-      }
-    }
-
-    function showStatus(text) {
-      const el = document.getElementById('calc-status');
-      el.textContent = text;
-      el.classList.remove('bg-blue-900/60','text-blue-300');
-      el.classList.add('bg-emerald-900/60','text-emerald-300');
-      setTimeout(() => {
-        el.textContent = 'COMPUTED';
-        el.classList.add('bg-blue-900/60','text-blue-300');
-        el.classList.remove('bg-emerald-900/60','text-emerald-300');
-      }, 1500);
-    }
-
-    /* ================= LaTeX ================= */
-    function toLatexMatrix(m) {
-      let s = '\\begin{pmatrix}';
-      for (let r = 0; r < m.length; r++) {
-        s += m[r].map(v => Number.isInteger(v) ? v : Number(v.toFixed(3))).join(' & ');
-        if (r < m.length - 1) s += ' \\\\ ';
-      }
-      return s + '\\end{pmatrix}';
-    }
-
-    /* ================= MATH HELPERS ================= */
-    const round = (n, d = 3) => Number(Math.round(n + 'e' + d) + 'e-' + d);
-    const det2x2 = m => m[0][0]*m[1][1] - m[0][1]*m[1][0];
-    const det3x3 = m =>
-      m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1]) -
-      m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0]) +
-      m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]);
-
-    function multiply(A, B) {
-      const n = A.length, out = [];
-      for (let i = 0; i < n; i++) {
-        out[i] = [];
-        for (let j = 0; j < n; j++) {
-          let s = 0;
-          for (let k = 0; k < n; k++) s += A[i][k] * B[k][j];
-          out[i][j] = round(s);
-        }
-      }
-      return out;
-    }
-
-    function invert2x2(m) {
-      const d = det2x2(m);
-      if (Math.abs(d) < 1e-12) return null;
-      return [
-        [round(m[1][1]/d), round(-m[0][1]/d)],
-        [round(-m[1][0]/d), round(m[0][0]/d)]
-      ];
-    }
-
-    function invert3x3(m) {
-      const d = det3x3(m);
-      if (Math.abs(d) < 1e-12) return null;
-      const out = [];
-      for (let i = 0; i < 3; i++) {
-        out[i] = [];
-        for (let j = 0; j < 3; j++) {
-          const a = (j+1)%3, b = (j+2)%3, c = (i+1)%3, e = (i+2)%3;
-          const minor = m[a][c]*m[b][e] - m[a][e]*m[b][c];
-          out[i][j] = round(minor / d);
-        }
-      }
-      return out;
-    }
-
-    /* ================= GAUSSIAN ELIMINATION (shared) ================= */
-    function gaussianElimination(A, B) {
-      const n = A.length;
-      const M = A.map((row, i) => [...row, B[i][0]]);
-      for (let col = 0; col < n; col++) {
-        // partial pivot
-        let pivot = col;
-        for (let r = col + 1; r < n; r++) {
-          if (Math.abs(M[r][col]) > Math.abs(M[pivot][col])) pivot = r;
-        }
-        [M[col], M[pivot]] = [M[pivot], M[col]];
-        if (Math.abs(M[col][col]) < 1e-12) continue;
-        for (let r = col + 1; r < n; r++) {
-          const factor = M[r][col] / M[col][col];
-          for (let c = col; c <= n; c++) M[r][c] -= factor * M[col][c];
-        }
-      }
-      // back substitution
-      const x = new Array(n).fill(0);
-      for (let i = n - 1; i >= 0; i--) {
-        let sum = M[i][n];
-        for (let j = i + 1; j < n; j++) sum -= M[i][j] * x[j];
-        if (Math.abs(M[i][i]) < 1e-12) return { x: null, M };
-        x[i] = sum / M[i][i];
-      }
-      return { x, M };
-    }
-
-    /* ================= GEOGEBRA BRIDGE ================= */
-    function clearGeoGebra(xmin=-8, xmax=8, ymin=-6, ymax=6) {
-      if (!ggbApi) return;
-      try {
-        ggbApi.newConstruction();
-        ggbApi.setAxesVisible(true, true);
-        ggbApi.setGridVisible(true);
-        ggbApi.setCoordSystem(xmin, xmax, ymin, ymax);
-      } catch (e) { console.warn('GGB reset err:', e); }
-    }
-
-    function evalGGBCommands(cmds) {
-      if (!ggbApi) return;
-      cmds.forEach(cmd => {
-        try {
-          const ok = ggbApi.evalCommand(cmd);
-          if (!ok) console.warn('GGB command returned false:', cmd);
-        } catch (err) { console.warn('GGB failed cmd:', cmd, err); }
-      });
-    }
-
-    function resetGeoGebraView() {
-      if (!ggbApi) return;
-      ggbApi.setCoordSystem(-8, 8, -6, 6);
-    }
-
-    function ggMatrixLiteral(m) {
-      return '{' + m.map(r => '{' + r.join(',') + '}').join(',') + '}';
-    }
-
-    /* ================= MAIN DISPATCHER ================= */
-    function calculate(op) {
-      const A = getMatrix('A');
-      const B = getMatrix('B');
-      const kVal = parseFloat(document.getElementById('scalar-k').value) || 1;
-      const resPanel = document.getElementById('results-content');
-      const descriptor = document.getElementById('plot-descriptor');
-
-      showStatus('COMPUTING...');
-
-      /* ---------- CORE OPS (unchanged, abbreviated for clarity) ---------- */
-      if (op === 'add' || op === 'sub' || op === 'mulAB' || op === 'mulBA' ||
-          op === 'scalar' || op === 'det' || op === 'invA' || op === 'transposeA' ||
-          op === 'eigen' || op === 'transform2D' || op === 'rref') {
-        // --- reuse the previous core implementation here ---
-        // (identical to the earlier working code; omitted here to keep focus on new methods)
-        // For brevity in this answer, call a helper that contains the old logic.
-        return calculateCore(op, A, B, kVal, resPanel, descriptor);
-      }
-
-      /* ---------- VTU: RANK & ECHELON ---------- */
-      if (op === 'rank') {
-        const n = currentDim;
-        const M = A.map(r => [...r]);
-        let rank = 0;
-        for (let col = 0; col < n && rank < n; col++) {
-          let pivot = -1;
-          for (let r = rank; r < n; r++) {
-            if (Math.abs(M[r][col]) > 1e-12) { pivot = r; break; }
-          }
-          if (pivot === -1) continue;
-          [M[rank], M[pivot]] = [M[pivot], M[rank]];
-          for (let r = 0; r < n; r++) {
-            if (r !== rank && Math.abs(M[rank][col]) > 1e-12) {
-              const f = M[r][col] / M[rank][col];
-              for (let c = 0; c < n; c++) M[r][c] -= f * M[rank][c];
-            }
-          }
-          rank++;
-        }
-        const echelon = M.map(r => r.map(v => round(v, 2)));
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Rank &amp; Row Echelon Form</div>
-          <div class="my-2">\\[\\text{rank}(A) = ${rank}\\]</div>
-          <div class="text-slate-300 text-[11px] font-mono">Echelon form:</div>
-          <div class="my-1">\\[${toLatexMatrix(echelon)}\\]</div>
-          <p class="text-slate-400">${rank === n ? '<span class="text-emerald-400">Full rank → invertible.</span>' : '<span class="text-rose-400">Rank deficient → singular.</span>'}</p>
-        `;
-        descriptor.textContent = `Rank = ${rank}`;
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("Rank(A) = " + ${rank}, (-5, 3))`,
-          `t2 = Text("Echelon = " + ${ggMatrixLiteral(echelon)}, (-5, 0))`,
-          `SetFontSize(t1, 18)`, `SetFontSize(t2, 14)`,
-          `SetColor(t1, 0, 100, 0)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: GAUSS-JORDAN ---------- */
-      if (op === 'gaussJordan') {
-        const n = currentDim;
-        const b = B.map(r => r[0]);
-        const M = A.map((row, i) => [...row, b[i]]);
-        for (let col = 0; col < n; col++) {
-          let pivot = col;
-          for (let r = col + 1; r < n; r++) {
-            if (Math.abs(M[r][col]) > Math.abs(M[pivot][col])) pivot = r;
-          }
-          [M[col], M[pivot]] = [M[pivot], M[col]];
-          if (Math.abs(M[col][col]) < 1e-12) continue;
-          const pv = M[col][col];
-          for (let c = col; c <= n; c++) M[col][c] /= pv;
-          for (let r = 0; r < n; r++) {
-            if (r === col) continue;
-            const f = M[r][col];
-            for (let c = col; c <= n; c++) M[r][c] -= f * M[col][c];
-          }
-        }
-        const R = M.map(r => r.map(v => round(v, 3)));
-        const sol = R.map(r => r[n]);
-        const rrefOk = R.every((r, i) => Math.abs(r[i] - 1) < 1e-9) &&
-                       R.every((r, i) => r.slice(0, n).every((v, j) => i === j ? Math.abs(v - 1) < 1e-9 : Math.abs(v) < 1e-9));
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Gauss-Jordan Elimination</div>
-          <div class="my-2">\\[\\text{RREF}([A|b]) = ${toLatexMatrix(R)}\\]</div>
-          ${rrefOk ? `<div class="p-2 bg-emerald-950/60 border border-emerald-800 rounded text-emerald-300 font-bold">Solution: \\(x = ${sol.map((v,i)=>`x_${i+1}=${v}`).join(', ') }\\)</div>` : '<p class="text-rose-400">No unique solution (singular / inconsistent).</p>'}
-        `;
-        descriptor.textContent = rrefOk ? `Solution: (${sol.join(', ')})` : 'Gauss-Jordan (no unique solution)';
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("RREF = " + ${ggMatrixLiteral(R)}, (-5, 2))`,
-          `SetFontSize(t1, 14)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: LU DECOMPOSITION ---------- */
-      if (op === 'lu') {
-        const n = currentDim;
-        const L = Array.from({ length: n }, () => new Array(n).fill(0));
-        const U = A.map(r => [...r]);
-        for (let i = 0; i < n; i++) L[i][i] = 1;
-        for (let col = 0; col < n; col++) {
-          for (let r = col + 1; r < n; r++) {
-            if (Math.abs(U[col][col]) < 1e-12) continue;
-            const f = U[r][col] / U[col][col];
-            L[r][col] = round(f);
-            for (let c = col; c < n; c++) U[r][c] -= f * U[col][c];
-          }
-        }
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">LU Decomposition: \\(A = LU\\)</div>
-          <div class="my-2">\\[L = ${toLatexMatrix(L)},\\quad U = ${toLatexMatrix(U)}\\]</div>
-          <p class="text-slate-400">Forward/back substitution can solve \\(Ax = b\\) in two triangular steps.</p>
-        `;
-        descriptor.textContent = 'LU Factors';
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("L = " + ${ggMatrixLiteral(L)}, (-5, 3))`,
-          `t2 = Text("U = " + ${ggMatrixLiteral(U)}, (-5, 0))`,
-          `SetFontSize(t1, 14)`, `SetFontSize(t2, 14)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: GAUSS-SEIDEL ---------- */
-      if (op === 'gaussSeidel') {
-        const n = currentDim;
-        const b = B.map(r => r[0]);
-        let x = new Array(n).fill(0);
-        const iterations = [];
-        for (let it = 0; it < 15; it++) {
-          const xNew = [...x];
-          for (let i = 0; i < n; i++) {
-            let sum = b[i];
-            for (let j = 0; j < n; j++) if (j !== i) sum -= A[i][j] * xNew[j];
-            xNew[i] = Math.abs(A[i][i]) > 1e-12 ? round(sum / A[i][i], 4) : 0;
-          }
-          x = xNew;
-          iterations.push([...x]);
-        }
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Gauss-Seidel Iteration (15 steps)</div>
-          <div class="my-2">\\[\\mathbf{x}^{(15)} = \\begin{pmatrix}${x.map(v=>v.toFixed(3)).join('\\\\')}\\end{pmatrix}\\]</div>
-          <div class="text-slate-300 text-[11px] font-mono">First 3 iterations:</div>
-          <div class="my-1 font-mono text-[11px] text-slate-400">
-            ${iterations.slice(0,3).map((arr,i)=>`k=${i+1}: (${arr.map(v=>v.toFixed(3)).join(', ')})`).join('<br>')}
+      <!-- Outputs -->
+      <div class="space-y-4">
+        <div class="panel p-3">
+          <div id="plot-linear" class="plot-box"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-linear" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-linear','btn-ggb-linear')" id="btn-ggb-linear"
+                    class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold transition">Copy</button>
           </div>
-        `;
-        descriptor.textContent = 'Gauss-Seidel Convergence';
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("x = (" + ${x.map(v=>v.toFixed(3)).join('+","+')} + ")", (-5, 2))`,
-          `SetFontSize(t1, 16)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
+          <pre id="ggb-linear" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      /* ---------- VTU: CAYLEY-HAMILTON ---------- */
-      if (op === 'cayleyHamilton') {
-        if (currentDim !== 2) {
-          resPanel.innerHTML = '<p class="text-amber-400">Cayley-Hamilton demo is shown for 2×2 (switch Dim to 2×2).</p>';
-          return;
-        }
-        const a = A[0][0], b = A[0][1], c = A[1][0], d = A[1][1];
-        const tr = a + d;
-        const det = a*d - b*c;
-        // A^2 = tr*A - det*I  →  A^{-1} = (1/det)(tr*I - A)
-        if (Math.abs(det) < 1e-12) {
-          resPanel.innerHTML = '<p class="text-rose-400">det(A)=0 → Cayley-Hamilton cannot give inverse.</p>';
-          return;
-        }
-        const invCH = [
-          [round((tr - a)/det), round(-b/det)],
-          [round(-c/det), round((tr - d)/det)]
-        ];
-        const directInv = invert2x2(A);
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Cayley-Hamilton Theorem (2×2)</div>
-          <div class="my-2">\\[A^2 - \\text{tr}(A)A + \\det(A)I = 0\\]</div>
-          <div class="my-1.5">\\[A^{-1} = \\frac{1}{\\det(A)}\\big(\\text{tr}(A)I - A\\big) = ${toLatexMatrix(invCH)}\\]</div>
-          <div class="text-emerald-400 text-[11px] font-mono">Matches direct inverse: ${JSON.stringify(directInv) === JSON.stringify(invCH.map(r=>r.map(v=>round(v))))}</div>
-        `;
-        descriptor.textContent = 'Cayley-Hamilton Inverse';
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("A^{-1} (CH) = " + ${ggMatrixLiteral(invCH)}, (-5, 3))`,
-          `t2 = Text("tr(A) = " + ${tr} + ", det(A) = " + ${det}, (-5, 0))`,
-          `SetFontSize(t1, 14)`, `SetFontSize(t2, 14)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: DIAGONALIZATION ---------- */
-      if (op === 'diagonalize') {
-        if (currentDim !== 2) {
-          resPanel.innerHTML = '<p class="text-amber-400">2×2 diagonalization shown; use Dim 2×2.</p>';
-          return;
-        }
-        const a = A[0][0], b = A[0][1], c = A[1][0], d = A[1][1];
-        const tr = a + d, det = a*d - b*c;
-        const disc = tr*tr - 4*det;
-        if (disc < 0) {
-          resPanel.innerHTML = '<p class="text-rose-400">Complex eigenvalues — not diagonalizable over ℝ.</p>';
-          return;
-        }
-        const l1 = round((tr + Math.sqrt(disc)) / 2);
-        const l2 = round((tr - Math.sqrt(disc)) / 2);
-        // eigenvectors
-        function eigvec(l) {
-          const m = [[a - l, b], [c, d - l]];
-          let vx = 1, vy = 1;
-          if (Math.abs(m[0][1]) > 1e-12) { vx = -m[0][1]; vy = m[0][0]; }
-          else if (Math.abs(m[1][0]) > 1e-12) { vx = -m[1][1]; vy = m[1][0]; }
-          else { vx = 1; vy = 0; }
-          const norm = Math.hypot(vx, vy) || 1;
-          return [round(vx/norm), round(vy/norm)];
-        }
-        const v1 = eigvec(l1), v2 = eigvec(l2);
-        const P = [[v1[0], v2[0]], [v1[1], v2[1]]];
-        const D = [[l1, 0], [0, l2]];
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Diagonalization: \\(A = PDP^{-1}\\)</div>
-          <div class="my-2">\\[P = ${toLatexMatrix(P)},\\quad D = ${toLatexMatrix(D)}\\]</div>
-          <p class="text-slate-400">Eigenvalues on the diagonal; columns of P are eigenvectors.</p>
-        `;
-        descriptor.textContent = `Diagonal: (${l1}, ${l2})`;
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("P = " + ${ggMatrixLiteral(P)}, (-5, 3))`,
-          `t2 = Text("D = " + ${ggMatrixLiteral(D)}, (-5, 0))`,
-          `SetFontSize(t1, 14)`, `SetFontSize(t2, 14)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: GRAM-SCHMIDT ---------- */
-      if (op === 'gramSchmidt') {
-        const n = currentDim;
-        const cols = [];
-        for (let j = 0; j < n; j++) {
-          const v = [];
-          for (let i = 0; i < n; i++) v.push(A[i][j]);
-          cols.push(v);
-        }
-        const dot = (u, v) => u.reduce((s, x, i) => s + x * v[i], 0);
-        const norm = v => Math.sqrt(dot(v, v));
-        const proj = (u, v) => {
-          const d = dot(v, v);
-          if (d < 1e-12) return v.map(() => 0);
-          const f = dot(u, v) / d;
-          return v.map(x => x * f);
-        };
-        const Q = [];
-        for (let i = 0; i < cols.length; i++) {
-          let u = [...cols[i]];
-          for (let j = 0; j < i; j++) {
-            const p = proj(u, Q[j]);
-            u = u.map((x, k) => x - p[k]);
-          }
-          const len = norm(u);
-          Q.push(len > 1e-12 ? u.map(x => round(x / len, 4)) : u.map(() => 0));
-        }
-        const Qmat = Q[0].map((_, i) => Q.map(col => col[i]));
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Gram-Schmidt Orthonormalization</div>
-          <div class="my-2">\\[Q = ${toLatexMatrix(Qmat)}\\]</div>
-          <p class="text-slate-400">Columns of Q are orthonormal: \\(Q^TQ = I\\).</p>
-        `;
-        descriptor.textContent = 'Orthonormal Basis (Gram-Schmidt)';
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("Q = " + ${ggMatrixLiteral(Qmat)}, (-5, 2))`,
-          `SetFontSize(t1, 14)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
-
-      /* ---------- VTU: QUADRATIC FORM ---------- */
-      if (op === 'quadraticForm') {
-        if (currentDim !== 2) {
-          resPanel.innerHTML = '<p class="text-amber-400">2×2 quadratic form demo.</p>';
-          return;
-        }
-        // x^T A x = a x^2 + 2b xy + d y^2
-        const a = A[0][0], b = A[0][1], d = A[1][1];
-        const disc = (a - d)*(a - d) + 4*b*b; // for classification
-        let type = 'Indefinite';
-        if (Math.abs(a*d - b*b) > 1e-12) {
-          if (a > 0 && a*d - b*b > 0) type = 'Positive Definite';
-          else if (a < 0 && a*d - b*b > 0) type = 'Negative Definite';
-          else type = 'Indefinite';
-        } else type = 'Positive Semi-definite (or degenerate)';
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Quadratic Form \\(Q(x,y) = \\mathbf{x}^T A \\mathbf{x}\\)</div>
-          <div class="my-2">\\[Q = ${a}x^2 + ${2*b}xy + ${d}y^2\\]</div>
-          <div class="p-2 bg-slate-800 rounded border border-slate-700">
-            <strong>Classification:</strong> <span class="text-emerald-400">${type}</span>
+  <!-- ============================ TAB 2: DIFFERENTIAL CALCULUS ============================ -->
+  <section id="tab-calc" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">f(x) = a·x³ + b·x² + c·x + d</h2>
+        <div class="grid grid-cols-4 gap-2 mb-3">
+          <div><div class="text-[10px] text-slate-500 mb-0.5 text-center">a</div><input id="cal-a" type="number" step="any" value="1" class="num-in text-center"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5 text-center">b</div><input id="cal-b" type="number" step="any" value="-3" class="num-in text-center"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5 text-center">c</div><input id="cal-c" type="number" step="any" value="0" class="num-in text-center"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5 text-center">d</div><input id="cal-d" type="number" step="any" value="2" class="num-in text-center"></div>
+        </div>
+        <div class="mb-3">
+          <div class="text-[10px] text-slate-500 mb-0.5">Tangent at x₀ =</div>
+          <input id="cal-x0" type="number" step="any" value="1" class="num-in">
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="presetCal('cubic')"  class="preset-btn">x³ − 3x² + 2</button>
+            <button onclick="presetCal('quad')"   class="preset-btn">x² − 4x + 3</button>
+            <button onclick="presetCal('inflect')" class="preset-btn">x³ (inflection)</button>
           </div>
-        `;
-        descriptor.textContent = `Quadratic Form: ${type}`;
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `f(x,y) = ${a}*x^2 + ${2*b}*x*y + ${d}*y^2`,
-          `Surface(f, 5)`,
-          `t = Text("Q = " + ${a} + "x² + " + ${2*b} + "xy + " + ${d} + "y²", (-5, 4))`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
+        </div>
+        <button onclick="computeCalc()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">Compute & Visualize</button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> f′(x)=0 locates critical points; f″(x)&gt;0 ⇒ local minimum, f″(x)&lt;0 ⇒ local maximum, f″(x)=0 ⇒ inflection candidate. Tangent slope at x₀ is f′(x₀).
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-3"><div id="plot-calc" class="plot-box"></div></div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-calc" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-calc','btn-ggb-calc')" id="btn-ggb-calc" class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold">Copy</button>
+          </div>
+          <pre id="ggb-calc" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      /* ---------- VTU: RAYLEIGH POWER METHOD ---------- */
-      if (op === 'powerMethod') {
-        const n = currentDim;
-        let v = new Array(n).fill(1);
-        let lambda = 0;
-        for (let it = 0; it < 20; it++) {
-          const Av = [];
-          for (let i = 0; i < n; i++) {
-            let s = 0;
-            for (let j = 0; j < n; j++) s += A[i][j] * v[j];
-            Av.push(s);
-          }
-          const norm = Math.sqrt(Av.reduce((s, x) => s + x*x, 0)) || 1;
-          v = Av.map(x => round(x / norm, 6));
-          lambda = round(norm, 4);
-        }
-        resPanel.innerHTML = `
-          <div class="font-semibold text-white">Rayleigh Power Method (dominant eigenpair)</div>
-          <div class="my-2">\\[\\lambda_{\\max} \\approx ${lambda}\\]</div>
-          <div class="my-1 font-mono text-slate-300">\\[\\mathbf{v} \\approx \\begin{pmatrix}${v.map(x=>x.toFixed(4)).join('\\\\')}\\end{pmatrix}\\]</div>
-        `;
-        descriptor.textContent = `Dominant λ ≈ ${lambda}`;
-        clearGeoGebra(-6, 6, -6, 6);
-        evalGGBCommands([
-          `t1 = Text("λ_max = " + ${lambda}, (-5, 3))`,
-          `t2 = Text("v = " + ${ggMatrixLiteral([v])}, (-5, 0))`,
-          `SetFontSize(t1, 16)`
-        ]);
-        if (window.MathJax) MathJax.typesetPromise();
-        return;
-      }
+  <!-- ============================ TAB 3: INTEGRAL CALCULUS ============================ -->
+  <section id="tab-integ" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">∫ from a to b of f(x) dx</h2>
+        <div class="mb-3">
+          <div class="text-[10px] text-slate-500 mb-0.5">f(x) =</div>
+          <select id="int-fn" class="num-in">
+            <option value="sin">sin(x)</option>
+            <option value="cos">cos(x)</option>
+            <option value="sq">x²</option>
+            <option value="cube">x³</option>
+            <option value="exp">eˣ</option>
+            <option value="inv">1/x</option>
+            <option value="sqrt">√x</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div><div class="text-[10px] text-slate-500 mb-0.5">a =</div><input id="int-a" type="number" step="any" value="0" class="num-in"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5">b =</div><input id="int-b" type="number" step="any" value="3.14159265" class="num-in"></div>
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="presetInt('sin')" class="preset-btn">∫₀^π sin = 2</button>
+            <button onclick="presetInt('sq')"  class="preset-btn">∫₀¹ x² = 1/3</button>
+            <button onclick="presetInt('inv')" class="preset-btn">∫₁^e 1/x = 1</button>
+          </div>
+        </div>
+        <button onclick="computeInteg()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">Compute & Visualize</button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> Simpson's 1/3 rule composites the parabola approximation. Error O(h⁴). ∫<sub>a</sub><sup>b</sup>f ≈ h/3·[f₀ + 4f₁ + 2f₂ + … + 4f<sub>n−1</sub> + f<sub>n</sub>].
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-3"><div id="plot-integ" class="plot-box"></div></div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-integ" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-integ','btn-ggb-integ')" id="btn-ggb-integ" class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold">Copy</button>
+          </div>
+          <pre id="ggb-integ" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      /* fallback */
-      resPanel.innerHTML = '<p class="text-amber-400">Operation not implemented.</p>';
-    }
+  <!-- ============================ TAB 4: DIFFERENTIAL EQUATIONS ============================ -->
+  <section id="tab-ode" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">2nd order linear: y″ + p·y′ + q·y = 0</h2>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div><div class="text-[10px] text-slate-500 mb-0.5">p</div><input id="ode-p" type="number" step="any" value="-5" class="num-in text-center"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5">q</div><input id="ode-q" type="number" step="any" value="6" class="num-in text-center"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div><div class="text-[10px] text-slate-500 mb-0.5">y(0)</div><input id="ode-y0" type="number" step="any" value="1" class="num-in text-center"></div>
+          <div><div class="text-[10px] text-slate-500 mb-0.5">y′(0)</div><input id="ode-v0" type="number" step="any" value="0" class="num-in text-center"></div>
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="presetODE('overdamp')" class="preset-btn">y″−5y′+6y=0</button>
+            <button onclick="presetODE('shm')"      class="preset-btn">y″+4y=0 (SHM)</button>
+            <button onclick="presetODE('crit')"     class="preset-btn">y″+2y′+y=0 (critical)</button>
+          </div>
+        </div>
+        <button onclick="computeODE()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">Solve & Visualize</button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> Characteristic roots r = (−p ± √(p²−4q))/2. Distinct real → Ae^(r₁x)+Be^(r₂x); repeated → (A+Bx)e^(rx); complex → e^(αx)(A cos βx + B sin βx).
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-3"><div id="plot-ode" class="plot-box"></div></div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-ode" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-ode','btn-ggb-ode')" id="btn-ggb-ode" class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold">Copy</button>
+          </div>
+          <pre id="ggb-ode" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    /* ================= CORE OPS (kept from earlier working code) ================= */
-    function calculateCore(op, A, B, kVal, resPanel, descriptor) {
-      // Paste the exact core branches (add/sub/mulAB/mulBA/scalar/det/invA/
-      // transposeA/eigen/transform2D/rref) from the earlier working version here.
-      // They are unchanged and already verified.
-      // ...
-    }
+  <!-- ============================ TAB 5: VECTOR CALCULUS ============================ -->
+  <section id="tab-vector" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">Vector field F = (P, Q)</h2>
+        <div class="mb-3">
+          <div class="text-[10px] text-slate-500 mb-0.5">Preset field</div>
+          <select id="vec-field" class="num-in">
+            <option value="rot">Rotational: F = (−y, x)</option>
+            <option value="radial">Radial: F = (x, y)</option>
+            <option value="quad">Quadratic: F = (x², xy)</option>
+            <option value="source">Source: F = (x, 0)</option>
+            <option value="sink">Sink: F = (−x, −y)</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset textbook examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="setVec('rot')"    class="preset-btn">Curl = 2</button>
+            <button onclick="setVec('radial')" class="preset-btn">Div = 2</button>
+            <button onclick="setVec('quad')"   class="preset-btn">Div = 3x</button>
+          </div>
+        </div>
+        <button onclick="computeVector()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">Compute & Visualize</button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> div F = ∂P/∂x + ∂Q/∂y measures source density. In 2D, curl F = ∂Q/∂x − ∂P/∂y measures rotation. Irrotational ⇔ curl = 0.
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-3"><div id="plot-vector" class="plot-box"></div></div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-vector" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-vector','btn-ggb-vector')" id="btn-ggb-vector" class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold">Copy</button>
+          </div>
+          <pre id="ggb-vector" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    /* ================= INIT ================= */
-    const ggbParameters = {
-      appName: "classic",
-      showToolBar: false, showAlgebraInput: false, showMenuBar: false,
-      showResetIcon: true, enableLabelDrags: true, enableShiftDragZoom: true,
-      enableRightClick: false, errorDialogsActive: false, useBrowserForJS: true,
-      language: "en", perspective: "G",
-      scaleContainerClass: "ggb-scale",
-      appletOnLoad: function (api) { ggbApi = api; calculate('transform2D'); }
-    };
+  <!-- ============================ TAB 6: TRANSFORMS ============================ -->
+  <section id="tab-laplace" class="tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="panel p-4">
+        <h2 class="section-title mb-3">Laplace Transform ℒ{f(t)} = F(s)</h2>
+        <div class="mb-3">
+          <div class="text-[10px] text-slate-500 mb-0.5">f(t) =</div>
+          <select id="lap-fn" class="num-in">
+            <option value="exp">e^(a·t)</option>
+            <option value="tn">tⁿ</option>
+            <option value="sin">sin(ωt)</option>
+            <option value="cos">cos(ωt)</option>
+            <option value="one">1 (unit step)</option>
+            <option value="sinh">sinh(at)</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <div class="text-[10px] text-slate-500 mb-0.5">Parameter (a, n, or ω)</div>
+          <input id="lap-param" type="number" step="any" value="2" class="num-in">
+        </div>
+        <div class="mb-3">
+          <div class="section-title mb-1.5">Preset examples</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="presetLap('exp',2)"  class="preset-btn">e^(-2t) → 1/(s+2)</button>
+            <button onclick="presetLap('tn',2)"   class="preset-btn">t² → 2/s³</button>
+            <button onclick="presetLap('sin',3)"  class="preset-btn">sin(3t) → 3/(s²+9)</button>
+          </div>
+        </div>
+        <button onclick="computeLap()" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition">Compute & Visualize</button>
+        <div class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          <strong class="text-slate-700">Concepts:</strong> ℒ{f} = ∫₀<sup>∞</sup> e<sup>−st</sup>f(t) dt. Standard table transforms reduce work: e^(at) → 1/(s−a), tⁿ → n!/s<sup>n+1</sup>, sin(ωt) → ω/(s²+ω²).
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-3"><div id="plot-laplace" class="plot-box"></div></div>
+        <div class="panel p-4">
+          <div class="section-title mb-2">Derivation (KaTeX)</div>
+          <div id="math-laplace" class="text-sm"></div>
+        </div>
+        <div class="panel p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="section-title">GeoGebra Script</div>
+            <button onclick="copyText('ggb-laplace','btn-ggb-laplace')" id="btn-ggb-laplace" class="text-[11px] px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold">Copy</button>
+          </div>
+          <pre id="ggb-laplace" class="code-box bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto max-h-64 whitespace-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    window.addEventListener('load', () => {
-      renderGrids();
-      ggbAppletInstance = new GGBApplet(ggbParameters, true);
-      ggbAppletInstance.inject('ggb-element');
+</main>
+
+<footer class="mt-8 py-4 text-center text-[11px] text-slate-500">
+  Engineering Mathematics Solver · KaTeX + Plotly + GeoGebra · works offline after first load
+</footer>
+
+<script>
+/* ==================== UTILITIES ==================== */
+function round(n, d = 4) { return Number(Math.round(n + 'e' + d) + 'e-' + d); }
+function latexNum(v) { return Math.abs(v) < 1e-12 ? '0' : (Number.isInteger(v) ? v : v.toFixed(4)); }
+function matLatex(m) {
+  return '\\begin{pmatrix}' + m.map(r => r.map(latexNum).join(' & ')).join(' \\\\ ') + '\\end{pmatrix}';
+}
+function renderKatex(el) {
+  if (window.renderMathInElement) {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '\\[', right: '\\]', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false }
+      ],
+      throwOnError: false
     });
+  }
+}
+function copyText(srcId, btnId) {
+  const text = document.getElementById(srcId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const b = document.getElementById(btnId);
+    const o = b.textContent;
+    b.textContent = '✓ Copied';
+    b.classList.add('bg-emerald-100', 'text-emerald-700');
+    setTimeout(() => {
+      b.textContent = o;
+      b.classList.remove('bg-emerald-100', 'text-emerald-700');
+    }, 1400);
+  });
+}
 
-    window.addEventListener('resize', () => {
-      if (ggbApi && typeof ggbApi.setSize === 'function') {
-        const wrap = document.getElementById('ggb-container');
-        ggbApi.setSize(wrap.clientWidth, wrap.clientHeight);
-      }
+/* ==================== TABS ==================== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.tab-btn[data-tab="${id}"]`).classList.add('active');
+  // refresh plot sizes after the panel becomes visible
+  setTimeout(() => {
+    document.querySelectorAll('.plot-box').forEach(el => {
+      if (el.offsetWidth > 0 && el.data) Plotly.Plots.resize(el);
     });
-  </script>
+  }, 30);
+}
+
+/* ==================== LINEAR ALGEBRA ==================== */
+function presetLin(key) {
+  const P = {
+    diag:  [4, 1, 2, 3],
+    rot:   [0, -1, 1, 0],
+    sym:   [2, -1, -1, 3],
+    sing:  [2, 4, 1, 2],
+    shear: [1, 1.5, 0, 1]
+  }[key];
+  ['lin-a11','lin-a12','lin-a21','lin-a22'].forEach((id, i) => {
+    document.getElementById(id).value = P[i];
+  });
+  computeLinear();
+}
+
+function computeLinear() {
+  const a11 = +document.getElementById('lin-a11').value;
+  const a12 = +document.getElementById('lin-a12').value;
+  const a21 = +document.getElementById('lin-a21').value;
+  const a22 = +document.getElementById('lin-a22').value;
+  const A = [[a11, a12], [a21, a22]];
+
+  const det = a11*a22 - a12*a21;
+  const tr = a11 + a22;
+  const disc = tr*tr - 4*det;
+  let l1 = 0, l2 = 0, eigsLatex = '', eigsScript = '';
+
+  if (disc >= 0) {
+    l1 = round((tr + Math.sqrt(disc)) / 2);
+    l2 = round((tr - Math.sqrt(disc)) / 2);
+    eigsLatex = `\\lambda_1 = ${latexNum(l1)},\\quad \\lambda_2 = ${latexNum(l2)}`;
+    eigsScript = `// Eigenvalues: ${latexNum(l1)}, ${latexNum(l2)}`;
+  } else {
+    const re = round(tr/2), im = round(Math.sqrt(-disc)/2);
+    eigsLatex = `\\lambda = ${latexNum(re)} \\pm ${latexNum(im)}i`;
+    eigsScript = `// Complex eigenvalues: ${latexNum(re)} ± ${latexNum(im)}i`;
+  }
+
+  // eigvec for 2x2: pick null of (A - lambda I)
+  function evec(l) {
+    const m = [[a11 - l, a12], [a21, a22 - l]];
+    let x = 1, y = 0;
+    if (Math.abs(m[0][1]) > 1e-9) { x = m[0][1]; y = -m[0][0]; }
+    else if (Math.abs(m[1][0]) > 1e-9) { x = m[1][1]; y = -m[1][0]; }
+    else if (Math.abs(m[1][1]) > 1e-9) { x = 0; y = 1; }
+    const n = Math.hypot(x, y) || 1;
+    return [round(x/n, 4), round(y/n, 4)];
+  }
+  let v1 = null, v2 = null;
+  if (disc > 1e-9) { v1 = evec(l1); v2 = evec(l2); }
+
+  // ---- KaTeX derivation ----
+  const detSteps = `\\det(A) = (${latexNum(a11)})(${latexNum(a22)}) - (${latexNum(a12)})(${latexNum(a21)}) = ${latexNum(round(det))}`;
+  const trSteps = `\\operatorname{tr}(A) = ${latexNum(a11)} + ${latexNum(a22)} = ${latexNum(round(tr))}`;
+  let mathHTML = `
+    <div>$$A = ${matLatex(A)}$$</div>
+    <div class="text-xs text-slate-600 my-1">$$${detSteps}$$</div>
+    <div class="text-xs text-slate-600 my-1">$$${trSteps}$$</div>
+    <div class="my-1">$$\\det(A-\\lambda I) = \\lambda^2 - ${latexNum(round(tr))}\\,\\lambda + ${latexNum(round(det))} = 0$$</div>
+    <div class="my-2 text-indigo-700 font-semibold">$$${eigsLatex}$$</div>`;
+  if (det !== 0) {
+    const inv = [[round(a22/det), round(-a12/det)], [round(-a21/det), round(a11/det)]];
+    mathHTML += `<div class="my-1">$$A^{-1} = \\frac{1}{\\det(A)}\\begin{pmatrix} d & -b \\\\ -c & a \\end{pmatrix} = ${matLatex(inv)}$$</div>`;
+  } else {
+    mathHTML += `<div class="text-rose-600 font-semibold text-xs my-1">Matrix is singular — no inverse. |det| = 0 means columns collapse.</div>`;
+  }
+  document.getElementById('math-linear').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-linear'));
+
+  // ---- Plotly ----
+  const s = 3.5;
+  const traces = [];
+
+  // original unit square
+  traces.push({
+    x: [0, 1, 1, 0, 0], y: [0, 0, 1, 1, 0],
+    mode: 'lines', name: 'Unit square',
+    line: { color: '#94a3b8', width: 2, dash: 'dot' },
+    fill: 'toself', fillcolor: 'rgba(148,163,184,0.12)'
+  });
+
+  // transformed parallelogram
+  const T = [[0, a11, a11 + a12, a12, 0], [0, a21, a21 + a22, a22, 0]];
+  traces.push({
+    x: T[0], y: T[1], mode: 'lines', name: 'Transformed',
+    line: { color: '#4f46e5', width: 3 },
+    fill: 'toself', fillcolor: 'rgba(79,70,229,0.18)'
+  });
+
+  // transformed basis vectors
+  traces.push({
+    x: [0, a11], y: [0, a21], mode: 'lines+markers', name: 'T(e₁)',
+    line: { color: '#dc2626', width: 3 }, marker: { size: 8 }
+  });
+  traces.push({
+    x: [0, a12], y: [0, a22], mode: 'lines+markers', name: 'T(e₂)',
+    line: { color: '#059669', width: 3 }, marker: { size: 8 }
+  });
+
+  // eigenvectors
+  if (v1) {
+    traces.push({
+      x: [-s*v1[0], s*v1[0]], y: [-s*v1[1], s*v1[1]],
+      mode: 'lines', name: `λ₁ = ${latexNum(l1)}`,
+      line: { color: '#9333ea', width: 2, dash: 'dash' }
+    });
+  }
+  if (v2) {
+    traces.push({
+      x: [-s*v2[0], s*v2[0]], y: [-s*v2[1], s*v2[1]],
+      mode: 'lines', name: `λ₂ = ${latexNum(l2)}`,
+      line: { color: '#f59e0b', width: 2, dash: 'dash' }
+    });
+  }
+
+  Plotly.newPlot('plot-linear', traces, {
+    title: { text: `A = ${matLatex(A).replace(/\\\\/g, '⏎').replace(/\\begin\{pmatrix\}|\\end\{pmatrix\}/g, '')}`, font: { size: 12 } },
+    xaxis: { range: [-s, s], zeroline: true, zerolinecolor: '#cbd5e1', scaleanchor: 'y' },
+    yaxis: { range: [-s, s], zeroline: true, zerolinecolor: '#cbd5e1' },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    legend: { font: { size: 10 }, orientation: 'h', y: -0.2 },
+    plot_bgcolor: '#f8fafc',
+    paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  // ---- GeoGebra script ----
+  const script = `// Linear Algebra — 2×2 matrix analysis
+A = { {${a11}, ${a12}}, {${a21}, ${a22}} }
+detA = Determinant(A)
+trA = Trace(A)
+${eigsScript}
+
+O = (0, 0)
+e1 = (1, 0)
+e2 = (0, 1)
+K = (1, 1)
+
+// Unit square (reference)
+UnitSq = Polygon(O, e1, K, e2)
+SetColor(UnitSq, 150, 150, 150)
+SetFilling(UnitSq, 0.1)
+SetLineStyle(UnitSq, 2)
+
+// Transformed basis vectors
+T1 = Vector(O, (${a11}, ${a21}))
+T2 = Vector(O, (${a12}, ${a22}))
+SetColor(T1, 200, 0, 0)
+SetColor(T2, 0, 130, 0)
+SetLineThickness(T1, 4)
+SetLineThickness(T2, 4)
+
+// Transformed parallelogram
+P1 = (${a11}, ${a21})
+P2 = (${a11 + a12}, ${a21 + a22})
+P3 = (${a12}, ${a22})
+TransSq = Polygon(O, P1, P2, P3)
+SetColor(TransSq, 0, 80, 200)
+SetFilling(TransSq, 0.2)
+
+// Eigenvalues shown on canvas
+txt = Text("det = " + detA + " · tr = " + trA, (2, 4))
+txt2 = Text("λ₁ = " + ${latexNum(l1)} + ", λ₂ = " + ${latexNum(l2)}, (2, 3.2))
+SetColor(txt, 100, 0, 150)
+SetColor(txt2, 100, 0, 150)`;
+  document.getElementById('ggb-linear').textContent = script;
+}
+presetLin('diag');
+
+/* ==================== DIFFERENTIAL CALCULUS ==================== */
+function presetCal(key) {
+  const P = {
+    cubic:   { a: 1, b: -3, c: 0, d: 2, x0: 1 },
+    quad:    { a: 0, b: 1, c: -4, d: 3, x0: 2 },
+    inflect: { a: 1, b: 0, c: 0, d: 0, x0: 1 }
+  }[key];
+  document.getElementById('cal-a').value = P.a;
+  document.getElementById('cal-b').value = P.b;
+  document.getElementById('cal-c').value = P.c;
+  document.getElementById('cal-d').value = P.d;
+  document.getElementById('cal-x0').value = P.x0;
+  computeCalc();
+}
+
+function computeCalc() {
+  const a = +document.getElementById('cal-a').value;
+  const b = +document.getElementById('cal-b').value;
+  const c = +document.getElementById('cal-c').value;
+  const d = +document.getElementById('cal-d').value;
+  const x0 = +document.getElementById('cal-x0').value;
+
+  // f(x) = ax³ + bx² + cx + d
+  const f  = x => a*x*x*x + b*x*x + c*x + d;
+  const fp = x => 3*a*x*x + 2*b*x + c;
+  const fpp = x => 6*a*x + 2*b;
+
+  // critical points: 3a·x² + 2b·x + c = 0
+  const critPts = [];
+  if (Math.abs(a) > 1e-9) {
+    const disc = 4*b*b - 12*a*c;
+    if (disc >= 0) {
+      critPts.push(round((-2*b + Math.sqrt(disc)) / (6*a), 3));
+      critPts.push(round((-2*b - Math.sqrt(disc)) / (6*a), 3));
+    }
+  } else if (Math.abs(b) > 1e-9) {
+    critPts.push(round(-c / (2*b), 3));
+  }
+  const critInfo = critPts.map(x => {
+    const second = fpp(x);
+    const type = second > 0 ? 'local min' : second < 0 ? 'local max' : 'inflection';
+    return { x, y: round(f(x), 3), type, second: round(second, 3) };
+  });
+
+  // ---- Plot ----
+  const xs = [], ys = [], fpys = [];
+  for (let i = -40; i <= 40; i++) {
+    const x = -4 + (i * 0.1);
+    xs.push(x); ys.push(round(f(x), 3)); fpys.push(round(fp(x), 3));
+  }
+  const tangentSlope = fp(x0);
+  const tangentY = f(x0);
+  const tangentX = [x0 - 2, x0 + 2];
+  const tangentYline = tangentX.map(x => tangentY + tangentSlope * (x - x0));
+
+  const traces = [
+    { x: xs, y: ys, mode: 'lines', name: 'f(x)', line: { color: '#4f46e5', width: 3 } },
+    { x: xs, y: fpys, mode: 'lines', name: "f′(x)", line: { color: '#dc2626', width: 2, dash: 'dash' } },
+    { x: tangentX, y: tangentYline, mode: 'lines', name: `tangent at x₀=${x0}`,
+      line: { color: '#059669', width: 2, dash: 'dot' } },
+    { x: [x0], y: [tangentY], mode: 'markers', name: `f(${x0})=${latexNum(tangentY)}`,
+      marker: { size: 10, color: '#059669' } }
+  ];
+  critInfo.forEach(p => {
+    traces.push({
+      x: [p.x], y: [p.y], mode: 'markers',
+      name: `${p.type} at x=${p.x}`,
+      marker: { size: 10, color: p.type === 'local min' ? '#10b981' : p.type === 'local max' ? '#ef4444' : '#f59e0b',
+                symbol: 'diamond' }
+    });
+  });
+
+  Plotly.newPlot('plot-calc', traces, {
+    title: { text: 'Function, derivative, tangent', font: { size: 12 } },
+    xaxis: { title: 'x', zeroline: true, zerolinecolor: '#cbd5e1', range: [-4, 4] },
+    yaxis: { title: 'y', zeroline: true, zerolinecolor: '#cbd5e1' },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    legend: { font: { size: 10 }, orientation: 'h', y: -0.2 },
+    plot_bgcolor: '#f8fafc', paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  // ---- KaTeX ----
+  const poly = `${a !== 0 ? `${a}x^3 ` : ''}${b !== 0 ? `${b>=0?'+':''}${b}x^2 ` : ''}${c !== 0 ? `${c>=0?'+':''}${c}x ` : ''}${d>=0?'+':''}${d}`;
+  let mathHTML = `
+    <div>$$f(x) = ${poly}$$</div>
+    <div class="my-1">$$f'(x) = ${3*a}x^2 + ${2*b}x + ${c}$$</div>
+    <div class="my-1">$$f''(x) = ${6*a}x + ${2*b}$$</div>
+    <div class="my-1">$$\\text{Tangent at } x_0 = ${x0}:\\ y = ${latexNum(tangentY)} + ${latexNum(tangentSlope)}(x - ${x0})$$</div>`;
+  if (critInfo.length) {
+    mathHTML += `<div class="section-title mt-3 mb-1">Critical points (f′(x) = 0)</div>`;
+    critInfo.forEach(p => {
+      mathHTML += `<div class="text-xs my-1">x = ${p.x} → f(x) = ${p.y}, f″(x) = ${p.second} → <span class="font-semibold ${p.type === 'local min' ? 'text-emerald-600' : p.type === 'local max' ? 'text-rose-600' : 'text-amber-600'}">${p.type}</span></div>`;
+    });
+  }
+  document.getElementById('math-calc').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-calc'));
+
+  // ---- Script ----
+  let script = `// Differential Calculus — polynomial analysis
+a = ${a}
+b = ${b}
+c = ${c}
+d = ${d}
+f(x) = a*x^3 + b*x^2 + c*x + d
+fp(x) = 3*a*x^2 + 2*b*x + c
+fpp(x) = 6*a*x + 2*b
+
+// Tangent line at x₀ = ${x0}
+x0 = ${x0}
+slope = fp(x0)
+y0 = f(x0)
+tangent = y0 + slope*(x - x0)
+
+SetColor(f, 70, 70, 220)
+SetColor(fp, 200, 40, 40)
+SetColor(tangent, 0, 150, 60)
+SetLineStyle(fp, 2)
+SetLineStyle(tangent, 4)
+`;
+  critInfo.forEach((p, i) => {
+    script += `
+// Critical point ${i+1}: ${p.type}
+P${i+1} = (${p.x}, ${p.y})
+SetColor(P${i+1}, ${p.type === 'local min' ? '0,150,80' : p.type === 'local max' ? '200,0,0' : '240,160,0'})
+`;
+  });
+  document.getElementById('ggb-calc').textContent = script;
+}
+presetCal('cubic');
+
+/* ==================== INTEGRAL CALCULUS ==================== */
+function presetInt(key) {
+  const m = {
+    sin: { fn: 'sin', a: 0, b: '3.14159265' },
+    sq:  { fn: 'sq',  a: 0, b: 1 },
+    inv: { fn: 'inv', a: 1, b: '2.718281828' }
+  }[key];
+  document.getElementById('int-fn').value = m.fn;
+  document.getElementById('int-a').value = m.a;
+  document.getElementById('int-b').value = m.b;
+  computeInteg();
+}
+
+function computeInteg() {
+  const fn = document.getElementById('int-fn').value;
+  const a = +document.getElementById('int-a').value;
+  const b = +document.getElementById('int-b').value;
+
+  const F = {
+    sin: x => Math.sin(x),
+    cos: x => Math.cos(x),
+    sq:  x => x*x,
+    cube: x => x*x*x,
+    exp: x => Math.exp(x),
+    inv: x => x === 0 ? NaN : 1/x,
+    sqrt: x => Math.sqrt(Math.max(0, x))
+  }[fn];
+
+  const exactMap = {
+    sin: { 0: { '3.14159265358979': 2 } },
+    sq:  { 0: { 1: 1/3 } }
+  };
+
+  // Simpson's 1/3 rule with n = 100 (must be even)
+  const n = 100, h = (b - a) / n;
+  let sum = 0;
+  for (let i = 0; i <= n; i++) {
+    const x = a + i*h;
+    const fx = F(x);
+    if (!isFinite(fx)) { sum = NaN; break; }
+    sum += (i === 0 || i === n) ? fx : (i % 2 === 0 ? 2 : 4) * fx;
+  }
+  const simpson = round(sum * h / 3, 6);
+
+  // Trapezoidal
+  let trap = 0;
+  for (let i = 0; i <= n; i++) {
+    const x = a + i*h;
+    const fx = F(x);
+    if (!isFinite(fx)) { trap = NaN; break; }
+    trap += (i === 0 || i === n) ? fx / 2 : fx;
+  }
+  const trapez = round(trap * h, 6);
+
+  // Plot
+  const xs = [], ys = [], fillX = [], fillY = [];
+  const nPlot = 250;
+  for (let i = 0; i <= nPlot; i++) {
+    const x = a - 0.5 + (b - a + 1) * i / nPlot;
+    xs.push(x);
+    const y = F(x);
+    ys.push(isFinite(y) ? round(y, 4) : null);
+  }
+  const nf = 80;
+  for (let i = 0; i <= nf; i++) {
+    const x = a + (b - a) * i / nf;
+    fillX.push(x);
+    const y = F(x);
+    fillY.push(isFinite(y) ? y : 0);
+  }
+  // close the fill polygon
+  const fx = fillX.concat([...fillX].reverse());
+  const fy = fillY.concat(new Array(fillY.length).fill(0));
+
+  Plotly.newPlot('plot-integ', [
+    { x: fx, y: fy, fill: 'toself', fillcolor: 'rgba(79,70,229,0.22)',
+      line: { color: 'transparent' }, mode: 'lines', name: 'Area', hoverinfo: 'skip' },
+    { x: xs, y: ys, mode: 'lines', name: `${fn}(x)`, line: { color: '#4f46e5', width: 3 } }
+  ], {
+    title: { text: `∫ from ${a} to ${b} of ${fn}(x) dx ≈ ${simpson}`, font: { size: 12 } },
+    xaxis: { title: 'x', zeroline: true, zerolinecolor: '#cbd5e1' },
+    yaxis: { title: 'y', zeroline: true, zerolinecolor: '#cbd5e1' },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    legend: { font: { size: 10 }, orientation: 'h', y: -0.2 },
+    plot_bgcolor: '#f8fafc', paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  // KaTeX
+  const fnLatex = { sin: '\\sin(x)', cos: '\\cos(x)', sq: 'x^2', cube: 'x^3',
+                    exp: 'e^x', inv: '\\frac{1}{x}', sqrt: '\\sqrt{x}' }[fn];
+  const mathHTML = `
+    <div>$$\\int_{${latexNum(a)}}^{${latexNum(round(b,4))}} ${fnLatex}\\,dx \\;\\approx\\; ${simpson}$$</div>
+    <div class="my-2 text-xs text-slate-600">
+      <div class="font-semibold mb-1">Simpson's 1/3 rule (n = 100):</div>
+      $$\\int_a^b f(x)\\,dx \\approx \\frac{h}{3}\\Big[f_0 + 4f_1 + 2f_2 + \\dots + 4f_{n-1} + f_n\\Big],\\quad h = \\frac{b-a}{n}$$
+    </div>
+    <div class="mt-2 p-2 bg-indigo-50 rounded border border-indigo-200 text-xs">
+      <div><strong>Simpson's:</strong> ${simpson}</div>
+      <div><strong>Trapezoidal:</strong> ${trapez}</div>
+      <div><strong>Difference:</strong> ${latexNum(round(Math.abs(simpson - trapez), 6))}</div>
+    </div>`;
+  document.getElementById('math-integ').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-integ'));
+
+  const script = `// Integral Calculus — numeric & geometric
+f(x) = ${fnLatex.replace(/\\/g, '')}
+a = ${a}
+b = ${b}
+
+// Numeric integral (GeoGebra uses adaptive quadrature)
+area = Integral(f, a, b)
+
+// Shaded region visualization
+SetColor(f, 70, 70, 220)
+SetLineThickness(f, 3)
+
+// Annotation
+txt = Text("∫ f dx from " + a + " to " + b + " = " + area, (a, 3))
+SetColor(txt, 70, 70, 220)
+SetFontSize(txt, 14)`;
+  document.getElementById('ggb-integ').textContent = script;
+}
+presetInt('sin');
+
+/* ==================== DIFFERENTIAL EQUATIONS ==================== */
+function presetODE(key) {
+  const P = {
+    overdamp: { p: -5, q: 6, y0: 1, v0: 0 },
+    shm:      { p: 0,  q: 4, y0: 1, v0: 0 },
+    crit:     { p: 2,  q: 1, y0: 1, v0: 0 }
+  }[key];
+  document.getElementById('ode-p').value = P.p;
+  document.getElementById('ode-q').value = P.q;
+  document.getElementById('ode-y0').value = P.y0;
+  document.getElementById('ode-v0').value = P.v0;
+  computeODE();
+}
+
+function computeODE() {
+  const p = +document.getElementById('ode-p').value;
+  const q = +document.getElementById('ode-q').value;
+  const y0 = +document.getElementById('ode-y0').value;
+  const v0 = +document.getElementById('ode-v0').value;
+
+  // Characteristic: r² + p·r + q = 0
+  const disc = p*p - 4*q;
+  let type, rootsLatex, solLatex, solFn;
+
+  if (disc > 1e-9) {
+    // two distinct real roots
+    const r1 = round((-p + Math.sqrt(disc)) / 2, 4);
+    const r2 = round((-p - Math.sqrt(disc)) / 2, 4);
+    type = 'Overdamped (distinct real roots)';
+    rootsLatex = `r_1 = ${latexNum(r1)},\\quad r_2 = ${latexNum(r2)}`;
+    // Solve A + B = y0, A·r1 + B·r2 = v0
+    const A = round((v0 - y0*r2) / (r1 - r2), 4);
+    const B = round((y0*r1 - v0) / (r1 - r2), 4);
+    solLatex = `y(x) = ${latexNum(A)}e^{${latexNum(r1)}x} + ${latexNum(B)}e^{${latexNum(r2)}x}`;
+    solFn = x => A*Math.exp(r1*x) + B*Math.exp(r2*x);
+  } else if (Math.abs(disc) < 1e-9) {
+    // repeated root
+    const r = round(-p / 2, 4);
+    type = 'Critically damped (repeated root)';
+    rootsLatex = `r = ${latexNum(r)}\\ \\text{(double)}`;
+    const A = y0, B = v0 - y0*r;
+    solLatex = `y(x) = \\big(${latexNum(A)} + ${latexNum(B)}x\\big)e^{${latexNum(r)}x}`;
+    solFn = x => (A + B*x) * Math.exp(r*x);
+  } else {
+    // complex conjugate
+    const alpha = round(-p / 2, 4);
+    const beta = round(Math.sqrt(-disc) / 2, 4);
+    type = 'Underdamped (complex roots)';
+    rootsLatex = `r = ${latexNum(alpha)} \\pm ${latexNum(beta)}i`;
+    const A = y0;
+    const B = round((v0 - y0*alpha) / beta, 4);
+    solLatex = `y(x) = e^{${latexNum(alpha)}x}\\big(${latexNum(A)}\\cos(${latexNum(beta)}x) + ${latexNum(B)}\\sin(${latexNum(beta)}x)\\big)`;
+    solFn = x => Math.exp(alpha*x) * (A*Math.cos(beta*x) + B*Math.sin(beta*x));
+  }
+
+  // Plot
+  const xs = [], ys = [];
+  const xmin = 0, xmax = 6, N = 300;
+  let ymin = Infinity, ymax = -Infinity;
+  for (let i = 0; i <= N; i++) {
+    const x = xmin + (xmax - xmin) * i / N;
+    const y = solFn(x);
+    xs.push(round(x, 4));
+    ys.push(round(y, 4));
+    if (y < ymin) ymin = y;
+    if (y > ymax) ymax = y;
+  }
+  Plotly.newPlot('plot-ode', [
+    { x: xs, y: ys, mode: 'lines', name: 'y(x)',
+      line: { color: '#4f46e5', width: 3 } }
+  ], {
+    title: { text: type, font: { size: 12 } },
+    xaxis: { title: 'x', zeroline: true, zerolinecolor: '#cbd5e1' },
+    yaxis: { title: 'y', zeroline: true, zerolinecolor: '#cbd5e1' },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    plot_bgcolor: '#f8fafc', paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  // KaTeX
+  const mathHTML = `
+    <div>$$\\frac{d^2y}{dx^2} + (${latexNum(p)})\\frac{dy}{dx} + (${latexNum(q)})y = 0$$</div>
+    <div class="my-1">$$r^2 + ${latexNum(p)}r + ${latexNum(q)} = 0$$</div>
+    <div class="my-1 text-indigo-700">$$${rootsLatex}$$</div>
+    <div class="my-2 p-2 bg-emerald-50 rounded border border-emerald-200 font-semibold">$$${solLatex}$$</div>
+    <div class="text-[11px] text-slate-500">Initial conditions: y(0) = ${y0}, y′(0) = ${v0}. Classification: <strong>${type}</strong>.</div>`;
+  document.getElementById('math-ode').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-ode'));
+
+  const script = `// Differential Equations — 2nd order linear ODE
+p = ${p}
+q = ${q}
+
+// The characteristic equation is r² + p·r + q = 0
+// Classification: ${type.replace(/\s+\(.*\)/, '')}
+
+// Particular solution
+y(x) = ${solLatex.replace(/\\/g, '').replace(/\\,/g, ',').replace(/\\[a-z]+\{[^}]*\}/g, m => m.replace(/[{}]/g, ''))}
+
+// Plot
+SetColor(y, 70, 70, 220)
+SetLineThickness(y, 4)
+
+// Initial conditions markers
+P0 = (0, ${y0})
+SetColor(P0, 200, 0, 0)
+SetPointSize(P0, 6)
+ShowLabel(P0, true)
+
+txt = Text("${type}", (1, 3))
+SetColor(txt, 100, 0, 150)
+SetFontSize(txt, 14)`;
+  document.getElementById('ggb-ode').textContent = script;
+}
+presetODE('overdamp');
+
+/* ==================== VECTOR CALCULUS ==================== */
+function setVec(key) {
+  document.getElementById('vec-field').value = key;
+  computeVector();
+}
+
+function computeVector() {
+  const key = document.getElementById('vec-field').value;
+  // Predefined fields: P(x,y), Q(x,y), div, curl (2D)
+  const F = {
+    rot:    { P: (x,y) => -y,    Q: (x,y) =>  x,     divStr: '0',  curlStr: '2',
+              pStr: 'P = −y',    qStr: 'Q = x' },
+    radial: { P: (x,y) =>  x,    Q: (x,y) =>  y,     divStr: '2',  curlStr: '0',
+              pStr: 'P = x',     qStr: 'Q = y' },
+    quad:   { P: (x,y) => x*x,   Q: (x,y) => x*y,   divStr: '3x', curlStr: 'y',
+              pStr: 'P = x²',    qStr: 'Q = xy' },
+    source: { P: (x,y) =>  x,    Q: (x,y) =>  0,     divStr: '1',  curlStr: '0',
+              pStr: 'P = x',     qStr: 'Q = 0' },
+    sink:   { P: (x,y) => -x,    Q: (x,y) => -y,    divStr: '−2', curlStr: '0',
+              pStr: 'P = −x',    qStr: 'Q = −y' }
+  }[key];
+
+  // Quiver plot via line segments
+  const xs = [], ys = [];
+  const arrows = 7, range = 2.5, step = (2*range)/arrows;
+  for (let i = -arrows; i <= arrows; i++) {
+    for (let j = -arrows; j <= arrows; j++) {
+      const x = i * step, y = j * step;
+      const px = F.P(x, y), qy = F.Q(x, y);
+      const mag = Math.hypot(px, qy);
+      if (mag < 1e-9) continue;
+      const scale = 0.35 * step / Math.max(0.5, mag);
+      const x1 = x + px * scale;
+      const y1 = y + qy * scale;
+      xs.push(x, x1, null);
+      ys.push(y, y1, null);
+    }
+  }
+  const mag = [];
+  const magX = [], magY = [], magVal = [];
+  for (let i = -arrows; i <= arrows; i++) {
+    for (let j = -arrows; j <= arrows; j++) {
+      const x = i * step, y = j * step;
+      const px = F.P(x, y), qy = F.Q(x, y);
+      magX.push(x); magY.push(y); magVal.push(round(Math.hypot(px, qy), 3));
+    }
+  }
+
+  Plotly.newPlot('plot-vector', [
+    { x: xs, y: ys, mode: 'lines', name: 'F',
+      line: { color: '#4f46e5', width: 2 } },
+    { x: magX, y: magY, mode: 'markers', name: '|F|',
+      marker: { size: 4, color: magVal, colorscale: 'Viridis', showscale: false },
+      hovertext: magVal.map(v => `|F| = ${v}`), hoverinfo: 'text' }
+  ], {
+    title: { text: `Vector field: ${F.pStr}, ${F.qStr}`, font: { size: 12 } },
+    xaxis: { title: 'x', zeroline: true, zerolinecolor: '#cbd5e1', scaleanchor: 'y',
+             range: [-range - 0.5, range + 0.5] },
+    yaxis: { title: 'y', zeroline: true, zerolinecolor: '#cbd5e1',
+             range: [-range - 0.5, range + 0.5] },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    legend: { font: { size: 10 }, orientation: 'h', y: -0.2 },
+    plot_bgcolor: '#f8fafc', paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  // KaTeX
+  const mathHTML = `
+    <div>$$\\vec{F}(x,y) = \\langle ${F.pStr.replace(/^[PQ] = /,'')},\\; ${F.qStr.replace(/^[PQ] = /,'')} \\rangle$$</div>
+    <div class="my-2">
+      <div class="font-semibold text-xs mb-1">Divergence:</div>
+      <div>$$\\nabla \\cdot \\vec{F} = \\frac{\\partial P}{\\partial x} + \\frac{\\partial Q}{\\partial y} = ${F.divStr}$$</div>
+    </div>
+    <div class="my-2">
+      <div class="font-semibold text-xs mb-1">Curl (2D):</div>
+      <div>$$\\nabla \\times \\vec{F} = \\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y} = ${F.curlStr}$$</div>
+    </div>
+    <div class="mt-2 text-[11px] text-slate-500">
+      <strong>${key === 'rot' ? 'Rotational field' : key === 'radial' ? 'Radial source field' : key === 'quad' ? 'Quadratic field' : key === 'source' ? 'Horizontal source' : 'Radial sink field'}</strong>
+    </div>`;
+  document.getElementById('math-vector').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-vector'));
+
+  const script = `// Vector Calculus — 2D field visualization
+// ${F.pStr},  ${F.qStr}
+
+// Use sequence to create a grid of arrows
+Sequence(Sequence(
+  Vector((${-2.5} + ${5/14}*i, ${-2.5} + ${5/14}*j),
+         (${-2.5} + ${5/14}*i + 0.2*(${key==='rot'?'-(' + (-2.5) + '+' + 5/14 + '*j)':key==='radial'?'(' + (-2.5) + '+' + 5/14 + '*i)':key==='quad'?'pow(' + (-2.5) + '+' + 5/14 + '*i,2)':key==='source'?'(' + (-2.5) + '+' + 5/14 + '*i)':'0'}),
+          ${-2.5} + ${5/14}*j + 0.2*(${key==='rot'?'(' + (-2.5) + '+' + 5/14 + '*i)':key==='radial'?'(' + (-2.5) + '+' + 5/14 + '*j)':key==='quad'?'(' + (-2.5) + '+' + 5/14 + '*i)*(' + (-2.5) + '+' + 5/14 + '*j)':key==='source'?'0':'-(' + (-2.5) + '+' + 5/14 + '*j)'})),
+         false, false)),
+  i, -6, 6), j, -6, 6)
+
+// Divergence and curl (constant per field)
+// ∇·F = ${F.divStr}
+// ∇×F = ${F.curlStr}
+txt = Text("∇·F = ${F.divStr}", (-2.3, 2.6))
+txt2 = Text("∇×F = ${F.curlStr}", (-2.3, 2.2))
+SetColor(txt, 100, 0, 150)
+SetColor(txt2, 100, 0, 150)
+SetFontSize(txt, 14)
+SetFontSize(txt2, 14)`;
+  document.getElementById('ggb-vector').textContent = script;
+}
+computeVector();
+
+/* ==================== TRANSFORMS ==================== */
+function presetLap(fn, param) {
+  document.getElementById('lap-fn').value = fn;
+  document.getElementById('lap-param').value = param;
+  computeLap();
+}
+
+function computeLap() {
+  const fn = document.getElementById('lap-fn').value;
+  const p = +document.getElementById('lap-param').value;
+
+  // Predefined standard Laplace pairs
+  let fLatex, FLatex, fFn, FFn, fDesc;
+
+  if (fn === 'exp') {
+    fLatex = `e^{${latexNum(p)}t}`;
+    FLatex = `\\frac{1}{s - (${latexNum(p)})}`;
+    fDesc = `f(t) = e^{${latexNum(p)}t}`;
+    fFn = t => Math.exp(p*t);
+    FFn = s => 1 / (s - p);
+  } else if (fn === 'tn') {
+    const n = Math.max(0, Math.round(p));
+    let fact = 1; for (let i = 2; i <= n; i++) fact *= i;
+    fLatex = `t^{${n}}`;
+    FLatex = `\\frac{${n === 0 ? 1 : fact}}{s^{${n+1}}}`;
+    fDesc = `f(t) = t^${n}`;
+    fFn = t => Math.pow(t, n);
+    FFn = s => fact / Math.pow(s, n + 1);
+  } else if (fn === 'sin') {
+    fLatex = `\\sin(${latexNum(p)}t)`;
+    FLatex = `\\frac{${latexNum(p)}}{s^2 + ${latexNum(p*p)}}`;
+    fDesc = `f(t) = sin(${latexNum(p)}t)`;
+    fFn = t => Math.sin(p*t);
+    FFn = s => p / (s*s + p*p);
+  } else if (fn === 'cos') {
+    fLatex = `\\cos(${latexNum(p)}t)`;
+    FLatex = `\\frac{s}{s^2 + ${latexNum(p*p)}}`;
+    fDesc = `f(t) = cos(${latexNum(p)}t)`;
+    fFn = t => Math.cos(p*t);
+    FFn = s => s / (s*s + p*p);
+  } else if (fn === 'one') {
+    fLatex = '1';
+    FLatex = '\\frac{1}{s}';
+    fDesc = 'f(t) = 1';
+    fFn = t => 1;
+    FFn = s => 1/s;
+  } else if (fn === 'sinh') {
+    fLatex = `\\sinh(${latexNum(p)}t)`;
+    FLatex = `\\frac{${latexNum(p)}}{s^2 - ${latexNum(p*p)}}`;
+    fDesc = `f(t) = sinh(${latexNum(p)}t)`;
+    fFn = t => Math.sinh(p*t);
+    FFn = s => p / (s*s - p*p);
+  }
+
+  // Plot f(t) and F(s) on two subplots
+  const tArr = [], fArr = [], sArr = [], FArr = [];
+  for (let i = 0; i <= 200; i++) {
+    const t = i * 5 / 200;
+    tArr.push(round(t, 3));
+    const v = fFn(t);
+    fArr.push(isFinite(v) ? round(Math.min(v, 1e4), 4) : null);
+  }
+  for (let i = 0; i <= 200; i++) {
+    const s = 0.2 + i * 8 / 200;
+    sArr.push(round(s, 3));
+    const v = FFn(s);
+    FArr.push(isFinite(v) ? round(Math.min(v, 1e4), 4) : null);
+  }
+
+  Plotly.newPlot('plot-laplace', [
+    { x: tArr, y: fArr, mode: 'lines', name: 'f(t)', line: { color: '#4f46e5', width: 3 }, xaxis: 'x', yaxis: 'y' },
+    { x: sArr, y: FArr, mode: 'lines', name: 'F(s)', line: { color: '#059669', width: 3 }, xaxis: 'x2', yaxis: 'y2' }
+  ], {
+    title: { text: `ℒ{${fDesc.replace('f(t) = ','')}}`, font: { size: 12 } },
+    grid: { rows: 1, columns: 2, pattern: 'independent' },
+    xaxis: { title: 't', zeroline: true, zerolinecolor: '#cbd5e1', domain: [0, 0.46] },
+    yaxis: { title: 'f(t)', zeroline: true, zerolinecolor: '#cbd5e1' },
+    xaxis2: { title: 's', zeroline: true, zerolinecolor: '#cbd5e1', domain: [0.54, 1] },
+    yaxis2: { title: 'F(s)', zeroline: true, zerolinecolor: '#cbd5e1' },
+    margin: { l: 40, r: 20, t: 40, b: 40 },
+    showlegend: true, legend: { font: { size: 10 }, orientation: 'h', y: -0.2 },
+    plot_bgcolor: '#f8fafc', paper_bgcolor: '#fff'
+  }, { responsive: true, displayModeBar: false });
+
+  const mathHTML = `
+    <div class="my-1">$$\\mathcal{L}\\{${fLatex}\\} = \\int_0^{\\infty} e^{-st} ${fLatex}\\, dt$$</div>
+    <div class="my-2 p-2 bg-emerald-50 rounded border border-emerald-200 font-semibold">$$F(s) = ${FLatex}$$</div>
+    <div class="text-[11px] text-slate-500">Standard transform from table. Region of convergence depends on the poles of F(s).</div>`;
+  document.getElementById('math-laplace').innerHTML = mathHTML;
+  renderKatex(document.getElementById('math-laplace'));
+
+  const script = `// Laplace Transform — standard pair
+f(t) = ${fLatex.replace(/\\/g, '')}
+F(s) = ${FLatex.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '($1)/($2)').replace(/\\sin/g, 'sin').replace(/\\cos/g, 'cos').replace(/\\sinh/g, 'sinh')}
+
+// Plot both curves on separate views
+SetColor(f, 70, 70, 220)
+SetLineThickness(f, 3)
+
+// F(s) on a different view (add as a function of x for the 2D view)
+G(x) = ${FLatex.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '($1)/($2)').replace(/\\sin/g, 'sin').replace(/\\cos/g, 'cos').replace(/\\sinh/g, 'sinh')}
+SetColor(G, 0, 150, 60)
+SetLineThickness(G, 3)
+
+txt = Text("ℒ{f} = ${FLatex.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '($1)/($2)').replace(/[\\]/g, '')}", (-2, 3))
+SetColor(txt, 100, 0, 150)
+SetFontSize(txt, 16)`;
+  document.getElementById('ggb-laplace').textContent = script;
+}
+presetLap('exp', 2);
+
+/* ==================== BOOT ==================== */
+window.addEventListener('load', () => {
+  // Initial render for whichever tab is active
+  computeLinear();
+  computeCalc();
+  computeInteg();
+  computeODE();
+  computeVector();
+  computeLap();
+  // Ensure plot sizes are correct
+  setTimeout(() => {
+    document.querySelectorAll('.plot-box').forEach(el => {
+      if (el.offsetWidth > 0 && el.data) Plotly.Plots.resize(el);
+    });
+  }, 100);
+});
+
+// Responsive resize for Plotly
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.plot-box').forEach(el => {
+    if (el.offsetWidth > 0 && el.data) Plotly.Plots.resize(el);
+  });
+});
+</script>
 </body>
 </html>
