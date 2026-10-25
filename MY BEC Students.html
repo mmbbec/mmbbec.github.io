@@ -16,7 +16,6 @@
       --line: #e5e7eb;
       --paper: #ffffff;
       --bg: #f5f6f8;
-      --green: #166534;
     }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
@@ -28,8 +27,7 @@
       font-family: Arial, Helvetica, sans-serif;
       line-height: 1.5;
     }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
+    button { font: inherit; cursor: pointer; }
 
     .skip-link {
       position: absolute;
@@ -74,22 +72,6 @@
     .muted { color: var(--muted); }
     .small { font-size: .88rem; }
 
-    label { display: block; font-weight: 700; margin: 12px 0 6px; }
-    input {
-      display: block;
-      width: 100%;
-      padding: 12px 13px;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      background: #fff;
-      color: inherit;
-    }
-    input:focus { outline: 2px solid #fecaca; border-color: var(--red); }
-
-    .input-row { display: flex; gap: 8px; align-items: stretch; }
-    .input-row input { flex: 1 1 auto; min-width: 0; }
-    .input-row .btn { flex: 0 0 auto; }
-
     .btn {
       border: 0;
       border-radius: 9px;
@@ -107,8 +89,6 @@
       outline: 3px solid #fca5a5;
       outline-offset: 2px;
     }
-
-    .full { width: 100%; margin-top: 16px; }
 
     .message { margin: 12px 0 0; color: var(--red-dark); font-weight: 700; }
     .message:empty { display: none; }
@@ -234,38 +214,10 @@
   </header>
 
   <main id="main" class="wrap">
-    <section id="loginPanel" class="panel" aria-labelledby="loginHeading">
-      <h2 id="loginHeading">Student Login</h2>
-      <p class="muted small">Log in to view semester-wise learning materials.</p>
-
-      <form id="loginForm" novalidate="false">
-        <label for="username">Username / Email</label>
-        <input id="username" name="username" type="email" autocomplete="username"
-               inputmode="email" autocapitalize="none" spellcheck="false"
-               placeholder="Enter student email" required>
-
-        <label for="password">Password</label>
-        <div class="input-row">
-          <input id="password" name="password" type="password"
-                 autocomplete="current-password" placeholder="Enter password" required>
-          <button id="togglePassword" class="btn secondary" type="button"
-                  aria-pressed="false" aria-controls="password">Show</button>
-        </div>
-
-        <button class="btn full" type="submit">Login</button>
-        <p id="loginMessage" class="message" role="alert"></p>
-      </form>
-    </section>
-
-    <section id="portalPanel" hidden>
+    <section id="portalPanel">
       <section class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div>
-            <h2 style="margin-bottom:4px">Learning Materials</h2>
-            <p class="muted small" style="margin:0">Choose a semester, then open a subject material.</p>
-          </div>
-          <button id="logoutBtn" class="btn secondary" type="button">Logout</button>
-        </div>
+        <h2 style="margin-bottom:4px">Learning Materials</h2>
+        <p class="muted small" style="margin:0">Choose a semester, then open a subject material.</p>
       </section>
 
       <section class="panel" aria-labelledby="semesterHeading">
@@ -314,26 +266,6 @@
     (function () {
       "use strict";
 
-      /* ------------------------------------------------------------------
-         SETUP
-         1. Upload your PDFs and edit MATERIALS below.
-         2. Each item needs: title, type, path (relative path or https URL).
-         3. Google Drive links are converted to /preview automatically —
-            the file must be shared as "Anyone with the link".
-      ------------------------------------------------------------------ */
-
-      // Stored encoded so the credentials are not sitting in plain text.
-      // NOTE: this is obfuscation, not security — a static page can never
-      // hold a real secret. Use server-side authentication for real privacy.
-      const AUTH = Object.freeze({
-        user: "c3R1ZGVudEBnbWFpbC5jb20=", // base64
-        pass: "MTIzNA=="                  // base64
-      });
-
-      function decode(value) {
-        try { return window.atob(value); } catch (error) { return ""; }
-      }
-
       const SEMESTER_NAMES = Object.freeze({
         first: "First Semester",
         second: "Second Semester",
@@ -353,7 +285,7 @@
               { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
               { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
               { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
-              { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" }
+              { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
               { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
             ]
           },
@@ -377,15 +309,6 @@
         ]
       };
 
-      /* ------------------------- DOM references ------------------------- */
-      const loginPanel       = document.getElementById("loginPanel");
-      const portalPanel      = document.getElementById("portalPanel");
-      const loginForm        = document.getElementById("loginForm");
-      const loginMessage     = document.getElementById("loginMessage");
-      const usernameInput    = document.getElementById("username");
-      const passwordInput    = document.getElementById("password");
-      const togglePassword   = document.getElementById("togglePassword");
-      const logoutBtn        = document.getElementById("logoutBtn");
       const semesterButtons  = Array.from(document.querySelectorAll(".semester"));
       const materialsHeading = document.getElementById("materialsHeading");
       const materialsStatus  = document.getElementById("materialsStatus");
@@ -403,7 +326,6 @@
       let lastViewerTrigger = null;
       let loadingTimer      = 0;
 
-      /* ---------------------------- Helpers ---------------------------- */
       function setMaterialsStatus(text) {
         materialsStatus.textContent = text || "";
       }
@@ -448,7 +370,6 @@
         }
       }
 
-      /* --------------------------- Rendering --------------------------- */
       function selectSemester(name) {
         currentSemester = Object.prototype.hasOwnProperty.call(MATERIALS, name) ? name : "first";
 
@@ -526,7 +447,6 @@
         subjectsEl.appendChild(fragment);
       }
 
-      /* ---------------------------- Viewer ----------------------------- */
       function openPdf(item, subject, trigger) {
         const rawPath = safePdfPath(item && item.path);
         if (!rawPath) {
@@ -542,7 +462,6 @@
         viewerTitle.textContent = subject.code + " — " + item.title;
         viewerFileName.textContent = fileNameFromPath(rawPath);
 
-        // Show a "loading" layer, but never let it block the PDF for long.
         window.clearTimeout(loadingTimer);
         viewerStatus.hidden = false;
         loadingTimer = window.setTimeout(function () {
@@ -579,56 +498,6 @@
         viewerStatus.hidden = true;
       });
 
-      /* ---------------------------- Login ------------------------------ */
-      loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const username = usernameInput.value.trim().toLowerCase();
-        const password = passwordInput.value;
-
-        const ok =
-          username === decode(AUTH.user).toLowerCase() &&
-          password === decode(AUTH.pass);
-
-        if (!ok) {
-          loginMessage.textContent = "Incorrect username or password. Please try again.";
-          passwordInput.select();
-          passwordInput.focus();
-          return;
-        }
-
-        loginMessage.textContent = "";
-        loginForm.reset();
-
-        loginPanel.hidden = true;
-        portalPanel.hidden = false;
-
-        selectSemester(currentSemester);
-        materialsHeading.focus({ preventScroll: true });
-      });
-
-      // Clear the error as soon as the student starts typing again.
-      loginForm.addEventListener("input", function () {
-        if (loginMessage.textContent) loginMessage.textContent = "";
-      });
-
-      togglePassword.addEventListener("click", function () {
-        const show = passwordInput.type === "password";
-        passwordInput.type = show ? "text" : "password";
-        togglePassword.textContent = show ? "Hide" : "Show";
-        togglePassword.setAttribute("aria-pressed", show ? "true" : "false");
-        passwordInput.focus();
-      });
-
-      logoutBtn.addEventListener("click", function () {
-        closeViewer({ restoreFocus: false });
-        portalPanel.hidden = true;
-        loginPanel.hidden = false;
-        loginMessage.textContent = "";
-        usernameInput.focus();
-      });
-
-      /* ------------------------- Semester switch ----------------------- */
       semesterButtons.forEach(function (button) {
         button.addEventListener("click", function () {
           if (button.dataset.semester === currentSemester) return;
@@ -637,7 +506,6 @@
         });
       });
 
-      /* ---------------------------- Globals ---------------------------- */
       closeViewerBtn.addEventListener("click", function () {
         closeViewer();
       });
@@ -648,6 +516,8 @@
           closeViewer();
         }
       });
+
+      selectSemester(currentSemester);
     })();
   </script>
 </body>
