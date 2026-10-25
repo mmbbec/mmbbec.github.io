@@ -1,76 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8"/>
   <title>Engineering Mathematics – Matrix Studio with GeoGebra</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- MathJax for rendering matrix equations -->
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <!-- GeoGebra Deploy Script -->
-  <script src="https://cdn.geogebra.org/apps/deployggb.js"></script>
+  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
 
   <style>
-    /* Custom scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* Matrix Bracket Styling */
-    .matrix-brackets {
-      position: relative;
-      padding: 0 8px;
-    }
-    .matrix-brackets::before,
-    .matrix-brackets::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 6px;
+    .matrix-brackets { position: relative; padding: 0 8px; }
+    .matrix-brackets::before, .matrix-brackets::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 6px;
       border: 2px solid #334155;
     }
-    .matrix-brackets::before {
-      left: 0;
-      border-right: none;
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
-    .matrix-brackets::after {
-      right: 0;
-      border-left: none;
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-    }
+    .matrix-brackets::before { left: 0; border-right: none;
+      border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+    .matrix-brackets::after { right: 0; border-left: none;
+      border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-    /* Cell inputs */
     .cell-input {
-      width: 46px;
-      height: 34px;
-      text-align: center;
+      width: 46px; height: 34px; text-align: center;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 4px;
-      border: 1px solid #cbd5e1;
-      background-color: #ffffff;
+      font-size: 13px; font-weight: 600; border-radius: 4px;
+      border: 1px solid #cbd5e1; background-color: #ffffff;
       transition: all 0.15s ease-in-out;
     }
     .cell-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-      background-color: #f8fafc;
+      outline: none; border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59,130,246,.2); background-color: #f8fafc;
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden font-sans select-none">
+
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row md:h-screen md:overflow-hidden overflow-y-auto font-sans select-none">
 
   <!-- ================= SIDEBAR ================= -->
-  <aside id="sidebar" class="w-full md:w-[460px] lg:w-[500px] h-full flex flex-col bg-white border-r border-slate-200 shadow-lg z-20 overflow-y-auto">
-    <!-- Header -->
+  <aside id="sidebar" class="w-full md:w-[460px] lg:w-[500px] md:h-full flex flex-col bg-white border-r border-slate-200 shadow-lg z-20 overflow-y-auto">
     <header class="p-4 border-b border-slate-200 bg-slate-900 text-white flex-shrink-0">
       <div class="flex items-center justify-between">
         <div>
@@ -78,7 +49,7 @@
             <span class="bg-blue-600 text-xs px-2 py-0.5 rounded font-mono">ENGR-MATH</span>
             Matrix Studio
           </h1>
-          <p class="text-xs text-slate-400 mt-0.5">Linear Algebra Computer & GeoGebra Visualizer</p>
+          <p class="text-xs text-slate-400 mt-0.5">Linear Algebra Computer &amp; GeoGebra Visualizer</p>
         </div>
         <div class="flex items-center gap-1.5">
           <label class="text-xs text-slate-300 font-medium">Dim:</label>
@@ -92,26 +63,23 @@
 
     <div class="p-4 space-y-5 flex-1 select-text">
 
-      <!-- PRESET TEMPLATES -->
       <section>
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Engineering Presets</span>
           <span class="text-[11px] text-slate-400">Click to autofill</span>
         </div>
         <div class="grid grid-cols-3 gap-1.5 text-xs">
-          <button onclick="applyPreset('identity')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Identity & Zero</button>
+          <button onclick="applyPreset('identity')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Identity &amp; Zero</button>
           <button onclick="applyPreset('rotation')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">90° Rotation</button>
-          <button onclick="applyPreset('shear')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Shear Mapping</button>
+          <button onclick="applyPreset('shear')"    class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Shear Mapping</button>
           <button onclick="applyPreset('symmetric')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Symmetric Matrix</button>
-          <button onclick="applyPreset('system')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">2×2 Linear System</button>
-          <button onclick="applyPreset('singular')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Singular (Det=0)</button>
+          <button onclick="applyPreset('system')"    class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">2×2 Linear System</button>
+          <button onclick="applyPreset('singular')"  class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 border border-slate-200 rounded text-left transition font-medium">Singular (Det=0)</button>
         </div>
       </section>
 
-      <!-- CUSTOM INPUT MATRICES -->
       <section class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3.5">
         <div class="grid grid-cols-2 gap-4">
-          <!-- Matrix A -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
@@ -124,8 +92,6 @@
               <div id="grid-A" class="matrix-brackets grid gap-1.5"></div>
             </div>
           </div>
-
-          <!-- Matrix B -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
@@ -140,11 +106,11 @@
           </div>
         </div>
 
-        <!-- Scalar Input & Vector Helper -->
         <div class="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
           <div class="flex items-center gap-2">
             <label for="scalar-k" class="font-semibold text-slate-600">Scalar \(k\):</label>
-            <input type="number" id="scalar-k" value="2" step="any" class="w-16 h-7 text-center font-mono font-semibold border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500" />
+            <input type="number" id="scalar-k" value="2" step="any"
+                   class="w-16 h-7 text-center font-mono font-semibold border border-slate-300 rounded bg-white focus:outline-none focus:border-blue-500" />
           </div>
           <div class="flex items-center gap-1.5">
             <span class="text-slate-500 font-medium">Vector \(v\):</span>
@@ -154,85 +120,56 @@
         </div>
       </section>
 
-      <!-- OPERATIONS SELECTOR -->
       <section class="space-y-2">
-        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Compute & Visualize</span>
-        
-        <!-- Binary Operations -->
+        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Compute &amp; Visualize</span>
+
         <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
-          <button onclick="calculate('add')" class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">
-            A + B
-          </button>
-          <button onclick="calculate('sub')" class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">
-            A − B
-          </button>
-          <button onclick="calculate('mulAB')" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition active:scale-95 text-center">
-            A × B
-          </button>
-          <button onclick="calculate('mulBA')" class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">
-            B × A
-          </button>
+          <button onclick="calculate('add')"   class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">A + B</button>
+          <button onclick="calculate('sub')"   class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">A − B</button>
+          <button onclick="calculate('mulAB')" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition active:scale-95 text-center">A × B</button>
+          <button onclick="calculate('mulBA')" class="p-2 rounded-lg bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-700 shadow-sm transition active:scale-95 text-center">B × A</button>
         </div>
 
-        <!-- Unary Matrix A Operations -->
         <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
-          <button onclick="calculate('det')" class="p-2 rounded-lg bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-400 text-slate-700 hover:text-rose-700 shadow-sm transition active:scale-95 text-center">
-            det(A) & det(B)
-          </button>
-          <button onclick="calculate('invA')" class="p-2 rounded-lg bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-700 shadow-sm transition active:scale-95 text-center">
-            A⁻¹ (Inverse)
-          </button>
-          <button onclick="calculate('transposeA')" class="p-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-400 text-slate-700 shadow-sm transition active:scale-95 text-center">
-            Aᵀ & Trace
-          </button>
-          <button onclick="calculate('scalar')" class="p-2 rounded-lg bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-400 text-slate-700 hover:text-amber-700 shadow-sm transition active:scale-95 text-center">
-            \(k \cdot A\)
-          </button>
+          <button onclick="calculate('det')"        class="p-2 rounded-lg bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-400 text-slate-700 hover:text-rose-700 shadow-sm transition active:scale-95 text-center">det(A) &amp; det(B)</button>
+          <button onclick="calculate('invA')"       class="p-2 rounded-lg bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-700 shadow-sm transition active:scale-95 text-center">A⁻¹ (Inverse)</button>
+          <button onclick="calculate('transposeA')" class="p-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-400 text-slate-700 shadow-sm transition active:scale-95 text-center">Aᵀ &amp; Trace</button>
+          <button onclick="calculate('scalar')"     class="p-2 rounded-lg bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-400 text-slate-700 hover:text-amber-700 shadow-sm transition active:scale-95 text-center">\(k \cdot A\)</button>
         </div>
 
-        <!-- Advanced Transformations & Solvers -->
         <div class="grid grid-cols-3 gap-1.5 text-xs font-semibold pt-1">
-          <button onclick="calculate('eigen')" class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">
-            Eigenvalues (\(\lambda\))
-          </button>
-          <button onclick="calculate('transform2D')" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 shadow-sm transition active:scale-95 text-center">
-            2D Transform Grid
-          </button>
-          <button onclick="calculate('rref')" class="p-2 rounded-lg bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 shadow-sm transition active:scale-95 text-center">
-            Solve Ax = b (RREF)
-          </button>
+          <button onclick="calculate('eigen')"      class="p-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 shadow-sm transition active:scale-95 text-center">Eigenvalues (λ)</button>
+          <button onclick="calculate('transform2D')" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 shadow-sm transition active:scale-95 text-center">2D Transform Grid</button>
+          <button onclick="calculate('rref')"       class="p-2 rounded-lg bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 shadow-sm transition active:scale-95 text-center">Solve Ax = b (RREF)</button>
         </div>
       </section>
 
-      <!-- RESULTS & CALCULATION LOG PANEL -->
       <section class="bg-slate-900 text-slate-100 rounded-xl p-4 shadow-inner border border-slate-800">
         <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-3">
           <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
             <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            Live Arithmetic & Analysis
+            Live Arithmetic &amp; Analysis
           </span>
           <span id="calc-status" class="text-[10px] bg-blue-900/60 text-blue-300 font-mono px-2 py-0.5 rounded">READY</span>
         </div>
         <div id="results-content" class="text-xs space-y-2.5 font-sans leading-relaxed text-slate-300">
-          <p class="text-slate-400 italic">Select an operation above or tweak matrix values to trigger real-time arithmetic calculation and GeoGebra visual evaluation.</p>
+          <p class="text-slate-400 italic">Select an operation above to trigger real-time arithmetic calculation and GeoGebra visualization.</p>
         </div>
       </section>
 
-      <!-- Engineering Quick Tips -->
       <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-        <strong>💡 Geometric Intuition:</strong> In the right-hand canvas, GeoGebra displays the geometric effect: row vectors, column transformation vectors \((T(\hat{i}), T(\hat{j}))\), characteristic polynomials, or linear equation intersections.
+        <strong>💡 Geometric Intuition:</strong> The right-hand canvas displays row/column vectors, transformed unit basis, characteristic polynomials, or linear-equation intersections.
       </div>
     </div>
   </aside>
 
   <!-- ================= GEOGEBRA VIEWPORT ================= -->
-  <main class="flex-1 h-full relative flex flex-col bg-slate-50">
-    <!-- Top toolbar above canvas -->
+  <main class="flex-1 min-h-[75vh] md:min-h-0 md:h-full relative flex flex-col bg-slate-50">
     <div class="h-10 bg-white border-b border-slate-200 px-4 flex items-center justify-between text-xs text-slate-600 flex-shrink-0">
       <div class="flex items-center gap-3">
         <span class="font-bold text-slate-800 flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          GeoGebra 2D/3D Interactive Canvas
+          GeoGebra Interactive Canvas
         </span>
         <span id="plot-descriptor" class="hidden sm:inline-block text-slate-500 font-mono text-[11px]">Mode: Vectors &amp; Transformations</span>
       </div>
@@ -244,55 +181,41 @@
       </div>
     </div>
 
-    <!-- Applet Mount Point -->
-    <div id="ggb-container" class="flex-1 w-full h-[calc(100%-2.5rem)] relative overflow-hidden">
-      <div id="ggb-element" class="w-full h-full"></div>
+    <!-- scaleContainerClass="ggb-scale" tells GeoGebra to fit this box -->
+    <div id="ggb-container" class="ggb-scale flex-1 w-full relative overflow-hidden">
+      <div id="ggb-element" class="absolute inset-0"></div>
     </div>
   </main>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    /* Global Application State */
-    let currentDim = 2; // 2 or 3
+    let currentDim = 2;
     let ggbAppletInstance = null;
     let ggbApi = null;
-    let isAppletReady = false;
 
-    // Default Matrix Values
     const state = {
-      A: [
-        [1, 2, 0],
-        [3, 4, 0],
-        [0, 0, 1]
-      ],
-      B: [
-        [2, 0, 0],
-        [1, 2, 0],
-        [0, 0, 1]
-      ],
+      A: [[1,2,0],[3,4,0],[0,0,1]],
+      B: [[2,0,0],[1,2,0],[0,0,1]],
       k: 2
     };
 
-    /* Build Matrix Input Grid in DOM */
+    /* ---------- Grid ---------- */
     function renderGrids() {
-      ['A', 'B'].forEach(matrixName => {
-        const grid = document.getElementById(`grid-${matrixName}`);
+      ['A','B'].forEach(name => {
+        const grid = document.getElementById(`grid-${name}`);
         grid.innerHTML = '';
-        grid.style.gridTemplateColumns = `repeat(${currentDim}, minmax(0, 1fr))`;
-
+        grid.style.gridTemplateColumns = `repeat(${currentDim}, minmax(0,1fr))`;
         for (let r = 0; r < currentDim; r++) {
           for (let c = 0; c < currentDim; c++) {
             const input = document.createElement('input');
-            input.type = 'number';
-            input.step = 'any';
+            input.type = 'number'; input.step = 'any';
             input.className = 'cell-input';
-            input.value = state[matrixName][r][c];
-            input.dataset.matrix = matrixName;
+            input.value = state[name][r][c];
+            input.dataset.matrix = name;
             input.dataset.row = r;
             input.dataset.col = c;
-            input.addEventListener('input', (e) => {
-              const val = parseFloat(e.target.value);
-              state[matrixName][r][c] = isNaN(val) ? 0 : val;
+            input.addEventListener('input', e => {
+              const v = parseFloat(e.target.value);
+              state[name][r][c] = isNaN(v) ? 0 : v;
             });
             grid.appendChild(input);
           }
@@ -300,39 +223,38 @@
       });
     }
 
-    /* Read matrix values from UI */
     function getMatrix(name) {
-      const mat = [];
+      const m = [];
       for (let r = 0; r < currentDim; r++) {
         const row = [];
         for (let c = 0; c < currentDim; c++) {
-          const input = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
-          const val = parseFloat(input ? input.value : 0);
-          row.push(isNaN(val) ? 0 : val);
+          const inp = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
+          const v = parseFloat(inp ? inp.value : 0);
+          row.push(isNaN(v) ? 0 : v);
         }
-        mat.push(row);
+        m.push(row);
       }
-      return mat;
+      return m;
     }
 
-    function setMatrix(name, matrix2D) {
+    function setMatrix(name, m) {
       for (let r = 0; r < currentDim; r++) {
         for (let c = 0; c < currentDim; c++) {
-          const val = (matrix2D[r] && matrix2D[r][c] !== undefined) ? matrix2D[r][c] : 0;
-          state[name][r][c] = val;
-          const input = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
-          if (input) input.value = Math.round(val * 1000) / 1000;
+          const v = (m[r] && m[r][c] !== undefined) ? m[r][c] : 0;
+          state[name][r][c] = v;
+          const inp = document.querySelector(`input[data-matrix="${name}"][data-row="${r}"][data-col="${c}"]`);
+          if (inp) inp.value = Math.round(v * 1000) / 1000;
         }
       }
     }
 
     function clearMatrix(name) {
-      const zeros = currentDim === 2 ? [[0,0],[0,0]] : [[0,0,0],[0,0,0],[0,0,0]];
-      setMatrix(name, zeros);
-      showStatus("Matrix " + name + " cleared");
+      const z = currentDim === 2 ? [[0,0],[0,0]] : [[0,0,0],[0,0,0],[0,0,0]];
+      setMatrix(name, z);
+      showStatus('Matrix ' + name + ' cleared');
     }
 
-    /* Dimension switch */
+    /* ---------- Dimension ---------- */
     document.getElementById('btn-dim-2').addEventListener('click', () => setDimension(2));
     document.getElementById('btn-dim-3').addEventListener('click', () => setDimension(3));
 
@@ -341,61 +263,47 @@
       const b2 = document.getElementById('btn-dim-2');
       const b3 = document.getElementById('btn-dim-3');
       if (dim === 2) {
-        b2.className = "px-2.5 py-1 text-xs font-semibold rounded-l-md bg-blue-600 text-white transition";
-        b3.className = "px-2.5 py-1 text-xs font-semibold rounded-r-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition";
+        b2.className = 'px-2.5 py-1 text-xs font-semibold rounded-l-md bg-blue-600 text-white transition';
+        b3.className = 'px-2.5 py-1 text-xs font-semibold rounded-r-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
       } else {
-        b3.className = "px-2.5 py-1 text-xs font-semibold rounded-r-md bg-blue-600 text-white transition";
-        b2.className = "px-2.5 py-1 text-xs font-semibold rounded-l-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition";
+        b3.className = 'px-2.5 py-1 text-xs font-semibold rounded-r-md bg-blue-600 text-white transition';
+        b2.className = 'px-2.5 py-1 text-xs font-semibold rounded-l-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
       }
       renderGrids();
       calculate('mulAB');
     }
 
-    /* Presets */
+    /* ---------- Presets ---------- */
     function applyPreset(type) {
       if (type === 'identity') {
         if (currentDim === 2) {
-          setMatrix('A', [[1, 0], [0, 1]]);
-          setMatrix('B', [[0, 0], [0, 0]]);
+          setMatrix('A', [[1,0],[0,1]]); setMatrix('B', [[0,0],[0,0]]);
         } else {
-          setMatrix('A', [[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
-          setMatrix('B', [[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+          setMatrix('A', [[1,0,0],[0,1,0],[0,0,1]]); setMatrix('B', [[0,0,0],[0,0,0],[0,0,0]]);
         }
         calculate('mulAB');
       } else if (type === 'rotation') {
         setDimension(2);
-        // 90 degree counter-clockwise rotation matrix [cos 90, -sin 90; sin 90, cos 90] = [0, -1; 1, 0]
-        setMatrix('A', [[0, -1], [1, 0]]);
-        setMatrix('B', [[1, 0], [0, 1]]);
+        setMatrix('A', [[0,-1],[1,0]]); setMatrix('B', [[1,0],[0,1]]);
         document.getElementById('vec-x').value = 2;
         document.getElementById('vec-y').value = 1;
         calculate('transform2D');
       } else if (type === 'shear') {
         setDimension(2);
-        setMatrix('A', [[1, 1.5], [0, 1]]);
-        setMatrix('B', [[1, 0], [0, 1]]);
+        setMatrix('A', [[1,1.5],[0,1]]); setMatrix('B', [[1,0],[0,1]]);
         calculate('transform2D');
       } else if (type === 'symmetric') {
-        if (currentDim === 2) {
-          setMatrix('A', [[2, -1], [-1, 3]]);
-          setMatrix('B', [[1, 2], [2, 5]]);
-        } else {
-          setMatrix('A', [[2, 1, 0], [1, 3, -1], [0, -1, 4]]);
-          setMatrix('B', [[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
-        }
+        if (currentDim === 2) { setMatrix('A', [[2,-1],[-1,3]]); setMatrix('B', [[1,2],[2,5]]); }
+        else { setMatrix('A', [[2,1,0],[1,3,-1],[0,-1,4]]); setMatrix('B', [[1,0,0],[0,1,0],[0,0,1]]); }
         calculate('det');
       } else if (type === 'system') {
         setDimension(2);
-        setMatrix('A', [[2, 3], [5, -1]]);
-        // Store constants in B column
-        setMatrix('B', [[8, 0], [3, 0]]);
+        setMatrix('A', [[2,3],[5,-1]]);
+        setMatrix('B', [[8,0],[3,0]]);
         calculate('rref');
       } else if (type === 'singular') {
-        if (currentDim === 2) {
-          setMatrix('A', [[2, 4], [1, 2]]);
-        } else {
-          setMatrix('A', [[1, 2, 3], [2, 4, 6], [1, 0, 1]]);
-        }
+        if (currentDim === 2) setMatrix('A', [[2,4],[1,2]]);
+        else                  setMatrix('A', [[1,2,3],[2,4,6],[1,0,1]]);
         calculate('det');
       }
     }
@@ -403,106 +311,88 @@
     function showStatus(text) {
       const el = document.getElementById('calc-status');
       el.textContent = text;
-      el.classList.remove('bg-blue-900/60', 'text-blue-300');
-      el.classList.add('bg-emerald-900/60', 'text-emerald-300');
+      el.classList.remove('bg-blue-900/60','text-blue-300');
+      el.classList.add('bg-emerald-900/60','text-emerald-300');
       setTimeout(() => {
         el.textContent = 'COMPUTED';
-        el.classList.add('bg-blue-900/60', 'text-blue-300');
-        el.classList.remove('bg-emerald-900/60', 'text-emerald-300');
+        el.classList.add('bg-blue-900/60','text-blue-300');
+        el.classList.remove('bg-emerald-900/60','text-emerald-300');
       }, 1500);
     }
 
-    /* Format 2D array to LaTeX */
+    /* ---------- Matrix → LaTeX ---------- */
     function toLatexMatrix(m) {
-      let str = '\\begin{pmatrix}';
+      let s = '\\begin{pmatrix}';
       for (let r = 0; r < m.length; r++) {
-        str += m[r].map(v => Number.isInteger(v) ? v : Number(v.toFixed(3))).join(' & ');
-        if (r < m.length - 1) str += ' \\\\ ';
+        s += m[r].map(v => Number.isInteger(v) ? v : Number(v.toFixed(3))).join(' & ');
+        if (r < m.length - 1) s += ' \\\\ ';
       }
-      str += '\\end{pmatrix}';
-      return str;
+      return s + '\\end{pmatrix}';
     }
 
-    /* Math Engine */
-    function round(n, dec = 3) {
-      return Number(Math.round(n + 'e' + dec) + 'e-' + dec);
-    }
-
-    function det2x2(m) {
-      return m[0][0] * m[1][1] - m[0][1] * m[1][0];
-    }
-
-    function det3x3(m) {
-      return (
-        m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
-        m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
-        m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
-      );
-    }
+    /* ---------- Math helpers ---------- */
+    const round = (n, d = 3) => Number(Math.round(n + 'e' + d) + 'e-' + d);
+    const det2x2 = m => m[0][0]*m[1][1] - m[0][1]*m[1][0];
+    const det3x3 = m =>
+      m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1]) -
+      m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0]) +
+      m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]);
 
     function invert2x2(m) {
       const d = det2x2(m);
       if (Math.abs(d) < 1e-12) return null;
       return [
-        [round(m[1][1] / d), round(-m[0][1] / d)],
-        [round(-m[1][0] / d), round(m[0][0] / d)]
+        [round(m[1][1]/d), round(-m[0][1]/d)],
+        [round(-m[1][0]/d), round(m[0][0]/d)]
       ];
     }
 
     function invert3x3(m) {
       const d = det3x3(m);
       if (Math.abs(d) < 1e-12) return null;
-      const inv = [];
+      const out = [];
       for (let i = 0; i < 3; i++) {
-        inv[i] = [];
+        out[i] = [];
         for (let j = 0; j < 3; j++) {
-          const minor = [
-            m[(j + 1) % 3][(i + 1) % 3] * m[(j + 2) % 3][(i + 2) % 3] -
-            m[(j + 1) % 3][(i + 2) % 3] * m[(j + 2) % 3][(i + 1) % 3]
-          ];
-          inv[i][j] = round(minor / d);
+          const a = (j+1)%3, b = (j+2)%3, c = (i+1)%3, e = (i+2)%3;
+          const minor = m[a][c]*m[b][e] - m[a][e]*m[b][c];
+          out[i][j] = round(minor / d);
         }
       }
-      return inv;
+      return out;
     }
 
     function multiply(A, B) {
-      const dim = A.length;
-      const res = [];
-      for (let i = 0; i < dim; i++) {
-        res[i] = [];
-        for (let j = 0; j < dim; j++) {
-          let sum = 0;
-          for (let k = 0; k < dim; k++) {
-            sum += A[i][k] * B[k][j];
-          }
-          res[i][j] = round(sum);
+      const n = A.length, out = [];
+      for (let i = 0; i < n; i++) {
+        out[i] = [];
+        for (let j = 0; j < n; j++) {
+          let s = 0;
+          for (let k = 0; k < n; k++) s += A[i][k] * B[k][j];
+          out[i][j] = round(s);
         }
       }
-      return res;
+      return out;
     }
 
-    /* GeoGebra Safe Command Evaluation */
-    function clearGeoGebra(xmin = -8, xmax = 8, ymin = -6, ymax = 6) {
+    /* ---------- GeoGebra bridge ---------- */
+    function clearGeoGebra(xmin=-8, xmax=8, ymin=-6, ymax=6) {
       if (!ggbApi) return;
       try {
         ggbApi.newConstruction();
         ggbApi.setAxesVisible(true, true);
         ggbApi.setGridVisible(true);
         ggbApi.setCoordSystem(xmin, xmax, ymin, ymax);
-      } catch (e) {
-        console.warn("GGB Reset err:", e);
-      }
+      } catch (e) { console.warn('GGB reset err:', e); }
     }
 
-    function evalGGBCommands(commands) {
+    function evalGGBCommands(cmds) {
       if (!ggbApi) return;
-      commands.forEach(cmd => {
+      cmds.forEach(cmd => {
         try {
-          ggbApi.evalCommand(cmd);
-        } catch (err) {
-          console.warn("GGB failed cmd:", cmd, err);
-        }
+          const ok = ggbApi.evalCommand(cmd);
+          if (!ok) console.warn('GGB command returned false:', cmd);
+        } catch (err) { console.warn('GGB failed cmd:', cmd, err); }
       });
     }
 
@@ -511,7 +401,13 @@
       ggbApi.setCoordSystem(-8, 8, -6, 6);
     }
 
-    /* Main Calculation & GeoGebra Bridge */
+    /* ---------- Build a GeoGebra matrix literal from a 2D array ---------- */
+    function ggMatrixLiteral(m) {
+      // GeoGebra syntax: {{a,b},{c,d}}
+      return '{' + m.map(r => '{' + r.join(',') + '}').join(',') + '}';
+    }
+
+    /* ---------- Main dispatcher ---------- */
     function calculate(op) {
       const A = getMatrix('A');
       const B = getMatrix('B');
@@ -519,126 +415,110 @@
       const resPanel = document.getElementById('results-content');
       const descriptor = document.getElementById('plot-descriptor');
 
-      showStatus("COMPUTING...");
+      showStatus('COMPUTING...');
 
       if (op === 'add') {
         const C = [];
         for (let r = 0; r < currentDim; r++) {
           C[r] = [];
-          for (let c = 0; c < currentDim; c++) {
-            C[r][c] = round(A[r][c] + B[r][c]);
-          }
+          for (let c = 0; c < currentDim; c++) C[r][c] = round(A[r][c] + B[r][c]);
         }
         resPanel.innerHTML = `
           <div class="font-semibold text-white">Matrix Addition: \\(C = A + B\\)</div>
           <div class="my-2">\\[${toLatexMatrix(A)} + ${toLatexMatrix(B)} = ${toLatexMatrix(C)}\\]</div>
-          <p class="text-slate-400">Summed element-by-element: \\(c_{ij} = a_{ij} + b_{ij}\\).</p>
+          <p class="text-slate-400">Element-wise: \\(c_{ij} = a_{ij} + b_{ij}\\).</p>
         `;
-        descriptor.textContent = "Addition: Vector Sum of Column 1";
-        
-        // Visualize in GeoGebra: Vector addition for 1st column
+        descriptor.textContent = 'Addition: Vector Sum of Column 1';
+
         clearGeoGebra(-10, 10, -10, 10);
         evalGGBCommands([
           `u = Vector((0,0), (${A[0][0]}, ${A[1][0]}))`,
           `v = Vector((${A[0][0]}, ${A[1][0]}), (${C[0][0]}, ${C[1][0]}))`,
           `w = Vector((0,0), (${C[0][0]}, ${C[1][0]}))`,
-          `SetColor(u, "Blue")`,
-          `SetColor(v, "Green")`,
-          `SetColor(w, "Red")`,
-          `SetLineStyle(v, 2)`,
-          `t1 = Text("u = Col_1(A)", (${A[0][0]}/2, ${A[1][0]}/2))`,
-          `t2 = Text("w = A+B Col 1", (${C[0][0]}/2 + 0.3, ${C[1][0]}/2 - 0.3))`,
-          `SetColor(t1, "Blue")`,
-          `SetColor(t2, "Red")`
+          `SetColor(u, 0, 0, 255)`,
+          `SetColor(v, 0, 128, 0)`,
+          `SetColor(w, 255, 0, 0)`,
+          `SetLineStyle(v, 2)`
         ]);
 
       } else if (op === 'sub') {
         const C = [];
         for (let r = 0; r < currentDim; r++) {
           C[r] = [];
-          for (let c = 0; c < currentDim; c++) {
-            C[r][c] = round(A[r][c] - B[r][c]);
-          }
+          for (let c = 0; c < currentDim; c++) C[r][c] = round(A[r][c] - B[r][c]);
         }
         resPanel.innerHTML = `
           <div class="font-semibold text-white">Matrix Subtraction: \\(D = A - B\\)</div>
           <div class="my-2">\\[${toLatexMatrix(A)} - ${toLatexMatrix(B)} = ${toLatexMatrix(C)}\\]</div>
-          <p class="text-slate-400">Subtracted element-by-element: \\(d_{ij} = a_{ij} - b_{ij}\\).</p>
+          <p class="text-slate-400">Element-wise: \\(d_{ij} = a_{ij} - b_{ij}\\).</p>
         `;
-        descriptor.textContent = "Difference: Vector Col 1";
+        descriptor.textContent = 'Difference: Vector Col 1';
+
         clearGeoGebra(-8, 8, -6, 6);
         evalGGBCommands([
           `u = Vector((0,0), (${A[0][0]}, ${A[1][0]}))`,
           `v = Vector((0,0), (${B[0][0]}, ${B[1][0]}))`,
           `diff = Vector((0,0), (${C[0][0]}, ${C[1][0]}))`,
-          `SetColor(u, "Blue")`,
-          `SetColor(v, "Green")`,
-          `SetColor(diff, "Red")`,
-          `t1 = Text("A - B", (${C[0][0]}, ${C[1][0]} + 0.5))`
+          `SetColor(u, 0, 0, 255)`,
+          `SetColor(v, 0, 128, 0)`,
+          `SetColor(diff, 255, 0, 0)`
         ]);
 
       } else if (op === 'mulAB' || op === 'mulBA') {
-        const first = op === 'mulAB' ? A : B;
+        const first  = op === 'mulAB' ? A : B;
         const second = op === 'mulAB' ? B : A;
-        const name1 = op === 'mulAB' ? 'A' : 'B';
-        const name2 = op === 'mulAB' ? 'B' : 'A';
+        const n1 = op === 'mulAB' ? 'A' : 'B';
+        const n2 = op === 'mulAB' ? 'B' : 'A';
         const P = multiply(first, second);
 
         resPanel.innerHTML = `
-          <div class="font-semibold text-white">Matrix Multiplication: \\(${name1} \\times ${name2}\\)</div>
+          <div class="font-semibold text-white">Matrix Multiplication: \\(${n1} \\times ${n2}\\)</div>
           <div class="my-2">\\[${toLatexMatrix(first)} \\times ${toLatexMatrix(second)} = ${toLatexMatrix(P)}\\]</div>
           <div class="p-2 bg-slate-800/80 rounded border border-slate-700 font-mono text-[11px] text-slate-300">
-            Row 1 · Col 1 = ${first[0].map((v, i) => `${v}×${second[i][0]}`).join(' + ')} = ${P[0][0]}
+            Row 1 · Col 1 = ${first[0].map((v,i)=>`${v}×${second[i][0]}`).join(' + ')} = ${P[0][0]}
           </div>
         `;
-        descriptor.textContent = `Product ${name1}·${name2}: Basis Vectors`;
+        descriptor.textContent = `Product ${n1}·${n2}: Basis Vectors`;
 
-        // Visualize transformed standard basis e1, e2
         clearGeoGebra(-8, 8, -6, 6);
         evalGGBCommands([
           `e1 = Vector((0,0), (1,0))`,
           `e2 = Vector((0,0), (0,1))`,
           `col1 = Vector((0,0), (${P[0][0]}, ${P[1][0]}))`,
           `col2 = Vector((0,0), (${P[0][1]}, ${P[1][1]}))`,
-          `SetColor(e1, "Gray")`,
-          `SetColor(e2, "Gray")`,
-          `SetColor(col1, "Blue")`,
-          `SetColor(col2, "Red")`,
-          `t1 = Text("${name1}${name2} * e_1", (${P[0][0]} + 0.2, ${P[1][0]} + 0.2))`,
-          `t2 = Text("${name1}${name2} * e_2", (${P[0][1]} + 0.2, ${P[1][1]} + 0.2))`,
-          `SetColor(t1, "Blue")`,
-          `SetColor(t2, "Red")`
+          `SetColor(e1, 150, 150, 150)`,
+          `SetColor(e2, 150, 150, 150)`,
+          `SetColor(col1, 0, 0, 255)`,
+          `SetColor(col2, 255, 0, 0)`
         ]);
 
       } else if (op === 'scalar') {
         const S = [];
         for (let r = 0; r < currentDim; r++) {
           S[r] = [];
-          for (let c = 0; c < currentDim; c++) {
-            S[r][c] = round(kVal * A[r][c]);
-          }
+          for (let c = 0; c < currentDim; c++) S[r][c] = round(kVal * A[r][c]);
         }
         resPanel.innerHTML = `
           <div class="font-semibold text-white">Scalar Multiplication: \\(${kVal} \\cdot A\\)</div>
           <div class="my-2">\\[${kVal} \\cdot ${toLatexMatrix(A)} = ${toLatexMatrix(S)}\\]</div>
-          <p class="text-slate-400">Every matrix entry is scaled by the scalar factor \\(k = ${kVal}\\).</p>
+          <p class="text-slate-400">Every entry scaled by \\(k = ${kVal}\\).</p>
         `;
         descriptor.textContent = `Scalar Scaling (k = ${kVal})`;
+
         clearGeoGebra(-10, 10, -10, 10);
         evalGGBCommands([
           `orig = Vector((0,0), (${A[0][0]}, ${A[1][0]}))`,
           `scaled = Vector((0,0), (${S[0][0]}, ${S[1][0]}))`,
-          `SetColor(orig, "Gray")`,
-          `SetColor(scaled, "Orange")`,
-          `SetLineThickness(scaled, 5)`,
-          `t = Text("${kVal} * v", (${S[0][0]}, ${S[1][0]} + 0.3))`
+          `SetColor(orig, 150, 150, 150)`,
+          `SetColor(scaled, 255, 140, 0)`,
+          `SetLineThickness(scaled, 5)`
         ]);
 
       } else if (op === 'det') {
         const detA = currentDim === 2 ? det2x2(A) : det3x3(A);
         const detB = currentDim === 2 ? det2x2(B) : det3x3(B);
 
-        let detAFormula = currentDim === 2
+        const detAFormula = currentDim === 2
           ? `(${A[0][0]} \\times ${A[1][1]}) - (${A[0][1]} \\times ${A[1][0]}) = ${detA}`
           : `Expansion by Row 1 = ${detA}`;
 
@@ -648,26 +528,32 @@
           <div class="text-[11px] text-slate-400 font-mono mb-2">Step: \\(${detAFormula}\\)</div>
           <div class="my-1.5">\\[\\det(B) = |B| = ${round(detB)}\\]</div>
           <div class="mt-2 p-2 bg-slate-800 rounded border border-slate-700">
-            <strong>Geometric meaning:</strong> In 2D, \\(|\\det(A)|\\) equals the area of the transformed unit square parallelogram. ${Math.abs(detA) < 1e-6 ? '<span class="text-rose-400">det(A) = 0: Matrix is Singular (Non-Invertible, space collapses).</span>' : '<span class="text-emerald-400">det(A) ≠ 0: Matrix is Invertible.</span>'}
+            <strong>Geometric meaning:</strong> \\(|\\det(A)|\\) equals area of transformed unit square.
+            ${Math.abs(detA) < 1e-6
+              ? '<span class="text-rose-400">det(A) = 0: Singular (space collapses).</span>'
+              : '<span class="text-emerald-400">det(A) ≠ 0: Invertible.</span>'}
           </div>
         `;
-        descriptor.textContent = `Determinant Area: Parallelogram = |det(A)| = ${Math.abs(round(detA))}`;
+        descriptor.textContent = `Determinant Area = |det(A)| = ${Math.abs(round(detA))}`;
 
-        // Visualize transformed unit square parallelogram in GeoGebra
+        // Compute midpoint in JS to avoid P2_x/P2_y
+        const p2x = (A[0][0] + A[0][1]) / 2;
+        const p2y = (A[1][0] + A[1][1]) / 2;
+
         clearGeoGebra(-8, 8, -6, 6);
         evalGGBCommands([
-          `O = (0, 0)`,
+          `O = (0,0)`,
           `P1 = (${A[0][0]}, ${A[1][0]})`,
           `P2 = (${A[0][0] + A[0][1]}, ${A[1][0] + A[1][1]})`,
           `P3 = (${A[0][1]}, ${A[1][1]})`,
           `Poly = Polygon(O, P1, P2, P3)`,
-          `SetColor(Poly, "Red")`,
+          `SetColor(Poly, 255, 0, 0)`,
           `SetFilling(Poly, 0.25)`,
           `v1 = Vector(O, P1)`,
           `v2 = Vector(O, P3)`,
-          `SetColor(v1, "Blue")`,
-          `SetColor(v2, "DarkGreen")`,
-          `lbl = Text("Area = " + abs(${round(detA)}), (P2_x/2, P2_y/2))`
+          `SetColor(v1, 0, 0, 255)`,
+          `SetColor(v2, 0, 100, 0)`,
+          `lbl = Text("Area = " + ${Math.abs(round(detA))}, (${p2x}, ${p2y}))`
         ]);
 
       } else if (op === 'invA') {
@@ -677,34 +563,34 @@
         if (!invA) {
           resPanel.innerHTML = `
             <div class="text-rose-400 font-semibold text-sm">Matrix A is Singular (det(A) = 0)</div>
-            <p class="mt-2 text-slate-300">Because the determinant is zero, Matrix A has no multiplicative inverse \\(A^{-1}\\). Columns are linearly dependent.</p>
+            <p class="mt-2 text-slate-300">No multiplicative inverse — columns are linearly dependent.</p>
           `;
-          descriptor.textContent = "Singular Matrix (Collinear Span)";
+          descriptor.textContent = 'Singular Matrix (Collinear Span)';
+
           clearGeoGebra(-6, 6, -6, 6);
           evalGGBCommands([
             `v1 = Vector((0,0), (${A[0][0]}, ${A[1][0]}))`,
             `v2 = Vector((0,0), (${A[0][1]}, ${A[1][1]}))`,
-            `SetColor(v1, "Red")`,
-            `SetColor(v2, "Red")`,
-            `t = Text("Rank Collapsed: Span is 1D line", (-4, 4))`,
-            `SetColor(t, "Red")`
+            `SetColor(v1, 255, 0, 0)`,
+            `SetColor(v2, 255, 0, 0)`
           ]);
         } else {
           resPanel.innerHTML = `
             <div class="font-semibold text-white">Inverse Matrix \\(A^{-1}\\):</div>
             <div class="my-2">\\[A^{-1} = \\frac{1}{\\det(A)} \\text{adj}(A) = ${toLatexMatrix(invA)}\\]</div>
-            <div class="text-emerald-400 font-mono text-[11px]">Identity Check: \\(A \\times A^{-1} = I\\)</div>
+            <div class="text-emerald-400 font-mono text-[11px]">Identity check: \\(A \\times A^{-1} = I\\)</div>
           `;
-          descriptor.textContent = "Inverse Matrix Mappings";
+          descriptor.textContent = 'Inverse Matrix Mapping';
+
           clearGeoGebra(-6, 6, -6, 6);
           evalGGBCommands([
-            `t1 = Text("Matrix A = " + {{${A.map(r=>'{'+r.join(',')+'}').join(',')}}}, (-5, 3))`,
-            `t2 = Text("A^{-1} = " + {{${invA.map(r=>'{'+r.join(',')+'}').join(',')}}}, (-5, 1))`,
+            `t1 = Text("A = " + ${ggMatrixLiteral(A)}, (-5, 3))`,
+            `t2 = Text("A^{-1} = " + ${ggMatrixLiteral(invA)}, (-5, 1))`,
             `t3 = Text("det(A) = " + ${round(detA)}, (-5, -1))`,
             `SetFontSize(t1, 16)`,
             `SetFontSize(t2, 16)`,
             `SetFontSize(t3, 16)`,
-            `SetColor(t2, "Blue")`
+            `SetColor(t2, 0, 0, 255)`
           ]);
         }
 
@@ -713,9 +599,7 @@
         let trA = 0;
         for (let r = 0; r < currentDim; r++) {
           At[r] = [];
-          for (let c = 0; c < currentDim; c++) {
-            At[r][c] = A[c][r];
-          }
+          for (let c = 0; c < currentDim; c++) At[r][c] = A[c][r];
           trA += A[r][r];
         }
 
@@ -723,71 +607,64 @@
           <div class="font-semibold text-white">Transpose \\(A^T\\) &amp; Trace \\(\\text{tr}(A)\\):</div>
           <div class="my-2">\\[A^T = ${toLatexMatrix(At)}\\]</div>
           <div class="p-2 bg-slate-800 rounded font-mono text-xs text-blue-300">
-            Trace: \\(\\text{tr}(A) = \\sum a_{ii} = ${A.map((_, i) => A[i][i]).join(' + ')} = ${trA}\\)
+            Trace = \\(${A.map((_,i)=>A[i][i]).join(' + ')} = ${trA}\\)
           </div>
         `;
         descriptor.textContent = `A^T & Trace = ${trA}`;
+
         clearGeoGebra(-6, 6, -6, 6);
         evalGGBCommands([
-          `t1 = Text("Original A = " + {{${A.map(r=>'{'+r.join(',')+'}').join(',')}}}, (-5, 3))`,
-          `t2 = Text("Transpose A^T = " + {{${At.map(r=>'{'+r.join(',')+'}').join(',')}}}, (-5, 1))`,
+          `t1 = Text("A = " + ${ggMatrixLiteral(A)}, (-5, 3))`,
+          `t2 = Text("A^T = " + ${ggMatrixLiteral(At)}, (-5, 1))`,
           `t3 = Text("Trace = " + ${trA}, (-5, -1))`,
           `SetFontSize(t1, 16)`,
           `SetFontSize(t2, 16)`,
-          `SetColor(t3, "DarkGreen")`,
-          `SetFontSize(t3, 16)`
+          `SetFontSize(t3, 16)`,
+          `SetColor(t3, 0, 100, 0)`
         ]);
 
       } else if (op === 'eigen') {
         if (currentDim === 2) {
           const a = A[0][0], b = A[0][1], c = A[1][0], d = A[1][1];
           const trace = a + d;
-          const det = a * d - b * c;
-          const discriminant = trace * trace - 4 * det;
+          const det = a*d - b*c;
+          const disc = trace*trace - 4*det;
 
           let rootsHtml = '';
-          if (discriminant >= 0) {
-            const lambda1 = round((trace + Math.sqrt(discriminant)) / 2);
-            const lambda2 = round((trace - Math.sqrt(discriminant)) / 2);
+          if (disc >= 0) {
+            const l1 = round((trace + Math.sqrt(disc)) / 2);
+            const l2 = round((trace - Math.sqrt(disc)) / 2);
             rootsHtml = `
               <div class="text-purple-300 font-mono mt-1">Real Eigenvalues:</div>
-              <div class="text-sm font-bold text-white mt-0.5">\\(\\lambda_1 = ${lambda1}, \\quad \\lambda_2 = ${lambda2}\\)</div>
+              <div class="text-sm font-bold text-white mt-0.5">\\(\\lambda_1 = ${l1},\\quad \\lambda_2 = ${l2}\\)</div>
             `;
+            descriptor.textContent = `Char. Poly roots at λ = ${l1}, ${l2}`;
 
-            descriptor.textContent = `Char. Poly: Roots at λ = ${lambda1}, ${lambda2}`;
             clearGeoGebra(-8, 8, -6, 8);
-            // Plot characteristic polynomial f(x) = x^2 - tr(A)*x + det(A)
             evalGGBCommands([
               `f(x) = x^2 - (${trace})*x + (${det})`,
-              `SetColor(f, "Purple")`,
+              `SetColor(f, 128, 0, 128)`,
               `SetLineThickness(f, 3)`,
-              `R1 = (${lambda1}, 0)`,
-              `R2 = (${lambda2}, 0)`,
-              `SetColor(R1, "Red")`,
-              `SetColor(R2, "Red")`,
+              `R1 = (${l1}, 0)`,
+              `R2 = (${l2}, 0)`,
+              `SetColor(R1, 255, 0, 0)`,
+              `SetColor(R2, 255, 0, 0)`,
               `SetPointSize(R1, 6)`,
-              `SetPointSize(R2, 6)`,
-              `txt1 = Text("p(λ) = λ² - (" + ${trace} + ")λ + " + ${det}, (-6, 5))`,
-              `txt2 = Text("λ₁ = " + ${lambda1}, (${lambda1} + 0.3, 0.6))`,
-              `txt3 = Text("λ₂ = " + ${lambda2}, (${lambda2} + 0.3, -0.8))`,
-              `SetColor(txt1, "Purple")`,
-              `SetFontSize(txt1, 15)`
+              `SetPointSize(R2, 6)`
             ]);
           } else {
-            const realPart = round(trace / 2);
-            const imagPart = round(Math.sqrt(-discriminant) / 2);
+            const re = round(trace / 2);
+            const im = round(Math.sqrt(-disc) / 2);
             rootsHtml = `
               <div class="text-purple-300 font-mono mt-1">Complex Conjugate Eigenvalues:</div>
-              <div class="text-sm font-bold text-white mt-0.5">\\(\\lambda = ${realPart} \\pm ${imagPart}i\\)</div>
+              <div class="text-sm font-bold text-white mt-0.5">\\(\\lambda = ${re} \\pm ${im}i\\)</div>
             `;
-            descriptor.textContent = `Complex Eigenvalues (No Real X-Intercepts)`;
+            descriptor.textContent = 'Complex Eigenvalues (no real x-intercepts)';
+
             clearGeoGebra(-8, 8, -6, 8);
             evalGGBCommands([
               `f(x) = x^2 - (${trace})*x + (${det})`,
-              `SetColor(f, "Purple")`,
-              `t = Text("Discriminant < 0: Complex Roots", (-5, 3))`,
-              `SetColor(t, "Red")`,
-              `SetFontSize(t, 16)`
+              `SetColor(f, 128, 0, 128)`
             ]);
           }
 
@@ -798,151 +675,141 @@
             ${rootsHtml}
           `;
         } else {
-          // 3x3 general statement
+          // Full 3×3 characteristic polynomial: λ³ − tr·λ² + M·λ − det
           const trA = A[0][0] + A[1][1] + A[2][2];
+          const M =
+              (A[0][0]*A[1][1] - A[0][1]*A[1][0])
+            + (A[0][0]*A[2][2] - A[0][2]*A[2][0])
+            + (A[1][1]*A[2][2] - A[1][2]*A[2][1]);
           const detA = det3x3(A);
+
           resPanel.innerHTML = `
             <div class="font-semibold text-white">Characteristic Equation (3×3):</div>
-            <div class="my-2">\\[p(\\lambda) = -\\lambda^3 + \\text{tr}(A)\\lambda^2 - M\\lambda + \\det(A) = 0\\]</div>
-            <div class="font-mono text-xs text-slate-300">Trace: ${trA}, Det: ${detA}</div>
-            <p class="text-slate-400 mt-2">Plotted characteristic curve on canvas for roots analysis.</p>
+            <div class="my-2">\\[p(\\lambda) = \\lambda^3 - \\text{tr}(A)\\lambda^2 + M\\lambda - \\det(A) = 0\\]</div>
+            <div class="font-mono text-xs text-slate-300">tr(A) = ${trA}, M = ${round(M)}, det(A) = ${round(detA)}</div>
           `;
-          descriptor.textContent = "3×3 Characteristic Polynomial Curve";
+          descriptor.textContent = '3×3 Characteristic Polynomial Curve';
+
           clearGeoGebra(-8, 8, -10, 10);
           evalGGBCommands([
-            `f(x) = -x^3 + (${trA})*x^2 - (${detA})`,
-            `SetColor(f, "Purple")`,
-            `txt = Text("p(λ) = -λ³ + Tr(A)λ² - Det(A)", (-6, 6))`,
-            `SetColor(txt, "Purple")`
+            `f(x) = x^3 - (${trA})*x^2 + (${round(M)})*x - (${round(detA)})`,
+            `SetColor(f, 128, 0, 128)`,
+            `SetLineThickness(f, 3)`
           ]);
         }
 
       } else if (op === 'transform2D') {
         const vx = parseFloat(document.getElementById('vec-x').value) || 1;
         const vy = parseFloat(document.getElementById('vec-y').value) || 1;
-
-        // T * v
-        const tvX = round(A[0][0] * vx + A[0][1] * vy);
-        const tvY = round(A[1][0] * vx + A[1][1] * vy);
+        const tvX = round(A[0][0]*vx + A[0][1]*vy);
+        const tvY = round(A[1][0]*vx + A[1][1]*vy);
 
         resPanel.innerHTML = `
-          <div class="font-semibold text-white">2D Linear Transformation Mapping:</div>
-          <div class="my-2">\\[T(\\mathbf{v}) = A \\mathbf{v} = ${toLatexMatrix([[A[0][0], A[0][1]], [A[1][0], A[1][1]]])} \\begin{pmatrix} ${vx} \\\\ ${vy} \\end{pmatrix} = \\begin{pmatrix} ${tvX} \\\\ ${tvY} \\end{pmatrix}\\]</div>
+          <div class="font-semibold text-white">2D Linear Transformation:</div>
+          <div class="my-2">\\[A\\mathbf{v} = ${toLatexMatrix([[A[0][0],A[0][1]],[A[1][0],A[1][1]]])}
+            \\begin{pmatrix}${vx}\\\\${vy}\\end{pmatrix}
+            = \\begin{pmatrix}${tvX}\\\\${tvY}\\end{pmatrix}\\]</div>
           <div class="space-y-1 text-slate-300 font-mono text-[11px]">
-            <div>• \\(T(\\hat{i}) = T(1,0) = (${A[0][0]}, ${A[1][0]})\\)</div>
-            <div>• \\(T(\\hat{j}) = T(0,1) = (${A[0][1]}, ${A[1][1]})\\)</div>
-            <div>• Output \\(T(\\mathbf{v}) = (${tvX}, ${tvY})\\)</div>
+            <div>• \\(T(\\hat{i}) = (${A[0][0]}, ${A[1][0]})\\)</div>
+            <div>• \\(T(\\hat{j}) = (${A[0][1]}, ${A[1][1]})\\)</div>
+            <div>• \\(T(\\mathbf{v}) = (${tvX}, ${tvY})\\)</div>
           </div>
         `;
-        descriptor.textContent = "Transforming Unit Grid and Custom Vector v";
+        descriptor.textContent = 'Transforming unit grid and vector v';
 
         clearGeoGebra(-8, 8, -6, 6);
         evalGGBCommands([
-          // Unit Grid Square
           `O = (0,0)`,
-          `I = (1, 0)`,
-          `J = (0, 1)`,
-          `K = (1, 1)`,
+          `I = (1,0)`, `J = (0,1)`, `K = (1,1)`,
           `UnitBox = Polygon(O, I, K, J)`,
-          `SetColor(UnitBox, "Gray")`,
+          `SetColor(UnitBox, 150, 150, 150)`,
           `SetFilling(UnitBox, 0.1)`,
           `SetLineStyle(UnitBox, 2)`,
-          // Transformed Parallelogram
+
           `TI = (${A[0][0]}, ${A[1][0]})`,
           `TJ = (${A[0][1]}, ${A[1][1]})`,
           `TK = (${A[0][0] + A[0][1]}, ${A[1][0] + A[1][1]})`,
           `TransBox = Polygon(O, TI, TK, TJ)`,
-          `SetColor(TransBox, "Blue")`,
+          `SetColor(TransBox, 0, 0, 255)`,
           `SetFilling(TransBox, 0.2)`,
-          // Vectors
-          `vOrig = Vector(O, (${vx}, ${vy}))`,
+
+          `vOrig  = Vector(O, (${vx}, ${vy}))`,
           `vTrans = Vector(O, (${tvX}, ${tvY}))`,
-          `SetColor(vOrig, "Gray")`,
-          `SetColor(vTrans, "Red")`,
-          `SetLineThickness(vTrans, 4)`,
-          `t1 = Text("v (" + ${vx} + "," + ${vy} + ")", (${vx}+0.2, ${vy}+0.2))`,
-          `t2 = Text("T(v) (" + ${tvX} + "," + ${tvY} + ")", (${tvX}+0.2, ${tvY}+0.2))`,
-          `SetColor(t2, "Red")`
+          `SetColor(vOrig, 150, 150, 150)`,
+          `SetColor(vTrans, 255, 0, 0)`,
+          `SetLineThickness(vTrans, 4)`
         ]);
 
       } else if (op === 'rref') {
         if (currentDim === 2) {
-          // System: A * [x, y]^T = [B_00, B_10]^T
-          const b1 = B[0][0];
-          const b2 = B[1][0];
-          const d = det2x2(A);
+          const b1 = B[0][0], b2 = B[1][0];
+          const d  = det2x2(A);
 
           if (Math.abs(d) < 1e-12) {
             resPanel.innerHTML = `
-              <div class="text-rose-400 font-semibold">Singular System (det(A) = 0)</div>
-              <p class="text-slate-300 mt-1">Lines are parallel or coincident; no unique point solution exists.</p>
+              <div class="text-rose-400 font-semibold">Singular system (det(A) = 0)</div>
+              <p class="text-slate-300 mt-1">Lines parallel/coincident — no unique solution.</p>
             `;
-            descriptor.textContent = "Parallel / Indeterminate System";
+            descriptor.textContent = 'Parallel / Indeterminate System';
+
             clearGeoGebra(-8, 8, -6, 6);
             evalGGBCommands([
               `eq1: ${A[0][0]}*x + ${A[0][1]}*y = ${b1}`,
               `eq2: ${A[1][0]}*x + ${A[1][1]}*y = ${b2}`,
-              `SetColor(eq1, "Blue")`,
-              `SetColor(eq2, "Red")`
+              `SetColor(eq1, 0, 0, 255)`,
+              `SetColor(eq2, 255, 0, 0)`
             ]);
           } else {
-            // Cramer's rule / RREF solution
-            const solX = round((b1 * A[1][1] - b2 * A[0][1]) / d);
-            const solY = round((A[0][0] * b2 - A[1][0] * b1) / d);
+            const solX = round((b1*A[1][1] - b2*A[0][1]) / d);
+            const solY = round((A[0][0]*b2 - A[1][0]*b1) / d);
 
             resPanel.innerHTML = `
-              <div class="font-semibold text-white">Linear System \\(A\\mathbf{x} = \\mathbf{b}\\):</div>
+              <div class="font-semibold text-white">System \\(A\\mathbf{x} = \\mathbf{b}\\):</div>
               <div class="my-1.5 font-mono text-slate-300">
                 Eq 1: \\(${A[0][0]}x + ${A[0][1]}y = ${b1}\\)<br>
                 Eq 2: \\(${A[1][0]}x + ${A[1][1]}y = ${b2}\\)
               </div>
               <div class="p-2 bg-emerald-950/60 border border-emerald-800 rounded font-bold text-emerald-300">
-                Unique Solution: \\(x = ${solX}, \\quad y = ${solY}\\)
+                Unique solution: \\(x = ${solX},\\quad y = ${solY}\\)
               </div>
             `;
-            descriptor.textContent = `Intersection Point: (${solX}, ${solY})`;
+            descriptor.textContent = `Intersection: (${solX}, ${solY})`;
+
             clearGeoGebra(-8, 8, -6, 6);
             evalGGBCommands([
               `eq1: ${A[0][0]}*x + ${A[0][1]}*y = ${b1}`,
               `eq2: ${A[1][0]}*x + ${A[1][1]}*y = ${b2}`,
               `Sol = Intersect(eq1, eq2)`,
-              `SetColor(eq1, "Blue")`,
-              `SetColor(eq2, "DarkGreen")`,
-              `SetColor(Sol, "Red")`,
+              `SetColor(eq1, 0, 0, 255)`,
+              `SetColor(eq2, 0, 100, 0)`,
+              `SetColor(Sol, 255, 0, 0)`,
               `SetPointSize(Sol, 6)`,
-              `ShowLabel(Sol, true)`,
-              `lbl = Text("Solution: (" + ${solX} + ", " + ${solY} + ")", (${solX}+0.3, ${solY}+0.3))`,
-              `SetColor(lbl, "Red")`
+              `ShowLabel(Sol, true)`
             ]);
           }
         } else {
-          // 3x3 augmented RREF text
           resPanel.innerHTML = `
             <div class="font-semibold text-white">3×3 Augmented Solver:</div>
-            <p class="text-slate-300">Set Matrix A as coefficients and Matrix B Column 1 as constants \\(\\mathbf{b}\\).</p>
+            <p class="text-slate-300">Matrix A = coefficients, Matrix B column 1 = RHS \\(\\mathbf{b}\\).</p>
           `;
-          descriptor.textContent = "3x3 System Solver View";
+          descriptor.textContent = '3×3 System Solver View';
+
           clearGeoGebra(-6, 6, -6, 6);
           evalGGBCommands([
             `Aug = {{${A[0].join(',')}, ${B[0][0]}}, {${A[1].join(',')}, ${B[1][0]}}, {${A[2].join(',')}, ${B[2][0]}}}`,
             `R = ReducedRowEchelonForm(Aug)`,
-            `t = Text("RREF Matrix = " + R, (-5, 2))`,
+            `t = Text("RREF = " + R, (-5, 2))`,
             `SetFontSize(t, 16)`
           ]);
         }
       }
 
-      // Re-render LaTeX formulas with MathJax
-      if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise();
-      }
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
     }
 
-    /* Initialize GeoGebra Applet */
+    /* ---------- GeoGebra init ---------- */
     const ggbParameters = {
       appName: "classic",
-      width: "100%",
-      height: "100%",
       showToolBar: false,
       showAlgebraInput: false,
       showMenuBar: false,
@@ -953,11 +820,10 @@
       errorDialogsActive: false,
       useBrowserForJS: true,
       language: "en",
-      perspective: "G", // 2D Graphics view only
-      appletOnLoad: function(api) {
+      perspective: "G",
+      scaleContainerClass: "ggb-scale",
+      appletOnLoad: function (api) {
         ggbApi = api;
-        isAppletReady = true;
-        // Run initial transformation visualization
         calculate('transform2D');
       }
     };
@@ -968,7 +834,6 @@
       ggbAppletInstance.inject('ggb-element');
     });
 
-    // Handle Window Resizing to keep GeoGebra responsive
     window.addEventListener('resize', () => {
       if (ggbApi && typeof ggbApi.setSize === 'function') {
         const wrap = document.getElementById('ggb-container');
