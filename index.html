@@ -451,14 +451,11 @@
             <h2>Associate Professor | Department of Mathematics</h2>
             <p><strong>Basaveshwar Engineering College, Bagalkote, Karnataka, India</strong></p>
             <div class="profile-buttons">
-                <a href="https://scholar.google.com/citations?user=PQDhCuoAAAAJ" class="profile-btn" target="_blank" rel="noopener noreferrer">📊 Google Scholar</a>
-                <a href="https://orcid.org/0000-0002-9897-8677" class="profile-btn" target="_blank" rel="noopener noreferrer">🆔 ORCID</a>
-                <a href="https://www.scopus.com/authid/detail.uri?authorId=57217004425" class="profile-btn" target="_blank" rel="noopener noreferrer">🔬 Scopus</a>
-                <a href="personal.html" class="profile-btn profile-btn-highlight">📚 Web Applications</a>
+                 <a href="personal.html" class="profile-btn profile-btn-highlight">📚 Web Applications</a>
                  <a href="Advanced-Numerical-Methods-Solver.html" class="profile-btn profile-btn-highlight">📚 Numerical Solver</a>
                  <a href="matrix.html" class="profile-btn profile-btn-highlight">📚 Matrix Solver</a>
                  <a href="Resume.html" class="profile-btn profile-btn-highlight">📚 Resume Builder</a>
-                 <a href="co-po-calculator.html" class="profile-btn profile-btn-highlight">📚 CO PO Calculator</a>
+                 <a href="co po calculator.html" class="profile-btn profile-btn-highlight">📚 CO PO Calculator</a>
                  <a href="gate.html" class="profile-btn profile-btn-highlight">📚 Gate Mathematics</a>
                  <a href="jee.html" class="profile-btn profile-btn-highlight">📚 JEE Advanced &
 NEET Practice Portal Mock Test</a>
@@ -1001,6 +998,9 @@ NEET Practice Portal Mock Test</a>
                     <a href="https://www.researchgate.net/profile/Mahadev-Biradar" class="profile-btn" target="_blank" rel="noopener noreferrer">📄 ResearchGate</a>
                     <a href="https://linkedin.com/in/559214217" class="profile-btn" target="_blank" rel="noopener noreferrer">🔗 LinkedIn</a>
                     <a href="https://orcid.org/0000-0002-9897-8677" class="profile-btn" target="_blank" rel="noopener noreferrer">🆔 ORCID</a>
+                    <a href="https://www.scopus.com/authid/detail.uri?authorId=57217004425" class="profile-btn" target="_blank" rel="noopener noreferrer">🔬 Scopus</a>
+ 
+              
                 </div>
             </div>
             <div class="contact-form-box">
@@ -1205,6 +1205,37 @@ function handleFormSubmit(e) {
     modal.addEventListener('click', function (e) { if (e.target === this) window.closeModal(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') window.closeModal(); });
 })();
+</script>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  var countEl = document.getElementById('real-visitor-count');
+  var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
+
+  // Prevent counting multiple refreshes within the same browser session
+  var isNewVisit = !sessionStorage.getItem('visited_session');
+
+  var query = isNewVisit 
+    ? '?ua=' + encodeURIComponent(navigator.userAgent) 
+    : '?ua=' + encodeURIComponent(navigator.userAgent) + '&countOnly=true';
+
+  fetch(scriptUrl + query)
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data && typeof data.totalVisits === 'number') {
+        if (countEl) {
+          countEl.textContent = data.totalVisits.toLocaleString();
+        }
+        if (isNewVisit) {
+          sessionStorage.setItem('visited_session', 'true');
+        }
+      }
+    })
+    .catch(function (err) {
+      if (countEl) {
+        countEl.textContent = 'Active';
+      }
+    });
+});
 </script>
 </body>
 </html>
