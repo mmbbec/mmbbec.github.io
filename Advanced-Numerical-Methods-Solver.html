@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JZRW69TE7N');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Numerical Lab Studio + Statistics Dashboard</title>
@@ -363,18 +372,6 @@ html[data-theme="dark"] #stats-app .topbar{background:rgba(8,11,18,.75)}
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
 
-   <!-- STICKY HEADER -->
-    <header class="page-header">
-        <div class="header-left">
-            <span class="logo-icon">📋</span>
-            <h1>Syllabus <span>Hub</span></h1>
-        </div>
-        <div class="header-right">
-            <a href="index.html" class="home-btn">🏠 Home</a>
-            <a href="free-tools.html">🛠️ Free Tools</a>
-            <a href="index.html#contact">📧 Contact</a>
-        </div>
-    </header>
 <!-- ========================= APP SWITCHER ========================= -->
 <div id="app-switcher">
   <button data-app="num" class="active">
@@ -424,6 +421,7 @@ html[data-theme="dark"] #stats-app .topbar{background:rgba(8,11,18,.75)}
         <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open navigation"></button>
         <div class="crumb"><span>Statistics</span><span style="opacity:.4">/</span><b id="crumb">Dashboard</b></div>
         <div class="top-right">
+          <a href="index.html" class="icon-btn" title="Home" aria-label="Home" style="text-decoration:none">🏠</a>
           <div class="pchip">
             <div class="ring">
               <svg viewBox="0 0 36 36">
@@ -498,13 +496,17 @@ function fmtTick(v) {
 function downloadCSV(rows, filename) {
   if (!rows || !rows.length) return;
   const keys = Object.keys(rows[0]);
-  const csv = [keys.join(","), ...rows.map((r) => keys.map((k) => r[k]).join(","))].join("\n");
+  const esc = (v) => {
+    const s = String(v == null ? "" : v);
+    return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const csv = [keys.join(","), ...rows.map(r => keys.map(k => esc(r[k])).join(","))].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function parseMatrix(str) {
   const lines = str.trim().split(/[\n;]+/).filter((l) => l.trim());
@@ -518,12 +520,24 @@ function parseMatrix(str) {
   return { A: rows.map((r) => r.slice(0, n)), b: rows.map((r) => r[n]), n };
 }
 
+function useKatexReady() {
+  const [ready, setReady] = React.useState(typeof window.katex !== "undefined");
+  React.useEffect(() => {
+    if (ready) return;
+    const t = setInterval(() => {
+      if (typeof window.katex !== "undefined") { setReady(true); clearInterval(t); }
+    }, 100);
+    return () => clearInterval(t);
+  }, [ready]);
+  return ready;
+}
 function Tex({ children, display = false, className = "" }) {
+  const ready = useKatexReady();
   const html = useMemo(() => {
-    if (typeof katex === "undefined") return null;
-    try { return katex.renderToString(String(children), { throwOnError: false, displayMode: display }); }
+    if (!ready) return null;
+    try { return window.katex.renderToString(String(children), { throwOnError: false, displayMode: display }); }
     catch { return null; }
-  }, [children, display]);
+  }, [children, display, ready]);
   if (!html) return <span className={className}>{children}</span>;
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 }
@@ -546,9 +560,6 @@ function Tabs({ tabs, active, onChange }) {
   );
 }
 
-/* ============================================================
-   SolverTitle — unified, dynamic page title for every solver
-   ============================================================ */
 function SolverTitle({ index, title, subtitle, chips = [], tabs, activeTab, onTabChange }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
@@ -579,14 +590,28 @@ function SolverTitle({ index, title, subtitle, chips = [], tabs, activeTab, onTa
 }
 
 function InputField({ label, value, onChange, step, type = "number", placeholder = "", hint }) {
+  const [draft, setDraft] = React.useState(String(value == null ? "" : value));
+  React.useEffect(() => { setDraft(String(value == null ? "" : value)); }, [value]);
+  const handleChange = (e) => {
+    const raw = e.target.value;
+    setDraft(raw);
+    if (type === "text") onChange(raw);
+    else { const n = parseFloat(raw); if (Number.isFinite(n)) onChange(n); }
+  };
+  const handleBlur = (e) => {
+    if (type !== "text") {
+      const n = parseFloat(e.target.value);
+      if (!Number.isFinite(n) && e.target.value !== "") setDraft(String(value == null ? "" : value));
+    }
+  };
   return (
     <div>
       <label className="flex items-center justify-between text-[11px] font-semibold text-slate-600 mb-1.5">
         <span>{label}</span>
         {hint && <span className="text-[10px] font-normal text-slate-400 font-mono">{hint}</span>}
       </label>
-      <input type={type} step={step} value={value} placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
+      <input type={type} step={step} value={draft} placeholder={placeholder}
+        onChange={handleChange} onBlur={handleBlur}
         className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono bg-white/70 text-slate-800 placeholder:text-slate-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all" />
     </div>
   );
@@ -753,7 +778,10 @@ function FunctionPlot({ title, subtitle, f, xMin, xMax, points = [], extraSeries
         const bx = Math.min(px + 10, W - padR - tw - 12);
         const by = Math.max(py - 26, padT + 2);
         ctx.fillStyle = "rgba(255,255,255,0.94)"; ctx.strokeStyle = "rgba(199,210,254,0.9)"; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.roundRect(bx - 5, by - 2, tw + 10, 16, 5); ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        if (typeof ctx.roundRect === "function") ctx.roundRect(bx - 5, by - 2, tw + 10, 16, 5);
+        else ctx.rect(bx - 5, by - 2, tw + 10, 16);
+        ctx.fill(); ctx.stroke();
         ctx.fillStyle = "#312e81"; ctx.fillText(p.label, bx, by + 10);
       }
     });
@@ -1024,28 +1052,28 @@ function RootSolver() {
                 </div>
                 {(method === "bisection" || method === "regula") && (
                   <div className="grid grid-cols-2 gap-2">
-                    <InputField label="a" value={a} onChange={(v) => setA(parseFloat(v) || 0)} />
-                    <InputField label="b" value={b} onChange={(v) => setB(parseFloat(v) || 0)} />
+                    <InputField label="a" value={a} onChange={setA} />
+                    <InputField label="b" value={b} onChange={setB} />
                   </div>
                 )}
-                {(method === "newton" || method === "fixed") && (<InputField label="x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />)}
+                {(method === "newton" || method === "fixed") && (<InputField label="x₀" value={x0} onChange={setX0} />)}
                 {method === "secant" && (
                   <div className="grid grid-cols-2 gap-2">
-                    <InputField label="x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />
-                    <InputField label="x₁" value={x1} onChange={(v) => setX1(parseFloat(v) || 0)} />
+                    <InputField label="x₀" value={x0} onChange={setX0} />
+                    <InputField label="x₁" value={x1} onChange={setX1} />
                   </div>
                 )}
                 {method === "muller" && (
                   <div className="grid grid-cols-3 gap-2">
-                    <InputField label="x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} />
-                    <InputField label="x₁" value={x1} onChange={(v) => setX1(parseFloat(v) || 0)} />
-                    <InputField label="x₂" value={x2} onChange={(v) => setX2(parseFloat(v) || 0)} />
+                    <InputField label="x₀" value={x0} onChange={setX0} />
+                    <InputField label="x₁" value={x1} onChange={setX1} />
+                    <InputField label="x₂" value={x2} onChange={setX2} />
                   </div>
                 )}
                 {method === "fixed" && (<InputField label="g(x)" type="text" value={gExpr} onChange={setGExpr} />)}
                 <div className="grid grid-cols-2 gap-2">
-                  <InputField label="ε" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-5)} step="0.00001" />
-                  <InputField label="Max iter" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 50)} />
+                  <InputField label="ε" value={tol} onChange={setTol} step="0.00001" />
+                  <InputField label="Max iter" value={maxIter} onChange={setMaxIter} />
                 </div>
               </div>
               <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] transition-all shadow-lg shadow-indigo-500/25">
@@ -1217,11 +1245,11 @@ function LinearSolver() {
               </div>
               {(method === "jacobi" || method === "gs" || method === "sor") && (
                 <div className="grid grid-cols-2 gap-2 mt-3">
-                  <InputField label="ε" value={tol} onChange={(v) => setTol(parseFloat(v) || 1e-8)} />
-                  <InputField label="Max iter" value={maxIter} onChange={(v) => setMaxIter(parseInt(v) || 100)} />
+                  <InputField label="ε" value={tol} onChange={setTol} />
+                  <InputField label="Max iter" value={maxIter} onChange={setMaxIter} />
                 </div>
               )}
-              {method === "sor" && (<div className="mt-3"><InputField label="ω" value={omega} onChange={(v) => setOmega(parseFloat(v) || 1.1)} step="0.05" /></div>)}
+              {method === "sor" && (<div className="mt-3"><InputField label="ω" value={omega} onChange={setOmega} step="0.05" /></div>)}
               <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] shadow-lg shadow-indigo-500/25">SOLVE SYSTEM</button>
               {error && (<div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3">⚠ {error}</div>)}
             </div>
@@ -1380,11 +1408,11 @@ function IntegSolver() {
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <InputField label="a" value={a} onChange={(v) => setA(parseFloat(v) || 0)} step="0.1" />
-                  <InputField label="b" value={b} onChange={(v) => setB(parseFloat(v) || 1)} step="0.1" />
+                  <InputField label="a" value={a} onChange={setA} step="0.1" />
+                  <InputField label="b" value={b} onChange={setB} step="0.1" />
                 </div>
-                {(method === "trap" || method === "simp13" || method === "simp38" || method === "midpoint") && (<InputField label="n" value={n} onChange={(v) => setN(parseInt(v) || 1)} hint={method === "simp13" ? "even" : method === "simp38" ? "mult of 3" : ""} />)}
-                {method === "romberg" && (<InputField label="Levels" value={levels} onChange={(v) => setLevels(parseInt(v) || 5)} />)}
+                {(method === "trap" || method === "simp13" || method === "simp38" || method === "midpoint") && (<InputField label="n" value={n} onChange={setN} hint={method === "simp13" ? "even" : method === "simp38" ? "mult of 3" : ""} />)}
+                {method === "romberg" && (<InputField label="Levels" value={levels} onChange={setLevels} />)}
               </div>
               <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] shadow-lg shadow-indigo-500/25">INTEGRATE</button>
               {error && (<div className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-xl p-3">⚠ {error}</div>)}
@@ -1516,12 +1544,12 @@ function ODESolver() {
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <InputField label="x₀" value={x0} onChange={(v) => setX0(parseFloat(v) || 0)} step="0.1" />
-                  <InputField label="y₀" value={y0} onChange={(v) => setY0(parseFloat(v) || 0)} step="0.1" />
+                  <InputField label="x₀" value={x0} onChange={setX0} step="0.1" />
+                  <InputField label="y₀" value={y0} onChange={setY0} step="0.1" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <InputField label="x end" value={xEnd} onChange={(v) => setXEnd(parseFloat(v) || 1)} step="0.1" />
-                  <InputField label="h" value={h} onChange={(v) => setH(parseFloat(v) || 0.1)} step="0.01" />
+                  <InputField label="x end" value={xEnd} onChange={setXEnd} step="0.1" />
+                  <InputField label="h" value={h} onChange={setH} step="0.01" />
                 </div>
               </div>
               <button onClick={solve} className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl py-2.5 text-[11px] tracking-[0.14em] shadow-lg shadow-indigo-500/25">INTEGRATE ODE</button>
@@ -1595,6 +1623,10 @@ function App() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <a href="index.html" className="h-8 px-3 rounded-full border border-slate-200 bg-white text-slate-600 text-[11px] font-bold flex items-center gap-1 hover:border-indigo-300 hover:text-indigo-600 transition-all">
+                <span aria-hidden="true">🏠</span>
+                <span className="hidden sm:inline">Home</span>
+              </a>
               <div className="hidden md:flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/70 px-3 py-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-shimmer" />
                 <span className="text-[10px] font-bold tracking-wider text-emerald-700 uppercase">Engine Ready</span>
@@ -1713,6 +1745,20 @@ const R = n => {
   return String(r);
 };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function num(v, d=0) { const n = parseFloat(v); return Number.isFinite(n) ? n : d; }
+function tCritical(df, alpha) {
+  const T = {
+    0.10: [6.314,2.920,2.353,2.132,2.015,1.943,1.895,1.860,1.833,1.812,1.796,1.782,1.771,1.761,1.753,1.746,1.740,1.734,1.729,1.725,1.721,1.717,1.714,1.711,1.708,1.706,1.703,1.701,1.699,1.697],
+    0.05: [12.706,4.303,3.182,2.776,2.571,2.447,2.365,2.306,2.262,2.228,2.201,2.179,2.160,2.145,2.131,2.120,2.110,2.101,2.093,2.086,2.080,2.074,2.069,2.064,2.060,2.056,2.052,2.048,2.045,2.042],
+    0.01: [63.657,9.925,5.841,4.604,4.032,3.707,3.499,3.355,3.250,3.169,3.106,3.055,3.012,2.977,2.947,2.921,2.898,2.878,2.861,2.845,2.831,2.819,2.807,2.797,2.787,2.779,2.771,2.763,2.756,2.750]
+  };
+  const tbl = T[alpha] || T[0.05];
+  if (df >= 1 && df <= 30) return tbl[df - 1];
+  if (df <= 40) return alpha === 0.10 ? 1.684 : alpha === 0.01 ? 2.704 : 2.021;
+  if (df <= 60) return alpha === 0.10 ? 1.671 : alpha === 0.01 ? 2.660 : 2.000;
+  if (df <= 120) return alpha === 0.10 ? 1.658 : alpha === 0.01 ? 2.617 : 1.980;
+  return alpha === 0.10 ? 1.645 : alpha === 0.01 ? 2.576 : 1.960;
+}
 function toast(msg){
   const t = $('#toast');
   t.textContent = msg;
@@ -1930,9 +1976,19 @@ const APPLICATIONS = [
 
 /* ============ NUMERICS ============ */
 function factorial(n){ if (n < 0) return NaN; if (n <= 1) return 1; let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; }
+function logFact(n){ if (n <= 1) return 0; let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; }
 function nCr(n, k){ if (k < 0 || k > n) return 0; if (k > n - k) k = n - k; let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; }
-function binomPmf(n, p, k){ return nCr(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k); }
-function poisPmf(l, k){ if (k < 0) return 0; return Math.exp(-l + k * Math.log(l || 1e-300) - Math.log(factorial(k) || 1)); }
+function binomPmf(n, p, k){
+  if (k < 0 || k > n || p < 0 || p > 1) return 0;
+  if (n > 170) return Math.exp(logFact(n) - logFact(k) - logFact(n-k) + k*Math.log(p || 1e-300) + (n-k)*Math.log((1-p) || 1e-300));
+  return nCr(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+}
+function poisPmf(l, k){
+  if (k < 0) return 0;
+  if (!Number.isFinite(l) || l < 0) return 0;
+  if (l === 0) return k === 0 ? 1 : 0;
+  return Math.exp(-l + k * Math.log(l) - logFact(k));
+}
 function normCdf(z){
   const t = 1 / (1 + 0.2316419 * Math.abs(z));
   const d = 0.3989422804014327 * Math.exp(-z * z / 2);
@@ -2007,7 +2063,7 @@ function save(){
 
 function progressPct(){
   const visitedUnits = [...state.visited].filter(v => v.startsWith('unit')).length;
-  const solved = Object.values(state.practice).filter(Boolean).length;
+  const solved = Object.values(state.practice).filter(v => v && v.ok === true).length;
   const mcqDone = state.mcq.submitted ? MCQS.length : Object.keys(state.mcq.answers).length;
   const pct = (visitedUnits/4)*45 + (solved/PRACTICE.length)*35 + (mcqDone/MCQS.length)*20;
   return Math.max(0, Math.min(100, Math.round(pct)));
@@ -2020,7 +2076,7 @@ function setRing(){
   $('#ringArc').setAttribute('stroke-dashoffset', (C*(1-p/100)).toFixed(1));
   $('#ringTxt').textContent = p + '%';
   $('#msUnits').textContent = [...state.visited].filter(v=>v.startsWith('unit')).length + '/4';
-  $('#msPractice').textContent = Object.values(state.practice).filter(Boolean).length + '/40';
+  $('#msPractice').textContent = Object.values(state.practice).filter(v => v && v.ok === true).length + '/40';
 }
 
 /* ============ NAV ============ */
@@ -2050,7 +2106,16 @@ function renderNav(){
 }
 
 /* ============ VIEWS ============ */
-function unitProgress(id){ const idx = UNITS.findIndex(u => u.id === id); return [60, 46, 30, 34][idx] || 0; }
+function unitProgress(id){
+  const idxMap = { unit1:0, unit2:1, unit3:2, unit4:3 };
+  const idx = idxMap[id] ?? 0;
+  if (!state.visited.has(id)) return 0;
+  const romanMap = { I:0, II:1, III:2, IV:3 };
+  const practiceForUnit = PRACTICE.filter(p => romanMap[p.u] === idx);
+  const solvedForUnit = practiceForUnit.filter(p => state.practice[p.id]?.ok).length;
+  if (practiceForUnit.length === 0) return 100;
+  return Math.min(100, 10 + Math.round((solvedForUnit / practiceForUnit.length) * 90));
+}
 
 function viewDashboard(){
   const quick = [['Linear Regression','unit1'],['Pearson r','unit1'],['Binomial','unit2'],['Normal CDF','unit2'],['Joint Distribution','unit3'],['Markov n-step','unit3'],['Z-test','unit4'],['t-test','unit4']];
@@ -2141,7 +2206,7 @@ function viewFormulas(){
 }
 
 function viewPractice(){
-  const solved = Object.values(state.practice).filter(Boolean).length;
+  const solved = Object.values(state.practice).filter(v => v && v.ok === true).length;
   return `<div class="fade">
     <div class="page-h"><div><h2>Practice Problems</h2><p>Forty numeric problems with tolerance checking.</p></div><span class="badge ${solved===PRACTICE.length?'ok':'brand'}">${solved} / ${PRACTICE.length} solved</span></div>
     <div class="grid g2">
@@ -2206,7 +2271,7 @@ function viewDefinitions(){
 function viewProgress(){
   const p = progressPct();
   const C = 2*Math.PI*54;
-  const solved = Object.values(state.practice).filter(Boolean).length;
+  const solved = Object.values(state.practice).filter(v => v && v.ok === true).length;
   const answered = state.mcq.submitted ? MCQS.length : Object.keys(state.mcq.answers).length;
   const unitsVisited = [...state.visited].filter(v=>v.startsWith('unit')).length;
   return `<div class="fade"><div class="page-h"><div><h2>Progress</h2><p>Saved locally.</p></div></div>
@@ -2375,9 +2440,9 @@ function svSpearman(){
 }
 
 function svBasicProb(){
-  const pA = parseFloat(getSV('basicProb','pA',0.5));
-  const pB = parseFloat(getSV('basicProb','pB',0.4));
-  const pAB = parseFloat(getSV('basicProb','pAB',0.2));
+  const pA = num(getSV('basicProb','pA',0.5), 0.5);
+  const pB = num(getSV('basicProb','pB',0.4), 0.4);
+  const pAB = num(getSV('basicProb','pAB',0.2), 0.2);
   const valid = [pA,pB,pAB].every(v => v>=0 && v<=1) && pAB <= Math.min(pA,pB);
   let out = '';
   if (valid){
@@ -2408,7 +2473,7 @@ function svRV(){
 
 function svBinomial(){
   const n = Math.max(0, parseInt(getSV('binomial','n',10)) || 0);
-  const p = clamp(parseFloat(getSV('binomial','p',0.5)) || 0, 0, 1);
+  const p = clamp(num(getSV('binomial','p',0.5), 0.5), 0, 1);
   const x = clamp(parseInt(getSV('binomial','x',3)) || 0, 0, n);
   const pmf = binomPmf(n, p, x);
   let cdf = 0; for (let k = 0; k <= x; k++) cdf += binomPmf(n, p, k);
@@ -2417,7 +2482,7 @@ function svBinomial(){
 }
 
 function svPoisson(){
-  const l = Math.max(1e-9, parseFloat(getSV('poisson','lambda',3)) || 1);
+  const l = Math.max(1e-9, num(getSV('poisson','lambda',3), 3));
   const x = Math.max(0, parseInt(getSV('poisson','x',2)) || 0);
   const pmf = poisPmf(l, x);
   let cdf = 0; for (let k = 0; k <= x; k++) cdf += poisPmf(l, k);
@@ -2426,10 +2491,10 @@ function svPoisson(){
 }
 
 function svNormal(){
-  const mu = parseFloat(getSV('normal','mu',0));
-  const sigma = Math.max(1e-9, parseFloat(getSV('normal','sigma',1)));
-  const a = parseFloat(getSV('normal','a',-1));
-  const b = parseFloat(getSV('normal','b',1));
+  const mu = num(getSV('normal','mu',0), 0);
+  const sigma = Math.max(1e-9, num(getSV('normal','sigma',1), 1));
+  const a = num(getSV('normal','a',-1), -1);
+  const b = num(getSV('normal','b',1), 1);
   const mode = getSV('normal','mode','between');
   const z1 = (a - mu) / sigma, z2 = (b - mu) / sigma;
   const Phi1 = normCdf(z1), Phi2 = normCdf(z2);
@@ -2504,7 +2569,7 @@ function svMarkov(){
     const steps = [P0]; let cur = [...P0];
     for (let k = 0; k < 4; k++){ cur = vecMul(cur, P); steps.push([...cur]); }
     const Pn = matPow(P, 3);
-    out = `<div class="steps">${steps.slice(0,4).map((v,i) => `<span class="ln"><b>P${i}</b> = [${v.map(R).join(', ')}]</span>`).join('')}<span class="ln ans">ANSWER       P₃ = [${vecMul(P0, Pn).map(R).join(', ')}]</span></div>`;
+    out = `<div class="steps">${steps.slice(0,5).map((v,i) => `<span class="ln"><b>P${i}</b> = [${v.map(R).join(', ')}]</span>`).join('')}<span class="ln ans">ANSWER       P₃ = [${vecMul(P0, Pn).map(R).join(', ')}]</span></div>`;
   } else {
     out = `<div class="steps"><span class="ln ans">P₀ must have ${n} entries summing to 1.</span></div>`;
   }
@@ -2537,8 +2602,8 @@ function svAbsorbing(){
 }
 
 function svSampling(){
-  const mu = parseFloat(getSV('sampling','mu',100));
-  const sigma = Math.max(1e-9, parseFloat(getSV('sampling','sigma',15)));
+  const mu = num(getSV('sampling','mu',100), 100);
+  const sigma = Math.max(1e-9, num(getSV('sampling','sigma',15), 15));
   const n = Math.max(1, parseInt(getSV('sampling','n',25)) || 1);
   const se = sigma / Math.sqrt(n);
   return `<div class="fields" style="grid-template-columns:repeat(3,minmax(0,1fr))"><label class="field"><span>μ</span><input class="input" type="number" step="any" data-custom="sampling" data-key="mu" value="${mu}"></label><label class="field"><span>σ</span><input class="input" type="number" step="any" data-custom="sampling" data-key="sigma" value="${sigma}"></label><label class="field"><span>n</span><input class="input" type="number" min="1" step="1" data-custom="sampling" data-key="n" value="${n}"></label></div>
@@ -2546,33 +2611,41 @@ function svSampling(){
 }
 
 function svZtest(){
-  const mode = getSV('ztest','mode','oneMean');
-  const alpha = parseFloat(getSV('ztest','alpha',0.05));
-  const zcrit = alpha === 0.01 ? 2.576 : alpha === 0.1 ? 1.645 : 1.96;
-  let z = 0, detail = '';
-  if (mode === 'oneMean'){ const xbar = parseFloat(getSV('ztest','xbar',52)); const mu = parseFloat(getSV('ztest','mu',50)); const sigma = Math.max(1e-9, parseFloat(getSV('ztest','sigma',4))); const n = Math.max(1, parseInt(getSV('ztest','n',16)) || 1); z = (xbar - mu) / (sigma/Math.sqrt(n)); detail = `Z = ${R(z)}`; }
-  else if (mode === 'twoMean'){ const x1 = parseFloat(getSV('ztest','x1',55)); const x2 = parseFloat(getSV('ztest','x2',50)); const s1 = Math.max(1e-9, parseFloat(getSV('ztest','s1',5))); const n1 = Math.max(1, parseInt(getSV('ztest','n1',30)) || 1); const n2 = Math.max(1, parseInt(getSV('ztest','n2',35)) || 1); z = (x1 - x2) / (s1*Math.sqrt(1/n1 + 1/n2)); detail = `Z = ${R(z)}`; }
-  else { const p1 = parseFloat(getSV('ztest','p1',0.6)); const p2 = parseFloat(getSV('ztest','p2',0.5)); const n1 = Math.max(1, parseInt(getSV('ztest','n1',100)) || 1); const n2 = Math.max(1, parseInt(getSV('ztest','n2',100)) || 1); const pbar = (p1*n1 + p2*n2) / (n1 + n2); const se = Math.sqrt(pbar*(1-pbar)*(1/n1 + 1/n2)); z = (p1 - p2) / se; detail = `Z = ${R(z)}`; }
-  const reject = Math.abs(z) > zcrit;
-  let fields = '';
-  if (mode === 'oneMean'){ fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄</span><input class="input" type="number" step="any" data-custom="ztest" data-key="xbar" value="${getSV('ztest','xbar',52)}"></label><label class="field"><span>μ₀</span><input class="input" type="number" step="any" data-custom="ztest" data-key="mu" value="${getSV('ztest','mu',50)}"></label><label class="field"><span>σ</span><input class="input" type="number" step="any" data-custom="ztest" data-key="sigma" value="${getSV('ztest','sigma',4)}"></label><label class="field"><span>n</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n" value="${getSV('ztest','n',16)}"></label></div>`; }
-  else if (mode === 'twoMean'){ fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄₁</span><input class="input" type="number" step="any" data-custom="ztest" data-key="x1" value="${getSV('ztest','x1',55)}"></label><label class="field"><span>x̄₂</span><input class="input" type="number" step="any" data-custom="ztest" data-key="x2" value="${getSV('ztest','x2',50)}"></label><label class="field"><span>σ</span><input class="input" type="number" step="any" data-custom="ztest" data-key="s1" value="${getSV('ztest','s1',5)}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n1" value="${getSV('ztest','n1',30)}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n2" value="${getSV('ztest','n2',35)}"></label></div>`; }
-  else { fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>p₁</span><input class="input" type="number" step="any" data-custom="ztest" data-key="p1" value="${getSV('ztest','p1',0.6)}"></label><label class="field"><span>p₂</span><input class="input" type="number" step="any" data-custom="ztest" data-key="p2" value="${getSV('ztest','p2',0.5)}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n1" value="${getSV('ztest','n1',100)}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n2" value="${getSV('ztest','n2',100)}"></label></div>`; }
-  return `<div class="fields" style="grid-template-columns:1fr"><label class="field"><span>Test type</span><select class="input" data-custom="ztest" data-key="mode"><option value="oneMean" ${mode==='oneMean'?'selected':''}>One-sample mean</option><option value="twoMean" ${mode==='twoMean'?'selected':''}>Two-sample mean</option><option value="twoProp" ${mode==='twoProp'?'selected':''}>Two proportions</option></select></label></div>${fields}
-  <div class="fields" style="grid-template-columns:1fr"><label class="field"><span>α</span><select class="input" data-custom="ztest" data-key="alpha"><option value="0.10" ${alpha===0.1?'selected':''}>0.10</option><option value="0.05" ${alpha===0.05?'selected':''}>0.05</option><option value="0.01" ${alpha===0.01?'selected':''}>0.01</option></select></label></div>
-  <div class="steps"><span class="ln"><b>CALC</b>   ${detail}</span><span class="ln"><b>CRIT</b>   Z_{α/2} = ±${R(zcrit)}</span><span class="ln ans">DECISION     |Z| = ${R(Math.abs(z))} → ${reject ? 'Reject H₀' : 'Fail to reject H₀'}</span></div>`;
+  try {
+    const mode = getSV('ztest','mode','oneMean');
+    const alpha = num(getSV('ztest','alpha',0.05), 0.05);
+    const zcrit = alpha === 0.01 ? 2.576 : alpha === 0.1 ? 1.645 : 1.96;
+    let z = 0, detail = '';
+    if (mode === 'oneMean'){ const xbar = num(getSV('ztest','xbar',52), 52); const mu = num(getSV('ztest','mu',50), 50); const sigma = Math.max(1e-9, num(getSV('ztest','sigma',4), 4)); const n = Math.max(1, parseInt(getSV('ztest','n',16)) || 1); z = (xbar - mu) / (sigma/Math.sqrt(n)); detail = `Z = ${R(z)}`; }
+    else if (mode === 'twoMean'){ const x1 = num(getSV('ztest','x1',55), 55); const x2 = num(getSV('ztest','x2',50), 50); const s1 = Math.max(1e-9, num(getSV('ztest','s1',5), 5)); const n1 = Math.max(1, parseInt(getSV('ztest','n1',30)) || 1); const n2 = Math.max(1, parseInt(getSV('ztest','n2',35)) || 1); z = (x1 - x2) / (s1*Math.sqrt(1/n1 + 1/n2)); detail = `Z = ${R(z)}`; }
+    else { const p1 = num(getSV('ztest','p1',0.6), 0.6); const p2 = num(getSV('ztest','p2',0.5), 0.5); if (p1 < 0 || p1 > 1 || p2 < 0 || p2 > 1) throw new Error("Proportions must be between 0 and 1."); const n1 = Math.max(1, parseInt(getSV('ztest','n1',100)) || 1); const n2 = Math.max(1, parseInt(getSV('ztest','n2',100)) || 1); const pbar = (p1*n1 + p2*n2) / (n1 + n2); const se = Math.sqrt(pbar*(1-pbar)*(1/n1 + 1/n2)); if (se < 1e-12) throw new Error("Zero standard error."); z = (p1 - p2) / se; detail = `Z = ${R(z)}`; }
+    const reject = Math.abs(z) > zcrit;
+    let fields = '';
+    if (mode === 'oneMean'){ fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄</span><input class="input" type="number" step="any" data-custom="ztest" data-key="xbar" value="${getSV('ztest','xbar',52)}"></label><label class="field"><span>μ₀</span><input class="input" type="number" step="any" data-custom="ztest" data-key="mu" value="${getSV('ztest','mu',50)}"></label><label class="field"><span>σ</span><input class="input" type="number" step="any" data-custom="ztest" data-key="sigma" value="${getSV('ztest','sigma',4)}"></label><label class="field"><span>n</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n" value="${getSV('ztest','n',16)}"></label></div>`; }
+    else if (mode === 'twoMean'){ fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄₁</span><input class="input" type="number" step="any" data-custom="ztest" data-key="x1" value="${getSV('ztest','x1',55)}"></label><label class="field"><span>x̄₂</span><input class="input" type="number" step="any" data-custom="ztest" data-key="x2" value="${getSV('ztest','x2',50)}"></label><label class="field"><span>σ</span><input class="input" type="number" step="any" data-custom="ztest" data-key="s1" value="${getSV('ztest','s1',5)}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n1" value="${getSV('ztest','n1',30)}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n2" value="${getSV('ztest','n2',35)}"></label></div>`; }
+    else { fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>p₁</span><input class="input" type="number" step="any" data-custom="ztest" data-key="p1" value="${getSV('ztest','p1',0.6)}"></label><label class="field"><span>p₂</span><input class="input" type="number" step="any" data-custom="ztest" data-key="p2" value="${getSV('ztest','p2',0.5)}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n1" value="${getSV('ztest','n1',100)}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="1" step="1" data-custom="ztest" data-key="n2" value="${getSV('ztest','n2',100)}"></label></div>`; }
+    return `<div class="fields" style="grid-template-columns:1fr"><label class="field"><span>Test type</span><select class="input" data-custom="ztest" data-key="mode"><option value="oneMean" ${mode==='oneMean'?'selected':''}>One-sample mean</option><option value="twoMean" ${mode==='twoMean'?'selected':''}>Two-sample mean</option><option value="twoProp" ${mode==='twoProp'?'selected':''}>Two proportions</option></select></label></div>${fields}
+    <div class="fields" style="grid-template-columns:1fr"><label class="field"><span>α</span><select class="input" data-custom="ztest" data-key="alpha"><option value="0.10" ${alpha===0.1?'selected':''}>0.10</option><option value="0.05" ${alpha===0.05?'selected':''}>0.05</option><option value="0.01" ${alpha===0.01?'selected':''}>0.01</option></select></label></div>
+    <div class="steps"><span class="ln"><b>CALC</b>   ${detail}</span><span class="ln"><b>CRIT</b>   Z_{α/2} = ±${R(zcrit)}</span><span class="ln ans">DECISION     |Z| = ${R(Math.abs(z))} → ${reject ? 'Reject H₀' : 'Fail to reject H₀'}</span></div>`;
+  } catch (e) {
+    return `<div class="steps"><span class="ln ans">⚠ ${esc(e.message || 'Error')}</span></div>`;
+  }
 }
 
 function svTtest(){
-  const mode = getSV('ttest','mode','one');
-  const alpha = parseFloat(getSV('ttest','alpha',0.05));
-  const tcrit = alpha === 0.01 ? 2.75 : 2.05;
-  let t = 0, df = 1, detail = '', fields = '';
-  if (mode === 'one'){ const xbar = parseFloat(getSV('ttest','xbar',5)); const mu = parseFloat(getSV('ttest','mu',4)); const s = Math.max(1e-9, parseFloat(getSV('ttest','s',1))); const n = Math.max(2, parseInt(getSV('ttest','n',10)) || 2); t = (xbar - mu) / (s/Math.sqrt(n)); df = n - 1; detail = `t = ${R(t)} , df = ${df}`; fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄</span><input class="input" type="number" step="any" data-custom="ttest" data-key="xbar" value="${xbar}"></label><label class="field"><span>μ₀</span><input class="input" type="number" step="any" data-custom="ttest" data-key="mu" value="${mu}"></label><label class="field"><span>s</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s" value="${s}"></label><label class="field"><span>n</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n" value="${n}"></label></div>`; }
-  else { const x1 = parseFloat(getSV('ttest','x1',55)); const x2 = parseFloat(getSV('ttest','x2',50)); const s1 = Math.max(1e-9, parseFloat(getSV('ttest','s1',5))); const s2 = Math.max(1e-9, parseFloat(getSV('ttest','s2',4))); const n1 = Math.max(2, parseInt(getSV('ttest','n1',12)) || 2); const n2 = Math.max(2, parseInt(getSV('ttest','n2',10)) || 2); const sp = Math.sqrt(((n1-1)*s1*s1 + (n2-1)*s2*s2) / (n1+n2-2)); t = (x1 - x2) / (sp * Math.sqrt(1/n1 + 1/n2)); df = n1 + n2 - 2; detail = `t = ${R(t)} , df = ${df}`; fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄₁</span><input class="input" type="number" step="any" data-custom="ttest" data-key="x1" value="${x1}"></label><label class="field"><span>x̄₂</span><input class="input" type="number" step="any" data-custom="ttest" data-key="x2" value="${x2}"></label><label class="field"><span>s₁</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s1" value="${s1}"></label><label class="field"><span>s₂</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s2" value="${s2}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n1" value="${n1}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n2" value="${n2}"></label></div>`; }
-  const reject = Math.abs(t) > tcrit;
-  return `<div class="fields" style="grid-template-columns:1fr"><label class="field"><span>Test type</span><select class="input" data-custom="ttest" data-key="mode"><option value="one" ${mode==='one'?'selected':''}>One-sample</option><option value="two" ${mode==='two'?'selected':''}>Two-sample</option></select></label></div>${fields}
-  <div class="steps"><span class="ln"><b>CALC</b>   ${detail}</span><span class="ln"><b>CRIT</b>   t_{α/2, df=${df}} ≈ ±${R(tcrit)}</span><span class="ln ans">DECISION     |t| = ${R(Math.abs(t))} → ${reject ? 'Reject H₀' : 'Fail to reject H₀'}</span></div>`;
+  try {
+    const mode = getSV('ttest','mode','one');
+    const alpha = num(getSV('ttest','alpha',0.05), 0.05);
+    let t = 0, df = 1, detail = '', fields = '';
+    if (mode === 'one'){ const xbar = num(getSV('ttest','xbar',5), 5); const mu = num(getSV('ttest','mu',4), 4); const s = Math.max(1e-9, num(getSV('ttest','s',1), 1)); const n = Math.max(2, parseInt(getSV('ttest','n',10)) || 2); t = (xbar - mu) / (s/Math.sqrt(n)); df = n - 1; detail = `t = ${R(t)} , df = ${df}`; fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄</span><input class="input" type="number" step="any" data-custom="ttest" data-key="xbar" value="${xbar}"></label><label class="field"><span>μ₀</span><input class="input" type="number" step="any" data-custom="ttest" data-key="mu" value="${mu}"></label><label class="field"><span>s</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s" value="${s}"></label><label class="field"><span>n</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n" value="${n}"></label></div>`; }
+    else { const x1 = num(getSV('ttest','x1',55), 55); const x2 = num(getSV('ttest','x2',50), 50); const s1 = Math.max(1e-9, num(getSV('ttest','s1',5), 5)); const s2 = Math.max(1e-9, num(getSV('ttest','s2',4), 4)); const n1 = Math.max(2, parseInt(getSV('ttest','n1',12)) || 2); const n2 = Math.max(2, parseInt(getSV('ttest','n2',10)) || 2); const sp = Math.sqrt(((n1-1)*s1*s1 + (n2-1)*s2*s2) / (n1+n2-2)); t = (x1 - x2) / (sp * Math.sqrt(1/n1 + 1/n2)); df = n1 + n2 - 2; detail = `t = ${R(t)} , df = ${df}`; fields = `<div class="fields" style="grid-template-columns:repeat(2,minmax(0,1fr))"><label class="field"><span>x̄₁</span><input class="input" type="number" step="any" data-custom="ttest" data-key="x1" value="${x1}"></label><label class="field"><span>x̄₂</span><input class="input" type="number" step="any" data-custom="ttest" data-key="x2" value="${x2}"></label><label class="field"><span>s₁</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s1" value="${s1}"></label><label class="field"><span>s₂</span><input class="input" type="number" step="any" data-custom="ttest" data-key="s2" value="${s2}"></label><label class="field"><span>n₁</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n1" value="${n1}"></label><label class="field"><span>n₂</span><input class="input" type="number" min="2" step="1" data-custom="ttest" data-key="n2" value="${n2}"></label></div>`; }
+    const tcrit = tCritical(df, alpha);
+    const reject = Math.abs(t) > tcrit;
+    return `<div class="fields" style="grid-template-columns:1fr"><label class="field"><span>Test type</span><select class="input" data-custom="ttest" data-key="mode"><option value="one" ${mode==='one'?'selected':''}>One-sample</option><option value="two" ${mode==='two'?'selected':''}>Two-sample</option></select></label></div>${fields}
+    <div class="steps"><span class="ln"><b>CALC</b>   ${detail}</span><span class="ln"><b>CRIT</b>   t_{α/2, df=${df}} ≈ ±${R(tcrit)}</span><span class="ln ans">DECISION     |t| = ${R(Math.abs(t))} → ${reject ? 'Reject H₀' : 'Fail to reject H₀'}</span></div>`;
+  } catch (e) {
+    return `<div class="steps"><span class="ln ans">⚠ ${esc(e.message || 'Error')}</span></div>`;
+  }
 }
 
 function svChi(){
@@ -2582,7 +2655,7 @@ function svChi(){
   if (obs.length === exp.length && obs.length > 0 && exp.every(v => v > 0)){
     const comps = obs.map((o,i) => ({o, e: exp[i], term: (o-exp[i])**2/exp[i]}));
     const chi2 = sumArr(comps.map(c => c.term)); const df = obs.length - 1;
-    const crit = df <= 10 ? ({1:3.841,2:5.991,3:7.815,4:9.488,5:11.07,6:12.592,7:14.067,8:15.507,9:16.919,10:18.307}[df] || df + 1.645*Math.sqrt(2*df)) : df + 1.645*Math.sqrt(2*df);
+    const crit = df <= 10 ? ({1:3.841,2:5.991,3:7.815,4:9.488,5:11.07,6:12.592,7:14.067,8:15.507,9:16.919,10:18.307}[df] || df + 1.96*Math.sqrt(2*df)) : df + 1.96*Math.sqrt(2*df);
     const reject = chi2 > crit;
     out = `<div class="steps"><span class="ln"><b>χ² = Σ(O−E)²/E</b></span><span class="ln"><b>CHI²</b>    ${R(chi2)} , df = ${df}</span><span class="ln ans">DECISION     χ² = ${R(chi2)} → ${reject ? 'Reject H₀' : 'Fail to reject H₀'}</span></div>`;
   } else {
@@ -2774,7 +2847,7 @@ function setupCltViz(container){
   const S = { n:5, pop:'unif', M:1000 };
   function sample(){ if (S.pop === 'unif') return Math.random(); if (S.pop === 'exp') return -Math.log(1 - Math.random()); return Math.random() < 0.5 ? 0.3 + Math.random()*0.2 : 0.7 + Math.random()*0.2; }
   function popMu(){ if (S.pop === 'unif') return 0.5; if (S.pop === 'exp') return 1; return 0.6; }
-  function popVar(){ if (S.pop === 'unif') return 1/12; if (S.pop === 'exp') return 1; return 0.03; }
+  function popVar(){ if (S.pop === 'unif') return 1/12; if (S.pop === 'exp') return 1; return 0.0433; }
   function draw(){
     const { ctx, w, h } = fitCanvas(canvas, 320); const p = vizPalette();
     ctx.fillStyle = p.bg; ctx.fillRect(0, 0, w, h);
@@ -2898,7 +2971,7 @@ function setupSampDistViz(container){
     const { ctx, w, h } = fitCanvas(canvas, 320); const p = vizPalette();
     ctx.fillStyle = p.bg; ctx.fillRect(0, 0, w, h);
     const mu = 100; const se = S.sigma / Math.sqrt(S.n);
-    const means = []; for (let i = 0; i < 5000; i++){ let s = 0; for (let j = 0; j < S.n; j++){ const u1 = Math.random() || 1e-9, u2 = Math.random(); const z = Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2); s += mu + S.sigma * z; } means.push(s / S.n); }
+    const means = []; for (let i = 0; i < 1500; i++){ let s = 0; for (let j = 0; j < S.n; j++){ const u1 = Math.random() || 1e-9, u2 = Math.random(); const z = Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2); s += mu + S.sigma * z; } means.push(s / S.n); }
     const lo = mu - 4*se, hi = mu + 4*se; const B = 40; const bins = new Array(B).fill(0);
     means.forEach(m => { const idx = clamp(Math.floor((m - lo)/(hi-lo)*B), 0, B-1); bins[idx]++; });
     const maxB = Math.max(...bins); const pad = 30; const X0 = pad, X1 = w - pad, Y0 = h - pad, Y1 = pad;
@@ -2924,7 +2997,7 @@ function setupSampDistViz(container){
 
 function setupHypoViz(container){
   const spec = VIZ_SPECS.unit4.find(s => s.id === 'hypo');
-  container.innerHTML = `<div class="solver-head"><div><h4>${spec.title}</h4><p>${spec.desc}</p></div></div><div class="viz-wrap"><canvas class="viz-canvas" style="height:320px"></canvas></div><div class="viz-ctrls"><label class="viz-ctrl"><span>Z value</span><input type="range" min="-4" max="4" step="0.05" value="2.1" data-k="z"><b>2.10</b></label><label class="viz-ctrl"><span>α</span><select data-k="alpha" style="flex:1;padding:5px 8px;font-size:11.5px;border-radius:8px;border:1px solid var(--border-2);background:var(--surface-2)"><option value="0.10">0.10</option><option value="0.05" selected>0.05</option><option value="0.01">0.01</option></select></label></div><div class="viz-stats"><div class="viz-stat"><span>critical</span><b data-out="crit">—</b></div><div class="viz-stats"><div class="viz-stat"><span>p (2-tail)</span><b data-out="p">—</b></div></div><div class="viz-stat"><span>decision</span><b data-out="dec" style="font-size:10.5px">—</b></div></div>`;
+  container.innerHTML = `<div class="solver-head"><div><h4>${spec.title}</h4><p>${spec.desc}</p></div></div><div class="viz-wrap"><canvas class="viz-canvas" style="height:320px"></canvas></div><div class="viz-ctrls"><label class="viz-ctrl"><span>Z value</span><input type="range" min="-4" max="4" step="0.05" value="2.1" data-k="z"><b>2.10</b></label><label class="viz-ctrl"><span>α</span><select data-k="alpha" style="flex:1;padding:5px 8px;font-size:11.5px;border-radius:8px;border:1px solid var(--border-2);background:var(--surface-2)"><option value="0.10">0.10</option><option value="0.05" selected>0.05</option><option value="0.01">0.01</option></select></label></div><div class="viz-stats"><div class="viz-stat"><span>critical</span><b data-out="crit">—</b></div><div class="viz-stat"><span>p (2-tail)</span><b data-out="p">—</b></div><div class="viz-stat"><span>decision</span><b data-out="dec" style="font-size:10.5px">—</b></div></div>`;
   const canvas = container.querySelector('canvas');
   const S = { z:2.1, alpha:0.05 };
   function crit(){ if (S.alpha === 0.10) return 1.645; if (S.alpha === 0.01) return 2.576; return 1.96; }
@@ -2981,7 +3054,7 @@ function renderView(){
   else if (v === 'progress') el.innerHTML = viewProgress();
   else if (v === 'about') el.innerHTML = viewAbout();
   el.scrollTop = 0;
-  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  window.scrollTo({ top: 0, behavior: 'instant' });
   if (v.startsWith('unit') && state.tab[v] === 'visualize'){ requestAnimationFrame(() => mountVizForUnit(v)); }
 }
 
@@ -3085,7 +3158,7 @@ content.addEventListener('input', e => {
     const which = t.dataset.key;
     card.replaceWith(tmp.firstElementChild);
     const again = $(`[data-custom="${t.dataset.custom}"][data-key="${which}"]`);
-    if (again){ again.focus(); const v = again.value; again.setSelectionRange(v.length, v.length); }
+    if (again){ again.focus(); if (typeof again.setSelectionRange === "function") { try { again.setSelectionRange(again.value.length, again.value.length); } catch(e){} } }
     return;
   }
   if (t.matches('[data-matrix]')){
@@ -3097,7 +3170,7 @@ content.addEventListener('input', e => {
     const tmp = document.createElement('div'); tmp.innerHTML = html;
     card.replaceWith(tmp.firstElementChild);
     const again = $(`[data-matrix="${name}"][data-r="${r}"][data-c="${c}"]`);
-    if (again){ again.focus(); const v = again.value; again.setSelectionRange(v.length, v.length); }
+    if (again){ again.focus(); if (typeof again.setSelectionRange === "function") { try { again.setSelectionRange(again.value.length, again.value.length); } catch(e){} } }
     return;
   }
   if (t.matches('[data-matrix-vec]')){
@@ -3112,7 +3185,7 @@ content.addEventListener('input', e => {
     const tmp = document.createElement('div'); tmp.innerHTML = html;
     card.replaceWith(tmp.firstElementChild);
     const again = $(`[data-matrix-vec="${name}"]`);
-    if (again){ again.focus(); const v = again.value; again.setSelectionRange(v.length, v.length); }
+    if (again){ again.focus(); if (typeof again.setSelectionRange === "function") { try { again.setSelectionRange(again.value.length, again.value.length); } catch(e){} } }
     return;
   }
   if (t.matches('[data-matrix-size]')){
