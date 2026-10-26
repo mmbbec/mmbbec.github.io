@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-JZRW69TE7N');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JZRW69TE7N');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#991b1b">
   <meta name="description" content="Semester-wise learning materials for Engineering Mathematics students.">
   <title>Engineering Mathematics | Student Learning Portal</title>
+
   <style>
     :root {
       --red: #991b1b;
@@ -247,18 +249,7 @@
   </style>
 </head>
 <body>
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>React Artifact</title>
-  <style>/* ... all your existing Tailwind CSS ... */</style>
-</head>
-<body>
-   </header>
-
-   <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="topbar">
     <h1>Engineering Mathematics</h1>
@@ -330,7 +321,20 @@
       const MATERIALS = {
         first: [
           {
-            code: "1BMAC101C",
+            code: "1BMAC101C(Civil)",
+            title: "Calculus and Linear Algebra",
+            items: [
+              { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
+              { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
+              { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
+              { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
+              { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
+              { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
+              { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
+            ]
+          },
+          {
+            code: "1BMAS101C(CSE Stream)",
             title: "Engineering Mathematics – Subject 1",
             items: [
               { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
@@ -446,6 +450,7 @@
 
       /* ---------------- Tabs (one per subject code) ---------------- */
 
+      // Switch to the given tab WITHOUT scrolling the page.
       function activateTab(tab, moveFocus) {
         const tablist = tab.parentElement;
         if (!tablist) return;
@@ -459,7 +464,8 @@
           if (panel) panel.hidden = !isSelected;
         });
 
-        if (moveFocus) tab.focus();
+        // Only move keyboard focus — never scroll the page.
+        if (moveFocus) tab.focus({ preventScroll: true });
       }
 
       function handleTabKeydown(event) {
@@ -611,6 +617,7 @@
         pdfFrame.src = path;
         viewerSection.hidden = false;
 
+        // This is the ONLY place we scroll — when the user explicitly opens a PDF.
         viewerSection.scrollIntoView({
           behavior: reduceMotion.matches ? "auto" : "smooth",
           block: "start"
@@ -660,47 +667,48 @@
       selectSemester(currentSemester);
     })();
   </script>
+
   <script>
-/* Injects the floating Home button globally */
-(function () {
-  if (document.getElementById('global-home-btn')) return;
+  /* Injects the floating Home button globally */
+  (function () {
+    if (document.getElementById('global-home-btn')) return;
 
-  const css = `
-    #global-home-btn{
-      position:fixed;bottom:22px;left:22px;z-index:9998;
-      display:flex;align-items:center;gap:8px;padding:9px 16px;
-      border-radius:999px;background:rgba(15,23,42,.92);color:#e2e8f0;
-      font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
-      font-size:12px;font-weight:700;letter-spacing:.02em;
-      text-decoration:none;box-shadow:0 12px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
-      border:1px solid rgba(255,255,255,.08);
-      backdrop-filter:blur(18px) saturate(180%);
-      -webkit-backdrop-filter:blur(18px) saturate(180%);
-      transition:transform .18s cubic-bezier(.4,0,.2,1),background .18s,box-shadow .18s;
-    }
-    #global-home-btn:hover{
-      background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
-      transform:translateY(-2px);
-      box-shadow:0 16px 38px rgba(79,70,229,.45),0 2px 8px rgba(0,0,0,.2);
-    }
-    #global-home-btn:active{transform:translateY(0) scale(.97)}
-    @media(max-width:520px){
-      #global-home-btn{bottom:12px;left:12px;padding:8px 12px;font-size:11px}
-    }
-  `;
+    const css = `
+      #global-home-btn{
+        position:fixed;bottom:22px;left:22px;z-index:9998;
+        display:flex;align-items:center;gap:8px;padding:9px 16px;
+        border-radius:999px;background:rgba(15,23,42,.92);color:#e2e8f0;
+        font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+        font-size:12px;font-weight:700;letter-spacing:.02em;
+        text-decoration:none;box-shadow:0 12px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
+        border:1px solid rgba(255,255,255,.08);
+        backdrop-filter:blur(18px) saturate(180%);
+        -webkit-backdrop-filter:blur(18px) saturate(180%);
+        transition:transform .18s cubic-bezier(.4,0,.2,1),background .18s,box-shadow .18s;
+      }
+      #global-home-btn:hover{
+        background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
+        transform:translateY(-2px);
+        box-shadow:0 16px 38px rgba(79,70,229,.45),0 2px 8px rgba(0,0,0,.2);
+      }
+      #global-home-btn:active{transform:translateY(0) scale(.97)}
+      @media(max-width:520px){
+        #global-home-btn{bottom:12px;left:12px;padding:8px 12px;font-size:11px}
+      }
+    `;
 
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
 
-  const a = document.createElement('a');
-  a.id = 'global-home-btn';
-  a.href = 'index.html';
-  a.title = 'Home';
-  a.setAttribute('aria-label', 'Back to Home');
-  a.innerHTML = '<span aria-hidden="true">🏠</span><span class="ghb-label">Home</span>';
-  document.body.appendChild(a);
-})();
-</script>
+    const a = document.createElement('a');
+    a.id = 'global-home-btn';
+    a.href = 'index.html';
+    a.title = 'Home';
+    a.setAttribute('aria-label', 'Back to Home');
+    a.innerHTML = '<span aria-hidden="true">🏠</span><span class="ghb-label">Home</span>';
+    document.body.appendChild(a);
+  })();
+  </script>
 </body>
 </html>
