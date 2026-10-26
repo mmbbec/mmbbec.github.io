@@ -60,8 +60,6 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
 .remove-btn{margin-top:6px;background:#ffeaea;color:#d94a32;border:1px solid #ffb4a3;padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer}
 .pdf-btn{width:100%;margin-top:14px;padding:11px;background:#d94a32;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s}
 .pdf-btn:hover{background:#b83a25}
-.download-pdf-btn{width:100%;padding:13px;background:#d94a32;color:white;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s;margin-top:0}
-.download-pdf-btn:hover{background:#b83a25}
 .sem-row{display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
 .sem-row span{font-size:12px;font-weight:600;color:#333}
 .sem-row input{padding:8px 10px;border:1px solid #d0d7de;border-radius:6px;font-size:13px;width:100%}
@@ -147,13 +145,7 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
   <div class="result-item"><span>Percentage (VTU Formula):</span><strong id="rPerc">-</strong></div>
   <div class="result-item" style="border:none"><span>Class:</span><strong id="rClass">-</strong></div>
   <p class="hint">Percentage is derived from CGPA/SGPA as per the VTU conversion formula for the selected scheme.</p>
-  <button type="button" class="pdf-btn" onclick="downloadSGPAPdf()">⬇️ Download PDF Result (with Name &amp; USN)</button>
-</div>
-
-<!-- DIRECT PDF DOWNLOAD -->
-<div style="background:white;border:1px solid #e5e7eb;padding:18px;border-radius:10px;margin:20px 0;text-align:center">
-  <p style="font-weight:600;color:#163b65;margin-bottom:12px;font-size:14px">📚 Get VTU M1–M4 Important Questions + CGPA Excel Sheet FREE</p>
-  <button type="button" class="download-pdf-btn" onclick="downloadFreePdf()">⬇️ Download Free PDF (M1–M4 + CGPA Sheet)</button>
+  <button type="button" class="pdf-btn" onclick="downloadSGPAPdf()">⬇️ Download SGPA PDF (with Name &amp; USN)</button>
 </div>
 </div>
 
@@ -183,7 +175,7 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
     <div class="result-item"><span>Class:</span><strong id="rCGPAClass">-</strong></div>
     <div class="result-item" style="border:none"><span>Total Credits:</span><strong id="rCGPACredits">-</strong></div>
     <p class="hint" id="cgpaNote"></p>
-    <button type="button" class="pdf-btn" onclick="downloadCGPAPdf()">⬇️ Download PDF Result (with Name &amp; USN)</button>
+    <button type="button" class="pdf-btn" onclick="downloadCGPAPdf()">⬇️ Download CGPA PDF (with Name &amp; USN)</button>
   </div>
 </div>
 
@@ -230,7 +222,6 @@ const truncate = (s, n) => (s && s.length > n) ? s.slice(0, n - 1) + '…' : (s 
 
 function getScheme(){ return $('scheme').value; }
 
-/* Percentage conversion — 2014/15/17/18 use CGPA*10, newer use (CGPA-0.5)*10 */
 const OLD_SCHEMES = ['2014', '2015', '2017', '2018'];
 function isOldScheme(){ return OLD_SCHEMES.indexOf(getScheme()) !== -1; }
 
@@ -251,10 +242,6 @@ function schemeLabel(){
   const s = getScheme();
   if (s === '2025') return '2025 Scheme (Current)';
   return s + ' Scheme';
-}
-
-function percentFormulaLabel(){
-  return isOldScheme() ? 'CGPA × 10' : '(CGPA − 0.5) × 10';
 }
 
 function semLabel(){
@@ -462,94 +449,7 @@ function calculateCGPA(){
 }
 
 /* ============================================================
-   FREE PDF DOWNLOAD
-   ============================================================ */
-function downloadFreePdf(){
-  const JsPDF = window.jspdf && window.jspdf.jsPDF;
-  if (!JsPDF){
-    alert('PDF library not loaded. Please check your internet connection and try again.');
-    return;
-  }
-
-  const doc = new JsPDF({ unit: 'pt', format: 'a4' });
-  const M = 40;
-  const PW = doc.internal.pageSize.getWidth();
-
-  doc.setFillColor(22, 59, 101);
-  doc.rect(0, 0, PW, 84, 'F');
-  doc.setFillColor(217, 74, 50);
-  doc.rect(0, 84, PW, 4, 'F');
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(17);
-  doc.text('VTU M1–M4 Important Questions & CGPA Sheet', M, 38);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text('mahadevbiradar.in • Free Study Pack for VTU Students', M, 60);
-
-  let y = 130;
-  doc.setTextColor(38, 50, 56);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text('Included in this pack:', M, y);
-
-  y += 26;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  const items = [
-    '✓ VTU Maths M1 — Important Questions (Module-wise)',
-    '✓ VTU Maths M2 — Important Questions (Module-wise)',
-    '✓ VTU Maths M3 — Important Questions (Module-wise)',
-    '✓ VTU Maths M4 — Important Questions (Module-wise)',
-    '✓ CGPA / SGPA Calculation Excel Sheet (auto-calc)',
-    '✓ VTU Percentage Conversion Reference Sheet'
-  ];
-  items.forEach(function(line){
-    doc.text(line, M + 10, y);
-    y += 20;
-  });
-
-  y += 20;
-  doc.setDrawColor(225, 231, 237);
-  doc.line(M, y, PW - M, y);
-  y += 24;
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.setTextColor(22, 59, 101);
-  doc.text('Quick VTU Formulas', M, y);
-  y += 20;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10.5);
-  doc.setTextColor(38, 50, 56);
-  doc.text('SGPA = Σ(Credits × Grade Points) / Σ(Credits)', M + 10, y); y += 17;
-  doc.text('CGPA = Σ(Semester Credits × SGPA) / Σ(Semester Credits)', M + 10, y); y += 17;
-  doc.text('2014/15/17/18 Scheme: % = CGPA × 10', M + 10, y); y += 17;
-  doc.text('2021–2025 Scheme: % = (CGPA − 0.5) × 10', M + 10, y); y += 17;
-
-  y += 14;
-  doc.setFontSize(9);
-  doc.setTextColor(130, 140, 150);
-  doc.text('Note: This is a free resource. Visit mahadevbiradar.in for the full question bank.', M, y);
-
-  const PH = doc.internal.pageSize.getHeight();
-  doc.setDrawColor(225, 231, 237);
-  doc.line(M, PH - 50, PW - M, PH - 50);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.setTextColor(130, 140, 150);
-  doc.text('© ' + new Date().getFullYear() + ' mahadevbiradar.in — VTU Study Resources', M, PH - 32);
-
-  doc.save('VTU_M1-M4_Questions_CGPA_Sheet.pdf');
-
-  if (typeof gtag === 'function'){
-    gtag('event', 'download_free_pdf', { item: 'M1-M4 + CGPA sheet' });
-  }
-}
-
-/* ============================================================
-   RESULT PDF GENERATION
+   PDF SHARED BLOCKS
    ============================================================ */
 function requireStudent(){
   const name = $('studentName').value.trim();
@@ -738,6 +638,9 @@ function pdfFooter(doc){
   doc.text('mahadevbiradar.in', PW - 40, PH - 38, { align: 'right' });
 }
 
+/* ============================================================
+   SGPA PDF (Name + USN)
+   ============================================================ */
 function downloadSGPAPdf(){
   const stu = requireStudent();
   if (!stu) return;
@@ -776,8 +679,15 @@ function downloadSGPAPdf(){
 
   pdfFooter(doc);
   doc.save('VTU_SGPA_' + safeFileName(stu.usn) + '.pdf');
+
+  if (typeof gtag === 'function'){
+    gtag('event', 'download_sgpa_pdf', { scheme: getScheme() });
+  }
 }
 
+/* ============================================================
+   CGPA PDF (Name + USN)
+   ============================================================ */
 function downloadCGPAPdf(){
   const stu = requireStudent();
   if (!stu) return;
@@ -829,6 +739,10 @@ function downloadCGPAPdf(){
 
   pdfFooter(doc);
   doc.save('VTU_CGPA_' + safeFileName(stu.usn) + '.pdf');
+
+  if (typeof gtag === 'function'){
+    gtag('event', 'download_cgpa_pdf', { scheme: getScheme() });
+  }
 }
 
 /* ============================================================
