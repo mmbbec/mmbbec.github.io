@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VTU CBCS CGPA Calculator & SGPA Calculator - All Semesters | mahadevbiradar.in</title>
-<meta name="description" content="Free VTU CBCS CGPA Calculator and SGPA Calculator for all semesters (1st to 8th Sem). Calculate VTU SGPA, CGPA, Percentage as per VTU CBCS Scheme 2018, 2021, 2022. For BE/B.Tech students.">
+<title>VTU CBCS CGPA Calculator &amp; SGPA Calculator - All Semesters | mahadevbiradar.in</title>
+<meta name="description" content="Free VTU CBCS CGPA Calculator and SGPA Calculator for all semesters (1st to 8th Sem). Calculate VTU SGPA, CGPA, Percentage as per VTU CBCS Scheme 2018, 2021, 2022. Download result PDF with Name and USN.">
 <meta name="keywords" content="VTU CGPA Calculator, VTU SGPA Calculator, VTU CBCS Calculator, VTU CGPA to Percentage, VTU SGPA to CGPA, VTU Calculator, VTU CBCS CGPA Calculator">
 <link rel="canonical" href="https://mahadevbiradar.in/vtu-cbcs-cgpa-calculator.html">
-<meta property="og:title" content="VTU CBCS CGPA & SGPA Calculator - All Semesters">
-<meta property="og:description" content="Calculate VTU SGPA & CGPA instantly. Free tool for VTU BE/B.Tech students as per CBCS scheme.">
+<meta property="og:title" content="VTU CBCS CGPA &amp; SGPA Calculator - All Semesters">
+<meta property="og:description" content="Calculate VTU SGPA &amp; CGPA instantly. Free tool for VTU BE/B.Tech students as per CBCS scheme.">
 <meta property="og:url" content="https://mahadevbiradar.in/vtu-cbcs-cgpa-calculator.html">
 <meta property="og:type" content="website">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332673221241180" crossorigin="anonymous"></script>
@@ -20,6 +20,8 @@
   gtag('js', new Date());
   gtag('config', 'G-JZRW69TE7N');
 </script>
+<!-- PDF library -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;line-height:1.7;color:#263238;background:#f7f9fc}
@@ -36,8 +38,9 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
 .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
-.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:14px}
-.form-group input:focus{border-color:#163b65;outline:none;box-shadow:0 0 0 3px rgba(22,59,101,0.1)}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:14px;background:#fff}
+.form-group input:focus,.form-group select:focus{border-color:#163b65;outline:none;box-shadow:0 0 0 3px rgba(22,59,101,0.1)}
+.form-group input.input-error{border-color:#d94a32;box-shadow:0 0 0 3px rgba(217,74,50,.15)}
 .btn{width:100%;padding:13px;background:#163b65;color:white;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;transition:0.3s}
 .btn:hover{background:#d94a32}
 .result-box{margin-top:20px;background:#f4f7fb;padding:20px;border-radius:10px;border:1px dashed #163b65;display:none}
@@ -48,7 +51,21 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
 .faq p{font-size:14px;color:#555;margin-bottom:12px}
 .badge{display:inline-block;background:#eef5fb;color:#163b65;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #d6e4f0;margin-bottom:10px}
 .lead-box{background:#eef5fb;border:2px dashed #163b65;padding:18px;border-radius:12px;text-align:center;margin:20px 0}
-@media(max-width:800px){.calc-wrapper{grid-template-columns:1fr}.hero h1{font-size:26px}.input-grid{grid-template-columns:1fr}}
+.student-block{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;background:#f7f9fc;border:1px solid #e0e7ef;border-radius:10px;padding:14px;margin-bottom:18px}
+.student-block .form-group{margin:0}
+.sem-tabs{display:flex;gap:10px;margin:15px 0}
+.sem-btn{flex:1;padding:9px;border:1px solid #163b65;border-radius:6px;background:#fff;color:#163b65;font-weight:600;cursor:pointer;font-size:13px;transition:.2s}
+.sem-btn.active{background:#163b65;color:#fff}
+.add-btn{margin:10px 0;padding:8px 14px;border:1px dashed #163b65;background:#f7f9fc;color:#163b65;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.remove-btn{margin-top:6px;background:#ffeaea;color:#d94a32;border:1px solid #ffb4a3;padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer}
+.pdf-btn{width:100%;margin-top:14px;padding:11px;background:#d94a32;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s}
+.pdf-btn:hover{background:#b83a25}
+.sem-row{display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.sem-row span{font-size:12px;font-weight:600;color:#333}
+.sem-row input{padding:8px 10px;border:1px solid #d0d7de;border-radius:6px;font-size:13px;width:100%}
+.sem-head span{font-size:11px;color:#8a97a3;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.hint{font-size:12px;color:#7a8794;margin-top:8px}
+@media(max-width:800px){.calc-wrapper{grid-template-columns:1fr}.hero h1{font-size:26px}.input-grid{grid-template-columns:1fr}.sem-row{grid-template-columns:60px 1fr 1fr}}
 </style>
 </head>
 <body>
@@ -56,162 +73,706 @@ header a{color:#163b65;text-decoration:none;font-weight:600;font-size:14px}
 <div class="logo">Dr. Mahadev <span>Biradar</span></div>
 <a href="/">← Back to Home</a>
 </header>
+
 <section class="hero">
-<h1>VTU CBCS CGPA & SGPA Calculator</h1>
-<p>Free calculator for VTU BE / B.Tech students (CBCS Scheme 2018, 2021, 2022). Calculate SGPA for any semester and overall CGPA + Percentage as per VTU official formula. No login required.</p>
+<h1>VTU CBCS CGPA &amp; SGPA Calculator</h1>
+<p>Free calculator for VTU BE / B.Tech students (CBCS Scheme 2018, 2021, 2022). Calculate SGPA for any semester and overall CGPA + Percentage as per VTU official formula. Download your result as a PDF with Name and USN.</p>
 <p style="margin-top:12px;font-size:13px;color:#888">1st to 8th Sem • CBCS • As per VTU Belagavi Official Formula</p>
 </section>
+
 <div class="container">
 <div class="calc-wrapper">
+
 <!-- LEFT: CALCULATOR -->
 <div class="card">
 <h2>📊 VTU SGPA Calculator - Semester Wise</h2>
-<span class="badge">VTU OFFICIAL FORMULA: SGPA = Σ(Ci*Gi) / ΣCi</span>
-<div style="display:flex;gap:10px;margin:15px 0">
-<button onclick="setSem(1)" class="sem-btn" style="flex:1;padding:8px;border:1px solid #163b65;border-radius:6px;background:white;color:#163b65;font-weight:600;cursor:pointer">1st Sem</button>
-<button onclick="setSem(2)" class="sem-btn" style="flex:1;padding:8px;border:1px solid #163b65;border-radius:6px;background:white;color:#163b65;font-weight:600;cursor:pointer">3rd-8th Sem</button>
+<span class="badge">VTU OFFICIAL FORMULA: SGPA = Σ(Ci × Gi) / ΣCi</span>
+
+<!-- STUDENT DETAILS -->
+<div class="student-block">
+  <div class="form-group">
+    <label for="studentName">Student Name *</label>
+    <input type="text" id="studentName" placeholder="e.g. Mahadev Biradar" autocomplete="name">
+  </div>
+  <div class="form-group">
+    <label for="studentUSN">USN *</label>
+    <input type="text" id="studentUSN" placeholder="e.g. 1BG21CS001" style="text-transform:uppercase" autocomplete="off">
+  </div>
+  <div class="form-group">
+    <label for="semesterNo">Semester</label>
+    <select id="semesterNo">
+      <option value="1">1st Sem</option>
+      <option value="2">2nd Sem</option>
+      <option value="3">3rd Sem</option>
+      <option value="4">4th Sem</option>
+      <option value="5">5th Sem</option>
+      <option value="6">6th Sem</option>
+      <option value="7">7th Sem</option>
+      <option value="8">8th Sem</option>
+      <option value="Overall">Overall (All Sems)</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="scheme">VTU Scheme</label>
+    <select id="scheme">
+      <option value="2021" selected>2021 / 2022 — % = (CGPA − 0.5) × 10</option>
+      <option value="2018">2018 — % = CGPA × 10</option>
+    </select>
+  </div>
 </div>
-<div id="subjectsContainer">
-<!-- Subjects will be added by JS -->
+
+<div class="sem-tabs">
+  <button type="button" class="sem-btn active" data-preset="first" onclick="setSem('first')">1st / 2nd Sem</button>
+  <button type="button" class="sem-btn" data-preset="other" onclick="setSem('other')">3rd – 8th Sem</button>
 </div>
-<button type="button" onclick="addSubject()" style="margin:10px 0;padding:8px 14px;border:1px dashed #163b65;background:#f7f9fc;color:#163b65;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">+ Add Subject</button>
-<button class="btn" onclick="calculateSGPA()">Calculate SGPA & Percentage →</button>
+
+<div id="subjectsContainer"><!-- rows injected by JS --></div>
+
+<button type="button" class="add-btn" onclick="addSubject()">+ Add Subject</button>
+<button type="button" class="btn" onclick="calculateSGPA()">Calculate SGPA &amp; Percentage →</button>
+
 <div id="sgpaResult" class="result-box">
-<h3>🎓 Your Result</h3>
-<div class="result-item"><span>SGPA:</span><strong id="rSGPA">-</strong></div>
-<div class="result-item"><span>Total Credits:</span><strong id="rCredits">-</strong></div>
-<div class="result-item"><span>Percentage (VTU Formula):</span><strong id="rPerc">-</strong></div>
-<div class="result-item" style="border:none"><span>Class:</span><strong id="rClass">-</strong></div>
-<p style="font-size:12px;color:#666;margin-top:12px">VTU Percentage Formula: (CGPA - 0.5) × 10</p>
+  <h3>🎓 Your Result</h3>
+  <div class="result-item"><span>SGPA:</span><strong id="rSGPA">-</strong></div>
+  <div class="result-item"><span>Total Credits:</span><strong id="rCredits">-</strong></div>
+  <div class="result-item"><span>Percentage (VTU Formula):</span><strong id="rPerc">-</strong></div>
+  <div class="result-item" style="border:none"><span>Class:</span><strong id="rClass">-</strong></div>
+  <p class="hint">Percentage is derived from CGPA/SGPA as per the VTU conversion formula for the selected scheme.</p>
+  <button type="button" class="pdf-btn" onclick="downloadSGPAPdf()">⬇️ Download PDF Result (with Name &amp; USN)</button>
 </div>
+
 <!-- EMAIL CAPTURE -->
 <div style="background:white;border:1px solid #e5e7eb;padding:16px;border-radius:10px;margin:20px 0;text-align:center">
-<p style="font-weight:600;color:#163b65;margin-bottom:10px;font-size:14px">📚 Get VTU M1-M4 Important Questions + CGPA Excel Sheet FREE</p>
-<form onsubmit="return saveEmail(event)" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-<input type="email" id="userEmail" placeholder="Enter your VTU email" required style="padding:10px 14px;border:1px solid #ccc;border-radius:6px;min-width:200px">
-<button type="submit" style="background:#163b65;color:white;border:none;padding:10px 16px;border-radius:6px;font-weight:bold;cursor:pointer">Get Free PDF</button>
-</form>
-<p id="emailMsg" style="font-size:12px;color:green;display:none;margin-top:8px">✅ Sent! Check inbox. PDF will download.</p>
+  <p style="font-weight:600;color:#163b65;margin-bottom:10px;font-size:14px">📚 Get VTU M1–M4 Important Questions + CGPA Excel Sheet FREE</p>
+  <form onsubmit="return saveEmail(event)" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <input type="email" id="userEmail" placeholder="Enter your VTU email" required style="padding:10px 14px;border:1px solid #ccc;border-radius:6px;min-width:200px">
+    <button type="submit" style="background:#163b65;color:white;border:none;padding:10px 16px;border-radius:6px;font-weight:bold;cursor:pointer">Send me the PDF</button>
+  </form>
+  <p id="emailMsg" style="font-size:12px;color:green;display:none;margin-top:8px">✅ Thanks! Please check your inbox for the free PDF.</p>
 </div>
 </div>
+
 <!-- RIGHT: CGPA + INFO -->
 <div>
 <div class="card">
-<h2>🎯 Overall CGPA Calculator</h2>
-<p style="font-size:13px;color:#666;margin-bottom:12px">Enter SGPA of all completed semesters</p>
-<div id="cgpaInputs" class="input-grid">
-<div class="form-group"><label>1st Sem SGPA</label><input type="number" id="s1" step="0.01" placeholder="e.g. 8.2"></div>
-<div class="form-group"><label>2nd Sem SGPA</label><input type="number" id="s2" step="0.01" placeholder="e.g. 7.8"></div>
-<div class="form-group"><label>3rd Sem SGPA</label><input type="number" id="s3" step="0.01"></div>
-<div class="form-group"><label>4th Sem SGPA</label><input type="number" id="s4" step="0.01"></div>
-<div class="form-group"><label>5th Sem SGPA</label><input type="number" id="s5" step="0.01"></div>
-<div class="form-group"><label>6th Sem SGPA</label><input type="number" id="s6" step="0.01"></div>
-<div class="form-group"><label>7th Sem SGPA</label><input type="number" id="s7" step="0.01"></div>
-<div class="form-group"><label>8th Sem SGPA</label><input type="number" id="s8" step="0.01"></div>
+  <h2>🎯 Overall CGPA Calculator</h2>
+  <p style="font-size:13px;color:#666;margin-bottom:12px">Enter the SGPA of all completed semesters. Adding semester credits gives an exact credit-weighted CGPA.</p>
+
+  <div class="sem-row sem-head"><span>Sem</span><span>SGPA</span><span>Credits</span></div>
+  <div id="cgpaInputs">
+    <div class="sem-row"><span>1st</span><input type="number" id="s1" step="0.01" min="0" max="10" placeholder="e.g. 8.2"><input type="number" id="c1" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>2nd</span><input type="number" id="s2" step="0.01" min="0" max="10" placeholder="e.g. 7.8"><input type="number" id="c2" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>3rd</span><input type="number" id="s3" step="0.01" min="0" max="10"><input type="number" id="c3" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>4th</span><input type="number" id="s4" step="0.01" min="0" max="10"><input type="number" id="c4" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>5th</span><input type="number" id="s5" step="0.01" min="0" max="10"><input type="number" id="c5" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>6th</span><input type="number" id="s6" step="0.01" min="0" max="10"><input type="number" id="c6" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>7th</span><input type="number" id="s7" step="0.01" min="0" max="10"><input type="number" id="c7" step="1" min="0" max="40" placeholder="optional"></div>
+    <div class="sem-row"><span>8th</span><input type="number" id="s8" step="0.01" min="0" max="10"><input type="number" id="c8" step="1" min="0" max="40" placeholder="optional"></div>
+  </div>
+
+  <button type="button" class="btn" onclick="calculateCGPA()" style="margin-top:12px">Calculate Overall CGPA</button>
+
+  <div id="cgpaResult" class="result-box">
+    <div class="result-item"><span>Overall CGPA:</span><strong id="rCGPA">-</strong></div>
+    <div class="result-item"><span>Overall Percentage:</span><strong id="rCGPAPerc">-</strong></div>
+    <div class="result-item"><span>Class:</span><strong id="rCGPAClass">-</strong></div>
+    <div class="result-item" style="border:none"><span>Total Credits:</span><strong id="rCGPACredits">-</strong></div>
+    <p class="hint" id="cgpaNote"></p>
+    <button type="button" class="pdf-btn" onclick="downloadCGPAPdf()">⬇️ Download PDF Result (with Name &amp; USN)</button>
+  </div>
 </div>
-<button class="btn" onclick="calculateCGPA()" style="margin-top:10px">Calculate Overall CGPA</button>
-<div id="cgpaResult" class="result-box">
-<div class="result-item"><span>Overall CGPA:</span><strong id="rCGPA">-</strong></div>
-<div class="result-item"><span>Overall Percentage:</span><strong id="rCGPAPerc">-</strong></div>
-<div class="result-item" style="border:none"><span>Class:</span><strong id="rCGPAClass">-</strong></div>
-</div>
-</div>
+
 <div class="lead-box">
-<h3 style="color:#163b65;font-size:16px;margin-bottom:8px">🏫 College Faculty?</h3>
-<p style="font-size:13px;color:#444;margin-bottom:12px">Get Bulk CGPA + CO-PO Automation Tool for your department. NBA/NAAC ready reports.</p>
-<a href="https://wa.me/919035246580?text=Hi%20Sir,%20I%20need%20VTU%20CGPA%20and%20CO-PO%20College%20License" style="background:#25D366;color:white;padding:10px 22px;border-radius:25px;text-decoration:none;font-weight:bold;display:inline-block;font-size:13px">📲 Get College License</a>
+  <h3 style="color:#163b65;font-size:16px;margin-bottom:8px">🏫 College Faculty?</h3>
+  <p style="font-size:13px;color:#444;margin-bottom:12px">Get Bulk CGPA + CO-PO Automation Tool for your department. NBA/NAAC ready reports.</p>
+  <a href="https://wa.me/919035246580?text=Hi%20Sir,%20I%20need%20VTU%20CGPA%20and%20CO-PO%20College%20License" style="background:#25D366;color:white;padding:10px 22px;border-radius:25px;text-decoration:none;font-weight:bold;display:inline-block;font-size:13px">📲 Get College License</a>
 </div>
+
 <div class="card faq">
-<h2>ℹ️ VTU CBCS Grading System</h2>
-<h3>VTU SGPA Formula</h3>
-<p>SGPA = Sum(Credits × Grade Points) / Sum(Credits)</p>
-<h3>VTU Percentage Formula (New)</h3>
-<p>Percentage = (CGPA - 0.5) × 10  (w.e.f 2021 scheme, for 2018 it's CGPA×10)</p>
-<h3>Grade Points</h3>
-<p>O=10, A+=9, A=8, B+=7, B=6, C=5, P=4, F=0</p>
-<h3>Class</h3>
-<p>FCD: ≥7.0 (70%+), First Class: 6.0-6.99, Second Class: 5.0-5.99</p>
-<p style="text-align:center;margin-top:15px;font-size:13px">Made with ❤️ by <a href="/" style="color:#d94a32;font-weight:bold">Dr. Mahadev Biradar, BEC Bagalkote</a> for VTU Students</p>
-<p style="text-align:center;font-size:12px;color:#777">This tool is free. If it saved your time, <a href="https://www.buymeacoffee.com/mahadevbiradar" target="_blank" style="color:#d94a32">buy me a coffee ☕</a></p>
+  <h2>ℹ️ VTU CBCS Grading System</h2>
+  <h3>VTU SGPA Formula</h3>
+  <p>SGPA = Σ(Credits × Grade Points) / Σ(Credits)</p>
+  <h3>VTU CGPA Formula</h3>
+  <p>CGPA = Σ(Semester Credits × SGPA) / Σ(Semester Credits). If credits are not entered, a simple average of the SGPAs is shown.</p>
+  <h3>VTU Percentage Formula</h3>
+  <p>2021 &amp; 2022 scheme: Percentage = (CGPA − 0.5) × 10. 2018 scheme: Percentage = CGPA × 10.</p>
+  <h3>Grade Points</h3>
+  <p>O = 10, A+ = 9, A = 8, B+ = 7, B = 6, C = 5, P = 4, F = 0</p>
+  <h3>Class Awarded</h3>
+  <p>First Class with Distinction: ≥ 70% • First Class: 60–69.9% • Second Class: 50–59.9% • Pass Class: 40–49.9%</p>
+  <p style="text-align:center;margin-top:15px;font-size:13px">Made with ❤️ by <a href="/" style="color:#d94a32;font-weight:bold">Dr. Mahadev Biradar, BEC Bagalkote</a> for VTU Students</p>
+  <p style="text-align:center;font-size:12px;color:#777">This tool is free. If it saved your time, <a href="https://www.buymeacoffee.com/mahadevbiradar" target="_blank" style="color:#d94a32">buy me a coffee ☕</a></p>
 </div>
 </div>
+
 </div>
 </div>
+
 <footer style="background:#102d4b;color:white;text-align:center;padding:20px;font-size:13px;margin-top:30px">© 2026 mahadevbiradar.in • VTU CBCS Calculator • Built for VTU Students</footer>
+
 <script>
-let subjectCount = 0;
-function createSubjectRow(marks='', credits=''){
-return `<div class="input-grid subject-row" style="margin-bottom:8px;background:#f7f9fc;padding:10px;border-radius:8px;position:relative">
-<div class="form-group" style="margin:0"><label>Subject Marks / Grade</label>
-<select onchange="handleGrade(this)"><option value="">Select Grade</option><option value="10">O (90-100) - 10</option><option value="9">A+ (80-89) - 9</option><option value="8">A (70-79) - 8</option><option value="7">B+ (60-69) - 7</option><option value="6">B (50-59) - 6</option><option value="5">C (40-49) - 5</option><option value="4">P (35-39) - 4</option><option value="0">F - 0</option></select>
-<input type="number" placeholder="Or Enter Grade Point 0-10" step="0.1" min="0" max="10" class="gradeInput" style="margin-top:6px" value="${marks}">
-</div>
-<div class="form-group" style="margin:0"><label>Credits (Ci)</label><input type="number" placeholder="e.g. 4" min="0" max="10" class="creditInput" value="${credits}"><button onclick="this.closest('.subject-row').remove()" style="margin-top:6px;background:#ffeaea;color:#d94a32;border:1px solid #ffb4a3;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer">Remove</button></div>
-</div>`;
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const num = v => {
+  const n = Number(v);
+  if (!isFinite(n)) return '-';
+  return (Math.round(n * 100) / 100).toString();
+};
+const clamp100 = v => Math.max(0, Math.min(100, v));
+const truncate = (s, n) => (s && s.length > n) ? s.slice(0, n - 1) + '…' : (s || '');
+
+function getScheme(){ return $('scheme').value; }
+
+/* Percentage conversion as per scheme */
+function toPercent(v){
+  const p = (getScheme() === '2018') ? v * 10 : (v - 0.5) * 10;
+  return clamp100(p);
 }
-function setSem(type){
-const container = document.getElementById('subjectsContainer');
-container.innerHTML='';
-if(type===1){ // 1st sem - Physics/Chem cycle
-for(let i=0;i<8;i++) container.innerHTML+=createSubjectRow('', i<4?4:3);
-}else{
-for(let i=0;i<6;i++) container.innerHTML+=createSubjectRow('', '4');
+
+function classify(p){
+  if (p >= 70) return 'First Class with Distinction';
+  if (p >= 60) return 'First Class';
+  if (p >= 50) return 'Second Class';
+  if (p >= 40) return 'Pass Class';
+  return 'Fail';
 }
+
+function schemeLabel(){
+  return getScheme() === '2018' ? '2018 Scheme' : '2021 / 2022 Scheme';
 }
+
+function semLabel(){
+  const v = $('semesterNo').value;
+  return v === 'Overall' ? 'Overall' : v + ' Semester';
+}
+
+/* ============================================================
+   SUBJECT ROWS
+   ============================================================ */
+function createSubjectRow(gp, cr){
+  gp = (gp === undefined || gp === null) ? '' : gp;
+  cr = (cr === undefined || cr === null) ? '' : cr;
+
+  const div = document.createElement('div');
+  div.className = 'input-grid subject-row';
+  div.style.cssText = 'margin-bottom:8px;background:#f7f9fc;padding:10px;border-radius:8px';
+
+  div.innerHTML =
+    '<div class="form-group" style="margin:0">' +
+      '<label>Grade</label>' +
+      '<select class="gradeSelect">' +
+        '<option value="">Select Grade</option>' +
+        '<option value="10">O (90–100) — 10</option>' +
+        '<option value="9">A+ (80–89) — 9</option>' +
+        '<option value="8">A (70–79) — 8</option>' +
+        '<option value="7">B+ (60–69) — 7</option>' +
+        '<option value="6">B (50–59) — 6</option>' +
+        '<option value="5">C (40–49) — 5</option>' +
+        '<option value="4">P (35–39) — 4</option>' +
+        '<option value="0">F (Fail) — 0</option>' +
+      '</select>' +
+      '<input type="number" class="gradeInput" placeholder="Grade point 0–10" min="0" max="10" step="0.01" value="' + gp + '" style="margin-top:6px">' +
+    '</div>' +
+    '<div class="form-group" style="margin:0">' +
+      '<label>Credits (Ci)</label>' +
+      '<input type="number" class="creditInput" placeholder="e.g. 4" min="0" max="20" step="1" value="' + cr + '">' +
+      '<button type="button" class="remove-btn">✕ Remove</button>' +
+    '</div>';
+
+  /* grade dropdown -> fills the grade point box */
+  const sel = div.querySelector('.gradeSelect');
+  const gpBox = div.querySelector('.gradeInput');
+  sel.addEventListener('change', function(){
+    if (this.value !== '') gpBox.value = this.value;
+  });
+
+  div.querySelector('.remove-btn').addEventListener('click', function(){
+    div.remove();
+  });
+
+  return div;
+}
+
+function setSem(preset){
+  const container = $('subjectsContainer');
+  container.innerHTML = '';
+
+  if (preset === 'first'){
+    [4, 4, 4, 4, 3, 3, 3, 3].forEach(cr => container.appendChild(createSubjectRow('', cr)));
+  } else {
+    [4, 4, 4, 3, 3, 3].forEach(cr => container.appendChild(createSubjectRow('', cr)));
+  }
+
+  document.querySelectorAll('.sem-btn').forEach(b => b.classList.remove('active'));
+  const active = document.querySelector('.sem-btn[data-preset="' + preset + '"]');
+  if (active) active.classList.add('active');
+
+  $('sgpaResult').style.display = 'none';
+}
+
 function addSubject(){
-document.getElementById('subjectsContainer').innerHTML+=createSubjectRow();
+  $('subjectsContainer').appendChild(createSubjectRow('', ''));
 }
-function handleGrade(sel){
-if(sel.value) sel.nextElementSibling.value = sel.value;
+
+/* ============================================================
+   SGPA CALCULATION
+   ============================================================ */
+function computeSGPA(){
+  const rows = document.querySelectorAll('#subjectsContainer .subject-row');
+  if (!rows.length) return { error: 'Please add at least one subject.' };
+
+  const subjects = [];
+  let invalid = false;
+
+  rows.forEach(function(row){
+    const gpRaw = row.querySelector('.gradeInput').value.trim();
+    const crRaw = row.querySelector('.creditInput').value.trim();
+
+    /* completely empty row -> ignore */
+    if (gpRaw === '' && crRaw === '') return;
+
+    const gp = parseFloat(gpRaw);
+    const cr = parseFloat(crRaw);
+
+    if (isNaN(gp) || isNaN(cr) || cr <= 0){
+      invalid = true;
+      return;
+    }
+    subjects.push({ gp: Math.min(Math.max(gp, 0), 10), cr: cr });
+  });
+
+  if (invalid){
+    return { error: 'Please enter a valid grade point (0–10) and credits (greater than 0) for every subject.' };
+  }
+  if (!subjects.length){
+    return { error: 'Please enter grade points and credits for your subjects.' };
+  }
+
+  const totalCredits = subjects.reduce((a, s) => a + s.cr, 0);
+  const totalCP = subjects.reduce((a, s) => a + s.gp * s.cr, 0);
+  const sgpa = totalCP / totalCredits;
+  const perc = toPercent(sgpa);
+
+  return {
+    subjects: subjects,
+    totalCredits: totalCredits,
+    totalCP: totalCP,
+    sgpa: sgpa,
+    perc: perc,
+    cls: classify(perc)
+  };
 }
+
 function calculateSGPA(){
-const grades = document.querySelectorAll('.gradeInput');
-const credits = document.querySelectorAll('.creditInput');
-let totalCP=0, totalC=0;
-grades.forEach((g,i)=>{
-let gp = parseFloat(g.value)||0;
-let cr = parseFloat(credits[i].value)||0;
-totalCP+=gp*cr;
-totalC+=cr;
-});
-if(totalC===0){alert('Please enter credits and grade points');return}
-let sgpa = totalCP/totalC;
-let perc = (sgpa-0.5)*10;
-let cls = sgpa>=7?'FCD (First Class with Distinction)': sgpa>=6?'First Class': sgpa>=5?'Second Class':'Pass';
-document.getElementById('rSGPA').innerText = sgpa.toFixed(2);
-document.getElementById('rCredits').innerText = totalC;
-document.getElementById('rPerc').innerText = perc.toFixed(2)+'%';
-document.getElementById('rClass').innerText = cls;
-document.getElementById('sgpaResult').style.display='block';
-gtag('event','calculate_sgpa',{value:sgpa});
-window.scrollTo({top:document.getElementById('sgpaResult').offsetTop-100,behavior:'smooth'});
+  const r = computeSGPA();
+  if (r.error){ alert(r.error); return; }
+
+  $('rSGPA').textContent = r.sgpa.toFixed(2);
+  $('rCredits').textContent = num(r.totalCredits);
+  $('rPerc').textContent = r.perc.toFixed(2) + '%';
+  $('rClass').textContent = r.cls;
+
+  const box = $('sgpaResult');
+  box.style.display = 'block';
+
+  if (typeof gtag === 'function'){
+    gtag('event', 'calculate_sgpa', { value: Number(r.sgpa.toFixed(2)) });
+  }
+
+  const rect = box.getBoundingClientRect();
+  window.scrollTo({ top: rect.top + window.scrollY - 100, behavior: 'smooth' });
 }
+
+/* ============================================================
+   CGPA CALCULATION (credit-weighted when credits are provided)
+   ============================================================ */
+function computeCGPA(){
+  const sems = [];
+
+  for (let i = 1; i <= 8; i++){
+    const sv = parseFloat($('s' + i).value);
+    if (isNaN(sv)) continue;
+    if (sv < 0 || sv > 10){
+      return { error: 'SGPA for semester ' + i + ' must be between 0 and 10.' };
+    }
+    const cv = parseFloat($('c' + i).value);
+    sems.push({
+      sem: i,
+      sgpa: sv,
+      cr: (!isNaN(cv) && cv > 0) ? cv : null
+    });
+  }
+
+  if (!sems.length) return { error: 'Please enter the SGPA of at least one semester.' };
+
+  const useCredits = sems.every(s => s.cr !== null);
+  let weighted = 0, totalWeight = 0;
+
+  sems.forEach(function(s){
+    const w = useCredits ? s.cr : 1;
+    weighted += s.sgpa * w;
+    totalWeight += w;
+  });
+
+  const cgpa = weighted / totalWeight;
+  const perc = toPercent(cgpa);
+
+  return {
+    sems: sems,
+    useCredits: useCredits,
+    totalCredits: useCredits ? totalWeight : null,
+    cgpa: cgpa,
+    perc: perc,
+    cls: classify(perc)
+  };
+}
+
 function calculateCGPA(){
-let sum=0,count=0;
-for(let i=1;i<=8;i++){
-let v = parseFloat(document.getElementById('s'+i).value);
-if(!isNaN(v)){sum+=v;count++}
+  const r = computeCGPA();
+  if (r.error){ alert(r.error); return; }
+
+  $('rCGPA').textContent = r.cgpa.toFixed(2);
+  $('rCGPAPerc').textContent = r.perc.toFixed(2) + '%';
+  $('rCGPAClass').textContent = r.cls;
+  $('rCGPACredits').textContent = r.useCredits ? num(r.totalCredits) : '—';
+
+  $('cgpaNote').textContent = r.useCredits
+    ? 'Credit-weighted CGPA as per the VTU formula.'
+    : 'Tip: enter semester credits for the exact credit-weighted CGPA. A simple average of SGPAs is being used.';
+
+  $('cgpaResult').style.display = 'block';
+
+  if (typeof gtag === 'function'){
+    gtag('event', 'calculate_cgpa', { value: Number(r.cgpa.toFixed(2)) });
+  }
 }
-if(count===0){alert('Enter at least one sem SGPA');return}
-let cgpa = sum/count;
-let perc = (cgpa-0.5)*10;
-let cls = cgpa>=7?'FCD': cgpa>=6?'First Class': cgpa>=5?'Second Class':'Pass';
-document.getElementById('rCGPA').innerText = cgpa.toFixed(2);
-document.getElementById('rCGPAPerc').innerText = perc.toFixed(2)+'%';
-document.getElementById('rCGPAClass').innerText = cls;
-document.getElementById('cgpaResult').style.display='block';
+
+/* ============================================================
+   PDF GENERATION
+   ============================================================ */
+function requireStudent(){
+  const name = $('studentName').value.trim();
+  const usn = $('studentUSN').value.trim().toUpperCase();
+  let ok = true;
+
+  $('studentName').classList.remove('input-error');
+  $('studentUSN').classList.remove('input-error');
+
+  if (!name){ $('studentName').classList.add('input-error'); ok = false; }
+  if (!usn){ $('studentUSN').classList.add('input-error'); ok = false; }
+
+  if (!ok){
+    alert('Please enter the Student Name and USN before downloading the PDF.');
+    return null;
+  }
+  return { name: name, usn: usn };
 }
+
+function getJsPDF(){
+  const ctor = window.jspdf && window.jspdf.jsPDF;
+  if (!ctor){
+    alert('PDF library could not load. Please check your internet connection and try again.');
+    return null;
+  }
+  return ctor;
+}
+
+function safeFileName(s){
+  return (s || 'result').replace(/[^a-z0-9_-]/gi, '_');
+}
+
+function todayString(){
+  return new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+/* --- reusable PDF drawing blocks --- */
+function pdfHeader(doc, title){
+  const PW = doc.internal.pageSize.getWidth();
+
+  doc.setFillColor(22, 59, 101);
+  doc.rect(0, 0, PW, 84, 'F');
+  doc.setFillColor(217, 74, 50);
+  doc.rect(0, 84, PW, 4, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(17);
+  doc.text(title, 40, 38);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text('VTU CBCS • ' + schemeLabel() + ' • Generated: ' + todayString(), 40, 60);
+  doc.text('mahadevbiradar.in', PW - 40, 60, { align: 'right' });
+}
+
+function pdfStudentBlock(doc, y, stu, extraLabel, extraValue){
+  const PW = doc.internal.pageSize.getWidth();
+
+  doc.setFillColor(249, 250, 252);
+  doc.setDrawColor(225, 231, 237);
+  doc.roundedRect(40, y, PW - 80, 56, 6, 6, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(120, 130, 140);
+  doc.text('STUDENT NAME', 56, y + 18);
+  doc.text('USN', 268, y + 18);
+  doc.text(extraLabel.toUpperCase(), 412, y + 18);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11.5);
+  doc.setTextColor(22, 59, 101);
+  doc.text(truncate(stu.name, 32), 56, y + 39);
+  doc.text(truncate(stu.usn, 20), 268, y + 39);
+  doc.text(truncate(extraValue, 16), 412, y + 39);
+
+  return y + 56;
+}
+
+function pdfTable(doc, x0, y0, widths, headers, rows){
+  const rowH = 22;
+  const totalW = widths.reduce((a, b) => a + b, 0);
+  let x, y;
+
+  /* header */
+  doc.setFillColor(22, 59, 101);
+  doc.rect(x0, y0, totalW, rowH, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  x = x0;
+  headers.forEach(function(h, i){
+    doc.text(String(h), x + 8, y0 + 14.5);
+    x += widths[i];
+  });
+
+  /* body */
+  y = y0 + rowH;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(38, 50, 56);
+
+  rows.forEach(function(row, idx){
+    if (idx % 2 === 1){
+      doc.setFillColor(247, 249, 252);
+      doc.rect(x0, y, totalW, rowH, 'F');
+    }
+    x = x0;
+    row.forEach(function(cell, i){
+      doc.text(String(cell), x + 8, y + 14.5);
+      x += widths[i];
+    });
+    y += rowH;
+  });
+
+  /* borders */
+  doc.setDrawColor(225, 231, 237);
+  doc.setLineWidth(0.6);
+  doc.rect(x0, y0, totalW, y - y0);
+
+  x = x0;
+  for (let i = 0; i < widths.length - 1; i++){
+    x += widths[i];
+    doc.line(x, y0, x, y);
+  }
+  for (let r = 1; r <= rows.length; r++){
+    const yy = y0 + rowH * r;
+    doc.line(x0, yy, x0 + totalW, yy);
+  }
+
+  return y;
+}
+
+function pdfTotalsBand(doc, x0, y0, widths, label, c1, c2){
+  const totalW = widths.reduce((a, b) => a + b, 0);
+
+  doc.setFillColor(238, 245, 251);
+  doc.setDrawColor(225, 231, 237);
+  doc.rect(x0, y0, totalW, 24, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(22, 59, 101);
+
+  doc.text(label, x0 + 8, y0 + 16);
+  doc.text(String(c1), x0 + widths[0] + widths[1] + 8, y0 + 16);
+  doc.text(String(c2), x0 + widths[0] + widths[1] + widths[2] + 8, y0 + 16);
+
+  return y0 + 24;
+}
+
+function pdfSummary(doc, y, items){
+  const PW = doc.internal.pageSize.getWidth();
+  const w = PW - 80;
+  const colW = w / items.length;
+
+  doc.setFillColor(238, 245, 251);
+  doc.setDrawColor(22, 59, 101);
+  doc.roundedRect(40, y, w, 74, 8, 8, 'FD');
+
+  items.forEach(function(it, i){
+    const cx = 40 + colW * i + colW / 2;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(110, 122, 135);
+    doc.text(it.label.toUpperCase(), cx, y + 24, { align: 'center' });
+
+    doc.setFontSize(it.size || 15);
+    doc.setTextColor(22, 59, 101);
+    doc.text(it.value, cx, y + 50, { align: 'center', maxWidth: colW - 12 });
+  });
+
+  return y + 74;
+}
+
+function pdfFooter(doc){
+  const PW = doc.internal.pageSize.getWidth();
+  const PH = doc.internal.pageSize.getHeight();
+
+  doc.setDrawColor(225, 231, 237);
+  doc.setLineWidth(0.6);
+  doc.line(40, PH - 56, PW - 40, PH - 56);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(130, 140, 150);
+  doc.text('Self-calculated result based on the VTU CBCS formula. This is NOT an official VTU document.', 40, PH - 38);
+  doc.text('mahadevbiradar.in', PW - 40, PH - 38, { align: 'right' });
+}
+
+/* --- SGPA PDF --- */
+function downloadSGPAPdf(){
+  const stu = requireStudent();
+  if (!stu) return;
+
+  const r = computeSGPA();
+  if (r.error){ alert(r.error); return; }
+
+  const JsPDF = getJsPDF();
+  if (!JsPDF) return;
+
+  const doc = new JsPDF({ unit: 'pt', format: 'a4' });
+  const M = 40;
+  const PW = doc.internal.pageSize.getWidth();
+  const CW = PW - 2 * M;
+
+  pdfHeader(doc, 'VTU CBCS SGPA Result Sheet');
+
+  let y = 112;
+  y = pdfStudentBlock(doc, y, stu, 'Semester', semLabel());
+
+  y += 26;
+
+  const widths = [55, 150, 150, 160];
+  const rows = r.subjects.map(function(s, i){
+    return [i + 1, num(s.gp), num(s.cr), num(s.gp * s.cr)];
+  });
+
+  y = pdfTable(doc, M, y, widths, ['#', 'Grade Point', 'Credits', 'Credit Points'], rows);
+  y = pdfTotalsBand(doc, M, y, widths, 'Total', num(r.totalCredits), num(r.totalCP));
+
+  y += 30;
+
+  pdfSummary(doc, y, [
+    { label: 'SGPA', value: r.sgpa.toFixed(2), size: 20 },
+    { label: 'Percentage', value: r.perc.toFixed(2) + '%', size: 18 },
+    { label: 'Class', value: r.cls, size: 9.5 }
+  ]);
+
+  pdfFooter(doc);
+  doc.save('VTU_SGPA_' + safeFileName(stu.usn) + '.pdf');
+}
+
+/* --- CGPA PDF --- */
+function downloadCGPAPdf(){
+  const stu = requireStudent();
+  if (!stu) return;
+
+  const r = computeCGPA();
+  if (r.error){ alert(r.error); return; }
+
+  const JsPDF = getJsPDF();
+  if (!JsPDF) return;
+
+  const doc = new JsPDF({ unit: 'pt', format: 'a4' });
+  const M = 40;
+
+  pdfHeader(doc, 'VTU CBCS CGPA Result Sheet');
+
+  let y = 112;
+  y = pdfStudentBlock(doc, y, stu, 'Scope', 'Overall CGPA');
+
+  y += 26;
+
+  const widths = [120, 130, 130, 135];
+  let totalCP = 0;
+
+  const rows = r.sems.map(function(s){
+    const pts = r.useCredits ? s.sgpa * s.cr : null;
+    if (pts !== null) totalCP += pts;
+    return [
+      s.sem + ' Sem',
+      s.sgpa.toFixed(2),
+      r.useCredits ? num(s.cr) : '—',
+      r.useCredits ? num(pts) : '—'
+    ];
+  });
+
+  y = pdfTable(doc, M, y, widths, ['Semester', 'SGPA', 'Credits', 'Credit Points'], rows);
+  y = pdfTotalsBand(
+    doc, M, y, widths, 'Total',
+    r.useCredits ? num(r.totalCredits) : '—',
+    r.useCredits ? num(totalCP) : '—'
+  );
+
+  y += 30;
+
+  pdfSummary(doc, y, [
+    { label: 'CGPA', value: r.cgpa.toFixed(2), size: 20 },
+    { label: 'Percentage', value: r.perc.toFixed(2) + '%', size: 18 },
+    { label: 'Class', value: r.cls, size: 9.5 }
+  ]);
+
+  pdfFooter(doc);
+  doc.save('VTU_CGPA_' + safeFileName(stu.usn) + '.pdf');
+}
+
+/* ============================================================
+   EMAIL CAPTURE
+   ============================================================ */
 function saveEmail(e){
-e.preventDefault();
-var email = document.getElementById('userEmail').value;
-// Replace YOUR_SCRIPT with your Google Script URL
-fetch('https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec?email='+encodeURIComponent(email)+'&source=vtu_cgpa');
-document.getElementById('emailMsg').style.display='block';
-setTimeout(()=>{window.open('https://mahadevbiradar.in/','_blank')},800);
-return false;
+  e.preventDefault();
+
+  const email = $('userEmail').value.trim();
+  if (!email) return false;
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const url = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec'
+            + '?email=' + encodeURIComponent(email) + '&source=vtu_cgpa';
+
+  try {
+    fetch(url, { mode: 'no-cors' }).catch(function(){});
+  } catch (err){ /* ignore */ }
+
+  setTimeout(function(){
+    $('emailMsg').style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Send me the PDF';
+  }, 600);
+
+  return false;
 }
-// Init
-setSem(1);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+setSem('first');
 </script>
 </body>
 </html>
