@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-JZRW69TE7N');
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#991b1b">
@@ -663,5 +671,47 @@
       selectSemester(currentSemester);
     })();
   </script>
+  <script>
+/* Injects the floating Home button globally */
+(function () {
+  if (document.getElementById('global-home-btn')) return;
+
+  const css = `
+    #global-home-btn{
+      position:fixed;bottom:22px;left:22px;z-index:9998;
+      display:flex;align-items:center;gap:8px;padding:9px 16px;
+      border-radius:999px;background:rgba(15,23,42,.92);color:#e2e8f0;
+      font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+      font-size:12px;font-weight:700;letter-spacing:.02em;
+      text-decoration:none;box-shadow:0 12px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.2);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(18px) saturate(180%);
+      -webkit-backdrop-filter:blur(18px) saturate(180%);
+      transition:transform .18s cubic-bezier(.4,0,.2,1),background .18s,box-shadow .18s;
+    }
+    #global-home-btn:hover{
+      background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 16px 38px rgba(79,70,229,.45),0 2px 8px rgba(0,0,0,.2);
+    }
+    #global-home-btn:active{transform:translateY(0) scale(.97)}
+    @media(max-width:520px){
+      #global-home-btn{bottom:12px;left:12px;padding:8px 12px;font-size:11px}
+    }
+  `;
+
+  const style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  const a = document.createElement('a');
+  a.id = 'global-home-btn';
+  a.href = 'index.html';
+  a.title = 'Home';
+  a.setAttribute('aria-label', 'Back to Home');
+  a.innerHTML = '<span aria-hidden="true">🏠</span><span class="ghb-label">Home</span>';
+  document.body.appendChild(a);
+})();
+</script>
 </body>
 </html>
