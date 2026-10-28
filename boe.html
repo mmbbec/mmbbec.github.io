@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOE Dashboard - BEC Bagalkote | VTU Question Paper Setter Management</title>
+<meta name="description" content="BEC Bagalkote BOE Dashboard - Manage Panel of Examiners, Course Master, QP Setter Assignment, Scrutiny Letters, Remuneration Bills. For VTU BE Odd/Even Semester.">
+<link rel="canonical" href="https://mahadevbiradar.in/boe-dashboard.html">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332673221241180" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JZRW69TE7N');</script>
+
+<!-- PDF + ZIP libraries (loaded lazily) -->
+<script>
+function loadScript(src){
+    return new Promise((resolve,reject)=>{
+        if(document.querySelector(`script[src="${src}"]`)) return resolve();
+        const s=document.createElement('script');
+        s.src=src; s.onload=resolve; s.onerror=reject;
+        document.head.appendChild(s);
+    });
+}
+async function ensurePdfLibs(){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    if(!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF failed to load');
+    if(!window.JSZip) throw new Error('JSZip failed to load');
+}
+</script>
+
+<style>
+:root{
+ --primary:#163b65; --primary-dark:#102d4b; --accent:#d94a32; --accent2:#3498db;
+ --success:#27ae60; --danger:#e74c3c; --bg:#f7f9fc; --card:#ffffff;
+ --border:#e5e7eb; --text:#263238; --muted:#6b7280;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+body{display:flex;flex-direction:column;min-height:100vh;background:var(--bg);color:var(--text)}
+.top-header{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1001;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.logo{font-size:20px;font-weight:bold;color:var(--primary)}.logo span{color:var(--accent)}
+.top-header-right{display:flex;gap:10px;align-items:center}
+.home-btn{background:var(--primary);color:white!important;text-decoration:none;padding:8px 16px;border-radius:6px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:0.2s}
+.home-btn:hover{background:var(--accent)}
+.hamburger{display:none;background:var(--primary);color:white;border:none;padding:8px 12px;border-radius:6px;font-size:18px;cursor:pointer}
+@media(max-width:900px){.hamburger{display:block}}
+.app-layout{display:flex;flex:1;min-height:0}
+.sidebar{width:260px;background:var(--primary);color:white;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;transition:transform 0.3s;z-index:1000}
+.sidebar-header{padding:20px;text-align:center;background:var(--primary-dark);border-bottom:1px solid #1a3a5a}
+.sidebar-header h2{font-size:1.15rem;margin-bottom:4px}
+.sidebar-header p{font-size:0.8rem;color:#bdc3c7}
+.nav-btn{padding:14px 20px;background:none;border:none;color:#e5e7eb;text-align:left;cursor:pointer;font-size:0.92rem;border-bottom:1px solid rgba(255,255,255,0.08);transition:0.2s;display:flex;align-items:center;gap:8px}
+.nav-btn:hover,.nav-btn.active{background:var(--accent);color:white}
+.nav-btn.settings-btn{margin-top:auto;background:var(--primary-dark);border-top:2px solid #1a3a5a}
+.nav-btn.home-sidebar{background:#0e2238;border-bottom:1px solid #1a3a5a;color:#90caf9}
+.nav-btn.home-sidebar:hover{background:var(--primary-dark);color:white}
+.nav-btn.logout-btn{background:#991b1b;color:#fecaca;border-top:1px solid #1a3a5a}
+.nav-btn.logout-btn:hover{background:#7f1d1d;color:white}
+@media(max-width:900px){
+ .sidebar{position:fixed;left:0;top:56px;bottom:0;transform:translateX(-100%)}
+ .sidebar.open{transform:translateX(0)}
+ .app-layout{flex-direction:column}
+}
+.main-content{flex:1;padding:22px;overflow-y:auto}
+.module{display:none;background:var(--card);padding:22px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.05);border:1px solid var(--border);margin-bottom:20px}
+.module.active{display:block}
+h1{font-size:1.35rem;margin-bottom:18px;color:var(--primary);border-left:4px solid var(--accent);padding:6px 0 6px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.table-container{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:0.88rem;min-width:700px}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+th{background:var(--primary);color:white;font-weight:600;font-size:0.82rem;position:sticky;top:0}
+tr:nth-child(even){background:#f8fafc}
+td[contenteditable="true"]:focus{outline:2px solid var(--accent2);background:#fff}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;margin-bottom:5px;font-weight:600;font-size:0.88rem;color:#374151}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:0.92rem;transition:0.2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(22,59,101,0.1)}
+.btn{padding:8px 14px;background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.84rem;font-weight:600;transition:0.2s;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--accent)}
+.btn-success{background:var(--success)}.btn-danger{background:var(--danger)}.btn-print{background:#6c5ce7}.btn-excel{background:#1e8e3e}.btn-pdf{background:#d35400;padding:6px 10px}
+.btn:disabled{background:#9ca3af;cursor:not-allowed}
+select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;background:white;font-size:0.84rem;cursor:pointer}
+.letter-output{margin-top:18px;padding:36px;border:1px solid var(--border);background:white;font-family:'Times New Roman',Times,serif;font-size:1rem;line-height:1.5;display:none;min-height:400px;border-radius:8px}
+.letter-output[contenteditable="true"]:focus{outline:2px solid var(--accent2)}
+.doc-table{width:100%;border-collapse:collapse;margin:12px 0}
+.doc-table th,.doc-table td{border:1px solid #000;padding:7px;text-align:left}
+.doc-table th{background:#f3f4f6;color:#000;font-weight:bold;text-align:center}
+.action-cell{text-align:center;width:170px}.action-btn-group{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+#remunerationTableBody td[contenteditable="true"]{background:#fffef0}
+#remunerationTableBody td[contenteditable="true"]:hover{background:#fff9c4}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2000;background:rgba(0,0,0,0.6)}
+.modal-overlay.active{display:flex}
+.modal-container{display:flex;flex-direction:column;width:100%;height:100%}
+.modal-toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--primary);color:white;gap:10px;flex-wrap:wrap}
+.modal-body{flex:1;overflow:auto;padding:20px;display:flex;justify-content:center;align-items:flex-start;background:#444}
+.a4-page{width:210mm;min-height:297mm;padding:15mm;box-sizing:border-box;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.4);font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;line-height:1.4;outline:none}
+.settings-preview{background:#eef5fb;padding:14px 18px;border-radius:8px;border-left:4px solid var(--primary);margin-bottom:18px}
+.settings-preview h4{color:var(--primary);margin-bottom:6px}
+.settings-saved-msg{color:var(--success);font-weight:bold;margin-left:10px;font-size:0.9rem}
+.sem-filter-bar{margin-bottom:14px;display:flex;align-items:center;gap:12px;background:#fffbeb;padding:12px 16px;border-radius:8px;border-left:4px solid #f59e0b;flex-wrap:wrap}
+.sem-filter-bar label{font-weight:bold;color:#92400e}
+.sem-filter-bar select{padding:7px 12px;border-radius:6px;border:1px solid #fbbf24;font-weight:600;background:white;cursor:pointer}
+footer{background:var(--primary-dark);color:white;text-align:center;padding:14px;font-size:12px;margin-top:auto}
+footer a{color:#90caf9;text-decoration:none}
+
+/* Login overlay */
+#loginOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#163b65,#3498db);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-card{background:white;padding:40px 35px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.4);width:400px;max-width:92vw;animation:slideIn 0.4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.login-card h2{text-align:center;color:#163b65;margin-bottom:6px;font-size:1.5rem}
+.login-card .subtitle{text-align:center;color:#6b7280;margin-bottom:24px;font-size:0.9rem}
+.login-card label{display:block;margin-bottom:6px;font-weight:600;color:#374151;font-size:0.9rem}
+.login-card input{width:100%;padding:12px 14px;margin-bottom:14px;border:1px solid #d0d7de;border-radius:6px;font-size:0.95rem;transition:0.2s}
+.login-card input:focus{outline:none;border-color:#163b65;box-shadow:0 0 0 3px rgba(22,59,101,0.1)}
+.login-card button{width:100%;padding:13px;background:#163b65;color:white;border:none;border-radius:6px;font-size:1rem;font-weight:bold;cursor:pointer;transition:background 0.2s}
+.login-card button:hover{background:#d94a32}
+.login-error{color:#e74c3c;text-align:center;margin-top:14px;font-size:0.9rem;display:none}
+
+/* ZIP progress toast */
+#zipToast{position:fixed;bottom:20px;right:20px;background:#163b65;color:white;padding:14px 20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.3);font-size:0.9rem;font-weight:600;display:none;z-index:3000}
+#zipToast.show{display:block}
+
+@media print{
+ body:not(.modal-open) .top-header,body:not(.modal-open) .sidebar,body:not(.modal-open) .btn,body:not(.modal-open) .action-cell,body:not(.modal-open) .no-print,body:not(.modal-open) .sem-filter-bar,body:not(.modal-open) footer{display:none!important}
+ body:not(.modal-open){display:block;background:white}
+ body:not(.modal-open) .main-content{padding:0;overflow:visible}
+ body:not(.modal-open) .module{box-shadow:none;border:none;padding:0}
+ body:not(.modal-open) .module.active{display:block}
+ body:not(.modal-open) .letter-output{border:none;padding:0;display:block!important}
+ body.modal-open > *:not(#letterModal){display:none!important}
+ body.modal-open #letterModal{display:block!important;position:static;background:white}
+ body.modal-open .modal-toolbar{display:none!important}
+ body.modal-open .modal-body{padding:0;background:white}
+ body.modal-open .a4-page{box-shadow:none;width:auto;min-height:auto;padding:15mm}
+ #loginOverlay,#zipToast{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN OVERLAY ==================== -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <h2>BEC Bagalkote</h2>
+        <p class="subtitle">BOE Dashboard · Login Required</p>
+        <label for="loginUser">Username (Email)</label>
+        <input type="email" id="loginUser" placeholder="becboe@gmail.com" autocomplete="username">
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" placeholder="••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button onclick="doLogin()">🔐 Login</button>
+        <p class="login-error" id="loginError">❌ Invalid username or password</p>
+    </div>
+</div>
+
+<header class="top-header">
+ <div style="display:flex;align-items:center;gap:12px">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="logo">Dr. Mahadev <span>Biradar</span></div>
+  <span style="font-size:12px;color:#6b7280;border-left:1px solid #e5e7eb;padding-left:12px;margin-left:4px">BEC Bagalkote • BOE Dashboard</span>
+ </div>
+ <div class="top-header-right">
+  <a href="/" class="home-btn">🏠 Home</a>
+  <a href="/vtu-cbcs-cgpa-calculator.html" class="home-btn" style="background:#eef5fb;color:#163b65!important;border:1px solid #d6e4f0">🎓 VTU Tools</a>
+ </div>
+</header>
+
+<div class="app-layout">
+ <div class="sidebar" id="sidebar">
+  <div class="sidebar-header"><h2>BEC Bagalkote</h2><p>BOE Dashboard - VTU</p></div>
+  <button class="nav-btn home-sidebar" onclick="window.location.href='/'">🏠 Back to Home</button>
+  <button class="nav-btn active" onclick="showModule('panel',this)">1. 👥 Panel of Examiners</button>
+  <button class="nav-btn" onclick="showModule('course',this)">2. 📚 Course Master</button>
+  <button class="nav-btn" onclick="showModule('assign',this)">3. 📝 Assign QP Setter</button>
+  <button class="nav-btn" onclick="showModule('scrutiny',this)">4. 🔍 Scrutiny Letter</button>
+  <button class="nav-btn" onclick="showModule('remuneration',this)">5. 💰 Remuneration Bill</button>
+  <button class="nav-btn settings-btn" onclick="showModule('settings',this)">⚙️ Settings</button>
+  <button class="nav-btn logout-btn" onclick="doLogout()">🚪 Logout</button>
+ </div>
+
+ <div class="main-content">
+  <div id="panel" class="module active">
+   <h1>Panel of Examiners <button class="btn btn-success no-print" onclick="addRow('panel')">+ Add Examiner</button></h1>
+   <div class="table-container"><table><thead><tr><th>Internal Examiner</th><th>College Name</th><th>Name of Faculty (External)</th><th>External College Name</th><th>PAN</th><th>Bank Name</th><th>SB A/C No.</th><th>IFSC</th><th class="action-cell no-print">Action</th></tr></thead><tbody id="panelTableBody"></tbody></table></div>
+  </div>
+
+  <div id="course" class="module">
+   <h1>Course Master <button class="btn btn-success no-print" onclick="addRow('course')">+ Add Course</button></h1>
+   <div class="table-container"><table><thead><tr><th>Course Code</th><th>Branch</th><th>Semester</th><th>Course Title</th><th class="action-cell no-print">Action</th></tr></thead><tbody id="courseTableBody"></tbody></table></div>
+  </div>
+
+  <div id="assign" class="module">
+   <h1>Assign QP Setter & Generate Orders
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn btn-pdf no-print" onclick="generateAllPDFsZip()">📦 Download All as ZIP</button>
+     <button class="btn no-print" style="background:#6c5ce7" onclick="generateAllPDFsPrint()">🖨 Print All</button>
+    </div>
+   </h1>
+   <div class="sem-filter-bar no-print">
+    <label for="assignSemFilter">Semester Filter:</label>
+    <select id="assignSemFilter" onchange="renderAssignTable()"><option value="all">All Semesters</option></select>
+   </div>
+   <div class="no-print" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;background:#eef5fb;padding:12px 14px;border-radius:8px;border:1px solid #d6e4f0;flex-wrap:wrap">
+    <label style="font-weight:600">Last Date:</label>
+    <input type="text" id="globalLastDate" value="17.09.2025" style="width:180px;padding:8px;border-radius:6px;border:1px solid #d0d7de" oninput="saveData()">
+    <span style="font-size:0.82rem;color:#6b7280">Printed on orders</span>
+   </div>
+   <div class="table-container"><table><thead><tr><th style="width:22%">Subject Code & Title</th><th style="width:14%">Examiner 1</th><th style="width:14%">Examiner 2</th><th style="width:14%">Examiner 3</th><th style="width:14%">Examiner 4</th><th class="action-cell no-print">Open / Edit</th></tr></thead><tbody id="assignTableBody"></tbody></table></div>
+   <p class="no-print" style="margin-top:12px;font-size:0.85rem;color:#16a085">
+    💡 <strong>Download All as ZIP</strong> creates separate PDF files for each examiner — ready to email/post individually.
+    <strong>Print All</strong> opens one print job with all letters, one per A4 page.
+   </p>
+  </div>
+
+  <div id="scrutiny" class="module">
+   <h1>Scrutiny Letter Generator</h1>
+   <div class="no-print">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+     <div class="form-group"><label>Letter Date:</label><input type="text" id="scDate" value="20.06.24" onchange="regenerateScrutinyLetter()"></div>
+     <div class="form-group"><label>Scrutiny Date:</label><input type="text" id="scSubjectDate" value="21.06.24" onchange="regenerateScrutinyLetter()"></div>
+     <div class="form-group"><label>Scrutiny Personnel 1:</label><input type="text" id="scPerson1" value="Dr.V M Shetter" onchange="regenerateScrutinyLetter()"></div>
+     <div class="form-group"><label>Scrutiny Personnel 2:</label><input type="text" id="scPerson2" value="Dr.S V Gurushantanavar" onchange="regenerateScrutinyLetter()"></div>
+    </div>
+    <p style="font-size:0.82rem;color:#b91c1c;margin:8px 0">⚠ Changing fields regenerates letter. Signature blank for physical signing.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn" onclick="regenerateScrutinyLetter()">↺ Regenerate</button>
+     <button class="btn btn-print" onclick="printScrutiny()">🖨 Print / PDF</button>
+     <button class="btn btn-excel" onclick="downloadScrutinyDocx()">📄 DOCX</button>
+    </div>
+   </div>
+   <div id="scLetterOutput" class="letter-output" contenteditable="true" spellcheck="false"></div>
+  </div>
+
+  <div id="remuneration" class="module">
+   <h1>Remuneration Bill</h1>
+   <div id="remBillHeader" style="text-align:center;margin-bottom:16px;background:#f8fafc;padding:14px;border-radius:8px;border:1px solid var(--border)">
+    <h3 id="remInstitution">Basaveshwar Engineering College, Bagalkote - 587102</h3>
+    <p>Department of <span id="remDepartment">Mathematics</span></p>
+    <p style="font-weight:bold;margin-top:8px">Sub: Payment of Remuneration SEE Theory Question Paper Setter of BE <span id="remSemesterType">Odd</span> Semester <span id="remAcademicYear">2025-26</span></p>
+    <p style="font-size:0.85rem;color:#6b7280"><strong>(External Examiners only)</strong></p>
+   </div>
+   <div class="table-container"><table id="remunerationTable"><thead><tr><th>Sl.</th><th>Faculty (External)</th><th>PAN</th><th>Total ₹</th><th>I Tax 10%</th><th>Net Payable</th><th>Bank</th><th>SB A/C</th><th>IFSC</th><th>Remarks</th></tr></thead><tbody id="remunerationTableBody"></tbody><tfoot><tr style="font-weight:bold;background:#e5e7eb"><td colspan="3" style="text-align:right">Total</td><td id="totalGross">₹0</td><td id="totalTax">₹0</td><td id="totalNet">₹0</td><td colspan="4"></td></tr></tfoot></table></div>
+   <div class="no-print" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-excel" onclick="downloadRemunerationDocx()">📄 DOCX</button>
+    <button class="btn btn-excel" style="background:#2c7a4b" onclick="downloadExcel()">📊 CSV</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-danger" onclick="resetRemunerationEdits()">↺ Reset</button>
+    <a href="/" class="btn" style="background:#6b7280">🏠 Home</a>
+   </div>
+  </div>
+
+  <div id="settings" class="module">
+   <h1>⚙️ Settings</h1>
+   <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. Signature blank for physical signing.</p>
+   <div class="settings-preview">
+    <h4>📋 Current Preview</h4>
+    <p><strong>Institution:</strong> <span id="previewInst">—</span></p>
+    <p><strong>Department:</strong> <span id="previewDept">—</span></p>
+    <p><strong>BOE:</strong> <span id="previewBoe">—</span> | <strong>Mobile:</strong> <span id="previewMobile">—</span></p>
+    <p><strong>Academic Year:</strong> <span id="previewAY">—</span> | <strong>Sem Type:</strong> <span id="previewSemType">—</span></p>
+   </div>
+   <div style="max-width:700px">
+    <div class="form-group"><label>Institution:</label><input type="text" id="setInstitution"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+     <div class="form-group"><label>Department:</label><input type="text" id="setDepartment"></div>
+     <div class="form-group"><label>Academic Year:</label><input type="text" id="setAcademicYear"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+     <div class="form-group"><label>BOE Name:</label><input type="text" id="setBoeName"></div>
+     <div class="form-group"><label>BOE Mobile:</label><input type="text" id="setBoeMobile"></div>
+    </div>
+    <div class="form-group"><label>Semester Type:</label><select id="setSemesterType"><option value="Odd">Odd Semester</option><option value="Even">Even Semester</option></select></div>
+    <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+     <button class="btn btn-success" style="padding:10px 22px" onclick="saveSettings()">💾 Save Settings</button>
+     <span id="settingsSavedMsg" class="settings-saved-msg"></span>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<footer>© 2026 <a href="/">mahadevbiradar.in</a> • BOE Dashboard • BEC Bagalkote • Built by Dr. Mahadev M Biradar • <a href="/vtu-cbcs-cgpa-calculator.html">VTU CGPA Calculator</a> • <a href="/nba-co-po-upload-tool.html">NBA CO-PO Tool</a></footer>
+
+<div id="letterModal" class="modal-overlay">
+ <div class="modal-container">
+  <div class="modal-toolbar no-print">
+   <span id="modalTitle">Document</span>
+   <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <button class="btn" onclick="resetModalEdit()">↺ Regenerate</button>
+    <button class="btn btn-print" onclick="printModal()">🖨 Print / PDF</button>
+    <button class="btn btn-excel" onclick="downloadModalPdf()" style="background:#c0392b">📄 Download PDF</button>
+    <button class="btn btn-excel" onclick="downloadModalDocx()">📄 DOCX</button>
+    <button class="btn btn-danger" onclick="closeModal()">✕ Close</button>
+   </div>
+  </div>
+  <div class="modal-body"><div id="modalContent" class="a4-page" contenteditable="true" spellcheck="false"></div></div>
+ </div>
+</div>
+
+<div id="zipToast">📦 Preparing ZIP…</div>
+
+<script>
+const TEMPLATE_VERSION = 4;
+
+/* ==================== LOGIN ==================== */
+const VALID_USER = 'becboe@gmail.com';
+const VALID_PASS = '1234';
+
+function doLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if (user === VALID_USER && pass === VALID_PASS) {
+        localStorage.setItem('boeLoggedIn', 'true');
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('loginError').style.display = 'none';
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+function doLogout() {
+    if (!confirm('Logout from BOE Dashboard?')) return;
+    localStorage.removeItem('boeLoggedIn');
+    location.reload();
+}
+function checkAuth() {
+    if (localStorage.getItem('boeLoggedIn') === 'true') {
+        document.getElementById('loginOverlay').style.display = 'none';
+    } else {
+        document.getElementById('loginOverlay').style.display = 'flex';
+    }
+}
+
+/* ==================== DATA ==================== */
+let panelData = [
+ ["Dr S V Gurushantnavar","BEC Bagalkote","Dr. Vishal Patil","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
+ ["Dr V M Shettar","BEC Bagalkote","Dr. Gurunath Sankad","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
+ ["Dr M M Biradar","BEC Bagalkote","Dr. H. M. Manjunath","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
+ ["Dr K Rama Prasad","BEC Bagalkote","Dr. Gopichand P.","KLE Tech Hubli","AZHPP3022B","Canara Bank PC","868310102241","CNRB0008683"],
+ ["Dr A H Agadi","BEC Bagalkote","Dr. D. Shaikh Meera","PDACE Kalaburagi","AFNPD5542E","PKGB BITM Bell","10977100000124","PKGB0010977"],
+ ["Dr Ishwar Maharudrappa","BEC Bagalkote","Dr. Jagadish Tawade","GNDEC Bidar","AMSPJ3335R","SBI Bhalki","62264115526","SBIN0020241"],
+ ["Prof. V M Pudakalkatti","BEC Bagalkote","Prof. Shivakumar Timanak","BEC Bagalkote","-","Union Bank Kalab","52010121482550","UBIN0920932"],
+ ["Dr Pradeep Hiremath","BEC Bagalkote","Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
+ ["Dr S S Benchalli","BEC Bagalkote","Dr. Roopa S","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
+];
+let courseData = [
+ ["1BMAS101C","Computer Science & Engineering","I","Calculus and Linear Algebra"],
+ ["1BMAC101C","Civil Engineering","I","Differential Calculus and Linear Algebra"],
+ ["1BMAE101C","Electrical & Electronics Engineering","I","Differential Calculus and Linear Algebra"],
+ ["1BMAM101C","Mechanical Engineering","I","Differential Calculus and Linear Algebra"],
+ ["1BMAS301C","Computer Science & Engineering","III","Mathematics for Computer Science"],
+ ["1BMAC301C","Civil Engineering","III","Mathematics for Civil Engineering"],
+ ["1BMAE301C","Electrical & Electronics Engineering","III","Mathematics for Electrical Engineering"],
+ ["1BMAM301C","Mechanical Engineering","III","Mathematics for Mechanical Engineering"],
+ ["BMAB300M","All Branches (Lateral Entry)","III","Bridge Course Mathematics-I"]
+];
+let assignData = [
+ ["1BMAS101C","Prof. V M Pudakalkatti","Dr Pradeep Hiremath","Dr. Vishal Patil","Dr. Jagadish Tawade"],
+ ["1BMAC101C","Dr M M Biradar","","Dr. Gurunath Sankad",""],
+ ["1BMAE101C","Dr S S Benchalli","","Dr. H. M. Manjunath",""],
+ ["1BMAM101C","Dr A H Agadi","","Dr. Gopichand P.",""]
+];
+let lastDateVal = "17.09.2025";
+let institutionName = "Basaveshwar Engineering College, Bagalkote - 587 102";
+let departmentName = "Mathematics";
+let boeName = "Dr. Ishwar Maharudrappa";
+let boeMobile = "9035246580";
+let academicYear = "2025-26";
+let semesterType = "Odd";
+
+const KEYS = {
+ panel:'panelData_v12', course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
+ settings:'settings_v12', scrutiny:'scrutiny_edit_v12', remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
+};
+
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+
+/* ==================== LOAD ==================== */
+function loadAll(){
+ ['panelData_v11','courseData_v11','assignData_v11'].forEach((old,i)=>{
+  const nk=[KEYS.panel,KEYS.course,KEYS.assign][i];
+  if(!localStorage.getItem(nk)&&localStorage.getItem(old))
+   localStorage.setItem(nk,localStorage.getItem(old));
+ });
+ if(!localStorage.getItem(KEYS.lastDate)&&localStorage.getItem('lastDate_v11'))
+  localStorage.setItem(KEYS.lastDate,localStorage.getItem('lastDate_v11'));
+ if(!localStorage.getItem(KEYS.settings)&&localStorage.getItem('settings_v11'))
+  localStorage.setItem(KEYS.settings,localStorage.getItem('settings_v11'));
+
+ if(localStorage.getItem(KEYS.panel))  panelData  = JSON.parse(localStorage.getItem(KEYS.panel));
+ if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
+ if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
+ if(localStorage.getItem(KEYS.lastDate)) lastDateVal = localStorage.getItem(KEYS.lastDate);
+
+ // Sanitise
+ const internalList = panelData.map(p=>p[0]).filter(n=>n&&n.trim()!=="");
+ const externalList = panelData.map(p=>p[2]).filter(n=>n&&n.trim()!=="");
+ assignData = assignData.map(row=>{
+  const out=[row[0]];
+  for(let i=1;i<=4;i++){
+   const n=(row[i]||'').trim();
+   const list=i<=2?internalList:externalList;
+   out.push(list.includes(n)?n:"");
+  }
+  return out;
+ });
+
+ if(localStorage.getItem(KEYS.settings)){
+  try{
+   const s=JSON.parse(localStorage.getItem(KEYS.settings));
+   institutionName=s.institution||institutionName;
+   departmentName=s.department||departmentName;
+   boeName=s.boeName||boeName;
+   boeMobile=s.boeMobile||boeMobile;
+   academicYear=s.academicYear||academicYear;
+   semesterType=s.semesterType||semesterType;
+  }catch(e){}
+ }
+
+ document.getElementById('setInstitution').value=institutionName;
+ document.getElementById('setDepartment').value=departmentName;
+ document.getElementById('setBoeName').value=boeName;
+ document.getElementById('setBoeMobile').value=boeMobile;
+ document.getElementById('setAcademicYear').value=academicYear;
+ document.getElementById('setSemesterType').value=semesterType;
+ document.getElementById('globalLastDate').value=lastDateVal;
+ refreshPreview();
+ refreshRemunerationHeader();
+}
+
+function refreshPreview(){
+ document.getElementById('previewInst').textContent=institutionName;
+ document.getElementById('previewDept').textContent=departmentName;
+ document.getElementById('previewBoe').textContent=boeName;
+ document.getElementById('previewMobile').textContent=boeMobile;
+ document.getElementById('previewAY').textContent=academicYear;
+ document.getElementById('previewSemType').textContent=semesterType;
+}
+
+function refreshRemunerationHeader(){
+ document.getElementById('remInstitution').textContent=institutionName;
+ document.getElementById('remDepartment').textContent=departmentName;
+ document.getElementById('remSemesterType').textContent=semesterType;
+ document.getElementById('remAcademicYear').textContent=academicYear;
+}
+
+function saveData(){
+ lastDateVal=document.getElementById('globalLastDate').value;
+ localStorage.setItem(KEYS.panel,JSON.stringify(panelData));
+ localStorage.setItem(KEYS.course,JSON.stringify(courseData));
+ localStorage.setItem(KEYS.assign,JSON.stringify(assignData));
+ localStorage.setItem(KEYS.lastDate,lastDateVal);
+}
+
+function saveSettings(){
+ institutionName=document.getElementById('setInstitution').value.trim()||institutionName;
+ departmentName=document.getElementById('setDepartment').value.trim()||departmentName;
+ boeName=document.getElementById('setBoeName').value.trim()||boeName;
+ boeMobile=document.getElementById('setBoeMobile').value.trim()||boeMobile;
+ academicYear=document.getElementById('setAcademicYear').value.trim()||academicYear;
+ semesterType=document.getElementById('setSemesterType').value;
+
+ localStorage.setItem(KEYS.settings,JSON.stringify({
+  institution:institutionName,department:departmentName,
+  boeName,boeMobile,academicYear,semesterType
+ }));
+
+ Object.keys(localStorage).forEach(k=>{
+  if(!k.startsWith(KEYS.letterPrefix)) return;
+  try{
+   const entry=JSON.parse(localStorage.getItem(k)||'null');
+   if(!entry||!entry.meta){ localStorage.removeItem(k); return; }
+   if(entry.meta.v!==TEMPLATE_VERSION ||
+      entry.meta.boeName!==boeName ||
+      entry.meta.boeMobile!==boeMobile ||
+      entry.meta.academicYear!==academicYear ||
+      entry.meta.semesterType!==semesterType){
+    localStorage.removeItem(k);
+   }
+  }catch(e){ localStorage.removeItem(k); }
+ });
+
+ refreshPreview();
+ refreshRemunerationHeader();
+
+ const filterSel=document.getElementById('assignSemFilter');
+ if(filterSel){
+  const sems=[...new Set(courseData.map(c=>c[2]).filter(s=>s&&s.trim()!==""))].sort();
+  const matches=semesterType==='Even'
+   ? sems.filter(s=>['II','IV','VI','VIII'].includes(s))
+   : sems.filter(s=>['I','III','V','VII'].includes(s));
+  filterSel.value=matches.length?matches[0]:'all';
+ }
+
+ const msg=document.getElementById('settingsSavedMsg');
+ msg.textContent='✓ Saved! Letters will regenerate.';
+ setTimeout(()=>msg.textContent='',3000);
+
+ if(typeof gtag==='function') gtag('event','save_settings');
+}
+
+/* ==================== NAVIGATION ==================== */
+function showModule(moduleId,btn){
+ document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+ document.getElementById(moduleId).classList.add('active');
+ if(btn) btn.classList.add('active');
+ if(window.innerWidth<=900) document.getElementById('sidebar').classList.remove('open');
+ if(moduleId==='assign') renderAssignTable();
+ if(moduleId==='scrutiny') restoreScrutinyLetter();
+ if(moduleId==='remuneration') renderRemunerationTable();
+}
+
+/* ==================== BASIC TABLES ==================== */
+function renderBasicTable(tableId,data){
+ const tbody=document.getElementById(tableId);
+ tbody.innerHTML="";
+ data.forEach((row,rowIndex)=>{
+  const tr=document.createElement('tr');
+  row.forEach((cell,colIndex)=>{
+   const td=document.createElement('td');
+   td.textContent=cell;
+   td.contentEditable="true";
+   td.spellcheck=false;
+   td.addEventListener('blur',e=>{ data[rowIndex][colIndex]=e.target.textContent.trim(); saveData(); });
+   td.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); td.blur(); } });
+   tr.appendChild(td);
+  });
+  const actionTd=document.createElement('td');
+  actionTd.className='action-cell no-print';
+  const delBtn=document.createElement('button');
+  delBtn.textContent='X';
+  delBtn.className='btn btn-danger';
+  delBtn.style.padding='4px 8px';
+  delBtn.onclick=()=>{
+   if(!confirm('Delete this row?')) return;
+   data.splice(rowIndex,1);
+   if(tableId==='courseTableBody'){
+    const code=row[0];
+    assignData=assignData.filter(a=>a[0]!==code);
+   }
+   saveData(); renderAll();
+  };
+  actionTd.appendChild(delBtn);
+  tr.appendChild(actionTd);
+  tbody.appendChild(tr);
+ });
+}
+
+/* ==================== ASSIGN ==================== */
+function populateSemFilter(){
+ const select=document.getElementById('assignSemFilter');
+ if(!select) return;
+ const cur=select.value;
+ const semesters=[...new Set(courseData.map(c=>c[2]).filter(s=>s&&s.trim()!==""))].sort();
+ select.innerHTML='<option value="all">All Semesters</option>';
+ semesters.forEach(s=>{
+  const o=document.createElement('option');
+  o.value=s; o.textContent='Semester '+s;
+  select.appendChild(o);
+ });
+ if(cur && (semesters.includes(cur)||cur==='all')) select.value=cur;
+ else{
+  const matches=semesterType==='Even'
+   ? semesters.filter(s=>['II','IV','VI','VIII'].includes(s))
+   : semesters.filter(s=>['I','III','V','VII'].includes(s));
+  select.value=matches.length?matches[0]:'all';
+ }
+}
+
+function renderAssignTable(){
+ populateSemFilter();
+ const tbody=document.getElementById('assignTableBody');
+ tbody.innerHTML="";
+ const filter=document.getElementById('assignSemFilter').value;
+ const filtered=filter==='all'?courseData:courseData.filter(c=>c[2]===filter);
+ if(filtered.length===0){
+  const tr=document.createElement('tr');
+  const td=document.createElement('td');
+  td.colSpan=6; td.textContent='No courses for selected semester.';
+  td.style.textAlign='center'; td.style.padding='20px'; td.style.color='#7f8c8d';
+  tr.appendChild(td); tbody.appendChild(tr); return;
+ }
+ const internalNames=[...new Set(panelData.map(r=>r[0]).filter(n=>n&&n.trim()!==""))];
+ const externalNames=[...new Set(panelData.map(r=>r[2]).filter(n=>n&&n.trim()!==""))];
+ filtered.forEach(course=>{
+  const code=course[0]; const title=course[3];
+  let assignRow=assignData.find(a=>a[0]===code);
+  if(!assignRow){ assignRow=[code,"","","",""]; assignData.push(assignRow); }
+  const tr=document.createElement('tr');
+  const tdCode=document.createElement('td');
+  tdCode.innerHTML=`<strong>${code}</strong><br><small style="color:#6b7280">${title}</small>`;
+  tdCode.style.background="#f8fafc";
+  tr.appendChild(tdCode);
+  const makeDD=(colIdx,names,ph,showCollege)=>{
+   const td=document.createElement('td');
+   const sel=document.createElement('select');
+   sel.className='cell-dropdown';
+   sel.innerHTML=`<option value="">-- ${ph} --</option>`;
+   names.forEach(name=>{
+    let label=name;
+    if(showCollege){
+     const p=panelData.find(x=>x[2]===name);
+     if(p&&p[3]) label=`${name} (${p[3]})`;
+    }
+    const o=document.createElement('option');
+    o.value=name; o.textContent=label;
+    if(name===assignRow[colIdx]) o.selected=true;
+    sel.appendChild(o);
+   });
+   sel.onchange=e=>{ assignRow[colIdx]=e.target.value; saveData(); renderAssignTable(); };
+   td.appendChild(sel); return td;
+  };
+  tr.appendChild(makeDD(1,internalNames,"Examiner 1",false));
+  tr.appendChild(makeDD(2,internalNames,"Examiner 2",false));
+  tr.appendChild(makeDD(3,externalNames,"Examiner 3",true));
+  tr.appendChild(makeDD(4,externalNames,"Examiner 4",true));
+  const actionTd=document.createElement('td');
+  actionTd.className='action-cell no-print';
+  actionTd.innerHTML=`<div class="action-btn-group">
+   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',1)" ${!assignRow[1]?'disabled':''}>1</button>
+   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',2)" ${!assignRow[2]?'disabled':''}>2</button>
+   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',3)" ${!assignRow[3]?'disabled':''}>3</button>
+   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',4)" ${!assignRow[4]?'disabled':''}>4</button>
+  </div>`;
+  tr.appendChild(actionTd);
+  tbody.appendChild(tr);
+ });
+}
+
+function addRow(type){
+ if(type==='panel'){
+  panelData.push(["New Internal","BEC Bagalkote","New External","External College","PANXXXX","Bank Name","12345678","IFSC0000"]);
+  renderBasicTable('panelTableBody',panelData);
+ }else if(type==='course'){
+  courseData.push(["NEWCODE","Branch","I","Course Title"]);
+  renderBasicTable('courseTableBody',courseData);
+ }
+ saveData();
+}
+
+function renderAll(){
+ renderBasicTable('panelTableBody',panelData);
+ renderBasicTable('courseTableBody',courseData);
+ renderAssignTable();
+}
+
+function getExternalCollege(name){
+ const r=panelData.find(p=>p[2]===name);
+ return r?r[3]:"";
+}
+
+/* ==================== MODAL ==================== */
+let modalState={key:null,title:null,originalHtml:null,meta:null};
+
+function openModal(key,title,originalHtml,meta){
+ modalState={key,title,originalHtml,meta};
+ document.getElementById('modalTitle').textContent=title;
+ const content=document.getElementById('modalContent');
+ const saved=JSON.parse(localStorage.getItem(key)||'null');
+ if(saved&&saved.meta&&JSON.stringify(saved.meta)===JSON.stringify(meta)){
+  content.innerHTML=saved.html;
+ }else{
+  content.innerHTML=originalHtml;
+  localStorage.setItem(key,JSON.stringify({meta,html:originalHtml}));
+ }
+ content.oninput=()=>{ localStorage.setItem(key,JSON.stringify({meta,html:content.innerHTML})); };
+ document.getElementById('letterModal').classList.add('active');
+ document.body.classList.add('modal-open');
+}
+
+function closeModal(){
+ document.getElementById('letterModal').classList.remove('active');
+ document.body.classList.remove('modal-open');
+ modalState={key:null,title:null,originalHtml:null,meta:null};
+}
+
+function resetModalEdit(){
+ if(!modalState.key) return;
+ if(!confirm('Discard edits and regenerate?')) return;
+ document.getElementById('modalContent').innerHTML=modalState.originalHtml;
+ localStorage.setItem(modalState.key,JSON.stringify({meta:modalState.meta,html:modalState.originalHtml}));
+}
+
+function printModal(){
+ if(!modalState.key) return;
+ localStorage.setItem(modalState.key,JSON.stringify({meta:modalState.meta,html:document.getElementById('modalContent').innerHTML}));
+ const el=document.getElementById('modalContent');
+ const prev=el.style.zoom;
+ el.style.zoom='';
+ void el.offsetHeight;
+ const maxH=1032;
+ if(el.scrollHeight>maxH) el.style.zoom=(maxH/el.scrollHeight)*0.97;
+ window.print();
+ setTimeout(()=>{ el.style.zoom=prev; },500);
+}
+
+function downloadModalDocx(){
+ if(!modalState.key) return;
+ const html=document.getElementById('modalContent').innerHTML;
+ const name=(modalState.title||'Document').replace(/[^\w\s-]/g,'_').trim();
+ downloadAsDoc(html,name);
+}
+
+/* NEW: Download single PDF */
+async function downloadModalPdf(){
+ if(!modalState.key) return;
+ const html=document.getElementById('modalContent').innerHTML;
+ const name=(modalState.title||'Document').replace(/[^\w\s-]/g,'_').trim();
+ try{
+  showToast('📄 Generating PDF…');
+  await ensurePdfLibs();
+  const pdf=await htmlToPdfBlob(html);
+  saveBlob(pdf, name + '.pdf');
+  hideToast();
+ }catch(e){
+  hideToast();
+  alert('PDF generation failed: '+e.message+'\nPlease use Print → Save as PDF instead.');
+ }
+}
+
+/* ==================== APPOINTMENT LETTER ==================== */
+function openAppointmentLetter(courseCode,idx){
+ const course=courseData.find(c=>c[0]===courseCode);
+ const assign=assignData.find(a=>a[0]===courseCode);
+ if(!assign) return alert("No assignment");
+ const examinerName=assign[idx];
+ if(!examinerName||!examinerName.trim()) return alert("No Examiner");
+ const date=document.getElementById('globalLastDate').value;
+ const college=getExternalCollege(examinerName)||"BEC Bagalkote";
+ const html=buildAppointmentHTML(course,examinerName,college,date);
+ const key=KEYS.letterPrefix+courseCode+'_'+idx;
+ const meta={v:TEMPLATE_VERSION,examiner:examinerName,date,courseCode,idx,boeName,boeMobile,academicYear,semesterType};
+ openModal(key,`Appointment Letter — ${examinerName}`,html,meta);
+}
+
+function buildAppointmentHTML(course,examinerName,college,date){
+ const inst=institutionName.toUpperCase();
+ const dept=departmentName;
+ return `<div style="font-family:'Times New Roman',Times,serif;color:#000">
+  <div style="text-align:center;margin-bottom:14px">
+   <h4 style="margin:0;font-size:13pt">BVVS</h4>
+   <h4 style="margin:4px 0;font-size:12pt">${inst}</h4>
+   <p style="margin:0;font-size:11pt">Department of ${dept}</p>
+   <h4 style="margin:10px 0 0 0;font-size:12pt;text-decoration:underline">APPOINTMENT LETTER</h4>
+   <p style="margin:0;font-size:9pt;font-weight:bold">STRICTLY CONFIDENTIAL</p>
+  </div>
+  <p style="margin-bottom:10px">To,<br><strong>${examinerName}</strong><br>${college}</p>
+  <p style="margin-bottom:6px"><strong>Subject:</strong> Appointment as QP Setter for SEE BE ${semesterType} Sem ${academicYear}</p>
+  <p style="margin-bottom:10px;text-align:justify">By direction of Principal, pleased to appoint you as QP setter for:</p>
+  <div style="margin-left:18px;margin-bottom:10px;font-size:11pt">
+   <p>Programme: B.E</p>
+   <p>Branch: ${course[1]}</p>
+   <p>Semester: ${course[2]} (${semesterType})</p>
+   <p>Course: ${course[3]} (${course[0]})</p>
+   <p>Academic Year: <strong>${academicYear}</strong></p>
+   <p>Last date: <strong>${date}</strong></p>
+  </div>
+  <p style="font-weight:bold;font-size:10.5pt">INSTRUCTIONS</p>
+  <ol style="margin-left:18px;font-size:10pt;text-align:justify">
+   <li>Ten questions, two per module, covering syllabus</li>
+   <li>Each 20 marks, max four subdivisions</li>
+   <li>Answer any five full questions, one per module</li>
+   <li>Provide neat sketches camera-ready</li>
+   <li>Mark CO and Bloom's level with marks</li>
+   <li>Type scheme & solutions in template - mandatory</li>
+  </ol>
+  <p style="margin-top:8px">Contact <strong>${boeName}</strong> - ${boeMobile} for queries.</p>
+  <div style="text-align:right;margin:20px 0">
+   <p style="height:50px">&nbsp;</p>
+   <p style="font-weight:bold">Controller of Examinations</p>
+   <p>${institutionName}</p>
+  </div>
+  <div style="font-size:9pt;border-top:1px solid #ccc;padding-top:4px">
+   <p><strong>Attachments:</strong> QP Template, Scheme Template, Syllabus, Model QP, Undertaking, Remuneration Bill</p>
+  </div>
+ </div>`;
+}
+
+/* ==================== BULK: ZIP (individual PDFs) ==================== */
+async function generateAllPDFsZip(){
+ const date=document.getElementById('globalLastDate').value;
+ const items=[];
+ assignData.forEach(row=>{
+  const course=courseData.find(c=>c[0]===row[0]);
+  if(!course) return;
+  for(let i=1;i<=4;i++){
+   const name=row[i];
+   if(!name||!name.trim()) continue;
+   const college=getExternalCollege(name)||"BEC Bagalkote";
+   items.push({course,name,college,date});
+  }
+ });
+ if(!items.length){ alert('No examiners assigned yet.'); return; }
+
+ try{
+  showToast(`📦 Generating ${items.length} PDF${items.length>1?'s':''}…`);
+  await ensurePdfLibs();
+
+  const zip=new JSZip();
+  for(let idx=0; idx<items.length; idx++){
+   const it=items[idx];
+   showToast(`📦 Generating ${idx+1}/${items.length}: ${it.name}…`);
+   const html=buildAppointmentHTML(it.course,it.name,it.college,it.date);
+   const pdfBlob=await htmlToPdfBlob(html);
+   const safeCourse=it.course[0].replace(/[^\w-]/g,'_');
+   const safeName=it.name.replace(/[^\w-]/g,'_').slice(0,40);
+   zip.file(`${String(idx+1).padStart(2,'0')}_${safeCourse}_${safeName}.pdf`, pdfBlob);
+  }
+
+  showToast('📦 Compressing ZIP…');
+  const zipBlob=await zip.generateAsync({type:'blob'});
+  const today=new Date().toISOString().slice(0,10);
+  saveBlob(zipBlob, `Appointment_Letters_${today}.zip`);
+  hideToast();
+ }catch(e){
+  hideToast();
+  console.error(e);
+  alert('ZIP generation failed: '+e.message+'\n\nYou can still use "Print All" and Save as PDF.');
+ }
+}
+
+/* ==================== BULK: PRINT ALL ==================== */
+function generateAllPDFsPrint(){
+ const date=document.getElementById('globalLastDate').value;
+ let combined='', count=0;
+ assignData.forEach(row=>{
+  const course=courseData.find(c=>c[0]===row[0]);
+  if(!course) return;
+  for(let i=1;i<=4;i++){
+   const name=row[i];
+   if(!name||!name.trim()) continue;
+   const college=getExternalCollege(name)||"BEC Bagalkote";
+   combined+=`<div style="page-break-after:always">${buildAppointmentHTML(course,name,college,date)}</div>`;
+   count++;
+  }
+ });
+ if(!count) return alert('No examiners assigned yet.');
+ const w=window.open('','_blank');
+ w.document.write(`<html><head><title>All Letters (${count})</title>
+  <style>@page{size:A4;margin:12mm}body{font-family:'Times New Roman',Times,serif;margin:0}div{page-break-after:always}div:last-child{page-break-after:auto}</style>
+ </head><body>${combined}<script>window.onload=()=>setTimeout(()=>{window.print();},400);<\/script></body></html>`);
+ w.document.close();
+}
+
+/* ==================== HTML → PDF ==================== */
+async function htmlToPdfBlob(html){
+ const {jsPDF}=window.jspdf;
+ // Render in offscreen A4 container matching print layout
+ const container=document.createElement('div');
+ container.style.position='fixed';
+ container.style.left='-99999px';
+ container.style.top='0';
+ container.style.width='210mm';
+ container.style.padding='15mm';
+ container.style.background='#fff';
+ container.style.color='#000';
+ container.style.boxSizing='border-box';
+ container.style.fontFamily="'Times New Roman',Times,serif";
+ container.style.fontSize='12pt';
+ container.style.lineHeight='1.4';
+ container.innerHTML=html;
+ document.body.appendChild(container);
+ // Wait a tick for fonts/layout
+ await new Promise(r=>setTimeout(r,80));
+
+ const pdf=new jsPDF('p','mm','a4');
+ // Use html2canvas-like approach via jsPDF's .html() (auto page-split)
+ await pdf.html(container, {
+  x: 0, y: 0,
+  width: 210,
+  windowWidth: 793, // 210mm at 96 DPI ≈ 793px
+  html2canvas: {
+   scale: 2,
+   useCORS: true,
+   backgroundColor: '#ffffff'
+  },
+  autoPaging: 'text',
+  margin: [0,0,0,0]
+ });
+ document.body.removeChild(container);
+ return pdf.output('blob');
+}
+
+/* ==================== FILE SAVE HELPER ==================== */
+function saveBlob(blob,filename){
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url; a.download=filename;
+ document.body.appendChild(a); a.click(); document.body.removeChild(a);
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+/* ==================== TOAST ==================== */
+function showToast(msg){ const t=document.getElementById('zipToast'); t.textContent=msg; t.classList.add('show'); }
+function hideToast(){ document.getElementById('zipToast').classList.remove('show'); }
+
+/* ==================== SCRUTINY ==================== */
+function getScrutinyMeta(){
+ return {
+  v:TEMPLATE_VERSION,
+  boeName,boeMobile,institutionName,departmentName,academicYear,semesterType,
+  date:document.getElementById('scDate').value,
+  subjectDate:document.getElementById('scSubjectDate').value,
+  p1:document.getElementById('scPerson1').value,
+  p2:document.getElementById('scPerson2').value,
+  dataHash:JSON.stringify(assignData)+'|'+JSON.stringify(courseData.map(c=>[c[0],c[2],c[3]]))
+ };
+}
+
+function buildScrutinyHTML(){
+ const date=document.getElementById('scDate').value;
+ const subjectDate=document.getElementById('scSubjectDate').value;
+ const p1=document.getElementById('scPerson1').value;
+ const p2=document.getElementById('scPerson2').value;
+ let rows="",sl=1;
+ assignData.forEach(row=>{
+  const code=row[0];
+  const course=courseData.find(c=>c[0]===code);
+  const title=course?course[3]:"Unknown";
+  for(let i=1;i<=4;i++){
+   const ex=row[i];
+   if(ex&&ex.trim())
+    rows+=`<tr><td style="text-align:center">${sl++}</td><td>${title}</td><td style="text-align:center">${code}</td><td>${ex}</td></tr>`;
+  }
+ });
+ if(!rows) rows=`<tr><td colspan="4" style="text-align:center">No examiners assigned yet.</td></tr>`;
+ return `<p>To,<br>The Controller of Examinations,<br>${institutionName}</p>
+  <p style="text-align:right">Date: ${date}</p>
+  <p>(Through HOD)</p>
+  <p style="text-decoration:underline;font-weight:bold">Sub: Request for Scrutiny of SEE QP (BE ${semesterType} Sem ${academicYear}) on ${subjectDate} reg…</p>
+  <p>Sir,</p>
+  <p style="text-align:justify">Request permission to do scrutiny of following subjects:</p>
+  <table class="doc-table"><thead><tr><th>Sl</th><th>Subject Title</th><th>Code</th><th>QP Setter</th></tr></thead><tbody>${rows}</tbody></table>
+  <p style="margin-top:16px;text-align:justify">Scrutiny by <strong>${p1}</strong> and <strong>${p2}</strong>.</p>
+  <p style="margin-top:30px">Thanking you</p>
+  <p>Yours faithfully</p>
+  <p style="height:50px">&nbsp;</p>
+  <p>BOE, Dept. of ${departmentName},</p>
+  <p>${institutionName}</p>
+  <p style="margin-top:6px;font-size:10pt">Mobile: <strong>${boeMobile}</strong></p>`;
+}
+
+function regenerateScrutinyLetter(){
+ const out=document.getElementById('scLetterOutput');
+ const html=buildScrutinyHTML();
+ out.innerHTML=html;
+ out.style.display='block';
+ localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html}));
+}
+
+function restoreScrutinyLetter(){
+ const out=document.getElementById('scLetterOutput');
+ const saved=localStorage.getItem(KEYS.scrutiny);
+ if(saved){
+  try{
+   const parsed=JSON.parse(saved);
+   if(parsed.meta&&JSON.stringify(parsed.meta)===JSON.stringify(getScrutinyMeta())){
+    out.innerHTML=parsed.html;
+    out.style.display='block';
+    return;
+   }
+  }catch(e){ localStorage.removeItem(KEYS.scrutiny); }
+ }
+ regenerateScrutinyLetter();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+ const out=document.getElementById('scLetterOutput');
+ if(out) out.addEventListener('input',()=>{
+  localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html:out.innerHTML}));
+ });
+});
+
+function printScrutiny(){
+ const out=document.getElementById('scLetterOutput');
+ localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html:out.innerHTML}));
+ const prev=out.style.zoom;
+ out.style.zoom='';
+ void out.offsetHeight;
+ const maxH=1032;
+ if(out.scrollHeight>maxH) out.style.zoom=(maxH/out.scrollHeight)*0.97;
+ window.print();
+ setTimeout(()=>{ out.style.zoom=prev; },500);
+}
+
+function downloadScrutinyDocx(){
+ downloadAsDoc(document.getElementById('scLetterOutput').innerHTML,'Scrutiny_Letter');
+}
+
+/* ==================== REMUNERATION ==================== */
+function parseMoney(t){
+ return parseFloat(String(t).replace(/[₹,\s]/g,''))||0;
+}
+
+function renderRemunerationTable(){
+ const tbody=document.getElementById('remunerationTableBody');
+ tbody.innerHTML="";
+ const edits=JSON.parse(localStorage.getItem(KEYS.remEdits)||'{}');
+ let gross=0,tax=0,net=0,sl=1,has=false;
+ assignData.forEach(row=>{
+  const code=row[0];
+  for(let i=3;i<=4;i++){
+   const name=row[i];
+   if(!name||!name.trim()) continue;
+   const ext=panelData.find(p=>p[2]===name);
+   if(!ext) continue;
+   if(panelData.some(p=>p[0]===name)) continue;
+   has=true;
+   const key=code+'_'+i;
+   const saved=edits[key];
+   const valid=saved&&saved.examiner===name;
+   const g=valid?saved.gross:1350;
+   const t=valid?saved.tax:135;
+   const n=valid?saved.net:1215;
+   const rem=valid?saved.remarks:'SEE Theory QP Setting (External)';
+   gross+=g; tax+=t; net+=n;
+   const tr=document.createElement('tr');
+   tr.dataset.editKey=key;
+   tr.dataset.examiner=name;
+   const cells=[
+    {v:sl++,edit:false},{v:name,edit:false},{v:ext[4]||'-',edit:false},
+    {v:g,edit:true,type:'money',cls:'amt-gross'},
+    {v:t,edit:true,type:'money',cls:'amt-tax'},
+    {v:n,edit:true,type:'money',cls:'amt-net'},
+    {v:ext[5]||'-',edit:false},{v:ext[6]||'-',edit:false},{v:ext[7]||'-',edit:false},
+    {v:rem,edit:true,cls:'remarks'}
+   ];
+   cells.forEach(c=>{
+    const td=document.createElement('td');
+    td.textContent=c.type==='money'?'₹'+Number(c.v).toLocaleString():c.v;
+    if(c.cls) td.className=c.cls;
+    if(c.edit){
+     td.contentEditable='true';
+     td.spellcheck=false;
+     if(c.type==='money'){
+      td.addEventListener('focus',()=>{ td.textContent=String(parseMoney(td.textContent)); });
+      td.addEventListener('blur',()=>{
+       const val=parseMoney(td.textContent);
+       td.textContent='₹'+val.toLocaleString();
+       saveRemunerationRow(tr);
+      });
+     }else{
+      td.addEventListener('blur',()=>saveRemunerationRow(tr));
+     }
+     td.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); td.blur(); } });
+    }
+    tr.appendChild(td);
+   });
+   tbody.appendChild(tr);
+  }
+ });
+ if(!has){
+  const tr=document.createElement('tr');
+  const td=document.createElement('td');
+  td.colSpan=10;
+  td.textContent='No External Examiners assigned yet.';
+  td.style.textAlign='center'; td.style.padding='20px';
+  tr.appendChild(td); tbody.appendChild(tr);
+ }
+ document.getElementById('totalGross').textContent='₹'+gross.toLocaleString();
+ document.getElementById('totalTax').textContent='₹'+tax.toLocaleString();
+ document.getElementById('totalNet').textContent='₹'+net.toLocaleString();
+}
+
+function saveRemunerationRow(tr){
+ const key=tr.dataset.editKey;
+ const examiner=tr.dataset.examiner;
+ const gross=parseMoney(tr.querySelector('.amt-gross').textContent);
+ const tax=parseMoney(tr.querySelector('.amt-tax').textContent);
+ const net=parseMoney(tr.querySelector('.amt-net').textContent);
+ const remarks=tr.querySelector('.remarks').textContent;
+ const edits=JSON.parse(localStorage.getItem(KEYS.remEdits)||'{}');
+ edits[key]={examiner,gross,tax,net,remarks};
+ localStorage.setItem(KEYS.remEdits,JSON.stringify(edits));
+ recalcTotals();
+}
+
+function recalcTotals(){
+ let g=0,t=0,n=0;
+ document.querySelectorAll('#remunerationTableBody tr[data-edit-key]').forEach(tr=>{
+  g+=parseMoney(tr.querySelector('.amt-gross').textContent);
+  t+=parseMoney(tr.querySelector('.amt-tax').textContent);
+  n+=parseMoney(tr.querySelector('.amt-net').textContent);
+ });
+ document.getElementById('totalGross').textContent='₹'+g.toLocaleString();
+ document.getElementById('totalTax').textContent='₹'+t.toLocaleString();
+ document.getElementById('totalNet').textContent='₹'+n.toLocaleString();
+}
+
+function resetRemunerationEdits(){
+ if(!confirm('Reset all edits?')) return;
+ localStorage.removeItem(KEYS.remEdits);
+ renderRemunerationTable();
+}
+
+function downloadRemunerationDocx(){
+ const inst=document.getElementById('remInstitution').textContent;
+ const dept=document.getElementById('remDepartment').textContent;
+ const table=document.getElementById('remunerationTable').cloneNode(true);
+ table.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+ const html=`<div style="text-align:center;margin-bottom:16px">
+  <h3>${inst}</h3>
+  <p>Department of ${dept}</p>
+  <p style="font-weight:bold">Sub: Payment of Remuneration SEE Theory QP Setter of BE ${semesterType} Semester ${academicYear}</p>
+ </div>${table.outerHTML}`;
+ downloadAsDoc(html,'Remuneration_Bill');
+}
+
+function downloadExcel(){
+ const table=document.getElementById('remunerationTable');
+ let csv="";
+ const headers=[];
+ table.querySelectorAll('thead th').forEach(th=>headers.push(`"${th.innerText}"`));
+ csv+=headers.join(",")+"\n";
+ table.querySelectorAll('tbody tr').forEach(row=>{
+  const r=[];
+  row.querySelectorAll('td').forEach(td=>r.push(`"${td.innerText.replace(/₹/g,'').replace(/,/g,'')}"`));
+  csv+=r.join(",")+"\n";
+ });
+ const blob=new Blob([csv],{type:'text/csv'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url; a.download='Remuneration_Bill.csv';
+ document.body.appendChild(a); a.click(); document.body.removeChild(a);
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* ==================== DOCX ==================== */
+function downloadAsDoc(html,filename){
+ const header=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+ <head><meta charset="utf-8"><title>${filename}</title>
+ <style>@page{size:A4;margin:2cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px}</style>
+ </head><body>`;
+ const footer=`</body></html>`;
+ const blob=new Blob(['\ufeff',header+html+footer],{type:'application/msword'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;
+ a.download=filename.replace(/[^\w\s-]/g,'_').trim()+'.doc';
+ document.body.appendChild(a); a.click(); document.body.removeChild(a);
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* ==================== INIT ==================== */
+window.addEventListener('load',()=>{
+ checkAuth();
+ loadAll();
+ renderAll();
+ restoreScrutinyLetter();
+});
+
+document.addEventListener('click',e=>{
+ if(window.innerWidth<=900
+  &&!document.getElementById('sidebar').contains(e.target)
+  &&!e.target.classList.contains('hamburger')){
+  document.getElementById('sidebar').classList.remove('open');
+ }
+});
+</script>
+</body>
+</html>
