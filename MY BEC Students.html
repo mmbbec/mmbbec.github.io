@@ -13,7 +13,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#991b1b">
-  <meta name="description" content="Semester-wise learning materials for Engineering Mathematics students.">
+  <meta name="description" content="Learning materials for Engineering Mathematics students.">
   <title>Engineering Mathematics | Student Learning Portal</title>
 
   <style>
@@ -37,7 +37,7 @@
       font-family: Arial, Helvetica, sans-serif;
       line-height: 1.5;
     }
-    button { font: inherit; cursor: pointer; }
+    button, a { font: inherit; }
 
     .skip-link {
       position: absolute;
@@ -75,6 +75,14 @@
       margin-bottom: 18px;
     }
 
+    .folder-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
     h2 { margin: 0 0 14px; font-size: 1.25rem; }
     h3 { margin: 0 0 8px; font-size: 1.05rem; }
     h2:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 4px; }
@@ -83,18 +91,23 @@
     .small { font-size: .88rem; }
 
     .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       border: 0;
       border-radius: 9px;
       padding: 11px 16px;
       background: var(--red);
       color: #fff;
       font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
     }
-    .btn:hover { background: var(--red-dark); }
+    .btn:hover { background: var(--red-dark); color: #fff; }
     .btn.secondary { background: #fff; color: var(--red); border: 1px solid #fecaca; }
     .btn.secondary:hover { background: var(--red-light); }
     .btn:focus-visible,
-    .semester:focus-visible,
     .tab:focus-visible,
     .skip-link:focus-visible {
       outline: 3px solid #fca5a5;
@@ -114,23 +127,7 @@
       margin-top: 16px;
     }
 
-    .semester-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .semester {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 12px;
-      padding: 18px 10px;
-      color: var(--ink);
-      font-weight: 700;
-    }
-    .semester span { display: block; font-size: 1.5rem; margin-bottom: 5px; }
-    .semester.active { background: var(--red-light); border-color: var(--red); color: var(--red-dark); }
-
-    /* ---- Subject tabs (per semester) ---- */
+    /* ---- Subject tabs ---- */
     .tabs {
       display: flex;
       flex-wrap: wrap;
@@ -148,6 +145,7 @@
       font-weight: 700;
       font-size: .9rem;
       line-height: 1.2;
+      cursor: pointer;
       transition: background .15s ease, border-color .15s ease, color .15s ease;
     }
     .tab:hover { background: var(--red-light); border-color: #fecaca; color: var(--red-dark); }
@@ -221,23 +219,13 @@
       background: #e5e7eb;
     }
 
-    .empty {
-      border: 1px dashed #d1d5db;
-      border-radius: 12px;
-      padding: 22px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 12px;
-    }
-
     footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 8px 0 22px; }
 
     @media (max-width: 540px) {
-      .semester-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .semester { padding: 14px 5px; font-size: .92rem; }
-      .semester span { font-size: 1.25rem; }
       .pdf-frame { min-height: 360px; height: 65vh; }
       .tab { padding: 8px 13px; font-size: .85rem; }
+      .folder-banner { flex-direction: column; align-items: stretch; }
+      .folder-banner .btn { text-align: center; }
     }
     @media (max-width: 420px) {
       .material-row { flex-direction: column; align-items: stretch; }
@@ -258,31 +246,29 @@
 
   <main id="main" class="wrap" tabindex="-1">
     <section id="portalPanel">
-      <section class="panel">
-        <h2 style="margin-bottom:4px">Learning Materials</h2>
-        <p class="muted small" style="margin:0">Choose a semester, then open a subject material.</p>
-      </section>
-
-      <section class="panel" aria-labelledby="semesterHeading">
-        <h2 id="semesterHeading">Select Semester</h2>
-        <div class="semester-grid" role="group" aria-labelledby="semesterHeading">
-          <button class="semester active" data-semester="first" type="button" aria-pressed="true"><span aria-hidden="true">📘</span>First</button>
-          <button class="semester" data-semester="second" type="button" aria-pressed="false"><span aria-hidden="true">📗</span>Second</button>
-          <button class="semester" data-semester="third" type="button" aria-pressed="false"><span aria-hidden="true">📙</span>Third</button>
-          <button class="semester" data-semester="fourth" type="button" aria-pressed="false"><span aria-hidden="true">📕</span>Fourth</button>
+      <!-- Drive Folder Link Banner -->
+      <section class="panel folder-banner">
+        <div>
+          <h2 style="margin-bottom:4px">Course Drive Folder</h2>
+          <p class="muted small" style="margin:0">Access all engineering mathematics study materials directly on Google Drive.</p>
         </div>
+        <a class="btn" href="https://drive.google.com/drive/folders/1MkkYjUQlIqT7t-onnQQBU2Oip1l0FCIH?usp=drive_link" target="_blank" rel="noopener noreferrer">
+          📁 Open Google Drive Folder ↗
+        </a>
       </section>
 
+      <!-- Materials Section -->
       <section class="panel" aria-labelledby="materialsHeading">
-        <h2 id="materialsHeading" tabindex="-1">First Semester</h2>
-        <p class="muted small">Use the tabs to switch subject code, then select “View” to open the PDF below.</p>
+        <h2 id="materialsHeading" tabindex="-1">Learning Materials</h2>
+        <p class="muted small">Select a subject tab, then click “View” to preview the PDF below.</p>
         <p id="materialsStatus" class="message" role="status"></p>
         <div id="subjects"></div>
       </section>
 
+      <!-- PDF Viewer Section -->
       <section id="viewerSection" class="panel" hidden aria-labelledby="viewerTitle">
         <h2 id="viewerTitle">PDF Viewer</h2>
-        <p class="muted small">If the PDF does not display, check the file path and whether the file is publicly accessible.</p>
+        <p class="muted small">If the PDF does not display, check the file permissions or open it directly in Drive.</p>
 
         <div class="viewer">
           <div class="viewer-head">
@@ -298,7 +284,7 @@
       </section>
 
       <div class="notice">
-        all the best
+        All the best!
       </div>
     </section>
   </main>
@@ -309,84 +295,59 @@
     (function () {
       "use strict";
 
-      const SEMESTER_NAMES = Object.freeze({
-        first: "First Semester",
-        second: "Second Semester",
-        third: "Third Semester",
-        fourth: "Fourth Semester"
-      });
+      // Consolidated subjects list across all modules
+      const SUBJECTS = [
+        {
+          code: "1BMAC101C (Civil)",
+          title: "Calculus and Linear Algebra",
+          items: [
+            { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
+            { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
+            { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
+            { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
+            { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
+            { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
+            { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
+          ]
+        },
+        {
+          code: "1BMAS101C (CSE Stream)",
+          title: "Engineering Mathematics – Subject 1",
+          items: [
+            { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
+            { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
+            { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
+            { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
+            { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
+            { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
+            { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
+          ]
+        },
+        {
+          code: "1BMAS301C",
+          title: "Mathematics for Computer Science Stream",
+          items: [
+            { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem3-cse.pdf" },
+            { title: "Curve Fitting", type: "PDF", path: "https://drive.google.com/file/d/15IQAg-AKFqHVLd6urdy33P-jhzyxPCWj/view?usp=drivesdk" },
+            { title: "Correlation and Regression", type: "PDF", path: "https://drive.google.com/file/d/1t_pQ5eWjXEKlyybnU93iH3rBHwt2GQ1k/view?usp=drivesdk" },
+            { title: "Discrete & Continuous Random Variable", type: "PDF", path: "https://drive.google.com/file/d/1WgwYviAOcmw6IylrIGzJ0AOXAxWorlhj/view?usp=drivesdk" },
+            { title: "Binomial and Poisson Distribution", type: "PDF", path: "https://drive.google.com/file/d/1Z-Lxu_xFEyBHQgYC-on0DNEWs0IX45YC/view?usp=drivesdk" },
+            { title: "Normal Distributions", type: "PDF", path: "https://drive.google.com/file/d/127Mws9q2UTb2ltNCVg_ISWUSbHgHvKkY/view?usp=drivesdk" }
+          ]
+        }
+      ];
 
-      // Paths are relative to this HTML file (or absolute http/https URLs).
-      // Each subject becomes one tab inside its semester.
-      const MATERIALS = {
-        first: [
-          {
-            code: "1BMAC101C(Civil)",
-            title: "Calculus and Linear Algebra",
-            items: [
-              { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
-              { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
-              { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
-              { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
-              { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
-              { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
-              { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
-            ]
-          },
-          {
-            code: "1BMAS101C(CSE Stream)",
-            title: "Engineering Mathematics – Subject 1",
-            items: [
-              { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem1-civil.pdf" },
-              { title: "Polar and Pedal Curves", type: "PDF", path: "https://drive.google.com/file/d/1jEDD9qYgNZZn85DT3pU6qNND5pneeeok/view?usp=drivesdk" },
-              { title: "Radius of Curvature", type: "PDF", path: "https://drive.google.com/file/d/1Ssp-bh5LCnBdiK8Vadka1Ils-TfdYaQw/view?usp=sharing" },
-              { title: "Taylor's & Maclaurin's Series", type: "PDF", path: "https://drive.google.com/file/d/1MCnh7E5xjfVYlvIJOdefK4nmWsFNe0s0/view?usp=drivesdk" },
-              { title: "Partial Differentiation", type: "PDF", path: "https://drive.google.com/file/d/1RXFj32g15ykIJQqQPLbhafToXY_xqwYO/view?usp=drivesdk" },
-              { title: "Jacobians", type: "PDF", path: "https://drive.google.com/file/d/1kc_x_p_o_WdpH6G_V0LfeVWjCFqskhqr/view?usp=drivesdk" },
-              { title: "Maxima and Minima", type: "PDF", path: "https://drive.google.com/file/d/1N2vw3MVKm1bk7gNlc4yptdrMC3xjSCnj/view?usp=sharing" }
-            ]
-          }
-        ],
-
-        second: [
-          // Add second-semester subjects here in the same format:
-          // { code: "1BMAC201C", title: "...", items: [ { title: "...", type: "PDF", path: "..." } ] }
-        ],
-
-        third: [
-          {
-            code: "1BMAS301C",
-            title: "Mathematics for Computer Science Stream",
-            items: [
-              { title: "Syllabus", type: "PDF", path: "https://pub-11b7012f1df548e482ac3763e2712496.r2.dev/departments/maths/docs/syllabus/sem3-cse.pdf" },
-              { title: "Curve Fitting", type: "PDF", path: "https://drive.google.com/file/d/15IQAg-AKFqHVLd6urdy33P-jhzyxPCWj/view?usp=drivesdk" },
-              { title: "Correlation and Regression", type: "PDF", path: "https://drive.google.com/file/d/1t_pQ5eWjXEKlyybnU93iH3rBHwt2GQ1k/view?usp=drivesdk" },
-              { title: "Discrete & Continuous Random Variable", type: "PDF", path: "https://drive.google.com/file/d/1WgwYviAOcmw6IylrIGzJ0AOXAxWorlhj/view?usp=drivesdk" },
-              { title: "Binomial and Poisson Distribution", type: "PDF", path: "https://drive.google.com/file/d/1Z-Lxu_xFEyBHQgYC-on0DNEWs0IX45YC/view?usp=drivesdk" },
-              { title: "Normal Distributions", type: "PDF", path: "https://drive.google.com/file/d/127Mws9q2UTb2ltNCVg_ISWUSbHgHvKkY/view?usp=drivesdk" }
-            ]
-          }
-        ],
-
-        fourth: [
-          // Add fourth-semester subjects here in the same format.
-        ]
-      };
-
-      const semesterButtons  = Array.from(document.querySelectorAll(".semester"));
-      const materialsHeading = document.getElementById("materialsHeading");
-      const materialsStatus  = document.getElementById("materialsStatus");
-      const subjectsEl       = document.getElementById("subjects");
-      const viewerSection    = document.getElementById("viewerSection");
-      const viewerTitle      = document.getElementById("viewerTitle");
-      const viewerFileName   = document.getElementById("viewerFileName");
-      const viewerStatus     = document.getElementById("viewerStatus");
-      const pdfFrame         = document.getElementById("pdfFrame");
-      const closeViewerBtn   = document.getElementById("closeViewerBtn");
+      const materialsStatus = document.getElementById("materialsStatus");
+      const subjectsEl      = document.getElementById("subjects");
+      const viewerSection   = document.getElementById("viewerSection");
+      const viewerTitle     = document.getElementById("viewerTitle");
+      const viewerFileName  = document.getElementById("viewerFileName");
+      const viewerStatus    = document.getElementById("viewerStatus");
+      const pdfFrame        = document.getElementById("pdfFrame");
+      const closeViewerBtn  = document.getElementById("closeViewerBtn");
 
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-      let currentSemester   = "first";
       let lastViewerTrigger = null;
       let loadingTimer      = 0;
 
@@ -394,7 +355,6 @@
         materialsStatus.textContent = text || "";
       }
 
-      /** Only allow relative paths or http(s) URLs — blocks javascript:, data:, etc. */
       function safePdfPath(value) {
         const raw = String(value == null ? "" : value).trim();
         if (!raw) return null;
@@ -411,7 +371,6 @@
         return raw;
       }
 
-      /** Turn Google Drive share links into embeddable /preview links. */
       function toEmbeddable(path) {
         let match = path.match(/^https?:\/\/drive\.google\.com\/file\/d\/([^/?#]+)/i);
         if (match) {
@@ -434,23 +393,6 @@
         }
       }
 
-      /* ---------------- Semester selection ---------------- */
-
-      function selectSemester(name) {
-        currentSemester = Object.prototype.hasOwnProperty.call(MATERIALS, name) ? name : "first";
-
-        semesterButtons.forEach(function (btn) {
-          const isActive = btn.dataset.semester === currentSemester;
-          btn.classList.toggle("active", isActive);
-          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-        });
-
-        renderSemester(currentSemester);
-      }
-
-      /* ---------------- Tabs (one per subject code) ---------------- */
-
-      // Switch to the given tab WITHOUT scrolling the page.
       function activateTab(tab, moveFocus) {
         const tablist = tab.parentElement;
         if (!tablist) return;
@@ -464,7 +406,6 @@
           if (panel) panel.hidden = !isSelected;
         });
 
-        // Only move keyboard focus — never scroll the page.
         if (moveFocus) tab.focus({ preventScroll: true });
       }
 
@@ -531,33 +472,22 @@
         return card;
       }
 
-      function renderSemester(semester) {
-        materialsHeading.textContent = SEMESTER_NAMES[semester] || "Semester Materials";
+      function renderSubjects() {
         subjectsEl.replaceChildren();
         setMaterialsStatus("");
-
-        const subjects = MATERIALS[semester] || [];
-
-        if (subjects.length === 0) {
-          const empty = document.createElement("p");
-          empty.className = "empty";
-          empty.textContent = "No subjects have been added for this semester yet.";
-          subjectsEl.appendChild(empty);
-          return;
-        }
 
         const tablist = document.createElement("div");
         tablist.className = "tabs";
         tablist.setAttribute("role", "tablist");
-        tablist.setAttribute("aria-label", "Subjects in " + (SEMESTER_NAMES[semester] || "semester"));
+        tablist.setAttribute("aria-label", "Subjects");
         tablist.addEventListener("keydown", handleTabKeydown);
 
         const panels = document.createDocumentFragment();
 
-        subjects.forEach(function (subject, index) {
+        SUBJECTS.forEach(function (subject, index) {
           const selected = index === 0;
-          const tabId = "tab-" + semester + "-" + index;
-          const panelId = "panel-" + semester + "-" + index;
+          const tabId = "tab-" + index;
+          const panelId = "panel-" + index;
 
           const tab = document.createElement("button");
           tab.type = "button";
@@ -590,8 +520,6 @@
         subjectsEl.appendChild(panels);
       }
 
-      /* ---------------- PDF viewer ---------------- */
-
       function openPdf(item, subject, trigger) {
         const rawPath = safePdfPath(item && item.path);
         if (!rawPath) {
@@ -617,7 +545,6 @@
         pdfFrame.src = path;
         viewerSection.hidden = false;
 
-        // This is the ONLY place we scroll — when the user explicitly opens a PDF.
         viewerSection.scrollIntoView({
           behavior: reduceMotion.matches ? "auto" : "smooth",
           block: "start"
@@ -645,14 +572,6 @@
         viewerStatus.hidden = true;
       });
 
-      semesterButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-          if (button.dataset.semester === currentSemester) return;
-          closeViewer({ restoreFocus: false });
-          selectSemester(button.dataset.semester);
-        });
-      });
-
       closeViewerBtn.addEventListener("click", function () {
         closeViewer();
       });
@@ -664,12 +583,12 @@
         }
       });
 
-      selectSemester(currentSemester);
+      renderSubjects();
     })();
   </script>
 
   <script>
-  /* Injects the floating Home button globally */
+  /* Floating Home button */
   (function () {
     if (document.getElementById('global-home-btn')) return;
 
