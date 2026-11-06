@@ -1021,6 +1021,27 @@ NEET Practice Portal Mock Test</a>
                 </div>
                 <div style="margin-top:12px;font-size:13px;color:#888;"><span>Orcid: 0000-0002-9897-8677 | Scopus: 57217004425</span></div>
                 <div class="visitor-counter"><span class="counter-icon">👁</span><span>Total Visitors: </span><span id="visitor-count">Loading…</span></div>
+
+<div style="max-width: 500px; margin: 15px auto; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+  <p style="margin: 0 0 10px 0; font-weight: 600;">Recent Visitors</p>
+  <div style="max-height: 200px; overflow-y: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+      <thead>
+        <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+          <th style="padding: 6px 10px;">Date & Time</th>
+          <th style="padding: 6px 10px;">Device</th>
+        </tr>
+      </thead>
+      <tbody id="visitor-list-body">
+        <tr>
+          <td colspan="2" style="padding: 8px 10px; text-align: center; color: #888;">Loading visitors...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="profile-buttons" style="justify-content:center;margin-top:18px;">
                 <div class="profile-buttons" style="justify-content:center;margin-top:18px;">
                     <a href="https://scholar.google.com/citations?user=PQDhCuoAAAAJ" class="profile-btn" target="_blank" rel="noopener noreferrer">📊 Google Scholar</a>
                     <a href="https://www.researchgate.net/profile/Mahadev-Biradar" class="profile-btn" target="_blank" rel="noopener noreferrer">📄 ResearchGate</a>
@@ -1234,36 +1255,50 @@ function handleFormSubmit(e) {
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') window.closeModal(); });
 })();
 </script>
-  <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var countEl = document.getElementById('visitor-count');
-  var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var countEl = document.getElementById('visitor-count');
+      var listBody = document.getElementById('visitor-list-body');
+      var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
 
-  // Prevent counting multiple refreshes within the same browser session
-  var isNewVisit = !sessionStorage.getItem('visited_session');
+      var isNewVisit = !sessionStorage.getItem('visited_session');
+      var recordQuery = isNewVisit
+        ? '?ua=' + encodeURIComponent(navigator.userAgent)
+        : '?ua=' + encodeURIComponent(navigator.userAgent) + '&countOnly=true';
 
-  var query = isNewVisit 
-    ? '?ua=' + encodeURIComponent(navigator.userAgent) 
-    : '?ua=' + encodeURIComponent(navigator.userAgent) + '&countOnly=true';
-
-  fetch(scriptUrl + query)
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      if (data && typeof data.totalVisits === 'number') {
-        if (countEl) {
-          countEl.textContent = data.totalVisits.toLocaleString();
-        }
-        if (isNewVisit) {
-          sessionStorage.setItem('visited_session', 'true');
-        }
-      }
-    })
-    .catch(function (err) {
-      if (countEl) {
-        countEl.textContent = 'Active';
-      }
+      fetch(scriptUrl + recordQuery)
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (isNewVisit) {
+            sessionStorage.setItem('visited_session', 'true');
+          }
+          if (data && typeof data.totalVisits === 'number' && countEl) {
+            countEl.textContent = data.totalVisits.toLocaleString();
+          }
+          return fetch(scriptUrl + '?getList=true');
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.visitors && listBody) {
+            if (data.visitors.length === 0) {
+              listBody.innerHTML = '<tr><td colspan="2" style="padding: 8px 10px; text-align: center;">No visits recorded yet.</td></tr>';
+              return;
+            }
+            listBody.innerHTML = data.visitors.map(function (v) {
+              return '<tr style="border-bottom: 1px solid #eee;">' +
+                       '<td style="padding: 6px 10px; color: #555;">' + v.timestamp + '</td>' +
+                       '<td style="padding: 6px 10px; font-weight: 500;">' + v.device + '</td>' +
+                     '</tr>';
+            }).join('');
+          }
+        })
+        .catch(function (err) {
+          if (countEl) countEl.textContent = 'Active';
+          if (listBody) {
+            listBody.innerHTML = '<tr><td colspan="2" style="padding: 8px 10px; text-align: center; color: #999;">Unable to load list</td></tr>';
+          }
+        });
     });
-});
-</script>
+  </script>
 </body>
 </html>
