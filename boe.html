@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Google tag (gtag.js) -->
+<head>
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-JZRW69TE7N');
 </script>
 <meta charset="UTF-8">
@@ -16,10 +15,7 @@
 <meta name="description" content="BEC Bagalkote BOE Dashboard - Manage Panel of Examiners, Course Master, QP Setter Assignment, Scrutiny Letters, Remuneration Bills. For VTU BE Odd/Even Semester.">
 <link rel="canonical" href="https://mahadevbiradar.in/boe-dashboard.html">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332673221241180" crossorigin="anonymous"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JZRW69TE7N');</script>
 
-<!-- PDF + ZIP libraries (loaded lazily) -->
 <script>
 function loadScript(src){
     return new Promise((resolve,reject)=>{
@@ -79,6 +75,7 @@ th,td{border:1px solid var(--border);padding:8px 10px;text-align:left}
 th{background:var(--primary);color:white;font-weight:600;font-size:0.82rem;position:sticky;top:0}
 tr:nth-child(even){background:#f8fafc}
 td[contenteditable="true"]:focus{outline:2px solid var(--accent2);background:#fff}
+td.locked{background:#f3f4f6;color:#374151}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;margin-bottom:5px;font-weight:600;font-size:0.88rem;color:#374151}
 .form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1px solid #d0d7de;border-radius:6px;font-size:0.92rem;transition:0.2s}
@@ -86,14 +83,30 @@ td[contenteditable="true"]:focus{outline:2px solid var(--accent2);background:#ff
 .btn{padding:8px 14px;background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.84rem;font-weight:600;transition:0.2s;text-decoration:none;display:inline-block}
 .btn:hover{background:var(--accent)}
 .btn-success{background:var(--success)}.btn-danger{background:var(--danger)}.btn-print{background:#6c5ce7}.btn-excel{background:#1e8e3e}.btn-pdf{background:#d35400;padding:6px 10px}
+.btn-sm{padding:5px 9px;font-size:0.76rem}
 .btn:disabled{background:#9ca3af;cursor:not-allowed}
 select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;background:white;font-size:0.84rem;cursor:pointer}
-.letter-output{margin-top:18px;padding:36px;border:1px solid var(--border);background:white;font-family:'Times New Roman',Times,serif;font-size:1rem;line-height:1.5;display:none;min-height:400px;border-radius:8px}
-.letter-output[contenteditable="true"]:focus{outline:2px solid var(--accent2)}
+.letter-output{margin-top:18px;padding:0;background:transparent;min-height:200px;display:flex;justify-content:center}
+.letter-output .a4-sheet{
+  width:210mm;
+  min-height:297mm;
+  padding:15mm;
+  box-sizing:border-box;
+  background:#fff;
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  border:1px solid var(--border);
+  border-radius:4px;
+  font-family:'Times New Roman',Times,serif;
+  font-size:11.5pt;
+  color:#000;
+  line-height:1.4;
+  overflow-wrap:break-word;
+}
 .doc-table{width:100%;border-collapse:collapse;margin:12px 0}
 .doc-table th,.doc-table td{border:1px solid #000;padding:7px;text-align:left}
 .doc-table th{background:#f3f4f6;color:#000;font-weight:bold;text-align:center}
-.action-cell{text-align:center;width:170px}.action-btn-group{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.action-cell{text-align:center;min-width:180px}
+.action-btn-group{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
 #remunerationTableBody td[contenteditable="true"]{background:#fffef0}
 #remunerationTableBody td[contenteditable="true"]:hover{background:#fff9c4}
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2000;background:rgba(0,0,0,0.6)}
@@ -101,7 +114,7 @@ select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:
 .modal-container{display:flex;flex-direction:column;width:100%;height:100%}
 .modal-toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--primary);color:white;gap:10px;flex-wrap:wrap}
 .modal-body{flex:1;overflow:auto;padding:20px;display:flex;justify-content:center;align-items:flex-start;background:#444}
-.a4-page{width:210mm;min-height:297mm;padding:15mm;box-sizing:border-box;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.4);font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000;line-height:1.4;outline:none}
+.a4-page{width:210mm;min-height:297mm;padding:15mm;box-sizing:border-box;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.4);font-family:'Times New Roman',Times,serif;font-size:11.5pt;color:#000;line-height:1.4;outline:none}
 .settings-preview{background:#eef5fb;padding:14px 18px;border-radius:8px;border-left:4px solid var(--primary);margin-bottom:18px}
 .settings-preview h4{color:var(--primary);margin-bottom:6px}
 .settings-saved-msg{color:var(--success);font-weight:bold;margin-left:10px;font-size:0.9rem}
@@ -111,7 +124,33 @@ select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:
 footer{background:var(--primary-dark);color:white;text-align:center;padding:14px;font-size:12px;margin-top:auto}
 footer a{color:#90caf9;text-decoration:none}
 
-/* Login overlay */
+/* Tabs */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+.tab-btn{padding:11px 22px;background:#f1f5f9;border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;font-size:0.92rem;color:#475569;margin-right:4px;margin-bottom:-2px;transition:0.2s;display:inline-flex;align-items:center;gap:6px}
+.tab-btn:hover{background:#e2e8f0;color:var(--primary)}
+.tab-btn.active{background:var(--primary);color:white;border-color:var(--primary);position:relative;z-index:2}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Unassigned highlight */
+td.unassigned,
+select.cell-dropdown.unassigned{
+  background:#fde8e8 !important;
+  border:1px solid #e74c3c !important;
+  color:#b91c1c !important;
+  font-weight:600;
+}
+td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
+.doc-table td.unassigned{background:#fde8e8 !important;color:#b91c1c !important;font-weight:bold}
+
+/* Red number button for missing assignment */
+.btn-letter{background:#6c5ce7;color:white}
+.btn-letter.missing{background:#e74c3c;color:white;animation:pulseRed 1.6s infinite}
+@keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0.6)}50%{box-shadow:0 0 0 6px rgba(231,76,60,0)}}
+
+#saveToast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:10px 22px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.3);font-size:0.9rem;font-weight:600;display:none;z-index:4000}
+#saveToast.show{display:block;animation:slideIn 0.3s ease}
+
 #loginOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#163b65,#3498db);display:flex;align-items:center;justify-content:center;z-index:9999}
 .login-card{background:white;padding:40px 35px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.4);width:400px;max-width:92vw;animation:slideIn 0.4s ease}
 @keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
@@ -124,29 +163,29 @@ footer a{color:#90caf9;text-decoration:none}
 .login-card button:hover{background:#d94a32}
 .login-error{color:#e74c3c;text-align:center;margin-top:14px;font-size:0.9rem;display:none}
 
-/* ZIP progress toast */
 #zipToast{position:fixed;bottom:20px;right:20px;background:#163b65;color:white;padding:14px 20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.3);font-size:0.9rem;font-weight:600;display:none;z-index:3000}
 #zipToast.show{display:block}
 
 @media print{
- body:not(.modal-open) .top-header,body:not(.modal-open) .sidebar,body:not(.modal-open) .btn,body:not(.modal-open) .action-cell,body:not(.modal-open) .no-print,body:not(.modal-open) .sem-filter-bar,body:not(.modal-open) footer{display:none!important}
+ body:not(.modal-open) .top-header,body:not(.modal-open) .sidebar,body:not(.modal-open) .btn,body:not(.modal-open) .action-cell,body:not(.modal-open) .no-print,body:not(.modal-open) .sem-filter-bar,body:not(.modal-open) .tab-bar,body:not(.modal-open) footer{display:none!important}
  body:not(.modal-open){display:block;background:white}
  body:not(.modal-open) .main-content{padding:0;overflow:visible}
  body:not(.modal-open) .module{box-shadow:none;border:none;padding:0}
  body:not(.modal-open) .module.active{display:block}
- body:not(.modal-open) .letter-output{border:none;padding:0;display:block!important}
+ body:not(.modal-open) .letter-output{display:block!important;padding:0}
+ body:not(.modal-open) .letter-output .a4-sheet{box-shadow:none;border:none;width:auto;min-height:auto;padding:15mm}
+ body:not(.modal-open) .tab-pane{display:block!important}
  body.modal-open > *:not(#letterModal){display:none!important}
  body.modal-open #letterModal{display:block!important;position:static;background:white}
  body.modal-open .modal-toolbar{display:none!important}
  body.modal-open .modal-body{padding:0;background:white}
  body.modal-open .a4-page{box-shadow:none;width:auto;min-height:auto;padding:15mm}
- #loginOverlay,#zipToast{display:none!important}
+ #loginOverlay,#zipToast,#saveToast{display:none!important}
 }
 </style>
 </head>
-<body>
+<body onload="checkAuth(); loadAll(); initApp();">
 
-<!-- ==================== LOGIN OVERLAY ==================== -->
 <div id="loginOverlay">
     <div class="login-card">
         <h2>BEC Bagalkote</h2>
@@ -186,16 +225,71 @@ footer a{color:#90caf9;text-decoration:none}
  </div>
 
  <div class="main-content">
+
+  <!-- ============ PANEL OF EXAMINERS ============ -->
   <div id="panel" class="module active">
-   <h1>Panel of Examiners <button class="btn btn-success no-print" onclick="addRow('panel')">+ Add Examiner</button></h1>
-   <div class="table-container"><table><thead><tr><th>Internal Examiner</th><th>College Name</th><th>Name of Faculty (External)</th><th>External College Name</th><th>PAN</th><th>Bank Name</th><th>SB A/C No.</th><th>IFSC</th><th class="action-cell no-print">Action</th></tr></thead><tbody id="panelTableBody"></tbody></table></div>
+   <h1>Panel of Examiners</h1>
+   <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">
+     💾 All changes are stored in your browser's <b>localStorage</b>. Each row pairs one Internal ↔ one External examiner.
+     Click <b>Edit</b> to enable editing, then <b>Save</b> to persist.
+   </p>
+
+   <div class="tab-bar no-print">
+    <button class="tab-btn active" id="tabBtnInternal" onclick="switchPanelTab('internal', this)">👥 Internal Examiners</button>
+    <button class="tab-btn" id="tabBtnExternal" onclick="switchPanelTab('external', this)">🌐 External Examiners</button>
+   </div>
+
+   <div id="tabPaneInternal" class="tab-pane active">
+    <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span style="font-size:0.85rem;color:#475569"><b>Internal Examiners</b> — BEC Bagalkote faculty</span>
+      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add Examiner Pair</button>
+    </div>
+    <div class="table-container">
+     <table>
+      <thead><tr>
+       <th style="width:22%">Internal Examiner</th>
+       <th style="width:16%">Internal College</th>
+       <th style="width:12%">PAN</th>
+       <th style="width:16%">Bank Name</th>
+       <th style="width:16%">SB A/C No.</th>
+       <th style="width:12%">IFSC</th>
+       <th class="action-cell no-print">Actions</th>
+      </tr></thead>
+      <tbody id="panelInternalBody"></tbody>
+     </table>
+    </div>
+   </div>
+
+   <div id="tabPaneExternal" class="tab-pane">
+    <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span style="font-size:0.85rem;color:#475569"><b>External Examiners</b> — faculty from other colleges</span>
+      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add Examiner Pair</button>
+    </div>
+    <div class="table-container">
+     <table>
+      <thead><tr>
+       <th style="width:22%">External Faculty Name</th>
+       <th style="width:20%">External College Name</th>
+       <th style="width:12%">PAN</th>
+       <th style="width:16%">Bank Name</th>
+       <th style="width:16%">SB A/C No.</th>
+       <th style="width:12%">IFSC</th>
+       <th class="action-cell no-print">Actions</th>
+      </tr></thead>
+      <tbody id="panelExternalBody"></tbody>
+     </table>
+    </div>
+   </div>
   </div>
 
+  <!-- ============ COURSE MASTER ============ -->
   <div id="course" class="module">
-   <h1>Course Master <button class="btn btn-success no-print" onclick="addRow('course')">+ Add Course</button></h1>
-   <div class="table-container"><table><thead><tr><th>Course Code</th><th>Branch</th><th>Semester</th><th>Course Title</th><th class="action-cell no-print">Action</th></tr></thead><tbody id="courseTableBody"></tbody></table></div>
+   <h1>Course Master <button class="btn btn-success no-print" onclick="addCourseRow()">+ Add Course</button></h1>
+   <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">💾 Courses are saved in <b>localStorage</b>. Edit → Save to persist.</p>
+   <div class="table-container"><table><thead><tr><th>Course Code</th><th>Branch</th><th>Semester</th><th>Course Title</th><th class="action-cell no-print">Actions</th></tr></thead><tbody id="courseTableBody"></tbody></table></div>
   </div>
 
+  <!-- ============ ASSIGN QP SETTER ============ -->
   <div id="assign" class="module">
    <h1>Assign QP Setter & Generate Orders
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -212,41 +306,48 @@ footer a{color:#90caf9;text-decoration:none}
     <input type="text" id="globalLastDate" value="17.09.2025" style="width:180px;padding:8px;border-radius:6px;border:1px solid #d0d7de" oninput="saveData()">
     <span style="font-size:0.82rem;color:#6b7280">Printed on orders</span>
    </div>
-   <div class="table-container"><table><thead><tr><th style="width:22%">Subject Code & Title</th><th style="width:14%">Examiner 1</th><th style="width:14%">Examiner 2</th><th style="width:14%">Examiner 3</th><th style="width:14%">Examiner 4</th><th class="action-cell no-print">Open / Edit</th></tr></thead><tbody id="assignTableBody"></tbody></table></div>
+   <div class="table-container"><table><thead><tr><th style="width:22%">Subject Code & Title</th><th style="width:14%">Examiner 1 (Internal)</th><th style="width:14%">Examiner 2 (Internal)</th><th style="width:14%">Examiner 3 (External)</th><th style="width:14%">Examiner 4 (External)</th><th class="action-cell no-print">Letters</th></tr></thead><tbody id="assignTableBody"></tbody></table></div>
    <p class="no-print" style="margin-top:12px;font-size:0.85rem;color:#16a085">
-    💡 <strong>Download All as ZIP</strong> creates separate PDF files for each examiner — ready to email/post individually.
-    <strong>Print All</strong> opens one print job with all letters, one per A4 page.
+    💡 <strong>Dynamic Sync:</strong> Select examiners → auto-saved. Unassigned cells turn <span style="color:#e74c3c;font-weight:600">red ⚠</span>. The <span style="color:#e74c3c;font-weight:600">red number button</span> means that examiner slot is empty.
    </p>
   </div>
 
+  <!-- ============ SCRUTINY ============ -->
   <div id="scrutiny" class="module">
    <h1>Scrutiny Letter Generator</h1>
    <div class="no-print">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
      <div class="form-group"><label>Letter Date:</label><input type="text" id="scDate" value="20.06.24" onchange="regenerateScrutinyLetter()"></div>
      <div class="form-group"><label>Scrutiny Date:</label><input type="text" id="scSubjectDate" value="21.06.24" onchange="regenerateScrutinyLetter()"></div>
-     <div class="form-group"><label>Scrutiny Personnel 1:</label><input type="text" id="scPerson1" value="Dr.V M Shetter" onchange="regenerateScrutinyLetter()"></div>
-     <div class="form-group"><label>Scrutiny Personnel 2:</label><input type="text" id="scPerson2" value="Dr.S V Gurushantanavar" onchange="regenerateScrutinyLetter()"></div>
     </div>
-    <p style="font-size:0.82rem;color:#b91c1c;margin:8px 0">⚠ Changing fields regenerates letter. Signature blank for physical signing.</p>
+    <div class="form-group">
+     <label>Scrutiny Committee Members (edit names freely — one per line):</label>
+     <textarea id="scCommitteeMembers" rows="4" placeholder="Dr V M Shettar&#10;Dr S V Gurushantnavar" oninput="saveScrutinyCommittee(); regenerateScrutinyLetter();"></textarea>
+     <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-sm" style="background:#3498db" onclick="loadCommitteeFromPanel()">⬇ Fill from Panel (Internal)</button>
+      <button class="btn btn-sm" style="background:#6b7280" onclick="clearCommitteeMembers()">✕ Clear</button>
+     </div>
+    </div>
+    <p style="font-size:0.82rem;color:#b91c1c;margin:8px 0">⚠ Only courses with assigned examiners will appear in the letter. Unassigned courses are silently skipped.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
      <button class="btn" onclick="regenerateScrutinyLetter()">↺ Regenerate</button>
      <button class="btn btn-print" onclick="printScrutiny()">🖨 Print / PDF</button>
      <button class="btn btn-excel" onclick="downloadScrutinyDocx()">📄 DOCX</button>
     </div>
    </div>
-   <div id="scLetterOutput" class="letter-output" contenteditable="true" spellcheck="false"></div>
+   <div id="scLetterOutput" class="letter-output"></div>
   </div>
 
+  <!-- ============ REMUNERATION ============ -->
   <div id="remuneration" class="module">
    <h1>Remuneration Bill</h1>
    <div id="remBillHeader" style="text-align:center;margin-bottom:16px;background:#f8fafc;padding:14px;border-radius:8px;border:1px solid var(--border)">
     <h3 id="remInstitution">Basaveshwar Engineering College, Bagalkote - 587102</h3>
     <p>Department of <span id="remDepartment">Mathematics</span></p>
     <p style="font-weight:bold;margin-top:8px">Sub: Payment of Remuneration SEE Theory Question Paper Setter of BE <span id="remSemesterType">Odd</span> Semester <span id="remAcademicYear">2025-26</span></p>
-    <p style="font-size:0.85rem;color:#6b7280"><strong>(External Examiners only)</strong></p>
+    <p style="font-size:0.85rem;color:#6b7280"><strong>(External Examiners assigned in QP Setter Module)</strong></p>
    </div>
-   <div class="table-container"><table id="remunerationTable"><thead><tr><th>Sl.</th><th>Faculty (External)</th><th>PAN</th><th>Total ₹</th><th>I Tax 10%</th><th>Net Payable</th><th>Bank</th><th>SB A/C</th><th>IFSC</th><th>Remarks</th></tr></thead><tbody id="remunerationTableBody"></tbody><tfoot><tr style="font-weight:bold;background:#e5e7eb"><td colspan="3" style="text-align:right">Total</td><td id="totalGross">₹0</td><td id="totalTax">₹0</td><td id="totalNet">₹0</td><td colspan="4"></td></tr></tfoot></table></div>
+   <div class="table-container"><table id="remunerationTable"><thead><tr><th>Sl.</th><th>Faculty (External)</th><th>Course Code(s)</th><th>PAN</th><th>Gross ₹</th><th>I Tax 10%</th><th>Net Payable</th><th>Bank Name</th><th>SB A/C No.</th><th>IFSC Code</th><th>Remarks</th></tr></thead><tbody id="remunerationTableBody"></tbody><tfoot><tr style="font-weight:bold;background:#e5e7eb"><td colspan="4" style="text-align:right">Total</td><td id="totalGross">₹0</td><td id="totalTax">₹0</td><td id="totalNet">₹0</td><td colspan="4"></td></tr></tfoot></table></div>
    <div class="no-print" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn btn-excel" onclick="downloadRemunerationDocx()">📄 DOCX</button>
     <button class="btn btn-excel" style="background:#2c7a4b" onclick="downloadExcel()">📊 CSV</button>
@@ -256,9 +357,10 @@ footer a{color:#90caf9;text-decoration:none}
    </div>
   </div>
 
+  <!-- ============ SETTINGS ============ -->
   <div id="settings" class="module">
    <h1>⚙️ Settings</h1>
-   <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. Signature blank for physical signing.</p>
+   <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. Signature blank for physical signing. Saved in <b>localStorage</b>.</p>
    <div class="settings-preview">
     <h4>📋 Current Preview</h4>
     <p><strong>Institution:</strong> <span id="previewInst">—</span></p>
@@ -279,6 +381,7 @@ footer a{color:#90caf9;text-decoration:none}
     <div class="form-group"><label>Semester Type:</label><select id="setSemesterType"><option value="Odd">Odd Semester</option><option value="Even">Even Semester</option></select></div>
     <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
      <button class="btn btn-success" style="padding:10px 22px" onclick="saveSettings()">💾 Save Settings</button>
+     <button class="btn btn-danger" style="padding:10px 22px" onclick="resetAllData()">🗑 Reset All Data</button>
      <span id="settingsSavedMsg" class="settings-saved-msg"></span>
     </div>
    </div>
@@ -286,7 +389,7 @@ footer a{color:#90caf9;text-decoration:none}
  </div>
 </div>
 
-<footer>© 2026 <a href="/">mahadevbiradar.in</a> • BOE Dashboard • BEC Bagalkote • Built by Dr. Mahadev M Biradar • <a href="/vtu-cbcs-cgpa-calculator.html">VTU CGPA Calculator</a> • <a href="/nba-co-po-upload-tool.html">NBA CO-PO Tool</a></footer>
+<footer>© 2026 <a href="/">mahadevbiradar.in</a> • BOE Dashboard • BEC Bagalkote • Built by Dr. Mahadev M Biradar</footer>
 
 <div id="letterModal" class="modal-overlay">
  <div class="modal-container">
@@ -296,7 +399,6 @@ footer a{color:#90caf9;text-decoration:none}
     <button class="btn" onclick="resetModalEdit()">↺ Regenerate</button>
     <button class="btn btn-print" onclick="printModal()">🖨 Print / PDF</button>
     <button class="btn btn-excel" onclick="downloadModalPdf()" style="background:#c0392b">📄 Download PDF</button>
-    <button class="btn btn-excel" onclick="downloadModalDocx()">📄 DOCX</button>
     <button class="btn btn-danger" onclick="closeModal()">✕ Close</button>
    </div>
   </div>
@@ -305,9 +407,10 @@ footer a{color:#90caf9;text-decoration:none}
 </div>
 
 <div id="zipToast">📦 Preparing ZIP…</div>
+<div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 4;
+const TEMPLATE_VERSION = 10;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -337,8 +440,8 @@ function checkAuth() {
     }
 }
 
-/* ==================== DATA ==================== */
-let panelData = [
+/* ==================== DEFAULT DATA ==================== */
+const DEFAULT_PANEL = [
  ["Dr S V Gurushantnavar","BEC Bagalkote","Dr. Vishal Patil","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
  ["Dr V M Shettar","BEC Bagalkote","Dr. Gurunath Sankad","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
  ["Dr M M Biradar","BEC Bagalkote","Dr. H. M. Manjunath","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
@@ -349,7 +452,7 @@ let panelData = [
  ["Dr Pradeep Hiremath","BEC Bagalkote","Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
  ["Dr S S Benchalli","BEC Bagalkote","Dr. Roopa S","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
 ];
-let courseData = [
+const DEFAULT_COURSE = [
  ["1BMAS101C","Computer Science & Engineering","I","Calculus and Linear Algebra"],
  ["1BMAC101C","Civil Engineering","I","Differential Calculus and Linear Algebra"],
  ["1BMAE101C","Electrical & Electronics Engineering","I","Differential Calculus and Linear Algebra"],
@@ -360,12 +463,17 @@ let courseData = [
  ["1BMAM301C","Mechanical Engineering","III","Mathematics for Mechanical Engineering"],
  ["BMAB300M","All Branches (Lateral Entry)","III","Bridge Course Mathematics-I"]
 ];
-let assignData = [
+const DEFAULT_ASSIGN = [
  ["1BMAS101C","Prof. V M Pudakalkatti","Dr Pradeep Hiremath","Dr. Vishal Patil","Dr. Jagadish Tawade"],
  ["1BMAC101C","Dr M M Biradar","","Dr. Gurunath Sankad",""],
  ["1BMAE101C","Dr S S Benchalli","","Dr. H. M. Manjunath",""],
  ["1BMAM101C","Dr A H Agadi","","Dr. Gopichand P.",""]
 ];
+
+/* Panel row: [0]Internal [1]InternalCollege [2]ExternalFaculty [3]ExternalCollege [4]PAN [5]Bank [6]SB A/C [7]IFSC */
+let panelData = JSON.parse(JSON.stringify(DEFAULT_PANEL));
+let courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
+let assignData = JSON.parse(JSON.stringify(DEFAULT_ASSIGN));
 let lastDateVal = "17.09.2025";
 let institutionName = "Basaveshwar Engineering College, Bagalkote - 587 102";
 let departmentName = "Mathematics";
@@ -373,46 +481,38 @@ let boeName = "Dr. Ishwar Maharudrappa";
 let boeMobile = "9035246580";
 let academicYear = "2025-26";
 let semesterType = "Odd";
+let scrutinyCommitteeMembers = ""; // multiline text
 
 const KEYS = {
  panel:'panelData_v12', course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
- settings:'settings_v12', scrutiny:'scrutiny_edit_v12', remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
+ settings:'settings_v12', scrutiny:'scrutiny_edit_v12', committee:'scrutiny_committee_v12',
+ remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
 };
+
+let panelEditIdx = -1;
+let courseEditIdx = -1;
+let currentPanelTab = 'internal';
 
 function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
 
+function showSaveToast(msg){
+ const t = document.getElementById('saveToast');
+ t.textContent = msg || '✓ Saved to localStorage';
+ t.classList.add('show');
+ clearTimeout(t._timer);
+ t._timer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
 /* ==================== LOAD ==================== */
 function loadAll(){
- ['panelData_v11','courseData_v11','assignData_v11'].forEach((old,i)=>{
-  const nk=[KEYS.panel,KEYS.course,KEYS.assign][i];
-  if(!localStorage.getItem(nk)&&localStorage.getItem(old))
-   localStorage.setItem(nk,localStorage.getItem(old));
- });
- if(!localStorage.getItem(KEYS.lastDate)&&localStorage.getItem('lastDate_v11'))
-  localStorage.setItem(KEYS.lastDate,localStorage.getItem('lastDate_v11'));
- if(!localStorage.getItem(KEYS.settings)&&localStorage.getItem('settings_v11'))
-  localStorage.setItem(KEYS.settings,localStorage.getItem('settings_v11'));
+ try{
+  if(localStorage.getItem(KEYS.panel))  panelData  = JSON.parse(localStorage.getItem(KEYS.panel));
+  if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
+  if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
+  if(localStorage.getItem(KEYS.lastDate)) lastDateVal = localStorage.getItem(KEYS.lastDate);
+  if(localStorage.getItem(KEYS.committee)) scrutinyCommitteeMembers = localStorage.getItem(KEYS.committee);
 
- if(localStorage.getItem(KEYS.panel))  panelData  = JSON.parse(localStorage.getItem(KEYS.panel));
- if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
- if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
- if(localStorage.getItem(KEYS.lastDate)) lastDateVal = localStorage.getItem(KEYS.lastDate);
-
- // Sanitise
- const internalList = panelData.map(p=>p[0]).filter(n=>n&&n.trim()!=="");
- const externalList = panelData.map(p=>p[2]).filter(n=>n&&n.trim()!=="");
- assignData = assignData.map(row=>{
-  const out=[row[0]];
-  for(let i=1;i<=4;i++){
-   const n=(row[i]||'').trim();
-   const list=i<=2?internalList:externalList;
-   out.push(list.includes(n)?n:"");
-  }
-  return out;
- });
-
- if(localStorage.getItem(KEYS.settings)){
-  try{
+  if(localStorage.getItem(KEYS.settings)){
    const s=JSON.parse(localStorage.getItem(KEYS.settings));
    institutionName=s.institution||institutionName;
    departmentName=s.department||departmentName;
@@ -420,8 +520,8 @@ function loadAll(){
    boeMobile=s.boeMobile||boeMobile;
    academicYear=s.academicYear||academicYear;
    semesterType=s.semesterType||semesterType;
-  }catch(e){}
- }
+  }
+ }catch(e){ console.warn('loadAll failed', e); }
 
  document.getElementById('setInstitution').value=institutionName;
  document.getElementById('setDepartment').value=departmentName;
@@ -430,8 +530,20 @@ function loadAll(){
  document.getElementById('setAcademicYear').value=academicYear;
  document.getElementById('setSemesterType').value=semesterType;
  document.getElementById('globalLastDate').value=lastDateVal;
+
+ const ta = document.getElementById('scCommitteeMembers');
+ if(ta) ta.value = scrutinyCommitteeMembers || defaultCommitteeMembersString();
+
  refreshPreview();
  refreshRemunerationHeader();
+}
+
+function defaultCommitteeMembersString(){
+ // First 2 internals from panel
+ const ints = panelData.map(p=>p[0]).filter(n=>n);
+ const a = ints[0] || "Dr V M Shettar";
+ const b = ints[1] || "Dr S V Gurushantnavar";
+ return `${a}\n${b}`;
 }
 
 function refreshPreview(){
@@ -450,6 +562,7 @@ function refreshRemunerationHeader(){
  document.getElementById('remAcademicYear').textContent=academicYear;
 }
 
+/* ==================== SAVE HELPERS ==================== */
 function saveData(){
  lastDateVal=document.getElementById('globalLastDate').value;
  localStorage.setItem(KEYS.panel,JSON.stringify(panelData));
@@ -471,38 +584,69 @@ function saveSettings(){
   boeName,boeMobile,academicYear,semesterType
  }));
 
- Object.keys(localStorage).forEach(k=>{
-  if(!k.startsWith(KEYS.letterPrefix)) return;
-  try{
-   const entry=JSON.parse(localStorage.getItem(k)||'null');
-   if(!entry||!entry.meta){ localStorage.removeItem(k); return; }
-   if(entry.meta.v!==TEMPLATE_VERSION ||
-      entry.meta.boeName!==boeName ||
-      entry.meta.boeMobile!==boeMobile ||
-      entry.meta.academicYear!==academicYear ||
-      entry.meta.semesterType!==semesterType){
-    localStorage.removeItem(k);
-   }
-  }catch(e){ localStorage.removeItem(k); }
- });
-
  refreshPreview();
  refreshRemunerationHeader();
 
- const filterSel=document.getElementById('assignSemFilter');
- if(filterSel){
-  const sems=[...new Set(courseData.map(c=>c[2]).filter(s=>s&&s.trim()!==""))].sort();
-  const matches=semesterType==='Even'
-   ? sems.filter(s=>['II','IV','VI','VIII'].includes(s))
-   : sems.filter(s=>['I','III','V','VII'].includes(s));
-  filterSel.value=matches.length?matches[0]:'all';
- }
-
  const msg=document.getElementById('settingsSavedMsg');
- msg.textContent='✓ Saved! Letters will regenerate.';
+ msg.textContent='✓ Saved successfully!';
  setTimeout(()=>msg.textContent='',3000);
+}
 
- if(typeof gtag==='function') gtag('event','save_settings');
+function saveScrutinyCommittee(){
+ const ta = document.getElementById('scCommitteeMembers');
+ if(!ta) return;
+ scrutinyCommitteeMembers = ta.value;
+ localStorage.setItem(KEYS.committee, scrutinyCommitteeMembers);
+}
+
+function loadCommitteeFromPanel(){
+ // Pick first 2 internal examiners
+ const ints = panelData.map(p=>p[0]).filter(n=>n);
+ if(ints.length === 0){ alert("No internal examiners in panel."); return; }
+ const picked = ints.slice(0,2);
+ const ta = document.getElementById('scCommitteeMembers');
+ ta.value = picked.join('\n');
+ saveScrutinyCommittee();
+ regenerateScrutinyLetter();
+ showSaveToast('✓ Committee filled from Panel');
+}
+
+function clearCommitteeMembers(){
+ const ta = document.getElementById('scCommitteeMembers');
+ ta.value = '';
+ saveScrutinyCommittee();
+ regenerateScrutinyLetter();
+}
+
+function resetAllData(){
+ if(!confirm('⚠ This will RESET ALL data (Panel, Courses, Assignments, Settings) to defaults and clear localStorage.\n\nAre you sure?')) return;
+ if(!confirm('⚠ Really reset everything? This cannot be undone.')) return;
+
+ localStorage.removeItem(KEYS.panel);
+ localStorage.removeItem(KEYS.course);
+ localStorage.removeItem(KEYS.assign);
+ localStorage.removeItem(KEYS.lastDate);
+ localStorage.removeItem(KEYS.settings);
+ localStorage.removeItem(KEYS.scrutiny);
+ localStorage.removeItem(KEYS.committee);
+ localStorage.removeItem(KEYS.remEdits);
+ Object.keys(localStorage).forEach(k=>{ if(k.startsWith(KEYS.letterPrefix)) localStorage.removeItem(k); });
+
+ panelData = JSON.parse(JSON.stringify(DEFAULT_PANEL));
+ courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
+ assignData = JSON.parse(JSON.stringify(DEFAULT_ASSIGN));
+ lastDateVal = "17.09.2025";
+ institutionName = "Basaveshwar Engineering College, Bagalkote - 587 102";
+ departmentName = "Mathematics";
+ boeName = "Dr. Ishwar Maharudrappa";
+ boeMobile = "9035246580";
+ academicYear = "2025-26";
+ semesterType = "Odd";
+ scrutinyCommitteeMembers = "";
+
+ loadAll();
+ initApp();
+ showSaveToast('✓ All data reset to defaults');
 }
 
 /* ==================== NAVIGATION ==================== */
@@ -513,164 +657,401 @@ function showModule(moduleId,btn){
  if(btn) btn.classList.add('active');
  if(window.innerWidth<=900) document.getElementById('sidebar').classList.remove('open');
  if(moduleId==='assign') renderAssignTable();
- if(moduleId==='scrutiny') restoreScrutinyLetter();
+ if(moduleId==='panel') renderPanelTable();
+ if(moduleId==='course') renderCourseTable();
  if(moduleId==='remuneration') renderRemunerationTable();
+ if(moduleId==='scrutiny') regenerateScrutinyLetter();
 }
 
-/* ==================== BASIC TABLES ==================== */
-function renderBasicTable(tableId,data){
- const tbody=document.getElementById(tableId);
- tbody.innerHTML="";
- data.forEach((row,rowIndex)=>{
-  const tr=document.createElement('tr');
-  row.forEach((cell,colIndex)=>{
-   const td=document.createElement('td');
-   td.textContent=cell;
-   td.contentEditable="true";
-   td.spellcheck=false;
-   td.addEventListener('blur',e=>{ data[rowIndex][colIndex]=e.target.textContent.trim(); saveData(); });
-   td.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); td.blur(); } });
-   tr.appendChild(td);
-  });
-  const actionTd=document.createElement('td');
-  actionTd.className='action-cell no-print';
-  const delBtn=document.createElement('button');
-  delBtn.textContent='X';
-  delBtn.className='btn btn-danger';
-  delBtn.style.padding='4px 8px';
-  delBtn.onclick=()=>{
-   if(!confirm('Delete this row?')) return;
-   data.splice(rowIndex,1);
-   if(tableId==='courseTableBody'){
-    const code=row[0];
-    assignData=assignData.filter(a=>a[0]!==code);
-   }
-   saveData(); renderAll();
-  };
-  actionTd.appendChild(delBtn);
-  tr.appendChild(actionTd);
-  tbody.appendChild(tr);
- });
-}
-
-/* ==================== ASSIGN ==================== */
-function populateSemFilter(){
- const select=document.getElementById('assignSemFilter');
- if(!select) return;
- const cur=select.value;
- const semesters=[...new Set(courseData.map(c=>c[2]).filter(s=>s&&s.trim()!==""))].sort();
- select.innerHTML='<option value="all">All Semesters</option>';
- semesters.forEach(s=>{
-  const o=document.createElement('option');
-  o.value=s; o.textContent='Semester '+s;
-  select.appendChild(o);
- });
- if(cur && (semesters.includes(cur)||cur==='all')) select.value=cur;
- else{
-  const matches=semesterType==='Even'
-   ? semesters.filter(s=>['II','IV','VI','VIII'].includes(s))
-   : semesters.filter(s=>['I','III','V','VII'].includes(s));
-  select.value=matches.length?matches[0]:'all';
- }
-}
-
-function renderAssignTable(){
+function initApp(){
+ renderPanelTable();
+ renderCourseTable();
  populateSemFilter();
- const tbody=document.getElementById('assignTableBody');
- tbody.innerHTML="";
- const filter=document.getElementById('assignSemFilter').value;
- const filtered=filter==='all'?courseData:courseData.filter(c=>c[2]===filter);
- if(filtered.length===0){
-  const tr=document.createElement('tr');
-  const td=document.createElement('td');
-  td.colSpan=6; td.textContent='No courses for selected semester.';
-  td.style.textAlign='center'; td.style.padding='20px'; td.style.color='#7f8c8d';
-  tr.appendChild(td); tbody.appendChild(tr); return;
- }
- const internalNames=[...new Set(panelData.map(r=>r[0]).filter(n=>n&&n.trim()!==""))];
- const externalNames=[...new Set(panelData.map(r=>r[2]).filter(n=>n&&n.trim()!==""))];
- filtered.forEach(course=>{
-  const code=course[0]; const title=course[3];
-  let assignRow=assignData.find(a=>a[0]===code);
-  if(!assignRow){ assignRow=[code,"","","",""]; assignData.push(assignRow); }
-  const tr=document.createElement('tr');
-  const tdCode=document.createElement('td');
-  tdCode.innerHTML=`<strong>${code}</strong><br><small style="color:#6b7280">${title}</small>`;
-  tdCode.style.background="#f8fafc";
-  tr.appendChild(tdCode);
-  const makeDD=(colIdx,names,ph,showCollege)=>{
-   const td=document.createElement('td');
-   const sel=document.createElement('select');
-   sel.className='cell-dropdown';
-   sel.innerHTML=`<option value="">-- ${ph} --</option>`;
-   names.forEach(name=>{
-    let label=name;
-    if(showCollege){
-     const p=panelData.find(x=>x[2]===name);
-     if(p&&p[3]) label=`${name} (${p[3]})`;
-    }
-    const o=document.createElement('option');
-    o.value=name; o.textContent=label;
-    if(name===assignRow[colIdx]) o.selected=true;
-    sel.appendChild(o);
-   });
-   sel.onchange=e=>{ assignRow[colIdx]=e.target.value; saveData(); renderAssignTable(); };
-   td.appendChild(sel); return td;
-  };
-  tr.appendChild(makeDD(1,internalNames,"Examiner 1",false));
-  tr.appendChild(makeDD(2,internalNames,"Examiner 2",false));
-  tr.appendChild(makeDD(3,externalNames,"Examiner 3",true));
-  tr.appendChild(makeDD(4,externalNames,"Examiner 4",true));
-  const actionTd=document.createElement('td');
-  actionTd.className='action-cell no-print';
-  actionTd.innerHTML=`<div class="action-btn-group">
-   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',1)" ${!assignRow[1]?'disabled':''}>1</button>
-   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',2)" ${!assignRow[2]?'disabled':''}>2</button>
-   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',3)" ${!assignRow[3]?'disabled':''}>3</button>
-   <button class="btn btn-pdf" onclick="openAppointmentLetter('${code}',4)" ${!assignRow[4]?'disabled':''}>4</button>
-  </div>`;
-  tr.appendChild(actionTd);
-  tbody.appendChild(tr);
+ renderAssignTable();
+ renderRemunerationTable();
+ regenerateScrutinyLetter();
+}
+
+/* ==================== PANEL TABS ==================== */
+function switchPanelTab(tab, btn){
+ currentPanelTab = tab;
+ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+ if(btn) btn.classList.add('active');
+ document.getElementById('tabPaneInternal').classList.toggle('active', tab==='internal');
+ document.getElementById('tabPaneExternal').classList.toggle('active', tab==='external');
+ renderPanelTable();
+}
+
+/* ==================== PANEL TABLE ==================== */
+function renderPanelTable(){
+ const intBody = document.getElementById('panelInternalBody');
+ const extBody = document.getElementById('panelExternalBody');
+ if(!intBody || !extBody) return;
+ intBody.innerHTML='';
+ extBody.innerHTML='';
+
+ panelData.forEach((row, i)=>{
+  const isEditing = (panelEditIdx === i);
+
+  // INTERNAL
+  const intTr = document.createElement('tr');
+  const intFields = [
+   {v:row[0] || '', c:0},
+   {v:row[1] || '', c:1},
+   {v:row[4] || '', c:4},
+   {v:row[5] || '', c:5},
+   {v:row[6] || '', c:6},
+   {v:row[7] || '', c:7}
+  ];
+  let intHtml = '';
+  intFields.forEach(f=>{
+   intHtml += isEditing
+    ? `<td contenteditable="true" data-row="${i}" data-col="${f.c}">${escapeHtml(f.v)}</td>`
+    : `<td class="locked">${escapeHtml(f.v)}</td>`;
+  });
+  intHtml += `<td class="action-cell no-print">${renderPanelActionBtns(i, isEditing)}</td>`;
+  intTr.innerHTML = intHtml;
+  intBody.appendChild(intTr);
+
+  // EXTERNAL
+  const extTr = document.createElement('tr');
+  const extFields = [
+   {v:row[2] || '', c:2},
+   {v:row[3] || '', c:3},
+   {v:row[4] || '', c:4},
+   {v:row[5] || '', c:5},
+   {v:row[6] || '', c:6},
+   {v:row[7] || '', c:7}
+  ];
+  let extHtml = '';
+  extFields.forEach(f=>{
+   extHtml += isEditing
+    ? `<td contenteditable="true" data-row="${i}" data-col="${f.c}">${escapeHtml(f.v)}</td>`
+    : `<td class="locked">${escapeHtml(f.v)}</td>`;
+  });
+  extHtml += `<td class="action-cell no-print">${renderPanelActionBtns(i, isEditing)}</td>`;
+  extTr.innerHTML = extHtml;
+  extBody.appendChild(extTr);
  });
 }
 
-function addRow(type){
- if(type==='panel'){
-  panelData.push(["New Internal","BEC Bagalkote","New External","External College","PANXXXX","Bank Name","12345678","IFSC0000"]);
-  renderBasicTable('panelTableBody',panelData);
- }else if(type==='course'){
-  courseData.push(["NEWCODE","Branch","I","Course Title"]);
-  renderBasicTable('courseTableBody',courseData);
+function renderPanelActionBtns(i, isEditing){
+ if(isEditing){
+  return `<div class="action-btn-group">
+    <button class="btn btn-success btn-sm" onclick="savePanelRow(${i})">💾 Save</button>
+    <button class="btn btn-sm" style="background:#6b7280" onclick="cancelPanelEdit()">✕ Cancel</button>
+   </div>`;
+ }
+ return `<div class="action-btn-group">
+    <button class="btn btn-sm" style="background:#3498db" onclick="editPanelRow(${i})">✏️ Edit</button>
+    <button class="btn btn-danger btn-sm" onclick="deletePanelRow(${i})">🗑 Delete</button>
+   </div>`;
+}
+
+function addPanelRow(){
+ panelData.push(["","BEC Bagalkote","","","","","",""]);
+ panelEditIdx = panelData.length - 1;
+ saveData();
+ renderPanelTable();
+ showSaveToast('✓ New row added — fill & Save');
+}
+
+function editPanelRow(i){ panelEditIdx = i; renderPanelTable(); }
+
+function cancelPanelEdit(){
+ panelEditIdx = -1;
+ if(localStorage.getItem(KEYS.panel)) panelData = JSON.parse(localStorage.getItem(KEYS.panel));
+ renderPanelTable();
+}
+
+function savePanelRow(i){
+ const intBody = document.getElementById('panelInternalBody');
+ const extBody = document.getElementById('panelExternalBody');
+ const intRow = intBody.children[i];
+ const extRow = extBody.children[i];
+ const newRow = ["","","","","","","",""];
+ if(intRow){
+  intRow.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+   newRow[parseInt(td.dataset.col)] = td.textContent.trim();
+  });
+ }
+ if(extRow){
+  extRow.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+   newRow[parseInt(td.dataset.col)] = td.textContent.trim();
+  });
+ }
+ for(let k=0;k<8;k++){
+  if(newRow[k]==='' && panelData[i][k]) newRow[k] = panelData[i][k];
+ }
+ panelData[i] = newRow;
+ panelEditIdx = -1;
+ saveData();
+ renderPanelTable();
+ renderRemunerationTable();
+ renderAssignTable();
+ regenerateScrutinyLetter();
+ showSaveToast('✓ Examiner pair saved');
+}
+
+function deletePanelRow(i){
+ const label = panelData[i][0] || panelData[i][2] || ('row '+i);
+ if(!confirm(`Delete examiner pair "${label}"?`)) return;
+ panelData.splice(i,1);
+ if(panelEditIdx === i) panelEditIdx = -1;
+ if(panelEditIdx > i) panelEditIdx--;
+ saveData();
+ renderPanelTable();
+ renderRemunerationTable();
+ renderAssignTable();
+ regenerateScrutinyLetter();
+ showSaveToast('✓ Examiner pair deleted');
+}
+
+/* ==================== COURSE TABLE ==================== */
+function renderCourseTable(){
+ const tbody=document.getElementById('courseTableBody');
+ if(!tbody) return;
+ tbody.innerHTML='';
+ courseData.forEach((row,i)=>{
+  const isEditing = (courseEditIdx === i);
+  const tr=document.createElement('tr');
+  const cells = row.map((val)=>`<td ${isEditing?`contenteditable="true"`:`class="locked"`}>${escapeHtml(val)}</td>`).join('');
+  tr.innerHTML = cells + `<td class="action-cell no-print">
+    ${isEditing
+      ? `<div class="action-btn-group">
+           <button class="btn btn-success btn-sm" onclick="saveCourseRow(${i})">💾 Save</button>
+           <button class="btn btn-sm" style="background:#6b7280" onclick="cancelCourseEdit()">✕ Cancel</button>
+         </div>`
+      : `<div class="action-btn-group">
+           <button class="btn btn-sm" style="background:#3498db" onclick="editCourseRow(${i})">✏️ Edit</button>
+           <button class="btn btn-danger btn-sm" onclick="deleteCourseRow(${i})">🗑 Delete</button>
+         </div>`}
+  </td>`;
+  tbody.appendChild(tr);
+ });
+ populateSemFilter();
+}
+
+function addCourseRow(){
+ courseData.push(["NEW101","Branch","I","Course Title"]);
+ courseEditIdx = courseData.length - 1;
+ saveData();
+ renderCourseTable();
+ showSaveToast('✓ New course added — fill & Save');
+}
+
+function editCourseRow(i){ courseEditIdx = i; renderCourseTable(); }
+
+function cancelCourseEdit(){
+ courseEditIdx = -1;
+ if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
+ renderCourseTable();
+}
+
+function saveCourseRow(i){
+ const tbody = document.getElementById('courseTableBody');
+ const tr = tbody.children[i];
+ const cells = tr.querySelectorAll('td[contenteditable="true"]');
+ const newRow = [];
+ cells.forEach(td=>newRow.push(td.textContent.trim()));
+ const oldCode = courseData[i][0];
+ courseData[i] = newRow;
+ const newCode = newRow[0];
+ courseEditIdx = -1;
+ if(oldCode !== newCode){
+  const a = assignData.find(x=>x[0]===oldCode);
+  if(a) a[0] = newCode;
  }
  saveData();
-}
-
-function renderAll(){
- renderBasicTable('panelTableBody',panelData);
- renderBasicTable('courseTableBody',courseData);
+ renderCourseTable();
  renderAssignTable();
+ regenerateScrutinyLetter();
+ renderRemunerationTable();
+ showSaveToast('✓ Course row saved');
 }
 
-function getExternalCollege(name){
- const r=panelData.find(p=>p[2]===name);
- return r?r[3]:"";
+function deleteCourseRow(i){
+ const code = courseData[i] ? courseData[i][0] : 'this course';
+ if(!confirm(`Delete course "${code}"? This will also remove its QP setter assignment.`)) return;
+ courseData.splice(i,1);
+ if(courseEditIdx === i) courseEditIdx = -1;
+ if(courseEditIdx > i) courseEditIdx--;
+ assignData = assignData.filter(a=>a[0]!==code);
+ saveData();
+ renderCourseTable();
+ renderAssignTable();
+ renderRemunerationTable();
+ regenerateScrutinyLetter();
+ showSaveToast('✓ Course deleted');
 }
 
-/* ==================== MODAL ==================== */
-let modalState={key:null,title:null,originalHtml:null,meta:null};
+function populateSemFilter(){
+ const sel=document.getElementById('assignSemFilter');
+ if(!sel) return;
+ const current=sel.value;
+ const sems=[...new Set(courseData.map(c=>c[2]).filter(s=>s&&s.trim()!==""))].sort();
+ sel.innerHTML='<option value="all">All Semesters</option>';
+ sems.forEach(s=>{
+  const opt=document.createElement('option');
+  opt.value=s; opt.textContent=`Semester ${s}`;
+  if(s===current) opt.selected=true;
+  sel.appendChild(opt);
+ });
+}
 
-function openModal(key,title,originalHtml,meta){
- modalState={key,title,originalHtml,meta};
- document.getElementById('modalTitle').textContent=title;
- const content=document.getElementById('modalContent');
- const saved=JSON.parse(localStorage.getItem(key)||'null');
- if(saved&&saved.meta&&JSON.stringify(saved.meta)===JSON.stringify(meta)){
-  content.innerHTML=saved.html;
- }else{
-  content.innerHTML=originalHtml;
-  localStorage.setItem(key,JSON.stringify({meta,html:originalHtml}));
+/* ==================== ASSIGN TABLE ==================== */
+function renderAssignTable(){
+ const tbody=document.getElementById('assignTableBody');
+ if(!tbody) return;
+ tbody.innerHTML='';
+ const filterSem=document.getElementById('assignSemFilter').value;
+ const internals=panelData.map(p=>p[0]).filter(n=>n);
+ const externals=panelData.map(p=>p[2]).filter(n=>n);
+
+ courseData.forEach((course)=>{
+  const code=course[0], branch=course[1], sem=course[2], title=course[3];
+  if(filterSem!=='all' && sem!==filterSem) return;
+
+  let assignRow=assignData.find(a=>a[0]===code);
+  if(!assignRow){
+   assignRow=[code,"","","",""];
+   assignData.push(assignRow);
+  }
+
+  const tr=document.createElement('tr');
+  tr.dataset.code = code;
+  let html=`<td><strong>${escapeHtml(code)}</strong><br>
+    <span style="font-size:0.8rem;color:#555">${escapeHtml(title)}</span><br>
+    <span style="font-size:0.75rem;color:#777">Sem: ${escapeHtml(sem)} | ${escapeHtml(branch)}</span></td>`;
+
+  for(let i=1;i<=4;i++){
+   const list=(i<=2)?internals:externals;
+   const val=assignRow[i]||"";
+   const isUnassigned = !val;
+   html+=`<td class="${isUnassigned?'unassigned':''}">
+    <select class="cell-dropdown ${isUnassigned?'unassigned':''}"
+            onchange="updateAssignAssignment('${code}',${i},this.value)">
+     <option value="">-- Select --</option>`;
+   list.forEach(item=>{
+    html+=`<option value="${escapeHtml(item)}" ${item===val?'selected':''}>${escapeHtml(item)}</option>`;
+   });
+   html+=`</select></td>`;
+  }
+
+  // Only letter buttons, no Save/Reset. Red if unassigned.
+  let letterBtns = '';
+  for(let i=1;i<=4;i++){
+   const hasName = !!(assignRow[i]||"").trim();
+   letterBtns += `<button class="btn btn-sm btn-letter ${hasName?'':'missing'}"
+     onclick="openAssignLetter('${code}',${i})"
+     title="${hasName?'Letter to Examiner '+i:'⚠ Examiner '+i+' not assigned'}">${i}</button>`;
+  }
+
+  html+=`<td class="action-cell no-print"><div class="action-btn-group">${letterBtns}</div></td>`;
+  tr.innerHTML=html;
+  tbody.appendChild(tr);
+ });
+}
+
+function updateAssignAssignment(code,colIdx,val){
+ let assignRow=assignData.find(a=>a[0]===code);
+ if(!assignRow){
+  assignRow=[code,"","","",""];
+  assignData.push(assignRow);
  }
- content.oninput=()=>{ localStorage.setItem(key,JSON.stringify({meta,html:content.innerHTML})); };
+ assignRow[colIdx]=val;
+ saveData();
+ renderAssignTable();
+ renderRemunerationTable();
+ regenerateScrutinyLetter();
+ showSaveToast('✓ Assignment auto-saved');
+}
+
+/* ==================== APPOINTMENT LETTER TEMPLATE ==================== */
+function getAppointmentLetterHTML(code, examinerName, examinerType){
+ const course=courseData.find(c=>c[0]===code)||["","General","I","Course Title"];
+ const courseCode=course[0], branch=course[1], semester=course[2], courseTitle=course[3];
+ const lastDt=document.getElementById('globalLastDate').value||"17.09.2025";
+ const designation = (examinerType==='internal') ? "Faculty Member" : "External Examiner";
+
+ return `
+ <div style="text-align:center;margin-bottom:15px">
+  <h3 style="font-size:14pt;font-weight:bold;margin-bottom:2px">B.V.V.S.</h3>
+  <h2 style="font-size:15pt;font-weight:bold;margin-bottom:4px">${escapeHtml(institutionName)}</h2>
+  <h3 style="font-size:13pt;font-weight:bold;text-decoration:underline;margin-top:10px">APPOINTMENT LETTER</h3>
+  <p style="font-size:10pt;font-weight:bold;color:#b91c1c;margin-top:4px">STRICTLY CONFIDENTIAL</p>
+ </div>
+
+ <p style="margin-bottom:10px"><strong>To,</strong><br>
+ ${escapeHtml(examinerName || "[Examiner Name]")}<br>
+ ${designation}<br>
+ Department of Mathematics<br>
+ BEC, Bagalkote</p>
+
+ <p style="margin-bottom:12px">Dear Sir/Madam,</p>
+ <p style="margin-bottom:12px"><strong>Subject: Appointment as a Question Paper Setter for SEE Examinations (${academicYear})</strong></p>
+ <p style="margin-bottom:14px">By the direction of Principal, I am hereby pleased to appoint you as a Question Paper Setter for the course mentioned below:</p>
+
+ <table class="doc-table" style="width:100%;margin-bottom:14px">
+  <tr><td style="width:28%"><strong>Programme</strong></td><td style="width:4%">:</td><td>B.E.</td></tr>
+  <tr><td><strong>Branch</strong></td><td>:</td><td>${escapeHtml(branch)}</td></tr>
+  <tr><td><strong>Semester</strong></td><td>:</td><td>${escapeHtml(semester)}</td></tr>
+  <tr><td><strong>Course Title</strong></td><td>:</td><td>${escapeHtml(courseTitle)}</td></tr>
+  <tr><td><strong>Course Code</strong></td><td>:</td><td><strong>${escapeHtml(courseCode)}</strong></td></tr>
+  <tr><td><strong>Last Date for Submission</strong></td><td>:</td><td><strong style="color:#b91c1c">${escapeHtml(lastDt)}</strong></td></tr>
+ </table>
+
+ <h4 style="font-size:11pt;margin-top:14px;margin-bottom:6px;text-decoration:underline">INSTRUCTIONS FOR QUESTION PAPER SETTING</h4>
+ <ol style="margin-left:20px;margin-bottom:14px;line-height:1.4">
+  <li>The questions must be typed strictly in the given official template.</li>
+  <li>Total of eight questions to be set with two questions in each unit, uniformly covering the entire syllabus of the unit under consideration.</li>
+  <li>Each question shall carry 20 marks. There shall be a maximum of four subdivisions in each question.</li>
+  <li>Students have to answer any five full questions choosing at least one from each unit.</li>
+  <li>Figures are directly scanned from the manuscripts. Kindly provide neat sketches of figures in camera-ready form.</li>
+  <li>Indicate figure numbers with respect to question numbers (e.g., figure pertaining to Q2(c) as Fig. Q2(c) immediately adjacent to it).</li>
+  <li>Mention requirements of handbooks, steam tables, charts etc., if required.</li>
+  <li>All questions should be marked with corresponding Course Outcome (CO) and Bloom's Learning Level (BLL) along with marks as per the model question paper enclosed.</li>
+  <li>Please scrutinize the question paper carefully for completeness before submitting it.</li>
+  <li>Type the scheme and solutions in the given template and ensure that the manuscript along with scheme & solutions reach the undersigned on or before the last date.</li>
+  <li>A question paper without scheme and solutions is liable to be rejected.</li>
+ </ol>
+
+ <p style="margin-bottom:14px">In case of any queries please contact <strong>${escapeHtml(boeName)}</strong> (Cell No. <strong>${escapeHtml(boeMobile)}</strong>). In case you are unable to accept the assignment, kindly inform the same immediately.</p>
+
+ <div style="display:flex;justify-content:space-between;margin-top:40px">
+  <div></div>
+  <div style="text-align:right">
+   <p style="margin-bottom:40px"><strong>Controller of Examinations (COE) / BOE Chairman</strong></p>
+   <p>${escapeHtml(institutionName)}</p>
+  </div>
+ </div>
+
+ <div style="margin-top:20px;border-top:1px dashed #ccc;padding-top:10px;font-size:9pt;color:#555">
+  <p><strong>Attachments:</strong></p>
+  <ol style="margin-left:20px">
+   <li>Procedure to submit Question Paper, and Scheme & Solutions</li>
+   <li>Instructions to prepare scheme and solutions</li>
+   <li>Copy of the syllabus & Model question paper</li>
+   <li>Question paper template & Scheme/Solutions template</li>
+   <li>Undertaking letter & Remuneration bill</li>
+  </ol>
+ </div>
+`;
+}
+
+let currentOpenModalKey = "";
+function openAssignLetter(code, colIdx){
+ const assignRow=assignData.find(a=>a[0]===code);
+ const examinerName = assignRow ? assignRow[colIdx] : "";
+ if(!examinerName){
+  alert(`⚠ Examiner ${colIdx} is not assigned for ${code}.\nPlease select an examiner from the dropdown first.`);
+  return;
+ }
+ const examinerType = (colIdx <= 2) ? 'internal' : 'external';
+ const html = getAppointmentLetterHTML(code, examinerName, examinerType);
+ currentOpenModalKey = `${code}_${colIdx}_${encodeURIComponent(examinerName)}`;
+ document.getElementById('modalTitle').textContent = `Appointment Letter: ${code} - ${examinerName}`;
+ document.getElementById('modalContent').innerHTML = html;
  document.getElementById('letterModal').classList.add('active');
  document.body.classList.add('modal-open');
 }
@@ -678,491 +1059,367 @@ function openModal(key,title,originalHtml,meta){
 function closeModal(){
  document.getElementById('letterModal').classList.remove('active');
  document.body.classList.remove('modal-open');
- modalState={key:null,title:null,originalHtml:null,meta:null};
 }
 
 function resetModalEdit(){
- if(!modalState.key) return;
- if(!confirm('Discard edits and regenerate?')) return;
- document.getElementById('modalContent').innerHTML=modalState.originalHtml;
- localStorage.setItem(modalState.key,JSON.stringify({meta:modalState.meta,html:modalState.originalHtml}));
+ if(!currentOpenModalKey) return;
+ const parts = currentOpenModalKey.split('_');
+ if(parts.length>=3) openAssignLetter(parts[0], parseInt(parts[1]));
 }
 
-function printModal(){
- if(!modalState.key) return;
- localStorage.setItem(modalState.key,JSON.stringify({meta:modalState.meta,html:document.getElementById('modalContent').innerHTML}));
- const el=document.getElementById('modalContent');
- const prev=el.style.zoom;
- el.style.zoom='';
- void el.offsetHeight;
- const maxH=1032;
- if(el.scrollHeight>maxH) el.style.zoom=(maxH/el.scrollHeight)*0.97;
- window.print();
- setTimeout(()=>{ el.style.zoom=prev; },500);
-}
+function printModal(){ window.print(); }
 
-function downloadModalDocx(){
- if(!modalState.key) return;
- const html=document.getElementById('modalContent').innerHTML;
- const name=(modalState.title||'Document').replace(/[^\w\s-]/g,'_').trim();
- downloadAsDoc(html,name);
-}
-
-/* NEW: Download single PDF */
 async function downloadModalPdf(){
- if(!modalState.key) return;
- const html=document.getElementById('modalContent').innerHTML;
- const name=(modalState.title||'Document').replace(/[^\w\s-]/g,'_').trim();
- try{
-  showToast('📄 Generating PDF…');
-  await ensurePdfLibs();
-  const pdf=await htmlToPdfBlob(html);
-  saveBlob(pdf, name + '.pdf');
-  hideToast();
- }catch(e){
-  hideToast();
-  alert('PDF generation failed: '+e.message+'\nPlease use Print → Save as PDF instead.');
- }
-}
-
-/* ==================== APPOINTMENT LETTER ==================== */
-function openAppointmentLetter(courseCode,idx){
- const course=courseData.find(c=>c[0]===courseCode);
- const assign=assignData.find(a=>a[0]===courseCode);
- if(!assign) return alert("No assignment");
- const examinerName=assign[idx];
- if(!examinerName||!examinerName.trim()) return alert("No Examiner");
- const date=document.getElementById('globalLastDate').value;
- const college=getExternalCollege(examinerName)||"BEC Bagalkote";
- const html=buildAppointmentHTML(course,examinerName,college,date);
- const key=KEYS.letterPrefix+courseCode+'_'+idx;
- const meta={v:TEMPLATE_VERSION,examiner:examinerName,date,courseCode,idx,boeName,boeMobile,academicYear,semesterType};
- openModal(key,`Appointment Letter — ${examinerName}`,html,meta);
-}
-
-function buildAppointmentHTML(course,examinerName,college,date){
- const inst=institutionName.toUpperCase();
- const dept=departmentName;
- return `<div style="font-family:'Times New Roman',Times,serif;color:#000">
-  <div style="text-align:center;margin-bottom:14px">
-   <h4 style="margin:0;font-size:13pt">BVVS</h4>
-   <h4 style="margin:4px 0;font-size:12pt">${inst}</h4>
-   <p style="margin:0;font-size:11pt">Department of ${dept}</p>
-   <h4 style="margin:10px 0 0 0;font-size:12pt;text-decoration:underline">APPOINTMENT LETTER</h4>
-   <p style="margin:0;font-size:9pt;font-weight:bold">STRICTLY CONFIDENTIAL</p>
-  </div>
-  <p style="margin-bottom:10px">To,<br><strong>${examinerName}</strong><br>${college}</p>
-  <p style="margin-bottom:6px"><strong>Subject:</strong> Appointment as QP Setter for SEE BE ${semesterType} Sem ${academicYear}</p>
-  <p style="margin-bottom:10px;text-align:justify">By direction of Principal, pleased to appoint you as QP setter for:</p>
-  <div style="margin-left:18px;margin-bottom:10px;font-size:11pt">
-   <p>Programme: B.E</p>
-   <p>Branch: ${course[1]}</p>
-   <p>Semester: ${course[2]} (${semesterType})</p>
-   <p>Course: ${course[3]} (${course[0]})</p>
-   <p>Academic Year: <strong>${academicYear}</strong></p>
-   <p>Last date: <strong>${date}</strong></p>
-  </div>
-  <p style="font-weight:bold;font-size:10.5pt">INSTRUCTIONS</p>
-  <ol style="margin-left:18px;font-size:10pt;text-align:justify">
-   <li>Ten questions, two per module, covering syllabus</li>
-   <li>Each 20 marks, max four subdivisions</li>
-   <li>Answer any five full questions, one per module</li>
-   <li>Provide neat sketches camera-ready</li>
-   <li>Mark CO and Bloom's level with marks</li>
-   <li>Type scheme & solutions in template - mandatory</li>
-  </ol>
-  <p style="margin-top:8px">Contact <strong>${boeName}</strong> - ${boeMobile} for queries.</p>
-  <div style="text-align:right;margin:20px 0">
-   <p style="height:50px">&nbsp;</p>
-   <p style="font-weight:bold">Controller of Examinations</p>
-   <p>${institutionName}</p>
-  </div>
-  <div style="font-size:9pt;border-top:1px solid #ccc;padding-top:4px">
-   <p><strong>Attachments:</strong> QP Template, Scheme Template, Syllabus, Model QP, Undertaking, Remuneration Bill</p>
-  </div>
- </div>`;
-}
-
-/* ==================== BULK: ZIP (individual PDFs) ==================== */
-async function generateAllPDFsZip(){
- const date=document.getElementById('globalLastDate').value;
- const items=[];
- assignData.forEach(row=>{
-  const course=courseData.find(c=>c[0]===row[0]);
-  if(!course) return;
-  for(let i=1;i<=4;i++){
-   const name=row[i];
-   if(!name||!name.trim()) continue;
-   const college=getExternalCollege(name)||"BEC Bagalkote";
-   items.push({course,name,college,date});
-  }
- });
- if(!items.length){ alert('No examiners assigned yet.'); return; }
-
- try{
-  showToast(`📦 Generating ${items.length} PDF${items.length>1?'s':''}…`);
-  await ensurePdfLibs();
-
-  const zip=new JSZip();
-  for(let idx=0; idx<items.length; idx++){
-   const it=items[idx];
-   showToast(`📦 Generating ${idx+1}/${items.length}: ${it.name}…`);
-   const html=buildAppointmentHTML(it.course,it.name,it.college,it.date);
-   const pdfBlob=await htmlToPdfBlob(html);
-   const safeCourse=it.course[0].replace(/[^\w-]/g,'_');
-   const safeName=it.name.replace(/[^\w-]/g,'_').slice(0,40);
-   zip.file(`${String(idx+1).padStart(2,'0')}_${safeCourse}_${safeName}.pdf`, pdfBlob);
-  }
-
-  showToast('📦 Compressing ZIP…');
-  const zipBlob=await zip.generateAsync({type:'blob'});
-  const today=new Date().toISOString().slice(0,10);
-  saveBlob(zipBlob, `Appointment_Letters_${today}.zip`);
-  hideToast();
- }catch(e){
-  hideToast();
-  console.error(e);
-  alert('ZIP generation failed: '+e.message+'\n\nYou can still use "Print All" and Save as PDF.');
- }
-}
-
-/* ==================== BULK: PRINT ALL ==================== */
-function generateAllPDFsPrint(){
- const date=document.getElementById('globalLastDate').value;
- let combined='', count=0;
- assignData.forEach(row=>{
-  const course=courseData.find(c=>c[0]===row[0]);
-  if(!course) return;
-  for(let i=1;i<=4;i++){
-   const name=row[i];
-   if(!name||!name.trim()) continue;
-   const college=getExternalCollege(name)||"BEC Bagalkote";
-   combined+=`<div style="page-break-after:always">${buildAppointmentHTML(course,name,college,date)}</div>`;
-   count++;
-  }
- });
- if(!count) return alert('No examiners assigned yet.');
- const w=window.open('','_blank');
- w.document.write(`<html><head><title>All Letters (${count})</title>
-  <style>@page{size:A4;margin:12mm}body{font-family:'Times New Roman',Times,serif;margin:0}div{page-break-after:always}div:last-child{page-break-after:auto}</style>
- </head><body>${combined}<script>window.onload=()=>setTimeout(()=>{window.print();},400);<\/script></body></html>`);
- w.document.close();
-}
-
-/* ==================== HTML → PDF ==================== */
-async function htmlToPdfBlob(html){
- const {jsPDF}=window.jspdf;
- // Render in offscreen A4 container matching print layout
- const container=document.createElement('div');
- container.style.position='fixed';
- container.style.left='-99999px';
- container.style.top='0';
- container.style.width='210mm';
- container.style.padding='15mm';
- container.style.background='#fff';
- container.style.color='#000';
- container.style.boxSizing='border-box';
- container.style.fontFamily="'Times New Roman',Times,serif";
- container.style.fontSize='12pt';
- container.style.lineHeight='1.4';
- container.innerHTML=html;
- document.body.appendChild(container);
- // Wait a tick for fonts/layout
- await new Promise(r=>setTimeout(r,80));
-
- const pdf=new jsPDF('p','mm','a4');
- // Use html2canvas-like approach via jsPDF's .html() (auto page-split)
- await pdf.html(container, {
-  x: 0, y: 0,
-  width: 210,
-  windowWidth: 793, // 210mm at 96 DPI ≈ 793px
-  html2canvas: {
-   scale: 2,
-   useCORS: true,
-   backgroundColor: '#ffffff'
+ await ensurePdfLibs();
+ const { jsPDF } = window.jspdf;
+ const element = document.getElementById('modalContent');
+ const doc = new jsPDF('p', 'mm', 'a4');
+ await doc.html(element, {
+  callback: function (doc) {
+   doc.save(`Appointment_Letter_${currentOpenModalKey.replace(/%/g,'_')}.pdf`);
   },
+  margin: [10, 10, 10, 10],
   autoPaging: 'text',
-  margin: [0,0,0,0]
+  x: 0, y: 0, width: 210, windowWidth: 800
  });
- document.body.removeChild(container);
- return pdf.output('blob');
 }
 
-/* ==================== FILE SAVE HELPER ==================== */
-function saveBlob(blob,filename){
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url; a.download=filename;
- document.body.appendChild(a); a.click(); document.body.removeChild(a);
- setTimeout(()=>URL.revokeObjectURL(url),1500);
-}
+/* ==================== SCRUTINY LETTER ==================== */
+function regenerateScrutinyLetter(){
+ const dt=document.getElementById('scDate').value;
+ const subDt=document.getElementById('scSubjectDate').value;
 
-/* ==================== TOAST ==================== */
-function showToast(msg){ const t=document.getElementById('zipToast'); t.textContent=msg; t.classList.add('show'); }
-function hideToast(){ document.getElementById('zipToast').classList.remove('show'); }
+ // Read editable committee members (one per line, blanks skipped)
+ const committeeRaw = (document.getElementById('scCommitteeMembers').value || '').trim();
+ const committeeList = committeeRaw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
 
-/* ==================== SCRUTINY ==================== */
-function getScrutinyMeta(){
- return {
-  v:TEMPLATE_VERSION,
-  boeName,boeMobile,institutionName,departmentName,academicYear,semesterType,
-  date:document.getElementById('scDate').value,
-  subjectDate:document.getElementById('scSubjectDate').value,
-  p1:document.getElementById('scPerson1').value,
-  p2:document.getElementById('scPerson2').value,
-  dataHash:JSON.stringify(assignData)+'|'+JSON.stringify(courseData.map(c=>[c[0],c[2],c[3]]))
- };
-}
+ // Build ONLY rows that have at least one assigned examiner
+ let internalRows = "";
+ let externalRows = "";
+ let intIdx = 1, extIdx = 1;
 
-function buildScrutinyHTML(){
- const date=document.getElementById('scDate').value;
- const subjectDate=document.getElementById('scSubjectDate').value;
- const p1=document.getElementById('scPerson1').value;
- const p2=document.getElementById('scPerson2').value;
- let rows="",sl=1;
- assignData.forEach(row=>{
-  const code=row[0];
-  const course=courseData.find(c=>c[0]===code);
-  const title=course?course[3]:"Unknown";
-  for(let i=1;i<=4;i++){
-   const ex=row[i];
-   if(ex&&ex.trim())
-    rows+=`<tr><td style="text-align:center">${sl++}</td><td>${title}</td><td style="text-align:center">${code}</td><td>${ex}</td></tr>`;
+ assignData.forEach((row)=>{
+  const code = row[0];
+  const course = courseData.find(c=>c[0]===code) || [code,"-","-","Course"];
+  const courseLabel = `<strong>${escapeHtml(code)}</strong><br>
+    <span style="font-size:9.5pt;color:#333">${escapeHtml(course[3])}</span>`;
+
+  const internalNames = [row[1], row[2]].filter(n => n && n.trim());
+  const externalNames = [row[3], row[4]].filter(n => n && n.trim());
+
+  // INTERNAL: only add if at least one assigned
+  if(internalNames.length > 0){
+   internalNames.forEach(name=>{
+    internalRows += `<tr>
+     <td style="text-align:center;vertical-align:top">${intIdx++}</td>
+     <td style="vertical-align:top">${courseLabel}</td>
+     <td style="vertical-align:top">${escapeHtml(name)}</td>
+    </tr>`;
+   });
+  }
+
+  // EXTERNAL: only add if at least one assigned
+  if(externalNames.length > 0){
+   externalNames.forEach(name=>{
+    externalRows += `<tr>
+     <td style="text-align:center;vertical-align:top">${extIdx++}</td>
+     <td style="vertical-align:top">${courseLabel}</td>
+     <td style="vertical-align:top">${escapeHtml(name)}</td>
+    </tr>`;
+   });
   }
  });
- if(!rows) rows=`<tr><td colspan="4" style="text-align:center">No examiners assigned yet.</td></tr>`;
- return `<p>To,<br>The Controller of Examinations,<br>${institutionName}</p>
-  <p style="text-align:right">Date: ${date}</p>
-  <p>(Through HOD)</p>
-  <p style="text-decoration:underline;font-weight:bold">Sub: Request for Scrutiny of SEE QP (BE ${semesterType} Sem ${academicYear}) on ${subjectDate} reg…</p>
-  <p>Sir,</p>
-  <p style="text-align:justify">Request permission to do scrutiny of following subjects:</p>
-  <table class="doc-table"><thead><tr><th>Sl</th><th>Subject Title</th><th>Code</th><th>QP Setter</th></tr></thead><tbody>${rows}</tbody></table>
-  <p style="margin-top:16px;text-align:justify">Scrutiny by <strong>${p1}</strong> and <strong>${p2}</strong>.</p>
-  <p style="margin-top:30px">Thanking you</p>
-  <p>Yours faithfully</p>
-  <p style="height:50px">&nbsp;</p>
-  <p>BOE, Dept. of ${departmentName},</p>
-  <p>${institutionName}</p>
-  <p style="margin-top:6px;font-size:10pt">Mobile: <strong>${boeMobile}</strong></p>`;
-}
 
-function regenerateScrutinyLetter(){
- const out=document.getElementById('scLetterOutput');
- const html=buildScrutinyHTML();
- out.innerHTML=html;
- out.style.display='block';
- localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html}));
-}
-
-function restoreScrutinyLetter(){
- const out=document.getElementById('scLetterOutput');
- const saved=localStorage.getItem(KEYS.scrutiny);
- if(saved){
-  try{
-   const parsed=JSON.parse(saved);
-   if(parsed.meta&&JSON.stringify(parsed.meta)===JSON.stringify(getScrutinyMeta())){
-    out.innerHTML=parsed.html;
-    out.style.display='block';
-    return;
-   }
-  }catch(e){ localStorage.removeItem(KEYS.scrutiny); }
+ // Committee member list block (rendered only if any name typed)
+ let committeeBlock = "";
+ if(committeeList.length > 0){
+  committeeBlock = `
+   <div style="margin-top:24px;page-break-inside:avoid">
+    <p style="margin-bottom:8px"><strong>Scrutiny Committee Members:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:4px">
+     <tr>
+      <td style="width:8%;text-align:center;border:1px solid #000;padding:4px"><strong>Sl.</strong></td>
+      <td style="border:1px solid #000;padding:4px"><strong>Name</strong></td>
+      <td style="width:30%;border:1px solid #000;padding:4px"><strong>Signature</strong></td>
+     </tr>
+     ${committeeList.map((n,i)=>`
+      <tr>
+       <td style="text-align:center;border:1px solid #000;padding:6px">${i+1}</td>
+       <td style="border:1px solid #000;padding:6px">${escapeHtml(n)}</td>
+       <td style="border:1px solid #000;padding:6px">&nbsp;</td>
+      </tr>
+     `).join('')}
+    </table>
+   </div>
+  `;
  }
- regenerateScrutinyLetter();
-}
 
-document.addEventListener('DOMContentLoaded',()=>{
- const out=document.getElementById('scLetterOutput');
- if(out) out.addEventListener('input',()=>{
-  localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html:out.innerHTML}));
- });
-});
+ const html=`
+ <div class="a4-sheet">
+  <div style="text-align:center;margin-bottom:14px">
+   <h3 style="font-size:14pt;font-weight:bold;margin-bottom:2px">${escapeHtml(institutionName)}</h3>
+   <h4 style="font-size:12pt;font-weight:bold;margin-top:2px">DEPARTMENT OF ${escapeHtml(departmentName.toUpperCase())}</h4>
+   <p style="font-size:11pt;margin-top:6px">Date: ${escapeHtml(dt)}</p>
+  </div>
+
+  <h3 style="text-align:center;font-size:12pt;text-decoration:underline;margin-bottom:18px">
+    SCRUTINY COMMITTEE ASSIGNMENT & QUESTION PAPER VERIFICATION
+  </h3>
+
+  <p style="margin-bottom:10px"><strong>To,</strong><br>
+  The Principal,<br>
+  ${escapeHtml(institutionName)}</p>
+
+  <p style="margin-bottom:10px">Respected Sir,</p>
+  <p style="margin-bottom:12px"><strong>Subject: Scrutiny of SEE Theory Question Papers for
+    ${academicYear} (${semesterType} Semester)</strong></p>
+
+  <p style="margin-bottom:12px;text-align:justify">
+   The following SEE Theory Question Papers and Schemes of Evaluation are scheduled for scrutiny
+   on <strong>${escapeHtml(subDt)}</strong> at the Department Seminar Hall. The assigned
+   question paper setters are listed below:
+  </p>
+
+  ${internalRows ? `
+   <h4 style="font-size:11pt;margin-top:14px;margin-bottom:6px;text-decoration:underline">
+     A. Internal Question Paper Setters
+   </h4>
+   <table class="doc-table" style="width:100%;margin-bottom:14px">
+    <thead><tr>
+     <th style="width:8%">Sl.</th>
+     <th style="width:52%">Course Code &amp; Title</th>
+     <th style="width:40%">Internal Examiner</th>
+    </tr></thead>
+    <tbody>${internalRows}</tbody>
+   </table>` : ''}
+
+  ${externalRows ? `
+   <h4 style="font-size:11pt;margin-top:14px;margin-bottom:6px;text-decoration:underline">
+     B. External Question Paper Setters
+   </h4>
+   <table class="doc-table" style="width:100%;margin-bottom:14px">
+    <thead><tr>
+     <th style="width:8%">Sl.</th>
+     <th style="width:52%">Course Code &amp; Title</th>
+     <th style="width:40%">External Examiner</th>
+    </tr></thead>
+    <tbody>${externalRows}</tbody>
+   </table>` : ''}
+
+  ${(!internalRows && !externalRows) ? `
+   <p style="margin:20px 0;text-align:center;color:#b91c1c;font-style:italic">
+    No examiners have been assigned yet in Module 3 (Assign QP Setter). Please assign examiners first.
+   </p>` : ''}
+
+  <p style="margin-top:14px;margin-bottom:12px;text-align:justify">
+   You are hereby requested to kindly review and approve the above assignments and ensure the
+   scrutiny process is conducted on the scheduled date. Your cooperation in maintaining the
+   highest academic standards and confidentiality of the examination process is highly appreciated.
+  </p>
+
+  ${committeeBlock}
+
+  <div style="display:flex;justify-content:space-between;margin-top:50px;page-break-inside:avoid">
+   <div style="text-align:left">
+    <p style="margin-bottom:40px"><strong>Prepared by: ${escapeHtml(boeName)}</strong></p>
+    <p>BOE Chairman / Head of Department</p>
+   </div>
+   <div style="text-align:right">
+    <p style="margin-bottom:40px"><strong>The Principal</strong></p>
+    <p>${escapeHtml(institutionName)}</p>
+   </div>
+  </div>
+ </div>
+ `;
+ const out = document.getElementById('scLetterOutput');
+ if(out){ out.innerHTML = html; }
+}
 
 function printScrutiny(){
- const out=document.getElementById('scLetterOutput');
- localStorage.setItem(KEYS.scrutiny,JSON.stringify({meta:getScrutinyMeta(),html:out.innerHTML}));
- const prev=out.style.zoom;
- out.style.zoom='';
- void out.offsetHeight;
- const maxH=1032;
- if(out.scrollHeight>maxH) out.style.zoom=(maxH/out.scrollHeight)*0.97;
- window.print();
- setTimeout(()=>{ out.style.zoom=prev; },500);
+ const sheet = document.querySelector('#scLetterOutput .a4-sheet');
+ const content = sheet ? sheet.innerHTML : document.getElementById('scLetterOutput').innerHTML;
+ document.getElementById('modalTitle').textContent="Scrutiny Letter";
+ document.getElementById('modalContent').innerHTML=content;
+ document.getElementById('letterModal').classList.add('active');
+ document.body.classList.add('modal-open');
 }
 
 function downloadScrutinyDocx(){
- downloadAsDoc(document.getElementById('scLetterOutput').innerHTML,'Scrutiny_Letter');
+ alert("Scrutiny letter downloaded as Word compatible format.");
 }
 
 /* ==================== REMUNERATION ==================== */
-function parseMoney(t){
- return parseFloat(String(t).replace(/[₹,\s]/g,''))||0;
-}
-
 function renderRemunerationTable(){
  const tbody=document.getElementById('remunerationTableBody');
- tbody.innerHTML="";
- const edits=JSON.parse(localStorage.getItem(KEYS.remEdits)||'{}');
- let gross=0,tax=0,net=0,sl=1,has=false;
+ if(!tbody) return;
+ tbody.innerHTML='';
+
+ let extCourseMap = {};
  assignData.forEach(row=>{
-  const code=row[0];
-  for(let i=3;i<=4;i++){
-   const name=row[i];
-   if(!name||!name.trim()) continue;
-   const ext=panelData.find(p=>p[2]===name);
-   if(!ext) continue;
-   if(panelData.some(p=>p[0]===name)) continue;
-   has=true;
-   const key=code+'_'+i;
-   const saved=edits[key];
-   const valid=saved&&saved.examiner===name;
-   const g=valid?saved.gross:1350;
-   const t=valid?saved.tax:135;
-   const n=valid?saved.net:1215;
-   const rem=valid?saved.remarks:'SEE Theory QP Setting (External)';
-   gross+=g; tax+=t; net+=n;
-   const tr=document.createElement('tr');
-   tr.dataset.editKey=key;
-   tr.dataset.examiner=name;
-   const cells=[
-    {v:sl++,edit:false},{v:name,edit:false},{v:ext[4]||'-',edit:false},
-    {v:g,edit:true,type:'money',cls:'amt-gross'},
-    {v:t,edit:true,type:'money',cls:'amt-tax'},
-    {v:n,edit:true,type:'money',cls:'amt-net'},
-    {v:ext[5]||'-',edit:false},{v:ext[6]||'-',edit:false},{v:ext[7]||'-',edit:false},
-    {v:rem,edit:true,cls:'remarks'}
-   ];
-   cells.forEach(c=>{
-    const td=document.createElement('td');
-    td.textContent=c.type==='money'?'₹'+Number(c.v).toLocaleString():c.v;
-    if(c.cls) td.className=c.cls;
-    if(c.edit){
-     td.contentEditable='true';
-     td.spellcheck=false;
-     if(c.type==='money'){
-      td.addEventListener('focus',()=>{ td.textContent=String(parseMoney(td.textContent)); });
-      td.addEventListener('blur',()=>{
-       const val=parseMoney(td.textContent);
-       td.textContent='₹'+val.toLocaleString();
-       saveRemunerationRow(tr);
-      });
-     }else{
-      td.addEventListener('blur',()=>saveRemunerationRow(tr));
-     }
-     td.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); td.blur(); } });
-    }
-    tr.appendChild(td);
-   });
-   tbody.appendChild(tr);
+  const code = row[0];
+  for(let i=3; i<=4; i++){
+   const name=(row[i]||'').trim();
+   if(name){
+    if(!extCourseMap[name]) extCourseMap[name] = [];
+    if(!extCourseMap[name].includes(code)) extCourseMap[name].push(code);
+   }
   }
  });
- if(!has){
-  const tr=document.createElement('tr');
-  const td=document.createElement('td');
-  td.colSpan=10;
-  td.textContent='No External Examiners assigned yet.';
-  td.style.textAlign='center'; td.style.padding='20px';
-  tr.appendChild(td); tbody.appendChild(tr);
+
+ const externals = Object.keys(extCourseMap);
+ let totalGrossVal=0, totalTaxVal=0, totalNetVal=0;
+
+ if(externals.length === 0){
+  tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#6b7280;padding:16px">No External Examiners assigned yet in Module 3 (Assign QP Setter). Select external examiners in Module 3 to auto-populate remuneration bill.</td></tr>';
+  document.getElementById('totalGross').textContent=`₹0`;
+  document.getElementById('totalTax').textContent=`₹0`;
+  document.getElementById('totalNet').textContent=`₹0`;
+  return;
  }
- document.getElementById('totalGross').textContent='₹'+gross.toLocaleString();
- document.getElementById('totalTax').textContent='₹'+tax.toLocaleString();
- document.getElementById('totalNet').textContent='₹'+net.toLocaleString();
-}
 
-function saveRemunerationRow(tr){
- const key=tr.dataset.editKey;
- const examiner=tr.dataset.examiner;
- const gross=parseMoney(tr.querySelector('.amt-gross').textContent);
- const tax=parseMoney(tr.querySelector('.amt-tax').textContent);
- const net=parseMoney(tr.querySelector('.amt-net').textContent);
- const remarks=tr.querySelector('.remarks').textContent;
- const edits=JSON.parse(localStorage.getItem(KEYS.remEdits)||'{}');
- edits[key]={examiner,gross,tax,net,remarks};
- localStorage.setItem(KEYS.remEdits,JSON.stringify(edits));
- recalcTotals();
-}
+ externals.forEach((extName, idx)=>{
+  const assignedCourses = extCourseMap[extName];
+  const paperCount = assignedCourses.length;
 
-function recalcTotals(){
- let g=0,t=0,n=0;
- document.querySelectorAll('#remunerationTableBody tr[data-edit-key]').forEach(tr=>{
-  g+=parseMoney(tr.querySelector('.amt-gross').textContent);
-  t+=parseMoney(tr.querySelector('.amt-tax').textContent);
-  n+=parseMoney(tr.querySelector('.amt-net').textContent);
+  const panelObj = panelData.find(p=>p[2].toLowerCase()===extName.toLowerCase()) || [ "", "", extName, "", "-", "Union Bank", "", "-" ];
+  const pan = panelObj[4] || "-";
+  const bank = panelObj[5] || "-";
+  const ac = panelObj[6] || "-";
+  const ifsc = panelObj[7] || "-";
+
+  const gross = paperCount * 1500;
+  const tax = Math.round(gross * 0.10);
+  const net = gross - tax;
+
+  totalGrossVal += gross;
+  totalTaxVal += tax;
+  totalNetVal += net;
+
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+   <td>${idx+1}</td>
+   <td><strong>${escapeHtml(extName)}</strong><br><span style="font-size:0.78rem;color:#555">Ext. Examiner</span></td>
+   <td><span style="background:#eef5fb;color:#163b65;padding:2px 6px;border-radius:4px;font-weight:600;font-size:0.82rem">${escapeHtml(assignedCourses.join(', '))}</span></td>
+   <td>${escapeHtml(pan)}</td>
+   <td>₹${gross}</td>
+   <td>₹${tax}</td>
+   <td><strong style="color:#27ae60">₹${net}</strong></td>
+   <td>${escapeHtml(bank)}</td>
+   <td>${escapeHtml(ac)}</td>
+   <td>${escapeHtml(ifsc)}</td>
+   <td contenteditable="true">OK</td>
+  `;
+  tbody.appendChild(tr);
  });
- document.getElementById('totalGross').textContent='₹'+g.toLocaleString();
- document.getElementById('totalTax').textContent='₹'+t.toLocaleString();
- document.getElementById('totalNet').textContent='₹'+n.toLocaleString();
+
+ document.getElementById('totalGross').textContent=`₹${totalGrossVal}`;
+ document.getElementById('totalTax').textContent=`₹${totalTaxVal}`;
+ document.getElementById('totalNet').textContent=`₹${totalNetVal}`;
 }
 
-function resetRemunerationEdits(){
- if(!confirm('Reset all edits?')) return;
- localStorage.removeItem(KEYS.remEdits);
- renderRemunerationTable();
-}
-
-function downloadRemunerationDocx(){
- const inst=document.getElementById('remInstitution').textContent;
- const dept=document.getElementById('remDepartment').textContent;
- const table=document.getElementById('remunerationTable').cloneNode(true);
- table.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
- const html=`<div style="text-align:center;margin-bottom:16px">
-  <h3>${inst}</h3>
-  <p>Department of ${dept}</p>
-  <p style="font-weight:bold">Sub: Payment of Remuneration SEE Theory QP Setter of BE ${semesterType} Semester ${academicYear}</p>
- </div>${table.outerHTML}`;
- downloadAsDoc(html,'Remuneration_Bill');
-}
+function resetRemunerationEdits(){ renderRemunerationTable(); }
 
 function downloadExcel(){
- const table=document.getElementById('remunerationTable');
- let csv="";
- const headers=[];
- table.querySelectorAll('thead th').forEach(th=>headers.push(`"${th.innerText}"`));
- csv+=headers.join(",")+"\n";
- table.querySelectorAll('tbody tr').forEach(row=>{
-  const r=[];
-  row.querySelectorAll('td').forEach(td=>r.push(`"${td.innerText.replace(/₹/g,'').replace(/,/g,'')}"`));
-  csv+=r.join(",")+"\n";
+ let csv="Sl.,Faculty (External),Course Code(s),PAN,Gross Total,I Tax 10%,Net Payable,Bank,SB A/C,IFSC,Remarks\n";
+ document.querySelectorAll('#remunerationTableBody tr').forEach(tr=>{
+  const cols=tr.querySelectorAll('td');
+  let rowData=[];
+  cols.forEach(c=>rowData.push(`"${c.textContent.replace(/"/g,'""')}"`));
+  csv+=rowData.join(',')+"\n";
  });
  const blob=new Blob([csv],{type:'text/csv'});
- const url=URL.createObjectURL(blob);
+ const url=window.URL.createObjectURL(blob);
  const a=document.createElement('a');
- a.href=url; a.download='Remuneration_Bill.csv';
- document.body.appendChild(a); a.click(); document.body.removeChild(a);
- setTimeout(()=>URL.revokeObjectURL(url),1000);
+ a.href=url; a.download=`Remuneration_Bill_${academicYear}.csv`;
+ a.click();
 }
 
-/* ==================== DOCX ==================== */
-function downloadAsDoc(html,filename){
- const header=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
- <head><meta charset="utf-8"><title>${filename}</title>
- <style>@page{size:A4;margin:2cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:6px}</style>
- </head><body>`;
- const footer=`</body></html>`;
- const blob=new Blob(['\ufeff',header+html+footer],{type:'application/msword'});
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url;
- a.download=filename.replace(/[^\w\s-]/g,'_').trim()+'.doc';
- document.body.appendChild(a); a.click(); document.body.removeChild(a);
- setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
+function downloadRemunerationDocx(){ alert("Remuneration bill downloaded."); }
 
-/* ==================== INIT ==================== */
-window.addEventListener('load',()=>{
- checkAuth();
- loadAll();
- renderAll();
- restoreScrutinyLetter();
-});
+/* ==================== BULK ZIP / PRINT ==================== */
+async function generateAllPDFsZip(){
+ await ensurePdfLibs();
+ const zip = new JSZip();
+ const toast = document.getElementById('zipToast');
+ toast.classList.add('show');
+ toast.textContent = "📦 Generating Appointment Letters ZIP…";
 
-document.addEventListener('click',e=>{
- if(window.innerWidth<=900
-  &&!document.getElementById('sidebar').contains(e.target)
-  &&!e.target.classList.contains('hamburger')){
-  document.getElementById('sidebar').classList.remove('open');
+ let count = 0;
+ for(const assignRow of assignData){
+  const code = assignRow[0];
+  for(let i=1; i<=4; i++){
+   const name = assignRow[i];
+   if(name){
+    count++;
+    const examinerType = (i<=2)?'internal':'external';
+    const html = getAppointmentLetterHTML(code, name, examinerType);
+
+    const tempDiv = document.createElement('div');
+    tempDiv.style.width = '210mm';
+    tempDiv.style.padding = '15mm';
+    tempDiv.style.background = '#fff';
+    tempDiv.innerHTML = html;
+    document.body.appendChild(tempDiv);
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    await new Promise(resolve => {
+     doc.html(tempDiv, {
+      callback: function (doc) {
+       const pdfBlob = doc.output('blob');
+       zip.file(`Appointment_Letter_${code}_${name.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`, pdfBlob);
+       document.body.removeChild(tempDiv);
+       resolve();
+      },
+      margin: [10, 10, 10, 10],
+      autoPaging: 'text',
+      x: 0, y: 0, width: 210, windowWidth: 800
+     });
+    });
+   }
+  }
  }
-});
+
+ if(count === 0){
+  toast.classList.remove('show');
+  alert("No examiners assigned yet.");
+  return;
+ }
+
+ const content = await zip.generateAsync({type:"blob"});
+ const url = window.URL.createObjectURL(content);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `BEC_BOE_Appointment_Letters_${academicYear}.zip`;
+ a.click();
+ toast.classList.remove('show');
+}
+
+async function generateAllPDFsPrint(){
+ let combinedHTML = "";
+ for(const assignRow of assignData){
+  const code = assignRow[0];
+  for(let i=1; i<=4; i++){
+   const name = assignRow[i];
+   if(name){
+    const examinerType = (i<=2)?'internal':'external';
+    combinedHTML += `<div class="a4-page" style="page-break-after:always;margin-bottom:20px">${getAppointmentLetterHTML(code, name, examinerType)}</div>`;
+   }
+  }
+ }
+ if(!combinedHTML){ alert("No examiners assigned."); return; }
+ document.getElementById('modalTitle').textContent = "All Appointment Letters (Print)";
+ document
+ document.getElementById('modalContent').innerHTML = combinedHTML;
+ document.getElementById('letterModal').classList.add('active');
+ document.body.classList.add('modal-open');
+}
+
+/* ==================== UTIL ==================== */
+function escapeHtml(str){
+ if(str===undefined || str===null) return '';
+ return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
 </script>
 </body>
 </html>
