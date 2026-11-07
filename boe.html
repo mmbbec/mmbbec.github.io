@@ -347,7 +347,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 
   <div id="settings" class="module">
    <h1>⚙️ Settings</h1>
-   <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. Signature blank for physical signing. Saved in <b>localStorage</b>.</p>
+   <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. blank for physical signing. Saved in <b>localStorage</b>.</p>
    <div class="settings-preview">
     <h4>📋 Current Preview</h4>
     <p><strong>Institution:</strong> <span id="previewInst">—</span></p>
@@ -1116,7 +1116,7 @@ function regenerateScrutinyLetter(){
      <tr>
       <td style="width:8%;text-align:center;border:1px solid #000;padding:4px"><strong>Sl.</strong></td>
       <td style="border:1px solid #000;padding:4px"><strong>Name</strong></td>
-      <td style="width:30%;border:1px solid #000;padding:4px"><strong>Signature</strong></td>
+      <td style="width:30%;border:1px solid #000;padding:4px"><strong></strong></td>
      </tr>
      ${committeeList.map((n,i)=>`
       <tr>
@@ -1197,12 +1197,12 @@ function regenerateScrutinyLetter(){
 
   <div style="display:flex;justify-content:space-between;margin-top:50px;page-break-inside:avoid">
    <div style="text-align:left">
-    <p style="margin-bottom:40px"><strong>Prepared by: ${escapeHtml(boeName)}</strong></p>
-    <p>BOE Chairman / Head of Department</p>
+    <p style="margin-bottom:40px"><strong>BOE}</strong></p>
+   
    </div>
    <div style="text-align:right">
-    <p style="margin-bottom:40px"><strong>The Principal</strong></p>
-    <p>${escapeHtml(institutionName)}</p>
+    <p style="margin-bottom:40px"><strong>HOD</strong></p>
+   
    </div>
   </div>
  </div>
@@ -1355,14 +1355,10 @@ function downloadExcel(){
  // ===== Footer (signature) =====
  lines.push('');
  lines.push('');
- lines.push(esc('Prepared by: ' + boeName));
- lines.push(esc('BOE Chairman / Head of Department'));
+ 
+ lines.push(esc('HOD'));
  lines.push('');
- lines.push(esc('Verified by: ______________________'));
- lines.push(esc('Account Section'));
- lines.push('');
- lines.push(esc('Approved by: ______________________'));
- lines.push(esc('The Principal'));
+
 
  const csv = lines.join('\r\n');
  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
