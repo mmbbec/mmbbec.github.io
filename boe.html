@@ -124,7 +124,6 @@ select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:
 footer{background:var(--primary-dark);color:white;text-align:center;padding:14px;font-size:12px;margin-top:auto}
 footer a{color:#90caf9;text-decoration:none}
 
-/* Tabs */
 .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
 .tab-btn{padding:11px 22px;background:#f1f5f9;border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;font-size:0.92rem;color:#475569;margin-right:4px;margin-bottom:-2px;transition:0.2s;display:inline-flex;align-items:center;gap:6px}
 .tab-btn:hover{background:#e2e8f0;color:var(--primary)}
@@ -132,7 +131,6 @@ footer a{color:#90caf9;text-decoration:none}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 
-/* Unassigned highlight */
 td.unassigned,
 select.cell-dropdown.unassigned{
   background:#fde8e8 !important;
@@ -143,7 +141,6 @@ select.cell-dropdown.unassigned{
 td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 .doc-table td.unassigned{background:#fde8e8 !important;color:#b91c1c !important;font-weight:bold}
 
-/* Red number button for missing assignment */
 .btn-letter{background:#6c5ce7;color:white}
 .btn-letter.missing{background:#e74c3c;color:white;animation:pulseRed 1.6s infinite}
 @keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0.6)}50%{box-shadow:0 0 0 6px rgba(231,76,60,0)}}
@@ -226,7 +223,6 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 
  <div class="main-content">
 
-  <!-- ============ PANEL OF EXAMINERS ============ -->
   <div id="panel" class="module active">
    <h1>Panel of Examiners</h1>
    <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">
@@ -282,14 +278,12 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    </div>
   </div>
 
-  <!-- ============ COURSE MASTER ============ -->
   <div id="course" class="module">
    <h1>Course Master <button class="btn btn-success no-print" onclick="addCourseRow()">+ Add Course</button></h1>
    <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">💾 Courses are saved in <b>localStorage</b>. Edit → Save to persist.</p>
    <div class="table-container"><table><thead><tr><th>Course Code</th><th>Branch</th><th>Semester</th><th>Course Title</th><th class="action-cell no-print">Actions</th></tr></thead><tbody id="courseTableBody"></tbody></table></div>
   </div>
 
-  <!-- ============ ASSIGN QP SETTER ============ -->
   <div id="assign" class="module">
    <h1>Assign QP Setter & Generate Orders
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -307,12 +301,8 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
     <span style="font-size:0.82rem;color:#6b7280">Printed on orders</span>
    </div>
    <div class="table-container"><table><thead><tr><th style="width:22%">Subject Code & Title</th><th style="width:14%">Examiner 1 (Internal)</th><th style="width:14%">Examiner 2 (Internal)</th><th style="width:14%">Examiner 3 (External)</th><th style="width:14%">Examiner 4 (External)</th><th class="action-cell no-print">Letters</th></tr></thead><tbody id="assignTableBody"></tbody></table></div>
-   <p class="no-print" style="margin-top:12px;font-size:0.85rem;color:#16a085">
-    💡 <strong>Dynamic Sync:</strong> Select examiners → auto-saved. Unassigned cells turn <span style="color:#e74c3c;font-weight:600">red ⚠</span>. The <span style="color:#e74c3c;font-weight:600">red number button</span> means that examiner slot is empty.
-   </p>
   </div>
 
-  <!-- ============ SCRUTINY ============ -->
   <div id="scrutiny" class="module">
    <h1>Scrutiny Letter Generator</h1>
    <div class="no-print">
@@ -328,7 +318,6 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
       <button class="btn btn-sm" style="background:#6b7280" onclick="clearCommitteeMembers()">✕ Clear</button>
      </div>
     </div>
-    <p style="font-size:0.82rem;color:#b91c1c;margin:8px 0">⚠ Only courses with assigned examiners will appear in the letter. Unassigned courses are silently skipped.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
      <button class="btn" onclick="regenerateScrutinyLetter()">↺ Regenerate</button>
      <button class="btn btn-print" onclick="printScrutiny()">🖨 Print / PDF</button>
@@ -338,7 +327,6 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    <div id="scLetterOutput" class="letter-output"></div>
   </div>
 
-  <!-- ============ REMUNERATION ============ -->
   <div id="remuneration" class="module">
    <h1>Remuneration Bill</h1>
    <div id="remBillHeader" style="text-align:center;margin-bottom:16px;background:#f8fafc;padding:14px;border-radius:8px;border:1px solid var(--border)">
@@ -357,7 +345,6 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    </div>
   </div>
 
-  <!-- ============ SETTINGS ============ -->
   <div id="settings" class="module">
    <h1>⚙️ Settings</h1>
    <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. Signature blank for physical signing. Saved in <b>localStorage</b>.</p>
@@ -410,7 +397,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 <div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 10;
+const TEMPLATE_VERSION = 11;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -470,7 +457,6 @@ const DEFAULT_ASSIGN = [
  ["1BMAM101C","Dr A H Agadi","","Dr. Gopichand P.",""]
 ];
 
-/* Panel row: [0]Internal [1]InternalCollege [2]ExternalFaculty [3]ExternalCollege [4]PAN [5]Bank [6]SB A/C [7]IFSC */
 let panelData = JSON.parse(JSON.stringify(DEFAULT_PANEL));
 let courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
 let assignData = JSON.parse(JSON.stringify(DEFAULT_ASSIGN));
@@ -481,7 +467,7 @@ let boeName = "Dr. Ishwar Maharudrappa";
 let boeMobile = "9035246580";
 let academicYear = "2025-26";
 let semesterType = "Odd";
-let scrutinyCommitteeMembers = ""; // multiline text
+let scrutinyCommitteeMembers = "";
 
 const KEYS = {
  panel:'panelData_v12', course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
@@ -539,7 +525,6 @@ function loadAll(){
 }
 
 function defaultCommitteeMembersString(){
- // First 2 internals from panel
  const ints = panelData.map(p=>p[0]).filter(n=>n);
  const a = ints[0] || "Dr V M Shettar";
  const b = ints[1] || "Dr S V Gurushantnavar";
@@ -600,7 +585,6 @@ function saveScrutinyCommittee(){
 }
 
 function loadCommitteeFromPanel(){
- // Pick first 2 internal examiners
  const ints = panelData.map(p=>p[0]).filter(n=>n);
  if(ints.length === 0){ alert("No internal examiners in panel."); return; }
  const picked = ints.slice(0,2);
@@ -693,7 +677,6 @@ function renderPanelTable(){
  panelData.forEach((row, i)=>{
   const isEditing = (panelEditIdx === i);
 
-  // INTERNAL
   const intTr = document.createElement('tr');
   const intFields = [
    {v:row[0] || '', c:0},
@@ -713,7 +696,6 @@ function renderPanelTable(){
   intTr.innerHTML = intHtml;
   intBody.appendChild(intTr);
 
-  // EXTERNAL
   const extTr = document.createElement('tr');
   const extFields = [
    {v:row[2] || '', c:2},
@@ -938,13 +920,12 @@ function renderAssignTable(){
    html+=`</select></td>`;
   }
 
-  // Only letter buttons, no Save/Reset. Red if unassigned.
   let letterBtns = '';
   for(let i=1;i<=4;i++){
    const hasName = !!(assignRow[i]||"").trim();
    letterBtns += `<button class="btn btn-sm btn-letter ${hasName?'':'missing'}"
      onclick="openAssignLetter('${code}',${i})"
-     title="${hasName?'Letter to Examiner '+i:'⚠ Examiner '+i+' not assigned'}">${i}</button>`;
+     title="${hasName?'Letter to Examiner '+i:'Examiner '+i+' not assigned'}">${i}</button>`;
   }
 
   html+=`<td class="action-cell no-print"><div class="action-btn-group">${letterBtns}</div></td>`;
@@ -1044,7 +1025,7 @@ function openAssignLetter(code, colIdx){
  const assignRow=assignData.find(a=>a[0]===code);
  const examinerName = assignRow ? assignRow[colIdx] : "";
  if(!examinerName){
-  alert(`⚠ Examiner ${colIdx} is not assigned for ${code}.\nPlease select an examiner from the dropdown first.`);
+  alert(`Examiner ${colIdx} is not assigned for ${code}.\nPlease select an examiner from the dropdown first.`);
   return;
  }
  const examinerType = (colIdx <= 2) ? 'internal' : 'external';
@@ -1089,11 +1070,9 @@ function regenerateScrutinyLetter(){
  const dt=document.getElementById('scDate').value;
  const subDt=document.getElementById('scSubjectDate').value;
 
- // Read editable committee members (one per line, blanks skipped)
  const committeeRaw = (document.getElementById('scCommitteeMembers').value || '').trim();
  const committeeList = committeeRaw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
 
- // Build ONLY rows that have at least one assigned examiner
  let internalRows = "";
  let externalRows = "";
  let intIdx = 1, extIdx = 1;
@@ -1107,7 +1086,6 @@ function regenerateScrutinyLetter(){
   const internalNames = [row[1], row[2]].filter(n => n && n.trim());
   const externalNames = [row[3], row[4]].filter(n => n && n.trim());
 
-  // INTERNAL: only add if at least one assigned
   if(internalNames.length > 0){
    internalNames.forEach(name=>{
     internalRows += `<tr>
@@ -1118,7 +1096,6 @@ function regenerateScrutinyLetter(){
    });
   }
 
-  // EXTERNAL: only add if at least one assigned
   if(externalNames.length > 0){
    externalNames.forEach(name=>{
     externalRows += `<tr>
@@ -1130,7 +1107,6 @@ function regenerateScrutinyLetter(){
   }
  });
 
- // Committee member list block (rendered only if any name typed)
  let committeeBlock = "";
  if(committeeList.length > 0){
   committeeBlock = `
@@ -1140,7 +1116,7 @@ function regenerateScrutinyLetter(){
      <tr>
       <td style="width:8%;text-align:center;border:1px solid #000;padding:4px"><strong>Sl.</strong></td>
       <td style="border:1px solid #000;padding:4px"><strong>Name</strong></td>
-      <td style="width:30%;border:1px solid #000;padding:4px"><strong></strong></td>
+      <td style="width:30%;border:1px solid #000;padding:4px"><strong>Signature</strong></td>
      </tr>
      ${committeeList.map((n,i)=>`
       <tr>
@@ -1221,12 +1197,12 @@ function regenerateScrutinyLetter(){
 
   <div style="display:flex;justify-content:space-between;margin-top:50px;page-break-inside:avoid">
    <div style="text-align:left">
-    <p style="margin-bottom:40px"><strong>BOE}</strong></p>
-   
+    <p style="margin-bottom:40px"><strong>Prepared by: ${escapeHtml(boeName)}</strong></p>
+    <p>BOE Chairman / Head of Department</p>
    </div>
    <div style="text-align:right">
-    <p style="margin-bottom:40px"><strong>HOD</strong></p>
-   
+    <p style="margin-bottom:40px"><strong>The Principal</strong></p>
+    <p>${escapeHtml(institutionName)}</p>
    </div>
   </div>
  </div>
@@ -1319,19 +1295,86 @@ function renderRemunerationTable(){
 
 function resetRemunerationEdits(){ renderRemunerationTable(); }
 
+/* ==================== CSV DOWNLOAD (with full header) ==================== */
 function downloadExcel(){
- let csv="Sl.,Faculty (External),Course Code(s),PAN,Gross Total,I Tax 10%,Net Payable,Bank,SB A/C,IFSC,Remarks\n";
+ const esc = s => `"${String(s==null?'':s).replace(/"/g,'""')}"`;
+
+ // ===== Build header block (institution, dept, subject, AY, semester) =====
+ let lines = [];
+
+ // Title line
+ lines.push(esc(institutionName));
+ lines.push(esc(`Department of ${departmentName}`));
+ lines.push(esc(`Sub: Payment of Remuneration SEE Theory Question Paper Setter of BE ${semesterType} Semester ${academicYear}`));
+ lines.push(esc(`(External Examiners assigned in QP Setter Module)`));
+ lines.push(''); // blank line
+
+ // ===== Table header row =====
+ lines.push([
+  'Sl.',
+  'Faculty (External)',
+  'Course Code(s)',
+  'PAN',
+  'Gross Total',
+  'I Tax 10%',
+  'Net Payable',
+  'Bank Name',
+  'SB A/C No.',
+  'IFSC',
+  'Remarks'
+].map(esc).join(','));
+
+ // ===== Data rows =====
  document.querySelectorAll('#remunerationTableBody tr').forEach(tr=>{
-  const cols=tr.querySelectorAll('td');
-  let rowData=[];
-  cols.forEach(c=>rowData.push(`"${c.textContent.replace(/"/g,'""')}"`));
-  csv+=rowData.join(',')+"\n";
+  const cols = tr.querySelectorAll('td');
+  if(cols.length < 11) return; // skip "no data" row
+  const rowData = [];
+  cols.forEach(c=>rowData.push(c.textContent.trim().replace(/^₹/,'')));
+  lines.push(rowData.map(esc).join(','));
  });
- const blob=new Blob([csv],{type:'text/csv'});
- const url=window.URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url; a.download=`Remuneration_Bill_${academicYear}.csv`;
+
+ // ===== Totals row =====
+ const totalGross = document.getElementById('totalGross').textContent.replace('₹','');
+ const totalTax   = document.getElementById('totalTax').textContent.replace('₹','');
+ const totalNet   = document.getElementById('totalNet').textContent.replace('₹','');
+ lines.push('');
+ lines.push([
+  esc(''),
+  esc(''),
+  esc(''),
+  esc('Total'),
+  esc(totalGross),
+  esc(totalTax),
+  esc(totalNet),
+  esc(''),
+  esc(''),
+  esc(''),
+  esc('')
+].join(','));
+
+ // ===== Footer (signature) =====
+ lines.push('');
+ lines.push('');
+ lines.push(esc('Prepared by: ' + boeName));
+ lines.push(esc('BOE Chairman / Head of Department'));
+ lines.push('');
+ lines.push(esc('Verified by: ______________________'));
+ lines.push(esc('Account Section'));
+ lines.push('');
+ lines.push(esc('Approved by: ______________________'));
+ lines.push(esc('The Principal'));
+
+ const csv = lines.join('\r\n');
+ const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+ const url = window.URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `Remuneration_Bill_${semesterType}_${academicYear}.csv`;
+ document.body.appendChild(a);
  a.click();
+ document.body.removeChild(a);
+ window.URL.revokeObjectURL(url);
+ showSaveToast('✓ Remuneration CSV downloaded');
 }
 
 function downloadRemunerationDocx(){ alert("Remuneration bill downloaded."); }
@@ -1409,7 +1452,6 @@ async function generateAllPDFsPrint(){
  }
  if(!combinedHTML){ alert("No examiners assigned."); return; }
  document.getElementById('modalTitle').textContent = "All Appointment Letters (Print)";
- document
  document.getElementById('modalContent').innerHTML = combinedHTML;
  document.getElementById('letterModal').classList.add('active');
  document.body.classList.add('modal-open');
