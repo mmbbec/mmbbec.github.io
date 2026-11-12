@@ -226,7 +226,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
   <div id="panel" class="module active">
    <h1>Panel of Examiners</h1>
    <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">
-     💾 All changes are stored in your browser's <b>localStorage</b>. Each row pairs one Internal ↔ one External examiner.
+     💾 All changes are stored in your browser's <b>localStorage</b>. Internal and External examiners are now entered <b>independently</b>.
      Click <b>Edit</b> to enable editing, then <b>Save</b> to persist.
    </p>
 
@@ -238,13 +238,13 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    <div id="tabPaneInternal" class="tab-pane active">
     <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span style="font-size:0.85rem;color:#475569"><b>Internal Examiners</b> — BEC Bagalkote faculty</span>
-      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add Examiner Pair</button>
+      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add Internal Examiner</button>
     </div>
     <div class="table-container">
      <table>
       <thead><tr>
-       <th style="width:22%">Internal Examiner</th>
-       <th style="width:16%">Internal College</th>
+       <th style="width:24%">Internal Examiner</th>
+       <th style="width:20%">Internal College</th>
        <th style="width:12%">PAN</th>
        <th style="width:16%">Bank Name</th>
        <th style="width:16%">SB A/C No.</th>
@@ -259,12 +259,12 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    <div id="tabPaneExternal" class="tab-pane">
     <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span style="font-size:0.85rem;color:#475569"><b>External Examiners</b> — faculty from other colleges</span>
-      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add Examiner Pair</button>
+      <button class="btn btn-success no-print" onclick="addPanelRow()">+ Add External Examiner</button>
     </div>
     <div class="table-container">
      <table>
       <thead><tr>
-       <th style="width:22%">External Faculty Name</th>
+       <th style="width:24%">External Faculty Name</th>
        <th style="width:20%">External College Name</th>
        <th style="width:12%">PAN</th>
        <th style="width:16%">Bank Name</th>
@@ -397,7 +397,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 <div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 11;
+const TEMPLATE_VERSION = 13;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -428,18 +428,32 @@ function checkAuth() {
 }
 
 /* ==================== DEFAULT DATA ==================== */
-const DEFAULT_PANEL = [
- ["Dr S V Gurushantnavar","BEC Bagalkote","Dr. Vishal Patil","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
- ["Dr V M Shettar","BEC Bagalkote","Dr. Gurunath Sankad","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
- ["Dr M M Biradar","BEC Bagalkote","Dr. H. M. Manjunath","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
- ["Dr K Rama Prasad","BEC Bagalkote","Dr. Gopichand P.","KLE Tech Hubli","AZHPP3022B","Canara Bank PC","868310102241","CNRB0008683"],
- ["Dr A H Agadi","BEC Bagalkote","Dr. D. Shaikh Meera","PDACE Kalaburagi","AFNPD5542E","PKGB BITM Bell","10977100000124","PKGB0010977"],
- ["Dr Ishwar Maharudrappa","BEC Bagalkote","Dr. Jagadish Tawade","GNDEC Bidar","AMSPJ3335R","SBI Bhalki","62264115526","SBIN0020241"],
- ["Prof. V M Pudakalkatti","BEC Bagalkote","Prof. Shivakumar Timanak","BEC Bagalkote","-","Union Bank Kalab","52010121482550","UBIN0920932"],
- ["Dr Pradeep Hiremath","BEC Bagalkote","Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
-   ["Dr Abhilash L Nandepanavar","BEC Bagalkote","Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
- ["Dr S S Benchalli","BEC Bagalkote","Dr. Roopa S","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
+const DEFAULT_INTERNAL = [
+ ["Dr S V Gurushantnavar","BEC Bagalkote","","","",""],
+ ["Dr V M Shettar","BEC Bagalkote","","","",""],
+ ["Dr M M Biradar","BEC Bagalkote","","","",""],
+ ["Dr K Rama Prasad","BEC Bagalkote","","","",""],
+ ["Dr A H Agadi","BEC Bagalkote","","","",""],
+ ["Dr Ishwar Maharudrappa","BEC Bagalkote","","","",""],
+ ["Prof. V M Pudakalkatti","BEC Bagalkote","","","",""],
+ ["Dr Pradeep Hiremath","BEC Bagalkote","","","",""],
+ ["Dr Abhilash L Nandepanavar","BEC Bagalkote","","","",""],
+ ["Dr S S Benchalli","BEC Bagalkote","","","",""]
 ];
+
+const DEFAULT_EXTERNAL = [
+ ["Dr. Vishal Patil","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
+ ["Dr. Gurunath Sankad","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
+ ["Dr. H. M. Manjunath","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
+ ["Dr. Gopichand P.","KLE Tech Hubli","AZHPP3022B","Canara Bank PC","868310102241","CNRB0008683"],
+ ["Dr. D. Shaikh Meera","PDACE Kalaburagi","AFNPD5542E","PKGB BITM Bell","10977100000124","PKGB0010977"],
+ ["Dr. Jagadish Tawade","GNDEC Bidar","AMSPJ3335R","SBI Bhalki","62264115526","SBIN0020241"],
+ ["Prof. Shivakumar Timanak","BEC Bagalkote","-","Union Bank Kalab","52010121482550","UBIN0920932"],
+ ["Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
+ ["Dr Abhilash L Nandepanavar","BEC Bagalkote","","","",""],
+ ["Dr. Roopa S","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
+];
+
 const DEFAULT_COURSE = [
  ["1BMAS101C","Computer Science & Engineering","I","Calculus and Linear Algebra"],
  ["1BMAC101C","Civil Engineering","I","Differential Calculus and Linear Algebra"],
@@ -458,7 +472,8 @@ const DEFAULT_ASSIGN = [
  ["1BMAM101C","Dr A H Agadi","","Dr. Gopichand P.",""]
 ];
 
-let panelData = JSON.parse(JSON.stringify(DEFAULT_PANEL));
+let internalPanelData = JSON.parse(JSON.stringify(DEFAULT_INTERNAL));
+let externalPanelData = JSON.parse(JSON.stringify(DEFAULT_EXTERNAL));
 let courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
 let assignData = JSON.parse(JSON.stringify(DEFAULT_ASSIGN));
 let lastDateVal = "17.09.2025";
@@ -471,12 +486,15 @@ let semesterType = "Odd";
 let scrutinyCommitteeMembers = "";
 
 const KEYS = {
- panel:'panelData_v12', course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
+ internalPanel:'internalPanelData_v13',
+ externalPanel:'externalPanelData_v13',
+ course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
  settings:'settings_v12', scrutiny:'scrutiny_edit_v12', committee:'scrutiny_committee_v12',
  remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
 };
 
-let panelEditIdx = -1;
+let internalEditIdx = -1;
+let externalEditIdx = -1;
 let courseEditIdx = -1;
 let currentPanelTab = 'internal';
 
@@ -493,7 +511,24 @@ function showSaveToast(msg){
 /* ==================== LOAD ==================== */
 function loadAll(){
  try{
-  if(localStorage.getItem(KEYS.panel))  panelData  = JSON.parse(localStorage.getItem(KEYS.panel));
+  const v13Int = localStorage.getItem(KEYS.internalPanel);
+  const v13Ext = localStorage.getItem(KEYS.externalPanel);
+
+  if(v13Int && v13Ext){
+   internalPanelData = JSON.parse(v13Int);
+   externalPanelData = JSON.parse(v13Ext);
+  } else {
+   // One-time migration from old paired v12 data
+   const legacy = localStorage.getItem('panelData_v12');
+   if(legacy){
+    const old = JSON.parse(legacy);
+    internalPanelData = old.map(r => [r[0]||'', r[1]||'', '', '', '', '']);
+    externalPanelData = old.map(r => [r[2]||'', r[3]||'', r[4]||'', r[5]||'', r[6]||'', r[7]||'']);
+    localStorage.setItem(KEYS.internalPanel, JSON.stringify(internalPanelData));
+    localStorage.setItem(KEYS.externalPanel, JSON.stringify(externalPanelData));
+   }
+  }
+
   if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
   if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
   if(localStorage.getItem(KEYS.lastDate)) lastDateVal = localStorage.getItem(KEYS.lastDate);
@@ -526,7 +561,7 @@ function loadAll(){
 }
 
 function defaultCommitteeMembersString(){
- const ints = panelData.map(p=>p[0]).filter(n=>n);
+ const ints = internalPanelData.map(p=>p[0]).filter(n=>n);
  const a = ints[0] || "Dr V M Shettar";
  const b = ints[1] || "Dr S V Gurushantnavar";
  return `${a}\n${b}`;
@@ -551,7 +586,8 @@ function refreshRemunerationHeader(){
 /* ==================== SAVE HELPERS ==================== */
 function saveData(){
  lastDateVal=document.getElementById('globalLastDate').value;
- localStorage.setItem(KEYS.panel,JSON.stringify(panelData));
+ localStorage.setItem(KEYS.internalPanel,JSON.stringify(internalPanelData));
+ localStorage.setItem(KEYS.externalPanel,JSON.stringify(externalPanelData));
  localStorage.setItem(KEYS.course,JSON.stringify(courseData));
  localStorage.setItem(KEYS.assign,JSON.stringify(assignData));
  localStorage.setItem(KEYS.lastDate,lastDateVal);
@@ -586,7 +622,7 @@ function saveScrutinyCommittee(){
 }
 
 function loadCommitteeFromPanel(){
- const ints = panelData.map(p=>p[0]).filter(n=>n);
+ const ints = internalPanelData.map(p=>p[0]).filter(n=>n);
  if(ints.length === 0){ alert("No internal examiners in panel."); return; }
  const picked = ints.slice(0,2);
  const ta = document.getElementById('scCommitteeMembers');
@@ -607,7 +643,9 @@ function resetAllData(){
  if(!confirm('⚠ This will RESET ALL data (Panel, Courses, Assignments, Settings) to defaults and clear localStorage.\n\nAre you sure?')) return;
  if(!confirm('⚠ Really reset everything? This cannot be undone.')) return;
 
- localStorage.removeItem(KEYS.panel);
+ localStorage.removeItem(KEYS.internalPanel);
+ localStorage.removeItem(KEYS.externalPanel);
+ localStorage.removeItem('panelData_v12');
  localStorage.removeItem(KEYS.course);
  localStorage.removeItem(KEYS.assign);
  localStorage.removeItem(KEYS.lastDate);
@@ -617,7 +655,8 @@ function resetAllData(){
  localStorage.removeItem(KEYS.remEdits);
  Object.keys(localStorage).forEach(k=>{ if(k.startsWith(KEYS.letterPrefix)) localStorage.removeItem(k); });
 
- panelData = JSON.parse(JSON.stringify(DEFAULT_PANEL));
+ internalPanelData = JSON.parse(JSON.stringify(DEFAULT_INTERNAL));
+ externalPanelData = JSON.parse(JSON.stringify(DEFAULT_EXTERNAL));
  courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
  assignData = JSON.parse(JSON.stringify(DEFAULT_ASSIGN));
  lastDateVal = "17.09.2025";
@@ -675,119 +714,115 @@ function renderPanelTable(){
  intBody.innerHTML='';
  extBody.innerHTML='';
 
- panelData.forEach((row, i)=>{
-  const isEditing = (panelEditIdx === i);
+ internalPanelData.forEach((row, i)=>{
+  const isEditing = (internalEditIdx === i);
+  const cells = row.map((v,c)=> isEditing
+    ? `<td contenteditable="true" data-row="${i}" data-col="${c}">${escapeHtml(v)}</td>`
+    : `<td class="locked">${escapeHtml(v)}</td>`).join('');
+  const tr = document.createElement('tr');
+  tr.innerHTML = cells + `<td class="action-cell no-print">${renderPanelActionBtns('internal', i, isEditing)}</td>`;
+  intBody.appendChild(tr);
+ });
 
-  const intTr = document.createElement('tr');
-  const intFields = [
-   {v:row[0] || '', c:0},
-   {v:row[1] || '', c:1},
-   {v:row[4] || '', c:4},
-   {v:row[5] || '', c:5},
-   {v:row[6] || '', c:6},
-   {v:row[7] || '', c:7}
-  ];
-  let intHtml = '';
-  intFields.forEach(f=>{
-   intHtml += isEditing
-    ? `<td contenteditable="true" data-row="${i}" data-col="${f.c}">${escapeHtml(f.v)}</td>`
-    : `<td class="locked">${escapeHtml(f.v)}</td>`;
-  });
-  intHtml += `<td class="action-cell no-print">${renderPanelActionBtns(i, isEditing)}</td>`;
-  intTr.innerHTML = intHtml;
-  intBody.appendChild(intTr);
-
-  const extTr = document.createElement('tr');
-  const extFields = [
-   {v:row[2] || '', c:2},
-   {v:row[3] || '', c:3},
-   {v:row[4] || '', c:4},
-   {v:row[5] || '', c:5},
-   {v:row[6] || '', c:6},
-   {v:row[7] || '', c:7}
-  ];
-  let extHtml = '';
-  extFields.forEach(f=>{
-   extHtml += isEditing
-    ? `<td contenteditable="true" data-row="${i}" data-col="${f.c}">${escapeHtml(f.v)}</td>`
-    : `<td class="locked">${escapeHtml(f.v)}</td>`;
-  });
-  extHtml += `<td class="action-cell no-print">${renderPanelActionBtns(i, isEditing)}</td>`;
-  extTr.innerHTML = extHtml;
-  extBody.appendChild(extTr);
+ externalPanelData.forEach((row, i)=>{
+  const isEditing = (externalEditIdx === i);
+  const cells = row.map((v,c)=> isEditing
+    ? `<td contenteditable="true" data-row="${i}" data-col="${c}">${escapeHtml(v)}</td>`
+    : `<td class="locked">${escapeHtml(v)}</td>`).join('');
+  const tr = document.createElement('tr');
+  tr.innerHTML = cells + `<td class="action-cell no-print">${renderPanelActionBtns('external', i, isEditing)}</td>`;
+  extBody.appendChild(tr);
  });
 }
 
-function renderPanelActionBtns(i, isEditing){
+function renderPanelActionBtns(type, i, isEditing){
  if(isEditing){
   return `<div class="action-btn-group">
-    <button class="btn btn-success btn-sm" onclick="savePanelRow(${i})">💾 Save</button>
-    <button class="btn btn-sm" style="background:#6b7280" onclick="cancelPanelEdit()">✕ Cancel</button>
+    <button class="btn btn-success btn-sm" onclick="savePanelRow('${type}',${i})">💾 Save</button>
+    <button class="btn btn-sm" style="background:#6b7280" onclick="cancelPanelEdit('${type}')">✕ Cancel</button>
    </div>`;
  }
  return `<div class="action-btn-group">
-    <button class="btn btn-sm" style="background:#3498db" onclick="editPanelRow(${i})">✏️ Edit</button>
-    <button class="btn btn-danger btn-sm" onclick="deletePanelRow(${i})">🗑 Delete</button>
+    <button class="btn btn-sm" style="background:#3498db" onclick="editPanelRow('${type}',${i})">✏️ Edit</button>
+    <button class="btn btn-danger btn-sm" onclick="deletePanelRow('${type}',${i})">🗑 Delete</button>
    </div>`;
 }
 
 function addPanelRow(){
- panelData.push(["","BEC Bagalkote","","","","","",""]);
- panelEditIdx = panelData.length - 1;
+ if(currentPanelTab === 'internal'){
+  internalPanelData.push(["","BEC Bagalkote","","","",""]);
+  internalEditIdx = internalPanelData.length - 1;
+ } else {
+  externalPanelData.push(["","","","","",""]);
+  externalEditIdx = externalPanelData.length - 1;
+ }
  saveData();
  renderPanelTable();
  showSaveToast('✓ New row added — fill & Save');
 }
 
-function editPanelRow(i){ panelEditIdx = i; renderPanelTable(); }
-
-function cancelPanelEdit(){
- panelEditIdx = -1;
- if(localStorage.getItem(KEYS.panel)) panelData = JSON.parse(localStorage.getItem(KEYS.panel));
+function editPanelRow(type, i){
+ if(type === 'internal') internalEditIdx = i;
+ else externalEditIdx = i;
  renderPanelTable();
 }
 
-function savePanelRow(i){
- const intBody = document.getElementById('panelInternalBody');
- const extBody = document.getElementById('panelExternalBody');
- const intRow = intBody.children[i];
- const extRow = extBody.children[i];
- const newRow = ["","","","","","","",""];
- if(intRow){
-  intRow.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
-   newRow[parseInt(td.dataset.col)] = td.textContent.trim();
-  });
+function cancelPanelEdit(type){
+ if(type === 'internal'){
+  internalEditIdx = -1;
+  if(localStorage.getItem(KEYS.internalPanel)) internalPanelData = JSON.parse(localStorage.getItem(KEYS.internalPanel));
+ } else {
+  externalEditIdx = -1;
+  if(localStorage.getItem(KEYS.externalPanel)) externalPanelData = JSON.parse(localStorage.getItem(KEYS.externalPanel));
  }
- if(extRow){
-  extRow.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
-   newRow[parseInt(td.dataset.col)] = td.textContent.trim();
-  });
- }
- for(let k=0;k<8;k++){
-  if(newRow[k]==='' && panelData[i][k]) newRow[k] = panelData[i][k];
- }
- panelData[i] = newRow;
- panelEditIdx = -1;
+ renderPanelTable();
+}
+
+function savePanelRow(type, i){
+ const body = type === 'internal'
+   ? document.getElementById('panelInternalBody')
+   : document.getElementById('panelExternalBody');
+ const dataArr = type === 'internal' ? internalPanelData : externalPanelData;
+ const tr = body.children[i];
+ if(!tr) return;
+
+ const newRow = ["","","","","",""];
+ tr.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+  newRow[parseInt(td.dataset.col)] = td.textContent.trim();
+ });
+
+ dataArr[i] = newRow;
+ if(type === 'internal') internalEditIdx = -1;
+ else externalEditIdx = -1;
+
  saveData();
  renderPanelTable();
  renderRemunerationTable();
  renderAssignTable();
  regenerateScrutinyLetter();
- showSaveToast('✓ Examiner pair saved');
+ showSaveToast('✓ Examiner saved');
 }
 
-function deletePanelRow(i){
- const label = panelData[i][0] || panelData[i][2] || ('row '+i);
- if(!confirm(`Delete examiner pair "${label}"?`)) return;
- panelData.splice(i,1);
- if(panelEditIdx === i) panelEditIdx = -1;
- if(panelEditIdx > i) panelEditIdx--;
+function deletePanelRow(type, i){
+ const dataArr = type === 'internal' ? internalPanelData : externalPanelData;
+ const label = dataArr[i][0] || ('row ' + i);
+ if(!confirm(`Delete examiner "${label}"?`)) return;
+ dataArr.splice(i,1);
+
+ if(type === 'internal'){
+  if(internalEditIdx === i) internalEditIdx = -1;
+  if(internalEditIdx > i) internalEditIdx--;
+ } else {
+  if(externalEditIdx === i) externalEditIdx = -1;
+  if(externalEditIdx > i) externalEditIdx--;
+ }
+
  saveData();
  renderPanelTable();
  renderRemunerationTable();
  renderAssignTable();
  regenerateScrutinyLetter();
- showSaveToast('✓ Examiner pair deleted');
+ showSaveToast('✓ Examiner deleted');
 }
 
 /* ==================== COURSE TABLE ==================== */
@@ -888,8 +923,8 @@ function renderAssignTable(){
  if(!tbody) return;
  tbody.innerHTML='';
  const filterSem=document.getElementById('assignSemFilter').value;
- const internals=panelData.map(p=>p[0]).filter(n=>n);
- const externals=panelData.map(p=>p[2]).filter(n=>n);
+ const internals=internalPanelData.map(p=>p[0]).filter(n=>n);
+ const externals=externalPanelData.map(p=>p[0]).filter(n=>n);
 
  courseData.forEach((course)=>{
   const code=course[0], branch=course[1], sem=course[2], title=course[3];
@@ -1258,11 +1293,12 @@ function renderRemunerationTable(){
   const assignedCourses = extCourseMap[extName];
   const paperCount = assignedCourses.length;
 
-  const panelObj = panelData.find(p=>p[2].toLowerCase()===extName.toLowerCase()) || [ "", "", extName, "", "-", "Union Bank", "", "-" ];
-  const pan = panelObj[4] || "-";
-  const bank = panelObj[5] || "-";
-  const ac = panelObj[6] || "-";
-  const ifsc = panelObj[7] || "-";
+  const panelObj = externalPanelData.find(p=>p[0].toLowerCase()===extName.toLowerCase())
+    || [ extName, "", "-", "-", "-", "-" ];
+  const pan  = panelObj[2] || "-";
+  const bank = panelObj[3] || "-";
+  const ac   = panelObj[4] || "-";
+  const ifsc = panelObj[5] || "-";
 
   const gross = paperCount * 1500;
   const tax = Math.round(gross * 0.10);
@@ -1300,17 +1336,14 @@ function resetRemunerationEdits(){ renderRemunerationTable(); }
 function downloadExcel(){
  const esc = s => `"${String(s==null?'':s).replace(/"/g,'""')}"`;
 
- // ===== Build header block (institution, dept, subject, AY, semester) =====
  let lines = [];
 
- // Title line
  lines.push(esc(institutionName));
  lines.push(esc(`Department of ${departmentName}`));
  lines.push(esc(`Sub: Payment of Remuneration SEE Theory Question Paper Setter of BE ${semesterType} Semester ${academicYear}`));
  lines.push(esc(`(External Examiners assigned in QP Setter Module)`));
- lines.push(''); // blank line
+ lines.push('');
 
- // ===== Table header row =====
  lines.push([
   'Sl.',
   'Faculty (External)',
@@ -1325,16 +1358,14 @@ function downloadExcel(){
   'Remarks'
 ].map(esc).join(','));
 
- // ===== Data rows =====
  document.querySelectorAll('#remunerationTableBody tr').forEach(tr=>{
   const cols = tr.querySelectorAll('td');
-  if(cols.length < 11) return; // skip "no data" row
+  if(cols.length < 11) return;
   const rowData = [];
   cols.forEach(c=>rowData.push(c.textContent.trim().replace(/^₹/,'')));
   lines.push(rowData.map(esc).join(','));
  });
 
- // ===== Totals row =====
  const totalGross = document.getElementById('totalGross').textContent.replace('₹','');
  const totalTax   = document.getElementById('totalTax').textContent.replace('₹','');
  const totalNet   = document.getElementById('totalNet').textContent.replace('₹','');
@@ -1353,13 +1384,10 @@ function downloadExcel(){
   esc('')
 ].join(','));
 
- // ===== Footer (signature) =====
  lines.push('');
  lines.push('');
- 
  lines.push(esc('HOD'));
  lines.push('');
-
 
  const csv = lines.join('\r\n');
  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
