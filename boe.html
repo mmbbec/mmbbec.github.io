@@ -163,6 +163,15 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 #zipToast{position:fixed;bottom:20px;right:20px;background:#163b65;color:white;padding:14px 20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.3);font-size:0.9rem;font-weight:600;display:none;z-index:3000}
 #zipToast.show{display:block}
 
+/* Appointment letter formatting helpers */
+.appt-letter h3.inst{font-size:14pt;font-weight:bold;margin:0 0 2px}
+.appt-letter h2.inst-name{font-size:14.5pt;font-weight:bold;margin:0 0 6px;text-transform:uppercase}
+.appt-letter h3.title{font-size:13pt;font-weight:bold;text-decoration:underline;margin-top:10px;margin-bottom:0}
+.appt-letter .conf{font-size:10pt;font-weight:bold;margin-top:4px;margin-bottom:0}
+.appt-letter .instr-table td{padding:6px 7px;vertical-align:top}
+.appt-letter .instr-table p{margin:2px 0}
+.appt-letter .attach-table td{padding:5px 7px}
+
 @media print{
  body:not(.modal-open) .top-header,body:not(.modal-open) .sidebar,body:not(.modal-open) .btn,body:not(.modal-open) .action-cell,body:not(.modal-open) .no-print,body:not(.modal-open) .sem-filter-bar,body:not(.modal-open) .tab-bar,body:not(.modal-open) footer{display:none!important}
  body:not(.modal-open){display:block;background:white}
@@ -227,7 +236,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    <h1>Panel of Examiners</h1>
    <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">
      💾 All changes are stored in your browser's <b>localStorage</b>. Internal and External examiners are now entered <b>independently</b>.
-     Click <b>Edit</b> to enable editing, then <b>Save</b> to persist.
+     <b>Designation</b> is used in Appointment Letters. Click <b>Edit</b> to enable editing, then <b>Save</b> to persist.
    </p>
 
    <div class="tab-bar no-print">
@@ -243,12 +252,13 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
     <div class="table-container">
      <table>
       <thead><tr>
-       <th style="width:24%">Internal Examiner</th>
-       <th style="width:20%">Internal College</th>
-       <th style="width:12%">PAN</th>
-       <th style="width:16%">Bank Name</th>
-       <th style="width:16%">SB A/C No.</th>
-       <th style="width:12%">IFSC</th>
+       <th style="width:18%">Internal Examiner</th>
+       <th style="width:13%">Designation</th>
+       <th style="width:15%">Internal College</th>
+       <th style="width:11%">PAN</th>
+       <th style="width:13%">Bank Name</th>
+       <th style="width:13%">SB A/C No.</th>
+       <th style="width:11%">IFSC</th>
        <th class="action-cell no-print">Actions</th>
       </tr></thead>
       <tbody id="panelInternalBody"></tbody>
@@ -264,12 +274,13 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
     <div class="table-container">
      <table>
       <thead><tr>
-       <th style="width:24%">External Faculty Name</th>
-       <th style="width:20%">External College Name</th>
-       <th style="width:12%">PAN</th>
-       <th style="width:16%">Bank Name</th>
-       <th style="width:16%">SB A/C No.</th>
-       <th style="width:12%">IFSC</th>
+       <th style="width:18%">External Faculty Name</th>
+       <th style="width:13%">Designation</th>
+       <th style="width:15%">External College Name</th>
+       <th style="width:11%">PAN</th>
+       <th style="width:13%">Bank Name</th>
+       <th style="width:13%">SB A/C No.</th>
+       <th style="width:11%">IFSC</th>
        <th class="action-cell no-print">Actions</th>
       </tr></thead>
       <tbody id="panelExternalBody"></tbody>
@@ -397,7 +408,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 <div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 13;
+const TEMPLATE_VERSION = 14;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -427,31 +438,31 @@ function checkAuth() {
     }
 }
 
-/* ==================== DEFAULT DATA ==================== */
+/* ==================== DEFAULT DATA (now with Designation at index 1) ==================== */
 const DEFAULT_INTERNAL = [
- ["Dr S V Gurushantnavar","BEC Bagalkote","","","",""],
- ["Dr V M Shettar","BEC Bagalkote","","","",""],
- ["Dr M M Biradar","BEC Bagalkote","","","",""],
- ["Dr K Rama Prasad","BEC Bagalkote","","","",""],
- ["Dr A H Agadi","BEC Bagalkote","","","",""],
- ["Dr Ishwar Maharudrappa","BEC Bagalkote","","","",""],
- ["Prof. V M Pudakalkatti","BEC Bagalkote","","","",""],
- ["Dr Pradeep Hiremath","BEC Bagalkote","","","",""],
- ["Dr Abhilash L Nandepanavar","BEC Bagalkote","","","",""],
- ["Dr S S Benchalli","BEC Bagalkote","","","",""]
+  ["Dr M M Biradar","Professor","BEC Bagalkote","","","",""],
+  ["Dr S V Gurushantnavar","Associate Professor & HOD","BEC Bagalkote","","","",""],
+ ["Dr V M Shettar","Associate Professor","BEC Bagalkote","","","",""],
+ ["Dr K Rama Prasad","Associate Professor","BEC Bagalkote","","","",""],
+ ["Dr A H Agadi","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Dr Ishwar Maharudrappa","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Prof. V M Pudakalkatti","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Dr Pradeep Hiremath","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Dr Abhilash L Nandepanavar","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Dr S S Benchalli","Professor","BEC Bagalkote","","","",""]
 ];
 
 const DEFAULT_EXTERNAL = [
- ["Dr. Vishal Patil","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
- ["Dr. Gurunath Sankad","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
- ["Dr. H. M. Manjunath","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
- ["Dr. Gopichand P.","KLE Tech Hubli","AZHPP3022B","Canara Bank PC","868310102241","CNRB0008683"],
- ["Dr. D. Shaikh Meera","PDACE Kalaburagi","AFNPD5542E","PKGB BITM Bell","10977100000124","PKGB0010977"],
- ["Dr. Jagadish Tawade","GNDEC Bidar","AMSPJ3335R","SBI Bhalki","62264115526","SBIN0020241"],
- ["Prof. Shivakumar Timanak","BEC Bagalkote","-","Union Bank Kalab","52010121482550","UBIN0920932"],
- ["Dr. A. Pranesh Shetty","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
- ["Dr Abhilash L Nandepanavar","BEC Bagalkote","","","",""],
- ["Dr. Roopa S","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
+ ["Dr. Vishal Patil","Associate Professor","SGBIT Belagavi","ARMPV0232E","Union Bank","2010120485090","UBIN0920932"],
+ ["Dr. Gurunath Sankad","Associate Professor","BLDEA's CET Vijayapur","AAHPS8257M","Karnatak Vikas G","1714551874","KVGB0003113"],
+ ["Dr. H. M. Manjunath","Professor","BIET Davangere","AFCPM3162L","SBI Bellary","10768714361","SBIN0000817"],
+ ["Dr. Gopichand P.","Professor","KLE Tech Hubli","AZHPP3022B","Canara Bank PC","868310102241","CNRB0008683"],
+ ["Dr. D. Shaikh Meera","Assistant Professor","PDACE Kalaburagi","AFNPD5542E","PKGB BITM Bell","10977100000124","PKGB0010977"],
+ ["Dr. Jagadish Tawade","Associate Professor","GNDEC Bidar","AMSPJ3335R","SBI Bhalki","62264115526","SBIN0020241"],
+ ["Prof. Shivakumar Timanak","Assistant Professor","BEC Bagalkote","-","Union Bank Kalab","52010121482550","UBIN0920932"],
+ ["Dr. A. Pranesh Shetty","Professor","NMAMIT Nitte","ANQPP7731G","Canara Bank BS","1147101029541","CNRB0001147"],
+ ["Dr Abhilash L Nandepanavar","Assistant Professor","BEC Bagalkote","","","",""],
+ ["Dr. Roopa S","Assistant Professor","SIT Tumkur","AENPRT7798R","Canara Bank My","1718201050","CNRB0002655"]
 ];
 
 const DEFAULT_COURSE = [
@@ -486,8 +497,8 @@ let semesterType = "Odd";
 let scrutinyCommitteeMembers = "";
 
 const KEYS = {
- internalPanel:'internalPanelData_v13',
- externalPanel:'externalPanelData_v13',
+ internalPanel:'internalPanelData_v14',
+ externalPanel:'externalPanelData_v14',
  course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
  settings:'settings_v12', scrutiny:'scrutiny_edit_v12', committee:'scrutiny_committee_v12',
  remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
@@ -508,22 +519,53 @@ function showSaveToast(msg){
  t._timer = setTimeout(()=>t.classList.remove('show'), 1800);
 }
 
+/* ==================== HELPERS ==================== */
+function normalizePanelRow(row){
+ if(!Array.isArray(row)) return ["","","","","","",""];
+ if(row.length === 6) return [row[0]||"", "", row[1]||"", row[2]||"", row[3]||"", row[4]||"", row[5]||""];
+ if(row.length === 7) return row;
+ const out = ["","","","","","",""];
+ row.forEach((v,i)=>{ if(i<7) out[i]=v; });
+ return out;
+}
+
+function getExaminerInfo(examinerName, examinerType){
+ const list = examinerType === 'internal' ? internalPanelData : externalPanelData;
+ const found = list.find(p => (p[0]||"").toLowerCase() === (examinerName||"").toLowerCase());
+ if(found){
+  return {
+   name: found[0] || examinerName,
+   designation: (found[1]||"").trim() || (examinerType === 'internal' ? 'Faculty Member' : 'External Examiner'),
+   college: (found[2]||"").trim() || (examinerType === 'internal' ? 'BEC Bagalkote' : '')
+  };
+ }
+ return {
+  name: examinerName,
+  designation: examinerType === 'internal' ? 'Faculty Member' : 'External Examiner',
+  college: examinerType === 'internal' ? 'BEC Bagalkote' : ''
+ };
+}
+
 /* ==================== LOAD ==================== */
 function loadAll(){
  try{
-  const v13Int = localStorage.getItem(KEYS.internalPanel);
-  const v13Ext = localStorage.getItem(KEYS.externalPanel);
+  let v14Int = localStorage.getItem(KEYS.internalPanel);
+  let v14Ext = localStorage.getItem(KEYS.externalPanel);
 
-  if(v13Int && v13Ext){
-   internalPanelData = JSON.parse(v13Int);
-   externalPanelData = JSON.parse(v13Ext);
+  // Fallback to old v13 keys (6-col) for smooth migration
+  if(!v14Int) v14Int = localStorage.getItem('internalPanelData_v13');
+  if(!v14Ext) v14Ext = localStorage.getItem('externalPanelData_v13');
+
+  if(v14Int && v14Ext){
+   internalPanelData = JSON.parse(v14Int).map(normalizePanelRow);
+   externalPanelData = JSON.parse(v14Ext).map(normalizePanelRow);
   } else {
    // One-time migration from old paired v12 data
    const legacy = localStorage.getItem('panelData_v12');
    if(legacy){
     const old = JSON.parse(legacy);
-    internalPanelData = old.map(r => [r[0]||'', r[1]||'', '', '', '', '']);
-    externalPanelData = old.map(r => [r[2]||'', r[3]||'', r[4]||'', r[5]||'', r[6]||'', r[7]||'']);
+    internalPanelData = old.map(r => [r[0]||'', '', r[1]||'', '', '', '', '']);
+    externalPanelData = old.map(r => [r[2]||'', '', r[3]||'', r[4]||'', r[5]||'', r[6]||'', r[7]||'']);
     localStorage.setItem(KEYS.internalPanel, JSON.stringify(internalPanelData));
     localStorage.setItem(KEYS.externalPanel, JSON.stringify(externalPanelData));
    }
@@ -544,6 +586,12 @@ function loadAll(){
    semesterType=s.semesterType||semesterType;
   }
  }catch(e){ console.warn('loadAll failed', e); }
+
+ // Persist normalized forms immediately (so migration is durable)
+ try{
+  localStorage.setItem(KEYS.internalPanel, JSON.stringify(internalPanelData));
+  localStorage.setItem(KEYS.externalPanel, JSON.stringify(externalPanelData));
+ }catch(_){}
 
  document.getElementById('setInstitution').value=institutionName;
  document.getElementById('setDepartment').value=departmentName;
@@ -645,6 +693,8 @@ function resetAllData(){
 
  localStorage.removeItem(KEYS.internalPanel);
  localStorage.removeItem(KEYS.externalPanel);
+ localStorage.removeItem('internalPanelData_v13');
+ localStorage.removeItem('externalPanelData_v13');
  localStorage.removeItem('panelData_v12');
  localStorage.removeItem(KEYS.course);
  localStorage.removeItem(KEYS.assign);
@@ -750,10 +800,10 @@ function renderPanelActionBtns(type, i, isEditing){
 
 function addPanelRow(){
  if(currentPanelTab === 'internal'){
-  internalPanelData.push(["","BEC Bagalkote","","","",""]);
+  internalPanelData.push(["","","BEC Bagalkote","","","",""]);
   internalEditIdx = internalPanelData.length - 1;
  } else {
-  externalPanelData.push(["","","","","",""]);
+  externalPanelData.push(["","","","","","",""]);
   externalEditIdx = externalPanelData.length - 1;
  }
  saveData();
@@ -770,10 +820,12 @@ function editPanelRow(type, i){
 function cancelPanelEdit(type){
  if(type === 'internal'){
   internalEditIdx = -1;
-  if(localStorage.getItem(KEYS.internalPanel)) internalPanelData = JSON.parse(localStorage.getItem(KEYS.internalPanel));
+  const raw = localStorage.getItem(KEYS.internalPanel);
+  if(raw) internalPanelData = JSON.parse(raw).map(normalizePanelRow);
  } else {
   externalEditIdx = -1;
-  if(localStorage.getItem(KEYS.externalPanel)) externalPanelData = JSON.parse(localStorage.getItem(KEYS.externalPanel));
+  const raw = localStorage.getItem(KEYS.externalPanel);
+  if(raw) externalPanelData = JSON.parse(raw).map(normalizePanelRow);
  }
  renderPanelTable();
 }
@@ -786,9 +838,10 @@ function savePanelRow(type, i){
  const tr = body.children[i];
  if(!tr) return;
 
- const newRow = ["","","","","",""];
+ const newRow = ["","","","","","",""];
  tr.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
-  newRow[parseInt(td.dataset.col)] = td.textContent.trim();
+  const col = parseInt(td.dataset.col);
+  if(col >= 0 && col < 7) newRow[col] = td.textContent.trim();
  });
 
  dataArr[i] = newRow;
@@ -984,74 +1037,113 @@ function updateAssignAssignment(code,colIdx,val){
  showSaveToast('✓ Assignment auto-saved');
 }
 
-/* ==================== APPOINTMENT LETTER TEMPLATE ==================== */
+/* ==================== APPOINTMENT LETTER (matches the DOCX format) ==================== */
 function getAppointmentLetterHTML(code, examinerName, examinerType){
- const course=courseData.find(c=>c[0]===code)||["","General","I","Course Title"];
+ const course = courseData.find(c=>c[0]===code) || ["","General","I","Course Title"];
  const courseCode=course[0], branch=course[1], semester=course[2], courseTitle=course[3];
- const lastDt=document.getElementById('globalLastDate').value||"17.09.2025";
- const designation = (examinerType==='internal') ? "Faculty Member" : "External Examiner";
+ const lastDt = (document.getElementById('globalLastDate')?.value) || lastDateVal || "17.09.2025";
+ const info = getExaminerInfo(examinerName, examinerType);
+ const collegeLine = info.college || (examinerType === 'internal' ? 'BEC Bagalkote' : '');
+ const deptLine = `Department of ${escapeHtml(departmentName)}`;
+ const instUpper = (institutionName || '').toUpperCase();
 
  return `
- <div style="text-align:center;margin-bottom:15px">
-  <h3 style="font-size:14pt;font-weight:bold;margin-bottom:2px">B.V.V.S.</h3>
-  <h2 style="font-size:15pt;font-weight:bold;margin-bottom:4px">${escapeHtml(institutionName)}</h2>
-  <h3 style="font-size:13pt;font-weight:bold;text-decoration:underline;margin-top:10px">APPOINTMENT LETTER</h3>
-  <p style="font-size:10pt;font-weight:bold;color:#b91c1c;margin-top:4px">STRICTLY CONFIDENTIAL</p>
- </div>
+ <div class="appt-letter">
 
- <p style="margin-bottom:10px"><strong>To,</strong><br>
- ${escapeHtml(examinerName || "[Examiner Name]")}<br>
- ${designation}<br>
- Department of Mathematics<br>
- BEC, Bagalkote</p>
-
- <p style="margin-bottom:12px">Dear Sir/Madam,</p>
- <p style="margin-bottom:12px"><strong>Subject: Appointment as a Question Paper Setter for SEE Examinations (${academicYear})</strong></p>
- <p style="margin-bottom:14px">By the direction of Principal, I am hereby pleased to appoint you as a Question Paper Setter for the course mentioned below:</p>
-
- <table class="doc-table" style="width:100%;margin-bottom:14px">
-  <tr><td style="width:28%"><strong>Programme</strong></td><td style="width:4%">:</td><td>B.E.</td></tr>
-  <tr><td><strong>Branch</strong></td><td>:</td><td>${escapeHtml(branch)}</td></tr>
-  <tr><td><strong>Semester</strong></td><td>:</td><td>${escapeHtml(semester)}</td></tr>
-  <tr><td><strong>Course Title</strong></td><td>:</td><td>${escapeHtml(courseTitle)}</td></tr>
-  <tr><td><strong>Course Code</strong></td><td>:</td><td><strong>${escapeHtml(courseCode)}</strong></td></tr>
-  <tr><td><strong>Last Date for Submission</strong></td><td>:</td><td><strong style="color:#b91c1c">${escapeHtml(lastDt)}</strong></td></tr>
- </table>
-
- <h4 style="font-size:11pt;margin-top:14px;margin-bottom:6px;text-decoration:underline">INSTRUCTIONS FOR QUESTION PAPER SETTING</h4>
- <ol style="margin-left:20px;margin-bottom:14px;line-height:1.4">
-  <li>The questions must be typed strictly in the given official template.</li>
-  <li>Total of eight questions to be set with two questions in each unit, uniformly covering the entire syllabus of the unit under consideration.</li>
-  <li>Each question shall carry 20 marks. There shall be a maximum of four subdivisions in each question.</li>
-  <li>Students have to answer any five full questions choosing at least one from each unit.</li>
-  <li>Figures are directly scanned from the manuscripts. Kindly provide neat sketches of figures in camera-ready form.</li>
-  <li>Indicate figure numbers with respect to question numbers (e.g., figure pertaining to Q2(c) as Fig. Q2(c) immediately adjacent to it).</li>
-  <li>Mention requirements of handbooks, steam tables, charts etc., if required.</li>
-  <li>All questions should be marked with corresponding Course Outcome (CO) and Bloom's Learning Level (BLL) along with marks as per the model question paper enclosed.</li>
-  <li>Please scrutinize the question paper carefully for completeness before submitting it.</li>
-  <li>Type the scheme and solutions in the given template and ensure that the manuscript along with scheme & solutions reach the undersigned on or before the last date.</li>
-  <li>A question paper without scheme and solutions is liable to be rejected.</li>
- </ol>
-
- <p style="margin-bottom:14px">In case of any queries please contact <strong>${escapeHtml(boeName)}</strong> (Cell No. <strong>${escapeHtml(boeMobile)}</strong>). In case you are unable to accept the assignment, kindly inform the same immediately.</p>
-
- <div style="display:flex;justify-content:space-between;margin-top:40px">
-  <div></div>
-  <div style="text-align:right">
-   <p style="margin-bottom:40px"><strong>Controller of Examinations (COE) / BOE Chairman</strong></p>
-   <p>${escapeHtml(institutionName)}</p>
+  <div style="text-align:center">
+   <h3 class="inst">B.V.V.S</h3>
+   <h2 class="inst-name">${escapeHtml(instUpper)}</h2>
+   <h3 class="title">APPOINTMENT LETTER</h3>
+   <p class="conf">STRICTLY CONFIDENTIAL</p>
   </div>
- </div>
 
- <div style="margin-top:20px;border-top:1px dashed #ccc;padding-top:10px;font-size:9pt;color:#555">
-  <p><strong>Attachments:</strong></p>
-  <ol style="margin-left:20px">
-   <li>Procedure to submit Question Paper, and Scheme & Solutions</li>
-   <li>Instructions to prepare scheme and solutions</li>
-   <li>Copy of the syllabus & Model question paper</li>
-   <li>Question paper template & Scheme/Solutions template</li>
-   <li>Undertaking letter & Remuneration bill</li>
-  </ol>
+  <p style="margin-top:18px;margin-bottom:2px">To,</p>
+  <p style="margin:0">
+   <strong>${escapeHtml(info.name)}</strong><br>
+   ${escapeHtml(info.designation)}<br>
+   ${deptLine}<br>
+   ${escapeHtml(collegeLine)}
+  </p>
+
+  <p style="margin-top:14px"><strong>Dear Sir/Madam,</strong></p>
+
+  <p style="margin-top:10px"><strong>Subject:</strong> <strong>Appointment as a Question paper Setter for SEE Examinations</strong></p>
+
+  <p style="margin-top:10px;text-align:justify">
+   By the direction of Principal, I am hereby pleased to appoint you as a Question paper setter
+   for the course mentioned below
+  </p>
+
+  <table class="doc-table" style="width:100%;margin-top:14px">
+   <tr><td style="width:30%"><strong>Programme</strong></td><td style="width:4%">:</td><td>B.E</td></tr>
+   <tr><td><strong>Branch</strong></td><td>:</td><td>${escapeHtml(branch)}</td></tr>
+   <tr><td><strong>Semester</strong></td><td>:</td><td>${escapeHtml(semester)}</td></tr>
+   <tr><td><strong>Course Title</strong></td><td>:</td><td><strong>${escapeHtml(courseTitle)}</strong></td></tr>
+   <tr><td><strong>Course Code</strong></td><td>:</td><td><strong>${escapeHtml(courseCode)}</strong></td></tr>
+   <tr><td><strong>Last date for submission</strong></td><td>:</td><td><strong style="color:#b91c1c">${escapeHtml(lastDt)}</strong></td></tr>
+  </table>
+
+  <h3 style="font-size:12pt;font-weight:bold;text-decoration:underline;text-align:center;margin-top:18px;margin-bottom:6px">
+    INSTRUCTIONS FOR QUESTION PAPER SETTING
+  </h3>
+
+  <table class="doc-table instr-table" style="width:100%;margin-top:6px">
+   <tr>
+    <td style="width:6%;vertical-align:top"><strong>1.</strong></td>
+    <td>
+     <p>i) The questions must be typed strictly in the given template.</p>
+     <p>ii) Total of eight questions to be set with two questions in each unit, uniformly covering the entire syllabus of the unit under consideration.</p>
+     <p>iii) Each question shall carry 20 marks. There shall be a maximum of four subdivisions in each question.</p>
+     <p>iv) Students have to answer any <strong>five</strong> full questions choosing at least <strong>one</strong> from each unit.</p>
+     <p>v) Figures are directly scanned from the manuscripts. Kindly provide the neat sketches of figures in a camera ready form.</p>
+     <p>vi) Indicate the figure numbers, with respect to the question numbers. Example – figure pertaining to Q2(c) as Fig.Q2(c) immediately adjacent to it.</p>
+     <p>vii) Mention the requirements of hand books, steam tables, charts etc., if required.</p>
+     <p><strong>All Questions should be marked with corresponding Course Outcome (CO) and Blooms Learning Level (BLL) along with marks as per the model question paper enclosed.</strong></p>
+    </td>
+   </tr>
+   <tr>
+    <td style="vertical-align:top"><strong>2.</strong></td>
+    <td>
+     <p>Please scrutinize the question paper carefully for completeness before submitting it.</p>
+     <p style="padding-left:14px">i) Type the scheme and solutions in the given template.</p>
+     <p style="padding-left:14px">ii) Ensure that the manuscript of the question paper along with scheme and solutions reach the undersigned, on or before the last date.</p>
+     <p style="padding-left:14px">iii) A question paper without scheme and solutions is liable to reject.</p>
+    </td>
+   </tr>
+   <tr>
+    <td style="vertical-align:top"><strong>3.</strong></td>
+    <td>In case of any queries please contact <strong>${escapeHtml(boeName)}</strong> Cell No. <strong>${escapeHtml(boeMobile)}</strong></td>
+   </tr>
+   <tr>
+    <td style="vertical-align:top"><strong>4.</strong></td>
+    <td>In case you are unable to accept the assignment, kindly inform the same immediately to the above faculty.</td>
+   </tr>
+  </table>
+
+  <div style="margin-top:30px;text-align:right">
+   <p style="margin:0"><strong>Controller of Examinations (COE)</strong></p>
+   <p style="margin:0"><strong>Basaveshwar Engineering College, Bagalkote</strong></p>
+  </div>
+
+  <p style="margin-top:18px;margin-bottom:4px"><strong>Attachments:</strong></p>
+  <table class="doc-table attach-table" style="width:100%">
+   <tr>
+    <td style="width:50%">1. Procedure to submit Question Paper, and Scheme &amp; Solutions</td>
+    <td style="width:50%">5. Question paper template</td>
+   </tr>
+   <tr>
+    <td>2. Instructions to prepare scheme and solutions</td>
+    <td>6. Scheme and Solutions template</td>
+   </tr>
+   <tr>
+    <td>3. Copy of the syllabus</td>
+    <td>7. Undertaking letter</td>
+   </tr>
+   <tr>
+    <td>4. Model question paper</td>
+    <td>8. Remuneration bill</td>
+   </tr>
+  </table>
  </div>
 `;
 }
@@ -1293,12 +1385,13 @@ function renderRemunerationTable(){
   const assignedCourses = extCourseMap[extName];
   const paperCount = assignedCourses.length;
 
+  // Panel row order (new): [name, designation, college, pan, bank, ac, ifsc]
   const panelObj = externalPanelData.find(p=>p[0].toLowerCase()===extName.toLowerCase())
-    || [ extName, "", "-", "-", "-", "-" ];
-  const pan  = panelObj[2] || "-";
-  const bank = panelObj[3] || "-";
-  const ac   = panelObj[4] || "-";
-  const ifsc = panelObj[5] || "-";
+    || [ extName, "", "", "-", "-", "-", "-" ];
+  const pan  = panelObj[3] || "-";
+  const bank = panelObj[4] || "-";
+  const ac   = panelObj[5] || "-";
+  const ifsc = panelObj[6] || "-";
 
   const gross = paperCount * 1500;
   const tax = Math.round(gross * 0.10);
@@ -1332,7 +1425,7 @@ function renderRemunerationTable(){
 
 function resetRemunerationEdits(){ renderRemunerationTable(); }
 
-/* ==================== CSV DOWNLOAD (with full header) ==================== */
+/* ==================== CSV DOWNLOAD ==================== */
 function downloadExcel(){
  const esc = s => `"${String(s==null?'':s).replace(/"/g,'""')}"`;
 
@@ -1371,21 +1464,12 @@ function downloadExcel(){
  const totalNet   = document.getElementById('totalNet').textContent.replace('₹','');
  lines.push('');
  lines.push([
-  esc(''),
-  esc(''),
-  esc(''),
-  esc('Total'),
-  esc(totalGross),
-  esc(totalTax),
-  esc(totalNet),
-  esc(''),
-  esc(''),
-  esc(''),
-  esc('')
-].join(','));
+  esc(''),esc(''),esc(''),esc('Total'),
+  esc(totalGross),esc(totalTax),esc(totalNet),
+  esc(''),esc(''),esc(''),esc('')
+ ].join(','));
 
- lines.push('');
- lines.push('');
+ lines.push(''); lines.push('');
  lines.push(esc('HOD'));
  lines.push('');
 
@@ -1426,6 +1510,9 @@ async function generateAllPDFsZip(){
     tempDiv.style.width = '210mm';
     tempDiv.style.padding = '15mm';
     tempDiv.style.background = '#fff';
+    tempDiv.style.fontFamily = "'Times New Roman', Times, serif";
+    tempDiv.style.fontSize = '11.5pt';
+    tempDiv.style.color = '#000';
     tempDiv.innerHTML = html;
     document.body.appendChild(tempDiv);
 
