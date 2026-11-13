@@ -472,7 +472,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 <div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 17;
+const TEMPLATE_VERSION = 18;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -528,17 +528,54 @@ const DEFAULT_EXTERNAL = [
  ["Dr. Roopa S","Professor","SIT Tumkur","AXXXX1234E","Canara Bank My","12123456800","CNRB0002655"]
 ];
 
+/* ==================== DEFAULT COURSE MASTER — ALL 44 COURSES ==================== */
 const DEFAULT_COURSE = [
- ["1BMAS101C","Computer Science & Engineering","I","Calculus and Linear Algebra"],
- ["1BMAC101C","Civil Engineering","I","Differential Calculus and Linear Algebra"],
- ["1BMAE101C","Electrical & Electronics Engineering","I","Differential Calculus and Linear Algebra"],
- ["1BMAM101C","Mechanical Engineering","I","Differential Calculus and Linear Algebra"],
- ["1BMAS301C","Computer Science & Engineering","III","Mathematics for Computer Science"],
- ["1BMAC301C","Civil Engineering","III","Mathematics for Civil Engineering"],
- ["1BMAE301C","Electrical & Electronics Engineering","III","Mathematics for Electrical Engineering"],
- ["1BMAM301C","Mechanical Engineering","III","Mathematics for Mechanical Engineering"],
- ["BMAB300M","All Branches (Lateral Entry)","III","Bridge Course Mathematics-I"]
+ ["1BMAC101C","Civil Engineering","I","DIFFERENTIAL CALCULUS AND LINEAR ALGEBRA FOR CV STREAM"],
+ ["1BMAE101C","EC,EEE,ECS","I","DIFFERENTIAL CALCULUS AND LINEAR ALGEBRA FOR EEE STREAM"],
+ ["1BMAS101C","CSE,ISE,AIML,BT","I","CALCULUS AND LINEAR ALGEBRA FOR CSE STREAM"],
+ ["1BMAM101C","ME,AU,IP","I","DIFFERENTIAL CALCULUS AND LINEAR ALGEBRA FOR ME STREAM"],
+ ["1BMAS301C","CSE,ISE,AIML,BT","III","MATHEMATICS FOR COMPUTER SCIENCE STREAM"],
+ ["1BMAC301C","Civil Engineering","III","MATHEMATICS FOR CIVIL ENGINEERING STREAM"],
+ ["1BMAE301C","EEE,ECS","III","MATHEMATICS FOR ELECTRICAL SCIENCE STREAM"],
+ ["1BMAM301C","ME,AU,IP","III","MATHEMATICS FOR MECHANICAL ENGINEERING STREAM"],
+ ["BMAB300M","All Branches (Lateral Entry)","III","BRIDGE COURSE MATHEMATICS-"],
+ ["1BMAS201C","CSE,ISE,AIML,BT","II","DIFFERENTIAL EQUATIONS AND NUMERICAL METHODS FOR CSE STREAM"],
+ ["1BMAC201C","Civil Engineering","II","CALCULUS AND NUMERICAL METHODS FOR CV STREAM"],
+ ["1BMAE201C","EC,EEE,ECS","II","CALCULUS, LAPLACE TRANSFORM AND NUMERICAL TECHNIQUES FOR EEE STREAM"],
+ ["1BMAM201C","ME,AU,IP","II","MULTIVARIABLE CALCULUS AND NUMERICAL METHODS FOR ME STREAM"],
+ ["BMAS101C","CSE,ISE,AIML,BT","I","Mathematics-I for Computer Science and Engineering"],
+ ["BMAC101C","Civil Engineering","I","Mathematics-I for Civil Engineering stream"],
+ ["BMAE101C","EC,EEE,ECS","I","Mathematics-I for Electrical & Electronics Engineering Stream"],
+ ["BMAM101 C","ME,AU,IP","I","Mathematics-I for Mechanical Engineering stream"],
+ ["BMAS201C","CSE,ISE,AIML,BT","II","Mathematics-II for Computer Science and Engineering stream"],
+ ["BMAC201C","Civil Engineering","II","Mathematics-II for Civil Engineering stream"],
+ ["BMAE201C","EC,EEE,ECS","II","Mathematics-II for Electrical & Electronics Engineering Stream"],
+ ["BMAM201C","ME,AU,IP","II","Mathematics-II for Mechanical Engineering stream"],
+ ["22UMA311C","CSE,ISE","III","Mathematics for Computer Science"],
+ ["22UMA312C","EC","III","AV Mathematics-III for Electronics & Communication Engineering"],
+ ["22UMA313C","EEE","III","Mathematics-III for Electrical & Electronics Engineering"],
+ ["22UMA314 C","AIML","III","Mathematics for Computer Science & Engineering /AIML"],
+ ["BMAS301C","CSE,ISE,AIML and BT","III","MATHEMATICS FOR COMPUTER SCIENCE STREAM"],
+ ["BMAC301C","Civil Engineering","III","MATHEMATICS FOR CIVIL ENGINEERING STREAM"],
+ ["BMAE301C","EE,EC,ECS","III","MATHEMATICS FOR ELECTRICAL SCIENCE STREAM"],
+ ["BMAM301C","ME,AU,IP","III","MATHEMATICS FOR MECHANICAL ENGINEERING STREAM"],
+ ["BMAB300M","All Branches (Lateral Entry)","III","BRIDGE COURSE MATHEMATICS-I"],
+ ["22UMA402C","Branch","IV","Statistics and Calculus of Variations"],
+ ["22UMA313C","Branch","III","Mathematics-III for Electrical & Electronics Engineering"],
+ ["22UMA312C","Branch","III","AV Mathematics-III for Electronics & Communication Engineering"],
+ ["22UMA302C","Branch","III","COMPLEX ANALYSIS AND INTEGRAL TRANSFORMS"],
+ ["22UMA311C","Branch","III","Mathematics for Computer Science"],
+ ["22UMA301C","Branch","III","PARTIAL DIFFERENTIAL EQUATIONS AND INTEGRAL TRANSFORMS"],
+ ["22UMA400M","Branch","IV","BRIDGE COURSE MATHEMATICS-II"],
+ ["UM430M","Branch","IV","BRIDGE COURSE MATHEMATICS-II"],
+ ["22UMA300M","Branch","III","BRIDGE COURSE MATHEMATICS-I"],
+ ["UMA161C","Branch","I","ENGINEERING MATHEMATICS-I"],
+ ["21UMA101C","Branch","I","ENGINEERING MATHEMATICS-I"],
+ ["21UMA300M","Branch","III","BRIDGE COURSE MATHEMATICS-I"],
+ ["21UMA301C","Branch","III","Numerical Techniques and Integral Transforms"],
+ ["21UMA303C","Branch","III","Computation Techniques for Electrical System-I"]
 ];
+
 const DEFAULT_ASSIGN = [
  ["1BMAS101C","Prof. V M Pudakalkatti","Dr Pradeep Hiremath","Dr. Vishal Patil","Dr. Jagadish Tawade"],
  ["1BMAC101C","Dr M M Biradar","","Dr. Gurunath Sankad",""],
@@ -562,7 +599,7 @@ let scrutinyCommitteeMembers = "";
 const KEYS = {
  internalPanel:'internalPanelData_v14',
  externalPanel:'externalPanelData_v14',
- course:'courseData_v12', assign:'assignData_v12', lastDate:'lastDate_v12',
+ course:'courseData_v18', assign:'assignData_v12', lastDate:'lastDate_v12',
  settings:'settings_v12', scrutiny:'scrutiny_edit_v12', committee:'scrutiny_committee_v12',
  remEdits:'remunerationEdits_v12', letterPrefix:'letter_v12_'
 };
@@ -610,7 +647,6 @@ function getExaminerInfo(examinerName, examinerType){
  };
 }
 
-/* Roman-numeral semester sort */
 function semesterSortKey(s){
  const order = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
  const idx = order.indexOf(String(s||'').toUpperCase());
@@ -624,7 +660,7 @@ function sortSemestersList(arr){
  });
 }
 
-/* ==================== LOAD ==================== */
+/* ==================== LOAD (with safe course migration) ==================== */
 function loadAll(){
  try{
   let v14Int = localStorage.getItem(KEYS.internalPanel);
@@ -647,7 +683,31 @@ function loadAll(){
    }
   }
 
-  if(localStorage.getItem(KEYS.course)) courseData = JSON.parse(localStorage.getItem(KEYS.course));
+  /* -------- COURSE DATA: new key first, then migrate from old keys -------- */
+  const savedNew = localStorage.getItem(KEYS.course);       // courseData_v18
+  const savedOld = localStorage.getItem('courseData_v12');  // previous key
+
+  if(savedNew){
+   courseData = JSON.parse(savedNew);
+  } else if(savedOld){
+   courseData = JSON.parse(savedOld);
+   // Merge in any missing courses from the new DEFAULT_COURSE (matched by course code)
+   const existingCodes = new Set(
+     courseData.map(c => String(c[0]||'').trim().toUpperCase())
+   );
+   DEFAULT_COURSE.forEach(dc=>{
+     const code = String(dc[0]||'').trim().toUpperCase();
+     if(!existingCodes.has(code)){
+       courseData.push([...dc]);
+       existingCodes.add(code);
+     }
+   });
+  } else {
+   courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
+  }
+  // Persist under new key so future loads are fast
+  try { localStorage.setItem(KEYS.course, JSON.stringify(courseData)); } catch(_){}
+
   if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
   if(localStorage.getItem(KEYS.lastDate)) lastDateVal = localStorage.getItem(KEYS.lastDate);
   if(localStorage.getItem(KEYS.committee)) scrutinyCommitteeMembers = localStorage.getItem(KEYS.committee);
@@ -792,6 +852,7 @@ function resetAllData(){
  localStorage.removeItem('externalPanelData_v13');
  localStorage.removeItem('panelData_v12');
  localStorage.removeItem(KEYS.course);
+ localStorage.removeItem('courseData_v12');
  localStorage.removeItem(KEYS.assign);
  localStorage.removeItem(KEYS.lastDate);
  localStorage.removeItem(KEYS.settings);
@@ -977,14 +1038,13 @@ function deletePanelRow(type, i){
  showSaveToast('✓ Examiner deleted');
 }
 
-/* ==================== COURSE MASTER (Sl. No. + Semester Tabs) ==================== */
+/* ==================== COURSE MASTER ==================== */
 function populateCourseSemTabs(){
  const tabBar = document.getElementById('courseTabs');
  if(!tabBar) return;
  const sems = sortSemestersList(
    [...new Set(courseData.map(c=>c[2]).filter(s=>s && String(s).trim()!==""))]
  );
- // If current tab no longer exists (semester was renamed/removed), fallback to 'all'
  if(currentCourseTab !== 'all' && !sems.includes(currentCourseTab)) currentCourseTab = 'all';
 
  const totalCount = courseData.length;
@@ -1008,7 +1068,6 @@ function renderCourseTable(){
  if(!tbody) return;
  tbody.innerHTML = '';
 
- // Build visible list with GLOBAL indices (so edit/save/delete touch the real row)
  const visible = [];
  courseData.forEach((c, gi)=>{
   if(currentCourseTab === 'all' || c[2] === currentCourseTab){
@@ -1047,7 +1106,6 @@ function renderCourseTable(){
 }
 
 function addCourseRow(){
- // Default new row's semester to currently active tab (if a specific semester is selected)
  const defaultSem = (currentCourseTab === 'all') ? 'I' : currentCourseTab;
  courseData.push(["NEW101","Branch", defaultSem, "Course Title"]);
  courseEditIdx = courseData.length - 1;
@@ -1067,14 +1125,8 @@ function cancelCourseEdit(){
 }
 
 function saveCourseRow(i){
- // Find the visible row for this global index in the current tab
  const tbody = document.getElementById('courseTableBody');
- let tr = null;
- [...tbody.children].forEach(c => { if(c.querySelector('td[contenteditable="true"]')) tr = c; });
- // Safer: find via iteration
  const allRows = [...tbody.children];
- // Because we need the row matching global index i:
- // We can reconstruct visible list and find the position
  const visible = [];
  courseData.forEach((c, gi)=>{
   if(currentCourseTab === 'all' || c[2] === currentCourseTab){
@@ -1083,7 +1135,7 @@ function saveCourseRow(i){
  });
  const pos = visible.findIndex(v => v.globalIdx === i);
  if(pos < 0 || !allRows[pos]) return;
- tr = allRows[pos];
+ const tr = allRows[pos];
 
  const cells = tr.querySelectorAll('td[contenteditable="true"]');
  const newRow = [];
@@ -1227,7 +1279,6 @@ function moveCourseByDirection(code, dir){
 
  saveData();
  renderAssignTable();
- // Course Master order is tied to courseData array, so refresh it too
  if(document.getElementById('course')?.classList.contains('active')){
   renderCourseTable();
  }
