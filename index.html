@@ -1332,13 +1332,31 @@ function handleFormSubmit(e) {
 </script>
 
 <script>
-/* ─── VISITOR LIST (Google Apps Script) ─── */
+/* ─── VISITOR COUNTER (CounterAPI) + VISITOR LIST (Google Apps Script) ─── */
 document.addEventListener('DOMContentLoaded', function () {
     var countEl = document.getElementById('visitor-count');
     var listBody = document.getElementById('visitor-list-body');
     var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
 
     var isNewVisit = !sessionStorage.getItem('visited_session');
+
+    // 1. Fast & Reliable Total Count via CounterAPI
+    var counterEndpoint = isNewVisit
+        ? 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/up'
+        : 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/';
+
+    fetch(counterEndpoint)
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data && typeof data.count === 'number' && countEl) {
+                countEl.textContent = data.count.toLocaleString();
+            }
+        })
+        .catch(function () {
+            // If CounterAPI fails, fallback to Google Sheet's totalVisits later
+        });
+
+    // 2. Log to Google Sheet & Load Recent Visitors Table
     var recordQuery = isNewVisit
         ? '?ua=' + encodeURIComponent(navigator.userAgent)
         : '?ua=' + encodeURIComponent(navigator.userAgent) + '&countOnly=true';
@@ -1349,8 +1367,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isNewVisit) {
                 sessionStorage.setItem('visited_session', 'true');
             }
-            if (data && typeof data.totalVisits === 'number' && countEl) {
-                countEl.textContent = data.totalVisits.toLocaleString();
+            // Fallback: if CounterAPI didn't load a number, use Google Sheet's count
+            if (countEl && (countEl.textContent === 'Loading...' || countEl.textContent === '1,992')) {
+                if (data && typeof data.totalVisits === 'number') {
+                    countEl.textContent = data.totalVisits.toLocaleString();
+                }
             }
             return fetch(scriptUrl + '?getList=true');
         })
@@ -1369,8 +1390,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }).join('');
             }
         })
-        .catch(function () {
-            if (countEl) countEl.textContent = 'Active';
+        .catch(function (err) {
+            console.error('Google Sheet Visitor Error:', err);
             if (listBody) {
                 listBody.innerHTML = '<tr><td colspan="2" style="padding: 8px 10px; text-align: center; color: #999;">Unable to load list</td></tr>';
             }
