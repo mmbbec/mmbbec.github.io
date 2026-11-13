@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question Paper Blueprint & Bloom's Taxonomy Checker | Dr. Mahadev Biradar</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #222; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h1 { color: #1a365d; margin-bottom: 5px; font-size: 24px; }
+    p.subtitle { color: #555; margin-top: 0; font-size: 14px; }
+    .ad-slot { background: #f8f9fa; border: 1px dashed #ccc; padding: 12px; text-align: center; margin: 15px 0; color: #888; font-size: 12px; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 14px; }
+    th { background: #1a365d; color: #fff; }
+    input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 90%; font-size: 14px; }
+    .btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; margin-top: 12px; }
+    .btn-add { background: #2b6cb0; color: #fff; }
+    .btn-calc { background: #2f855a; color: #fff; }
+    .btn-print { background: #4a5568; color: #fff; }
+    .summary-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+    .card { background: #edf2f7; padding: 15px; border-radius: 8px; border-left: 4px solid #1a365d; }
+    .card h3 { margin: 0 0 10px 0; font-size: 16px; color: #1a365d; }
+    .cta-box { background: #ebf8ff; border: 1px solid #90cdf4; padding: 16px; border-radius: 8px; margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+    .btn-wa { background: #25D366; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; display: inline-block; }
+    .warning { color: #c53030; }
+    .ok { color: #2f855a; }
+    @media print { .no-print { display: none; } body { background: #fff; } .container { box-shadow: none; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📋 Question Paper Blueprint & Bloom's Taxonomy Checker</h1>
+  <p class="subtitle">Verify CO Distribution & Bloom's Levels (L1–L6) for VTU / Autonomous / NBA Question Papers</p>
+
+  <!-- PASTE YOUR GOOGLE ADSENSE CODE BELOW -->
+  <div class="ad-slot no-print">
+    <!-- Replace this comment with your Google AdSense <ins> code -->
+    Advertisement Space (High-Visibility Student & Faculty Tool Banner)
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+    <input type="text" id="courseName" placeholder="Course Code & Title (e.g., 21MAT11 - Calculus & Linear Algebra)" style="flex:2;">
+    <input type="number" id="maxMarks" value="100" min="1" placeholder="Total Marks (e.g., 100)" style="flex:1;" oninput="calculateBlueprint()">
+  </div>
+
+  <table id="qTable">
+    <thead>
+      <tr>
+        <th>Q. No.</th>
+        <th>Marks</th>
+        <th>Course Outcome (CO)</th>
+        <th>Bloom's Level (L1–L6)</th>
+        <th class="no-print">Action</th>
+      </tr>
+    </thead>
+    <tbody id="qBody">
+      <tr>
+        <td><input type="text" value="1a"></td>
+        <td><input type="number" class="marks" value="10" min="0" oninput="calculateBlueprint()"></td>
+        <td>
+          <select class="co" onchange="calculateBlueprint()">
+            <option>CO1</option><option>CO2</option><option>CO3</option><option>CO4</option><option>CO5</option>
+          </select>
+        </td>
+        <td>
+          <select class="bloom" onchange="calculateBlueprint()">
+            <option value="L1">L1 - Remember</option>
+            <option value="L2" selected>L2 - Understand</option>
+            <option value="L3">L3 - Apply</option>
+            <option value="L4">L4 - Analyze</option>
+            <option value="L5">L5 - Evaluate</option>
+            <option value="L6">L6 - Create</option>
+          </select>
+        </td>
+        <td class="no-print"><button type="button" onclick="removeRow(this)">❌</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="1b"></td>
+        <td><input type="number" class="marks" value="10" min="0" oninput="calculateBlueprint()"></td>
+        <td>
+          <select class="co" onchange="calculateBlueprint()">
+            <option>CO1</option><option>CO2</option><option>CO3</option><option>CO4</option><option>CO5</option>
+          </select>
+        </td>
+        <td>
+          <select class="bloom" onchange="calculateBlueprint()">
+            <option value="L1">L1 - Remember</option>
+            <option value="L2">L2 - Understand</option>
+            <option value="L3" selected>L3 - Apply</option>
+            <option value="L4">L4 - Analyze</option>
+            <option value="L5">L5 - Evaluate</option>
+            <option value="L6">L6 - Create</option>
+          </select>
+        </td>
+        <td class="no-print"><button type="button" onclick="removeRow(this)">❌</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="no-print">
+    <button type="button" class="btn btn-add" onclick="addRow()">+ Add Sub-Question</button>
+    <button type="button" class="btn btn-calc" onclick="calculateBlueprint()">🔄 Recalculate</button>
+    <button type="button" class="btn btn-print" onclick="window.print()">🖨️ Print / Save Scrutiny Report</button>
+  </div>
+
+  <div class="summary-box">
+    <div class="card">
+      <h3>📊 Total Marks Entered</h3>
+      <div id="totalSummary" style="font-size:18px; font-weight:bold;">20 / 100 Marks</div>
+    </div>
+    <div class="card">
+      <h3>🧠 Bloom's Level Distribution</h3>
+      <div id="bloomSummary" style="font-size:14px; line-height:1.6;"></div>
+    </div>
+    <div class="card">
+      <h3>🎯 CO-Wise Marks Breakdown</h3>
+      <div id="coSummary" style="font-size:14px; line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div id="validationMsg" style="margin-top:12px; font-size:14px; font-weight:bold;"></div>
+
+  <!-- MONETIZATION CTA FOR OTHER COLLEGES & HODs -->
+  <div class="cta-box no-print">
+    <div>
+      <strong>🏫 Want this customized with your College Logo, Scheme & Auto-PDF Scrutiny Report?</strong><br>
+      <span style="font-size:13px; color:#444;">Get a custom department license for BOE Scrutiny, CO-PO Attainment & Question Paper Automation.</span>
+    </div>
+    <a class="btn-wa" href="https://wa.me/919035246580?text=Hello%20Dr.%20Mahadev%20Biradar,%20I%20am%20interested%20in%20a%20custom%20college%20version%20of%20your%20Academic%20Web%20Tools." target="_blank">
+      💬 Get Custom College Version
+    </a>
+  </div>
+</div>
+
+<script>
+var rowCounter = 2;
+
+function addRow() {
+  var tbody = document.getElementById('qBody');
+  rowCounter++;
+  var tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="Q${rowCounter}"></td>
+    <td><input type="number" class="marks" value="10" min="0" oninput="calculateBlueprint()"></td>
+    <td>
+      <select class="co" onchange="calculateBlueprint()">
+        <option>CO1</option><option>CO2</option><option>CO3</option><option>CO4</option><option>CO5</option>
+      </select>
+    </td>
+    <td>
+      <select class="bloom" onchange="calculateBlueprint()">
+        <option value="L1">L1 - Remember</option>
+        <option value="L2">L2 - Understand</option>
+        <option value="L3" selected>L3 - Apply</option>
+        <option value="L4">L4 - Analyze</option>
+        <option value="L5">L5 - Evaluate</option>
+        <option value="L6">L6 - Create</option>
+      </select>
+    </td>
+    <td class="no-print"><button type="button" onclick="removeRow(this)">❌</button></td>
+  `;
+  tbody.appendChild(tr);
+  calculateBlueprint();
+}
+
+function removeRow(btn) {
+  btn.closest('tr').remove();
+  calculateBlueprint();
+}
+
+function calculateBlueprint() {
+  var rows = document.querySelectorAll('#qBody tr');
+  var total = 0;
+  var blooms = { L1: 0, L2: 0, L3: 0, L4: 0, L5: 0, L6: 0 };
+  var cos = { CO1: 0, CO2: 0, CO3: 0, CO4: 0, CO5: 0 };
+
+  rows.forEach(function(r) {
+    var m = parseFloat(r.querySelector('.marks').value);
+    if (isNaN(m) || m < 0) m = 0;
+
+    var b = r.querySelector('.bloom').value;
+    var c = r.querySelector('.co').value;
+
+    total += m;
+    blooms[b] += m;
+    cos[c] += m;
+  });
+
+  var maxM = parseFloat(document.getElementById('maxMarks').value);
+  var maxValid = isFinite(maxM) && maxM > 0;
+
+  document.getElementById('totalSummary').textContent =
+    total + ' / ' + (maxValid ? maxM : '?') + ' Marks';
+
+  var bHtml = '';
+  for (var k in blooms) {
+    if (blooms[k] > 0) {
+      var pct = total > 0 ? ((blooms[k] / total) * 100).toFixed(1) : '0.0';
+      bHtml += `<b>${k}:</b> ${blooms[k]} marks (${pct}%)<br>`;
+    }
+  }
+  document.getElementById('bloomSummary').innerHTML = bHtml || 'No marks entered';
+
+  var cHtml = '';
+  for (var c in cos) {
+    if (cos[c] > 0) {
+      var pct = total > 0 ? ((cos[c] / total) * 100).toFixed(1) : '0.0';
+      cHtml += `<b>${c}:</b> ${cos[c]} marks (${pct}%)<br>`;
+    }
+  }
+  document.getElementById('coSummary').innerHTML = cHtml || 'No marks entered';
+
+  var msg = document.getElementById('validationMsg');
+
+  if (!maxValid) {
+    msg.className = 'warning';
+    msg.textContent = '⚠️ Enter a valid total marks value greater than 0.';
+  } else if (total === 0) {
+    msg.className = 'warning';
+    msg.textContent = '⚠️ No question marks entered.';
+  } else if (total < maxM) {
+    msg.className = 'warning';
+    msg.textContent = `⚠️ Total entered is short by ${maxM - total} marks (entered ${total} / ${maxM}).`;
+  } else if (total > maxM) {
+    msg.className = 'warning';
+    msg.textContent = `⚠️ Total entered exceeds maximum by ${total - maxM} marks (entered ${total} / ${maxM}).`;
+  } else {
+    msg.className = 'ok';
+    msg.textContent = '✅ Total marks match the maximum marks.';
+  }
+}
+
+calculateBlueprint();
+</script>
+
+</body>
+</html>
