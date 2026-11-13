@@ -630,14 +630,26 @@ function normalizePanelRow(row){
  return out;
 }
 
+/* ==================== FIXED: getExaminerInfo ==================== */
 function getExaminerInfo(examinerName, examinerType){
  const list = examinerType === 'internal' ? internalPanelData : externalPanelData;
- const found = list.find(p => (p[0]||"").toLowerCase() === (examinerName||"").toLowerCase());
+
+ // Normalize: decode HTML entities, collapse whitespace, trim
+ const clean = s => String(s == null ? '' : s)
+   .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")
+   .replace(/\s+/g,' ')
+   .trim();
+
+ const target = clean(examinerName).toLowerCase();
+ const found = target ? list.find(p => clean(p[0]).toLowerCase() === target) : null;
+
  if(found){
+  const desig   = clean(found[1]);
+  const college = clean(found[2]);
   return {
-   name: found[0] || examinerName,
-   designation: (found[1]||"").trim() || (examinerType === 'internal' ? 'Faculty Member' : 'External Examiner'),
-   college: (found[2]||"").trim() || (examinerType === 'internal' ? 'BEC Bagalkote' : '')
+   name: clean(found[0]) || examinerName,
+   designation: desig || (examinerType === 'internal' ? 'Faculty Member' : 'External Examiner'),
+   college: college || (examinerType === 'internal' ? 'BEC Bagalkote' : '')
   };
  }
  return {
@@ -691,7 +703,6 @@ function loadAll(){
    courseData = JSON.parse(savedNew);
   } else if(savedOld){
    courseData = JSON.parse(savedOld);
-   // Merge in any missing courses from the new DEFAULT_COURSE (matched by course code)
    const existingCodes = new Set(
      courseData.map(c => String(c[0]||'').trim().toUpperCase())
    );
@@ -705,7 +716,6 @@ function loadAll(){
   } else {
    courseData = JSON.parse(JSON.stringify(DEFAULT_COURSE));
   }
-  // Persist under new key so future loads are fast
   try { localStorage.setItem(KEYS.course, JSON.stringify(courseData)); } catch(_){}
 
   if(localStorage.getItem(KEYS.assign)) assignData = JSON.parse(localStorage.getItem(KEYS.assign));
