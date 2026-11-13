@@ -55,7 +55,8 @@ body{display:flex;flex-direction:column;min-height:100vh;background:var(--bg);co
 .sidebar-header p{font-size:0.8rem;color:#bdc3c7}
 .nav-btn{padding:14px 20px;background:none;border:none;color:#e5e7eb;text-align:left;cursor:pointer;font-size:0.92rem;border-bottom:1px solid rgba(255,255,255,0.08);transition:0.2s;display:flex;align-items:center;gap:8px}
 .nav-btn:hover,.nav-btn.active{background:var(--accent);color:white}
-.nav-btn.settings-btn{margin-top:auto;background:var(--primary-dark);border-top:2px solid #1a3a5a}
+/* Settings button now sits immediately after Remuneration — no auto push */
+.nav-btn.settings-btn{background:var(--primary-dark);border-top:2px solid #1a3a5a}
 .nav-btn.home-sidebar{background:#0e2238;border-bottom:1px solid #1a3a5a;color:#90caf9}
 .nav-btn.home-sidebar:hover{background:var(--primary-dark);color:white}
 .nav-btn.logout-btn{background:#991b1b;color:#fecaca;border-top:1px solid #1a3a5a}
@@ -298,8 +299,10 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
   <div id="assign" class="module">
    <h1>Assign QP Setter & Generate Orders
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn btn-pdf no-print" onclick="downloadBlankAssignSheet()">📄 Blank Assign Sheet (PDF)</button>
+     <button class="btn no-print" style="background:#6b7280" onclick="printBlankAssignSheet()">🖨 Print Blank Sheet</button>
      <button class="btn btn-pdf no-print" onclick="generateAllPDFsZip()">📦 Download All as ZIP</button>
-     <button class="btn no-print" style="background:#6c5ce7" onclick="generateAllPDFsPrint()">🖨 Print All</button>
+     <button class="btn no-print" style="background:#6c5ce7" onclick="generateAllPDFsPrint()">🖨 Print All Letters</button>
     </div>
    </h1>
    <div class="sem-filter-bar no-print">
@@ -358,6 +361,13 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 
   <div id="settings" class="module">
    <h1>⚙️ Settings</h1>
+
+   <!-- Live header banner reflecting Institution + Department -->
+   <div id="settingsHeaderBanner" style="text-align:center;background:linear-gradient(135deg,#163b65,#3498db);color:#fff;padding:22px 18px;border-radius:12px;margin-bottom:18px;box-shadow:0 6px 18px rgba(22,59,101,0.25)">
+    <h2 id="setHeaderInst" style="margin:0;font-size:1.45rem;letter-spacing:0.3px">Basaveshwar Engineering College, Bagalkote - 587 102</h2>
+    <p id="setHeaderDept" style="margin:8px 0 0;font-size:1.05rem;opacity:0.95">Department of Mathematics</p>
+   </div>
+
    <p class="no-print" style="margin-bottom:16px;color:#6b7280;font-size:0.9rem">Used across all letters & bills. blank for physical signing. Saved in <b>localStorage</b>.</p>
    <div class="settings-preview">
     <h4>📋 Current Preview</h4>
@@ -367,9 +377,9 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
     <p><strong>Academic Year:</strong> <span id="previewAY">—</span> | <strong>Sem Type:</strong> <span id="previewSemType">—</span></p>
    </div>
    <div style="max-width:700px">
-    <div class="form-group"><label>Institution:</label><input type="text" id="setInstitution"></div>
+    <div class="form-group"><label>Institution:</label><input type="text" id="setInstitution" oninput="updateSettingsHeader()"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-     <div class="form-group"><label>Department:</label><input type="text" id="setDepartment"></div>
+     <div class="form-group"><label>Department:</label><input type="text" id="setDepartment" oninput="updateSettingsHeader()"></div>
      <div class="form-group"><label>Academic Year:</label><input type="text" id="setAcademicYear"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -438,10 +448,10 @@ function checkAuth() {
     }
 }
 
-/* ==================== DEFAULT DATA (now with Designation at index 1) ==================== */
+/* ==================== DEFAULT DATA ==================== */
 const DEFAULT_INTERNAL = [
-  ["Dr M M Biradar","Professor","BEC Bagalkote","","","",""],
-  ["Dr S V Gurushantnavar","Associate Professor & HOD","BEC Bagalkote","","","",""],
+ ["Dr S V Gurushantnavar","Associate Professor","BEC Bagalkote","","","",""],
+ ["Dr M M Biradar","Professor","BEC Bagalkote","","","",""],
  ["Dr V M Shettar","Associate Professor","BEC Bagalkote","","","",""],
  ["Dr K Rama Prasad","Associate Professor","BEC Bagalkote","","","",""],
  ["Dr A H Agadi","Assistant Professor","BEC Bagalkote","","","",""],
@@ -453,15 +463,15 @@ const DEFAULT_INTERNAL = [
 ];
 
 const DEFAULT_EXTERNAL = [
- ["Dr. Vishal Patil","Associate Professor","SGBIT Belagavi","AXXX0232E","Union Bank","212435870","UBIN0920932"],
- ["Dr. Gurunath Sankad","Associate Professor","BLDEA's CET Vijayapur","AXXX0232E","Karnatak Vikas G","123456789","KVGB0003113"],
- ["Dr. H. M. Manjunath","Professor","BIET Davangere","AXXXX1234L","SBI Bellary","1123456789","SBIN0000817"],
- ["Dr. Gopichand P.","Professor","KLE Tech Hubli","AXXXX1234L","Canara Bank PC","123456789","CNRB0008683"],
- ["Dr. D. Shaikh Meera","Assistant Professor","PDACE Kalaburagi","AXXXX1234L","PKGB BITM Bell","1123456789","PKGB0010977"],
- ["Dr. Jagadish Tawade","Associate Professor","GNDEC Bidar","AXXXX1234L","SBI Bhalki","6123456789","SBIN0020241"],
- ["Prof. Shivakumar Timanak","Assistant Professor","BEC Bagalkote","-","Union Bank Kalab","521234567890","UBIN0920932"],
- ["Dr. A. Pranesh Shetty","Professor","NMAMIT Nitte","AXXXX1234L","Canara Bank BS","11234567891","CNRB0001147"],
-  ["Dr. Roopa S","Assistant Professor","SIT Tumkur","AXXXX1234L","Canara Bank My","1212345678950","CNRB0002655"]
+ ["Dr. Vishal Patil","Associate Professor","SGBIT Belagavi","AXXXX1234E","Union Bank","212345680","UBIN0920932"],
+ ["Dr. Gurunath Sankad","Associate Professor","BLDEA's CET Vijayapur","AXXXX1234E","Karnatak Vikas G","12123456804","KVGB0003113"],
+ ["Dr. H. M. Manjunath","Professor","BIET Davangere","AXXXX1234E","SBI Bellary","12123456801","SBIN0000817"],
+ ["Dr. Gopichand P.","Professor","KLE Tech Hubli","AXXXX1234E","Canara Bank PC","82123456801","CNRB0008683"],
+ ["Dr. D. Shaikh Meera","Associate Professor","PDACE Kalaburagi","AXXXX1234E","PKGB BITM Bell","121234568024","PKGB0010977"],
+ ["Dr. Jagadish Tawade","Professor","GNDEC Bidar","AXXXX1234E","SBI Bhalki","622123456806","SBIN0020241"],
+ ["Prof. Shivakumar Timanak","Assistant Professor","BEC Bagalkote","AXXXX1234E","Union Bank Kalab","52123456800","UBIN0920932"],
+ ["Dr. A. Pranesh Shetty","Professor","NMAMIT Nitte","AXXXX1234E","Canara Bank BS","12123456801","CNRB0001147"],
+ ["Dr. Roopa S","Professor","SIT Tumkur","AXXXX1234E","Canara Bank My","12123456800","CNRB0002655"]
 ];
 
 const DEFAULT_COURSE = [
@@ -551,7 +561,6 @@ function loadAll(){
   let v14Int = localStorage.getItem(KEYS.internalPanel);
   let v14Ext = localStorage.getItem(KEYS.externalPanel);
 
-  // Fallback to old v13 keys (6-col) for smooth migration
   if(!v14Int) v14Int = localStorage.getItem('internalPanelData_v13');
   if(!v14Ext) v14Ext = localStorage.getItem('externalPanelData_v13');
 
@@ -559,7 +568,6 @@ function loadAll(){
    internalPanelData = JSON.parse(v14Int).map(normalizePanelRow);
    externalPanelData = JSON.parse(v14Ext).map(normalizePanelRow);
   } else {
-   // One-time migration from old paired v12 data
    const legacy = localStorage.getItem('panelData_v12');
    if(legacy){
     const old = JSON.parse(legacy);
@@ -586,7 +594,6 @@ function loadAll(){
   }
  }catch(e){ console.warn('loadAll failed', e); }
 
- // Persist normalized forms immediately (so migration is durable)
  try{
   localStorage.setItem(KEYS.internalPanel, JSON.stringify(internalPanelData));
   localStorage.setItem(KEYS.externalPanel, JSON.stringify(externalPanelData));
@@ -604,6 +611,7 @@ function loadAll(){
  if(ta) ta.value = scrutinyCommitteeMembers || defaultCommitteeMembersString();
 
  refreshPreview();
+ updateSettingsHeader();
  refreshRemunerationHeader();
 }
 
@@ -612,6 +620,17 @@ function defaultCommitteeMembersString(){
  const a = ints[0] || "Dr V M Shettar";
  const b = ints[1] || "Dr S V Gurushantnavar";
  return `${a}\n${b}`;
+}
+
+/* Live header on the Settings page */
+function updateSettingsHeader(){
+ const instEl = document.getElementById('setHeaderInst');
+ const deptEl = document.getElementById('setHeaderDept');
+ if(!instEl || !deptEl) return;
+ const inst = (document.getElementById('setInstitution').value || '').trim() || 'Institution Name';
+ const dept = (document.getElementById('setDepartment').value || '').trim() || 'Department';
+ instEl.textContent = inst;
+ deptEl.textContent = 'Department of ' + dept;
 }
 
 function refreshPreview(){
@@ -654,6 +673,7 @@ function saveSettings(){
  }));
 
  refreshPreview();
+ updateSettingsHeader();
  refreshRemunerationHeader();
 
  const msg=document.getElementById('settingsSavedMsg');
@@ -734,6 +754,7 @@ function showModule(moduleId,btn){
  if(moduleId==='course') renderCourseTable();
  if(moduleId==='remuneration') renderRemunerationTable();
  if(moduleId==='scrutiny') regenerateScrutinyLetter();
+ if(moduleId==='settings') updateSettingsHeader();
 }
 
 function initApp(){
@@ -743,6 +764,7 @@ function initApp(){
  renderAssignTable();
  renderRemunerationTable();
  regenerateScrutinyLetter();
+ updateSettingsHeader();
 }
 
 /* ==================== PANEL TABS ==================== */
@@ -1036,7 +1058,103 @@ function updateAssignAssignment(code,colIdx,val){
  showSaveToast('✓ Assignment auto-saved');
 }
 
-/* ==================== APPOINTMENT LETTER (matches the DOCX format) ==================== */
+/* ==================== BLANK ASSIGN SHEET (PDF / PRINT) ==================== */
+function getBlankAssignSheetHTML(){
+ const semLabel = semesterType === 'Odd' ? 'Odd' : 'Even';
+ const rows = courseData.map((c, i)=>`
+   <tr>
+     <td style="text-align:center">${i+1}</td>
+     <td><strong>${escapeHtml(c[0])}</strong></td>
+     <td>${escapeHtml(c[3])}</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+     <td>&nbsp;</td>
+   </tr>
+ `).join('');
+
+ return `
+ <div style="font-family:'Times New Roman',Times,serif;color:#000;font-size:11.5pt;line-height:1.35">
+  <div style="text-align:center;margin-bottom:14px">
+   <h2 style="margin:0;font-size:15pt;font-weight:bold">${escapeHtml(institutionName)}</h2>
+   <h3 style="margin:4px 0 0;font-size:13pt;font-weight:bold">DEPARTMENT OF ${escapeHtml(departmentName.toUpperCase())}</h3>
+   <p style="margin:10px 0 0;font-size:12pt;font-weight:bold;text-decoration:underline">
+     QUESTION PAPER SETTER — ASSIGNMENT PLAN (${escapeHtml(semLabel)} Semester ${escapeHtml(academicYear)})
+   </p>
+  </div>
+
+  <p style="font-size:10.5pt;margin:0 0 10px;text-align:justify;font-style:italic">
+    Instructions: Fill in the names of the four Question Paper Setters for each subject below.
+    Columns 1&nbsp;and&nbsp;2 are intended for <b>Internal</b> examiners and Columns 3&nbsp;and&nbsp;4 for <b>External</b> examiners.
+  </p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:10pt">
+   <thead>
+    <tr>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:5%;text-align:center">Sl.</th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:16%">Subject Code</th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:35%">Subject Name</th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:11%;text-align:center">Examiner&nbsp;1<br><span style="font-weight:normal;font-size:9pt">(Internal)</span></th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:11%;text-align:center">Examiner&nbsp;2<br><span style="font-weight:normal;font-size:9pt">(Internal)</span></th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:11%;text-align:center">Examiner&nbsp;3<br><span style="font-weight:normal;font-size:9pt">(External)</span></th>
+     <th style="border:1px solid #000;padding:6px;background:#e5e7eb;width:11%;text-align:center">Examiner&nbsp;4<br><span style="font-weight:normal;font-size:9pt">(External)</span></th>
+    </tr>
+   </thead>
+   <tbody>
+     ${rows || '<tr><td colspan="7" style="text-align:center;border:1px solid #000;padding:14px;color:#777">No courses in Course Master.</td></tr>'}
+   </tbody>
+  </table>
+
+  <div style="display:flex;justify-content:space-between;margin-top:45px;font-size:10.5pt">
+   <div style="text-align:center">
+    <p style="margin:0;border-top:1px solid #000;padding-top:4px;min-width:180px"><strong>BOE</strong></p>
+   </div>
+   <div style="text-align:center">
+    <p style="margin:0;border-top:1px solid #000;padding-top:4px;min-width:180px"><strong>HOD</strong></p>
+   </div>
+  </div>
+ </div>`;
+}
+
+async function downloadBlankAssignSheet(){
+ await ensurePdfLibs();
+ const html = getBlankAssignSheetHTML();
+
+ const tempDiv = document.createElement('div');
+ tempDiv.style.width = '210mm';
+ tempDiv.style.padding = '15mm';
+ tempDiv.style.background = '#fff';
+ tempDiv.style.fontFamily = "'Times New Roman', Times, serif";
+ tempDiv.style.fontSize = '11.5pt';
+ tempDiv.innerHTML = html;
+ document.body.appendChild(tempDiv);
+
+ const { jsPDF } = window.jspdf;
+ const doc = new jsPDF('p', 'mm', 'a4');
+ await new Promise(resolve=>{
+  doc.html(tempDiv, {
+   callback: (doc)=>{
+    doc.save(`Blank_Assignment_Sheet_${semesterType}_${academicYear}.pdf`);
+    document.body.removeChild(tempDiv);
+    resolve();
+   },
+   margin:[10,10,10,10],
+   autoPaging:'text',
+   x:0, y:0, width:210, windowWidth:800
+  });
+ });
+ showSaveToast('✓ Blank assignment sheet downloaded');
+}
+
+function printBlankAssignSheet(){
+ const html = getBlankAssignSheetHTML();
+ document.getElementById('modalTitle').textContent = "Blank Assignment Sheet (Print / PDF)";
+ document.getElementById('modalContent').innerHTML = html;
+ document.getElementById('letterModal').classList.add('active');
+ document.body.classList.add('modal-open');
+}
+
+/* ==================== APPOINTMENT LETTER ==================== */
 function getAppointmentLetterHTML(code, examinerName, examinerType){
  const course = courseData.find(c=>c[0]===code) || ["","General","I","Course Title"];
  const courseCode=course[0], branch=course[1], semester=course[2], courseTitle=course[3];
@@ -1184,7 +1302,7 @@ async function downloadModalPdf(){
  const doc = new jsPDF('p', 'mm', 'a4');
  await doc.html(element, {
   callback: function (doc) {
-   doc.save(`Appointment_Letter_${currentOpenModalKey.replace(/%/g,'_')}.pdf`);
+   doc.save(`Document_${currentOpenModalKey.replace(/%/g,'_')||'output'}.pdf`);
   },
   margin: [10, 10, 10, 10],
   autoPaging: 'text',
@@ -1384,7 +1502,6 @@ function renderRemunerationTable(){
   const assignedCourses = extCourseMap[extName];
   const paperCount = assignedCourses.length;
 
-  // Panel row order (new): [name, designation, college, pan, bank, ac, ifsc]
   const panelObj = externalPanelData.find(p=>p[0].toLowerCase()===extName.toLowerCase())
     || [ extName, "", "", "-", "-", "-", "-" ];
   const pan  = panelObj[3] || "-";
@@ -1437,18 +1554,8 @@ function downloadExcel(){
  lines.push('');
 
  lines.push([
-  'Sl.',
-  'Faculty (External)',
-  'Course Code(s)',
-  'PAN',
-  'Gross Total',
-  'I Tax 10%',
-  'Net Payable',
-  'Bank Name',
-  'SB A/C No.',
-  'IFSC',
-  'Remarks'
-].map(esc).join(','));
+  'Sl.','Faculty (External)','Course Code(s)','PAN','Gross Total','I Tax 10%','Net Payable','Bank Name','SB A/C No.','IFSC','Remarks'
+ ].map(esc).join(','));
 
  document.querySelectorAll('#remunerationTableBody tr').forEach(tr=>{
   const cols = tr.querySelectorAll('td');
@@ -1511,7 +1618,6 @@ async function generateAllPDFsZip(){
     tempDiv.style.background = '#fff';
     tempDiv.style.fontFamily = "'Times New Roman', Times, serif";
     tempDiv.style.fontSize = '11.5pt';
-    tempDiv.style.color = '#000';
     tempDiv.innerHTML = html;
     document.body.appendChild(tempDiv);
 
