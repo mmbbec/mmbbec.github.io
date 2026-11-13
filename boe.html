@@ -49,7 +49,6 @@ body{display:flex;flex-direction:column;min-height:100vh;background:var(--bg);co
 .hamburger{display:none;background:var(--primary);color:white;border:none;padding:8px 12px;border-radius:6px;font-size:18px;cursor:pointer}
 @media(max-width:900px){.hamburger{display:block}}
 
-/* Global Institution + Department banner on every page */
 .global-header-banner{
   background:linear-gradient(135deg,#163b65,#3498db);
   color:#fff;
@@ -97,7 +96,9 @@ td.locked{background:#f3f4f6;color:#374151}
 .btn:hover{background:var(--accent)}
 .btn-success{background:var(--success)}.btn-danger{background:var(--danger)}.btn-print{background:#6c5ce7}.btn-excel{background:#1e8e3e}.btn-pdf{background:#d35400;padding:6px 10px}
 .btn-sm{padding:5px 9px;font-size:0.76rem}
-.btn:disabled{background:#9ca3af;cursor:not-allowed}
+.btn:disabled{background:#9ca3af!important;cursor:not-allowed;opacity:0.65}
+.btn-reorder{background:#6b7280;padding:4px 9px;font-size:0.95rem;line-height:1;min-width:26px;font-weight:700}
+.btn-reorder:not(:disabled):hover{background:var(--primary)}
 select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;background:white;font-size:0.84rem;cursor:pointer}
 .letter-output{margin-top:18px;padding:0;background:transparent;min-height:200px;display:flex;justify-content:center}
 .letter-output .a4-sheet{
@@ -118,8 +119,8 @@ select.cell-dropdown{width:100%;padding:6px;border:1px solid #ddd;border-radius:
 .doc-table{width:100%;border-collapse:collapse;margin:12px 0}
 .doc-table th,.doc-table td{border:1px solid #000;padding:7px;text-align:left}
 .doc-table th{background:#f3f4f6;color:#000;font-weight:bold;text-align:center}
-.action-cell{text-align:center;min-width:180px}
-.action-btn-group{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.action-cell{text-align:center;min-width:230px}
+.action-btn-group{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;align-items:center}
 #remunerationTableBody td[contenteditable="true"]{background:#fffef0}
 #remunerationTableBody td[contenteditable="true"]:hover{background:#fff9c4}
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2000;background:rgba(0,0,0,0.6)}
@@ -230,7 +231,6 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
  </div>
 </header>
 
-<!-- GLOBAL HEADER (shows on every page) -->
 <div id="globalHeaderBanner" class="global-header-banner no-print">
   <h2 id="globalHeaderInst">Basaveshwar Engineering College, Bagalkote - 587 102</h2>
   <p id="globalHeaderDept">Department of Mathematics</p>
@@ -310,7 +310,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 
   <div id="course" class="module">
    <h1>Course Master <button class="btn btn-success no-print" onclick="addCourseRow()">+ Add Course</button></h1>
-   <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">💾 Courses are saved in <b>localStorage</b>. Edit → Save to persist.</p>
+   <p class="no-print" style="font-size:0.82rem;color:#6b7280;margin-bottom:12px">💾 Courses are saved in <b>localStorage</b>. Edit → Save to persist. Reorder from <b>Assign QP Setter</b> module.</p>
    <div class="table-container"><table><thead><tr><th>Course Code</th><th>Branch</th><th>Semester</th><th>Course Title</th><th class="action-cell no-print">Actions</th></tr></thead><tbody id="courseTableBody"></tbody></table></div>
   </div>
 
@@ -326,13 +326,29 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
    <div class="sem-filter-bar no-print">
     <label for="assignSemFilter">Semester Filter:</label>
     <select id="assignSemFilter" onchange="renderAssignTable()"><option value="all">All Semesters</option></select>
+    <span style="font-size:0.8rem;color:#92400e">↕ Use ↑ / ↓ arrows in each row to re-order subjects</span>
    </div>
    <div class="no-print" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;background:#eef5fb;padding:12px 14px;border-radius:8px;border:1px solid #d6e4f0;flex-wrap:wrap">
     <label style="font-weight:600">Last Date:</label>
     <input type="text" id="globalLastDate" value="17.09.2025" style="width:180px;padding:8px;border-radius:6px;border:1px solid #d0d7de" oninput="saveData()">
     <span style="font-size:0.82rem;color:#6b7280">Printed on orders</span>
    </div>
-   <div class="table-container"><table><thead><tr><th style="width:22%">Subject Code & Title</th><th style="width:14%">Examiner 1 (Internal)</th><th style="width:14%">Examiner 2 (Internal)</th><th style="width:14%">Examiner 3 (External)</th><th style="width:14%">Examiner 4 (External)</th><th class="action-cell no-print">Letters</th></tr></thead><tbody id="assignTableBody"></tbody></table></div>
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th style="width:5%;text-align:center">Sl.</th>
+       <th style="width:21%">Subject Code &amp; Title</th>
+       <th style="width:13%">Examiner 1 (Internal)</th>
+       <th style="width:13%">Examiner 2 (Internal)</th>
+       <th style="width:13%">Examiner 3 (External)</th>
+       <th style="width:13%">Examiner 4 (External)</th>
+       <th class="action-cell no-print">Reorder / Letters</th>
+      </tr>
+     </thead>
+     <tbody id="assignTableBody"></tbody>
+    </table>
+   </div>
   </div>
 
   <div id="scrutiny" class="module">
@@ -435,7 +451,7 @@ td.unassigned::after{ content:" ⚠"; color:#e74c3c; }
 <div id="saveToast">✓ Saved to localStorage</div>
 
 <script>
-const TEMPLATE_VERSION = 15;
+const TEMPLATE_VERSION = 16;
 
 /* ==================== LOGIN ==================== */
 const VALID_USER = 'becboe@gmail.com';
@@ -639,7 +655,6 @@ function defaultCommitteeMembersString(){
  return `${a}\n${b}`;
 }
 
-/* Updates BOTH the settings-page banner AND the global banner at the top */
 function updateSettingsHeader(){
  const instInput = document.getElementById('setInstitution');
  const deptInput = document.getElementById('setDepartment');
@@ -647,13 +662,11 @@ function updateSettingsHeader(){
  const inst = ((instInput && instInput.value) || institutionName || '').trim() || 'Institution Name';
  const dept = ((deptInput && deptInput.value) || departmentName || '').trim() || 'Department';
 
- // Settings-page banner
  const instEl = document.getElementById('setHeaderInst');
  const deptEl = document.getElementById('setHeaderDept');
  if(instEl) instEl.textContent = inst;
  if(deptEl) deptEl.textContent = 'Department of ' + dept;
 
- // Global banner (visible on every page)
  const gInst = document.getElementById('globalHeaderInst');
  const gDept = document.getElementById('globalHeaderDept');
  if(gInst) gInst.textContent = inst;
@@ -1027,9 +1040,14 @@ function renderAssignTable(){
  const internals=internalPanelData.map(p=>p[0]).filter(n=>n);
  const externals=externalPanelData.map(p=>p[0]).filter(n=>n);
 
- courseData.forEach((course)=>{
+ // Compute the visible list ONCE so Sl numbers and reorder buttons align with what's shown
+ const visibleCourses = courseData.filter(c => filterSem==='all' || c[2]===filterSem);
+
+ visibleCourses.forEach((course, visIdx)=>{
   const code=course[0], branch=course[1], sem=course[2], title=course[3];
-  if(filterSem!=='all' && sem!==filterSem) return;
+  const slNo = visIdx + 1;
+  const isFirst = visIdx === 0;
+  const isLast  = visIdx === visibleCourses.length - 1;
 
   let assignRow=assignData.find(a=>a[0]===code);
   if(!assignRow){
@@ -1039,7 +1057,9 @@ function renderAssignTable(){
 
   const tr=document.createElement('tr');
   tr.dataset.code = code;
-  let html=`<td><strong>${escapeHtml(code)}</strong><br>
+
+  let html = `<td style="text-align:center;font-weight:700;color:#163b65">${slNo}</td>
+    <td><strong>${escapeHtml(code)}</strong><br>
     <span style="font-size:0.8rem;color:#555">${escapeHtml(title)}</span><br>
     <span style="font-size:0.75rem;color:#777">Sem: ${escapeHtml(sem)} | ${escapeHtml(branch)}</span></td>`;
 
@@ -1057,6 +1077,11 @@ function renderAssignTable(){
    html+=`</select></td>`;
   }
 
+  // Reorder buttons
+  const upBtn   = `<button class="btn btn-sm btn-reorder" onclick="moveCourseUp('${code}')" ${isFirst?'disabled':''} title="Move Up">↑</button>`;
+  const downBtn = `<button class="btn btn-sm btn-reorder" onclick="moveCourseDown('${code}')" ${isLast?'disabled':''} title="Move Down">↓</button>`;
+
+  // Letter buttons
   let letterBtns = '';
   for(let i=1;i<=4;i++){
    const hasName = !!(assignRow[i]||"").trim();
@@ -1065,10 +1090,43 @@ function renderAssignTable(){
      title="${hasName?'Letter to Examiner '+i:'Examiner '+i+' not assigned'}">${i}</button>`;
   }
 
-  html+=`<td class="action-cell no-print"><div class="action-btn-group">${letterBtns}</div></td>`;
+  html+=`<td class="action-cell no-print">
+    <div class="action-btn-group">
+      ${upBtn}${downBtn}
+      <span style="display:inline-block;width:6px;border-left:1px solid #cbd5e1;height:18px"></span>
+      ${letterBtns}
+    </div>
+  </td>`;
   tr.innerHTML=html;
   tbody.appendChild(tr);
  });
+}
+
+/* ==================== REORDER (Move Up / Down) ==================== */
+function moveCourseUp(code){ moveCourseByDirection(code, -1); }
+function moveCourseDown(code){ moveCourseByDirection(code, +1); }
+
+function moveCourseByDirection(code, dir){
+ const filterSem = document.getElementById('assignSemFilter').value;
+ const visible = courseData.filter(c => filterSem==='all' || c[2]===filterSem);
+ const visIdx = visible.findIndex(c => c[0]===code);
+ if(visIdx < 0) return;
+ const targetVisIdx = visIdx + dir;
+ if(targetVisIdx < 0 || targetVisIdx >= visible.length) return;
+
+ const targetCode = visible[targetVisIdx][0];
+ const iA = courseData.findIndex(c => c[0]===code);
+ const iB = courseData.findIndex(c => c[0]===targetCode);
+ if(iA < 0 || iB < 0) return;
+
+ // Swap the two entries in the underlying courseData array
+ const tmp = courseData[iA];
+ courseData[iA] = courseData[iB];
+ courseData[iB] = tmp;
+
+ saveData();
+ renderAssignTable();
+ showSaveToast('✓ Order updated');
 }
 
 function updateAssignAssignment(code,colIdx,val){
