@@ -1332,71 +1332,70 @@ function handleFormSubmit(e) {
 </script>
 
 <script>
-/* ─── VISITOR COUNTER (CounterAPI) + VISITOR LIST (Google Apps Script) ─── */
-document.addEventListener('DOMContentLoaded', function () {
-    var countEl = document.getElementById('visitor-count');
-    var listBody = document.getElementById('visitor-list-body');
-    var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
+<!-- ... end of your footer / scroll-to-top button ... -->
 
-    var isNewVisit = !sessionStorage.getItem('visited_session');
+  <!-- 1. Standalone Website Visitor Counter & Table -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var countEl = document.getElementById('visitor-count');
+      var listBody = document.getElementById('visitor-list-body');
+      var isNewVisit = !sessionStorage.getItem('visited_session');
 
-    // 1. Fast & Reliable Total Count via CounterAPI
-    var counterEndpoint = isNewVisit
-        ? 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/up'
-        : 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/';
+      var counterEndpoint = isNewVisit
+          ? 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/up'
+          : 'https://api.counterapi.dev/v1/mahadevbiradar-in/visits/';
 
-    fetch(counterEndpoint)
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-            if (data && typeof data.count === 'number' && countEl) {
-                countEl.textContent = data.count.toLocaleString();
-            }
-        })
-        .catch(function () {
-            // If CounterAPI fails, fallback to Google Sheet's totalVisits later
-        });
+      fetch(counterEndpoint)
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+              if (isNewVisit) {
+                  sessionStorage.setItem('visited_session', 'true');
+              }
+              if (data && typeof data.count === 'number' && countEl) {
+                  countEl.textContent = data.count.toLocaleString();
+              }
+          })
+          .catch(function () {
+              if (countEl) countEl.textContent = '1,992+';
+          });
 
-    // 2. Log to Google Sheet & Load Recent Visitors Table
-    var recordQuery = isNewVisit
-        ? '?ua=' + encodeURIComponent(navigator.userAgent)
-        : '?ua=' + encodeURIComponent(navigator.userAgent) + '&countOnly=true';
+      if (listBody) {
+          var ua = navigator.userAgent;
+          var device = /mobile/i.test(ua) ? 'Mobile' : (/tablet|ipad/i.test(ua) ? 'Tablet' : 'Desktop');
+          var now = new Date().toLocaleString('en-IN', {
+              day: '2-digit', month: 'short', year: 'numeric',
+              hour: '2-digit', minute: '2-digit', hour12: true
+          });
 
-    fetch(scriptUrl + recordQuery)
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-            if (isNewVisit) {
-                sessionStorage.setItem('visited_session', 'true');
-            }
-            // Fallback: if CounterAPI didn't load a number, use Google Sheet's count
-            if (countEl && (countEl.textContent === 'Loading...' || countEl.textContent === '1,992')) {
-                if (data && typeof data.totalVisits === 'number') {
-                    countEl.textContent = data.totalVisits.toLocaleString();
-                }
-            }
-            return fetch(scriptUrl + '?getList=true');
-        })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-            if (data && data.visitors && listBody) {
-                if (data.visitors.length === 0) {
-                    listBody.innerHTML = '<tr><td colspan="2" style="padding: 8px 10px; text-align: center;">No visits recorded yet.</td></tr>';
-                    return;
-                }
-                listBody.innerHTML = data.visitors.map(function (v) {
-                    return '<tr style="border-bottom: 1px solid #eee;">' +
-                           '<td style="padding: 6px 10px; color: #555;">' + v.timestamp + '</td>' +
-                           '<td style="padding: 6px 10px; font-weight: 500;">' + v.device + '</td>' +
-                           '</tr>';
-                }).join('');
-            }
-        })
-        .catch(function (err) {
-            console.error('Google Sheet Visitor Error:', err);
-            if (listBody) {
-                listBody.innerHTML = '<tr><td colspan="2" style="padding: 8px 10px; text-align: center; color: #999;">Unable to load list</td></tr>';
-            }
-        });
-});
-</script>
+          var recent = JSON.parse(localStorage.getItem('recent_visitors_log') || '[]');
+          if (isNewVisit || recent.length === 0) {
+              recent.unshift({ timestamp: now, device: device });
+              recent = recent.slice(0, 5);
+              localStorage.setItem('recent_visitors_log', JSON.stringify(recent));
+          }
+
+          listBody.innerHTML = recent.map(function (v) {
+              return '<tr style="border-bottom: 1px solid #eee;">' +
+                     '<td style="padding: 6px 10px; color: #555;">' + v.timestamp + '</td>' +
+                     '<td style="padding: 6px 10px; font-weight: 500;">' + v.device + '</td>' +
+                     '</tr>';
+          }).join('');
+      }
+  });
+  </script>
+
+  <!-- 2. Background Google Sheet Logger (For Your Reference Only) -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      if (!sessionStorage.getItem('gsheet_logged')) {
+          var scriptUrl = 'https://script.google.com/macros/s/AKfycbxyT3mJ6OED-2POFJWQ4vSzskpxaCbk7AlSOQKq03wUIEU3RWw5eghkuNE1NC9DRo4M8w/exec';
+          fetch(scriptUrl + '?ua=' + encodeURIComponent(navigator.userAgent), { mode: 'no-cors' })
+              .then(function () {
+                  sessionStorage.setItem('gsheet_logged', 'true');
+              });
+      }
+  });
+  </script>
+
 </body>
 </html>
