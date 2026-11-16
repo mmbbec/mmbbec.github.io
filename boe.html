@@ -1603,7 +1603,7 @@ function regenerateScrutinyLetter(){
   }
  });
 
- let committeeBlock = "";
+  let committeeBlock = "";
  if(committeeList.length > 0){
   committeeBlock = `
    <div style="margin-top:24px;page-break-inside:avoid">
@@ -1625,6 +1625,17 @@ function regenerateScrutinyLetter(){
    </div>
   `;
  }
+
+ // --- NEW CODE: Check if empty before generating A4 sheet ---
+ if (!internalRows && !externalRows) {
+     document.getElementById('scLetterOutput').innerHTML = `
+         <div style="text-align: center; padding: 40px; background: #fef2f2; border: 1px solid #f87171; border-radius: 8px; color: #b91c1c; max-width: 600px; margin: 20px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+             <h2 style="margin-bottom: 10px; font-size: 1.4rem;">⚠ No Examiners Assigned</h2>
+             <p style="font-size: 1rem; line-height: 1.5;">Please go to <strong>Module 3 (Assign QP Setter)</strong> and assign at least one Internal or External examiner. The scrutiny letter will generate automatically once assignments are made.</p>
+         </div>`;
+     return; // Stop executing further so the A4 sheet doesn't render
+ }
+ // -----------------------------------------------------------
 
  const html=`
  <div class="a4-sheet">
