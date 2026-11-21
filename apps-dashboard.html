@@ -2,24 +2,19 @@
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JZRW69TE7N');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZRW69TE7N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JZRW69TE7N');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Academic & Utility Web Apps | Dr. Mahadev M Biradar</title>
   <meta name="description" content="Categorized dashboard of VTU calculators, mathematical solvers, faculty NBA/CO-PO tools, and exam portals by Dr. Mahadev Mallikarjun Biradar.">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
@@ -56,9 +51,7 @@
       text-decoration: none;
     }
 
-    .logo span {
-      color: #d94a32;
-    }
+    .logo span { color: #d94a32; }
 
     .back-btn {
       text-decoration: none;
@@ -72,10 +65,7 @@
       transition: 0.25s ease;
     }
 
-    .back-btn:hover {
-      background: #163b65;
-      color: #ffffff;
-    }
+    .back-btn:hover { background: #163b65; color: #ffffff; }
 
     /* ─── HERO BANNER ─── */
     .dashboard-hero {
@@ -85,10 +75,7 @@
       text-align: center;
     }
 
-    .dashboard-hero h1 {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
+    .dashboard-hero h1 { font-size: 30px; margin-bottom: 8px; }
 
     .dashboard-hero p {
       font-size: 15px;
@@ -175,10 +162,7 @@
       font-family: inherit;
     }
 
-    .tab-btn:hover {
-      background: #f0f4f8;
-      color: #163b65;
-    }
+    .tab-btn:hover { background: #f0f4f8; color: #163b65; }
 
     .tab-btn.active {
       background: #163b65;
@@ -206,6 +190,12 @@
       color: #ffffff;
     }
 
+    /* Accent the BEC tab (home-institution tools) */
+    .tab-btn[data-category="BEC"] {
+      border-left: 3px solid #d94a32;
+      padding-left: 11px;
+    }
+
     /* ─── CONTENT PANEL & APP CARDS ─── */
     .tab-content-area {
       background: #ffffff;
@@ -227,15 +217,9 @@
       gap: 10px;
     }
 
-    .category-header h2 {
-      color: #163b65;
-      font-size: 22px;
-    }
+    .category-header h2 { color: #163b65; font-size: 22px; }
 
-    .category-header span {
-      font-size: 13px;
-      color: #666;
-    }
+    .category-header span { font-size: 13px; color: #666; }
 
     .apps-grid {
       display: grid;
@@ -320,9 +304,7 @@
       border-top: 1px solid #edf2f7;
     }
 
-    .app-card:hover .app-footer {
-      color: #163b65;
-    }
+    .app-card:hover .app-footer { color: #163b65; }
 
     .no-results {
       text-align: center;
@@ -330,6 +312,8 @@
       color: #666;
       display: none;
     }
+
+    .no-results h3 { color: #163b65; margin-bottom: 8px; }
 
     /* ─── FOOTER ─── */
     footer {
@@ -342,10 +326,7 @@
 
     /* ─── RESPONSIVE MOBILE VIEW ─── */
     @media (max-width: 850px) {
-      .dashboard-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
+      .dashboard-container { grid-template-columns: 1fr; gap: 20px; }
 
       .vertical-tabs {
         position: static;
@@ -356,9 +337,7 @@
         white-space: nowrap;
       }
 
-      .tabs-header {
-        display: none;
-      }
+      .tabs-header { display: none; }
 
       .tab-btn {
         width: auto;
@@ -384,8 +363,9 @@
     <h1>Academic &amp; Engineering Web Applications</h1>
     <p>Interactive calculators, numerical solvers, accreditation tools, and exam preparation portals designed for students and faculty.</p>
     <div class="search-wrapper">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="appSearch" placeholder="Search tools (e.g., CGPA, Matrix, NBA, GATE, Resume)...">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="text" id="appSearch" placeholder="Search tools (e.g., CGPA, Matrix, NBA, GATE, Resume)..."
+             aria-label="Search applications">
     </div>
   </section>
 
@@ -395,52 +375,53 @@
     <!-- Left Sidebar: Vertical Category Tabs -->
     <aside class="vertical-tabs" role="tablist" aria-label="Application Categories">
       <div class="tabs-header">Categories</div>
-      
-      <button class="tab-btn active" data-category="all" role="tab" aria-selected="true">
+
+      <button class="tab-btn active" data-category="all" role="tab" aria-selected="true" aria-controls="appsPanel">
         <span class="tab-label">🌐 All Applications</span>
         <span class="tab-count" id="count-all">0</span>
       </button>
 
-      <button class="tab-btn" data-category="vtu" role="tab" aria-selected="false">
+      <button class="tab-btn" data-category="vtu" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">🎓 VTU &amp; Student Tools</span>
         <span class="tab-count" id="count-vtu">0</span>
       </button>
 
-      <button class="tab-btn" data-category="math" role="tab" aria-selected="false">
+      <button class="tab-btn" data-category="math" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">📐 Mathematics &amp; Solvers</span>
         <span class="tab-count" id="count-math">0</span>
       </button>
 
-      <button class="tab-btn" data-category="faculty" role="tab" aria-selected="false">
+      <button class="tab-btn" data-category="faculty" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">🏫 Faculty, NBA &amp; OBE</span>
         <span class="tab-count" id="count-faculty">0</span>
       </button>
 
-      <button class="tab-btn" data-category="exams" role="tab" aria-selected="false">
+      <button class="tab-btn" data-category="exams" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">📝 Competitive Exams</span>
         <span class="tab-count" id="count-exams">0</span>
       </button>
 
-      <button class="tab-btn" data-category="BEC" role="tab" aria-selected="false">
-        <span class="tab-label">📝 BEC</span>
-        <span class="tab-count" id="count-exams">0</span>
+      <!-- FIXED: unique id (was id="count-exams" → duplicate) -->
+      <button class="tab-btn" data-category="BEC" role="tab" aria-selected="false" aria-controls="appsPanel">
+        <span class="tab-label">🏛️ BEC</span>
+        <span class="tab-count" id="count-BEC">0</span>
       </button>
 
-      <button class="tab-btn" data-category="utilities" role="tab" aria-selected="false">
+      <button class="tab-btn" data-category="utilities" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">🛠️ General Utilities</span>
         <span class="tab-count" id="count-utilities">0</span>
       </button>
     </aside>
 
     <!-- Right Panel: Filtered App Cards -->
-    <section class="tab-content-area">
+    <section class="tab-content-area" id="appsPanel" role="tabpanel" aria-label="Application list">
       <div class="category-header">
         <h2 id="currentCategoryTitle">All Applications</h2>
         <span id="showingText">Showing all tools</span>
       </div>
 
       <div class="apps-grid" id="appsGrid">
-        <!-- Cards are dynamically rendered via JS from your repository files -->
+        <!-- Cards are dynamically rendered via JS -->
       </div>
 
       <div class="no-results" id="noResults">
@@ -456,316 +437,183 @@
   </footer>
 
   <script>
-    // Complete list of web apps from your GitHub repository categorized cleanly
+    // ─────────────────────────────────────────────────────────────────────
+    // WEB APPS CATALOG
+    // FIX: BEC-specific tools now use category: "BEC" (previously "vtu"/"faculty")
+    // ─────────────────────────────────────────────────────────────────────
     const webApps = [
       // 1. VTU & Student Tools
-      {
-        title: "VTU CBCS CGPA & SGPA Calculator",
+      { title: "VTU CBCS CGPA & SGPA Calculator",
         desc: "Calculate semester SGPA and overall CGPA accurately according to VTU CBCS grading schemes.",
-        url: "vtu-cbcs-cgpa-calculator.html",
-        category: "vtu",
-        badge: "VTU Students",
-        icon: "🎓"
-      },
-      {
-        title: "SGPA Calculator",
+        url: "vtu-cbcs-cgpa-calculator.html", category: "vtu", badge: "VTU Students", icon: "🎓" },
+      { title: "SGPA Calculator",
         desc: "Quick semester-wise grade point average computation tool for engineering students.",
-        url: "sgpa-calculator.html",
-        category: "vtu",
-        badge: "Academics",
-        icon: "📊"
-      },
-      {
-        title: "VTU CIE & Attendance Shortage Calculator",
+        url: "sgpa-calculator.html", category: "vtu", badge: "Academics", icon: "📊" },
+      { title: "VTU CIE & Attendance Shortage Calculator",
         desc: "Check attendance eligibility percentage and calculate minimum SEE passing marks required.",
-        url: "vtu-cie-attendance.html",
-        category: "vtu",
-        badge: "Eligibility",
-        icon: "📅"
-      },
-      {
-        title: "VTU Academic Resources",
+        url: "vtu-cie-attendance.html", category: "vtu", badge: "Eligibility", icon: "📅" },
+      { title: "VTU Academic Resources",
         desc: "Curated notes, model question papers, and reference links for VTU engineering subjects.",
-        url: "vtu-resources.html",
-        category: "vtu",
-        badge: "Study Material",
-        icon: "📚"
-      },
-      {
-        title: "First Semester Portal",
+        url: "vtu-resources.html", category: "vtu", badge: "Study Material", icon: "📚" },
+      { title: "First Semester Portal",
         desc: "Dedicated mathematics syllabus, notes, and resources for 1st Semester B.E./B.Tech students.",
-        url: "first sem.html",
-        category: "vtu",
-        badge: "1st Sem",
-        icon: "1️⃣"
-      },
-      {
-        title: "Third Semester Portal",
+        url: "first sem.html", category: "vtu", badge: "1st Sem", icon: "1️⃣" },
+      { title: "Third Semester Portal",
         desc: "Dedicated mathematics syllabus, notes, and resources for 3rd Semester B.E./B.Tech students.",
-        url: "third sem.html",
-        category: "vtu",
-        badge: "3rd Sem",
-        icon: "3️⃣"
-      },
-      {
-        title: "Syllabus Repository",
+        url: "third sem.html", category: "vtu", badge: "3rd Sem", icon: "3️⃣" },
+      { title: "Syllabus Repository",
         desc: "Structured overview of undergraduate and postgraduate engineering mathematics syllabi.",
-        url: "syllabus.html",
-        category: "vtu",
-        badge: "Curriculum",
-        icon: "📋"
-      },
-     
+        url: "syllabus.html", category: "vtu", badge: "Curriculum", icon: "📋" },
+      { title: "Placement Preparation Portal",
+        desc: "Aptitude, quantitative reasoning, and interview preparation resources for campus placements.",
+        url: "placement.html", category: "vtu", badge: "Career", icon: "💼" },
 
       // 2. Mathematics & Solvers
-      {
-        title: "Advanced Numerical Methods Solver",
+      { title: "Advanced Numerical Methods Solver",
         desc: "Step-by-step interactive solver for root-finding, interpolation, numerical integration, and ODEs.",
-        url: "Advanced-Numerical-Methods-Solver.html",
-        category: "math",
-        badge: "Computational",
-        icon: "🧮"
-      },
-      {
-        title: "Matrix Operations Solver",
+        url: "Advanced-Numerical-Methods-Solver.html", category: "math", badge: "Computational", icon: "🧮" },
+      { title: "Matrix Operations Solver",
         desc: "Compute determinants, inverses, eigenvalues, rank, and solve systems of linear equations.",
-        url: "matrix.html",
-        category: "math",
-        badge: "Linear Algebra",
-        icon: "🔢"
-      },
-      {
-        title: "Scientific Calculator",
+        url: "matrix.html", category: "math", badge: "Linear Algebra", icon: "🔢" },
+      { title: "Scientific Calculator",
         desc: "Web-based scientific calculator supporting trigonometric, logarithmic, and algebraic functions.",
-        url: "calculator.html",
-        category: "math",
-        badge: "Utility",
-        icon: "🖩"
-      },
-      {
-        title: "Magic Square Generator & Explorer",
+        url: "calculator.html", category: "math", badge: "Utility", icon: "🖩" },
+      { title: "Magic Square Generator & Explorer",
         desc: "Interactive mathematical tool to construct and verify magic squares of various orders.",
-        url: "magic square.html",
-        category: "math",
-        badge: "Recreational Math",
-        icon: "⊞"
-      },
-      {
-        title: "Mathematics Resources Hub",
+        url: "magic square.html", category: "math", badge: "Recreational Math", icon: "⊞" },
+      { title: "Mathematics Resources Hub",
         desc: "Comprehensive collection of engineering mathematics formulas, LaTeX guides, and tools.",
-        url: "Mathematics Resources.html",
-        category: "math",
-        badge: "Reference",
-        icon: "📐"
-      },
+        url: "Mathematics Resources.html", category: "math", badge: "Reference", icon: "📐" },
 
-      // 3. Faculty, NBA & OBE Tools
-      {
-        title: "CO-PO Attainment Calculator",
+      // 3. Faculty, NBA & OBE Tools (generic — not BEC-specific)
+      { title: "CO-PO Attainment Calculator",
         desc: "Automate Course Outcome (CO) and Program Outcome (PO) mapping and attainment calculations.",
-        url: "co po calculator.html",
-        category: "faculty",
-        badge: "OBE / NBA",
-        icon: "📈"
-      },
-      {
-        title: "CO-PO Mapping Tool (Alt)",
+        url: "co po calculator.html", category: "faculty", badge: "OBE / NBA", icon: "📈" },
+      { title: "CO-PO Mapping Tool (Alt)",
         desc: "Streamlined interface for evaluating direct and indirect CO-PO attainment metrics.",
-        url: "copo.html",
-        category: "faculty",
-        badge: "Accreditation",
-        icon: "📑"
-      },
-      {
-        title: "Bloom's Taxonomy & QP Checker",
+        url: "copo.html", category: "faculty", badge: "Accreditation", icon: "📑" },
+      { title: "Bloom's Taxonomy & QP Checker",
         desc: "Analyze question papers for Bloom's cognitive levels (L1–L6) and CO distribution compliance.",
-        url: "blooms.html",
-        category: "faculty",
-        badge: "Exam Audit",
-        icon: "🎯"
-      },
-     
-      {
-        title: "NBA Accreditation Portal",
-        desc: "Documentation, criteria checklists, and calculation helpers for NBA accreditation.",
-        url: "nba.html",
-        category: "faculty",
-        badge: "NBA",
-        icon: "🏅"
-      },
-      {
-        title: "NBA Criteria Helper (Part 2)",
-        desc: "Supplementary module for NBA SAR data compilation and departmental metrics.",
-        url: "nba1.html",
-        category: "faculty",
-        badge: "NBA",
-        icon: "📋"
-      },
-     
-     
+        url: "blooms.html", category: "faculty", badge: "Exam Audit", icon: "🎯" },
+
       // 4. Competitive Exams
-      {
-        title: "GATE Mathematics Practice Portal",
+      { title: "GATE Mathematics Practice Portal",
         desc: "Topic-wise practice questions, formulas, and mock tests for GATE Engineering Mathematics.",
-        url: "gate.html",
-        category: "exams",
-        badge: "GATE",
-        icon: "🚀"
-      },
-      {
-        title: "GATE Civil Engineering Portal",
+        url: "gate.html", category: "exams", badge: "GATE", icon: "🚀" },
+      { title: "GATE Civil Engineering Portal",
         desc: "Specialized GATE preparation resources and mathematics modules for Civil Engineering.",
-        url: "gate civil.html",
-        category: "exams",
-        badge: "GATE Civil",
-        icon: "🏗️"
-      },
-      {
-        title: "JEE Advanced & NEET Practice Portal",
+        url: "gate civil.html", category: "exams", badge: "GATE Civil", icon: "🏗️" },
+      { title: "JEE Advanced & NEET Practice Portal",
         desc: "Interactive mock tests and practice quizzes for JEE Advanced and NEET aspirants.",
-        url: "jee.html",
-        category: "exams",
-        badge: "JEE / NEET",
-        icon: "🧪"
-      },
-     
-      // 4. BEC
-       {
-        title: "Board of Examiners (BOE) Portal",
-        desc: "Workflow and scrutiny checklist tools for Board of Examiners academic duties.",
-        url: "boe.html",
-        category: "faculty",
-        badge: "Examination",
-        icon: "✍️"
-      },
-       {
-        title: "Teacher Academic Toolkit",
-        desc: "Daily classroom utilities and academic management links for faculty members.",
-        url: "teacher.html",
-        category: "faculty",
-        badge: "Faculty",
-        icon: "👨‍🏫"
-      },
- {
-        title: "BEC Student Hub",
+        url: "jee.html", category: "exams", badge: "JEE / NEET", icon: "🧪" },
+
+      // 5. BEC — Basaveshwar Engineering College institutional tools
+      // FIX: These previously used category "vtu"/"faculty" — that's why BEC tab was empty.
+      { title: "BEC Student Hub",
         desc: "Dedicated portal and academic updates for Basaveshwar Engineering College students.",
-        url: "MY BEC Students.html",
-        category: "vtu",
-        badge: "BEC Bagalkote",
-        icon: "🏛️"
-      },
-      {
-        title: "Placement Preparation Portal",
-        desc: "Aptitude, quantitative reasoning, and interview preparation resources for campus placements.",
-        url: "placement.html",
-        category: "vtu",
-        badge: "Career",
-        icon: "💼"
-      },
-   {
-        title: "CIE Marks Management System",
+        url: "MY BEC Students.html", category: "BEC", badge: "BEC Bagalkote", icon: "🏛️" },
+      { title: "Board of Examiners (BOE) Portal",
+        desc: "Workflow and scrutiny checklist tools for Board of Examiners academic duties.",
+        url: "boe.html", category: "BEC", badge: "Examination", icon: "✍️" },
+      { title: "Teacher Academic Toolkit",
+        desc: "Daily classroom utilities and academic management links for faculty members.",
+        url: "teacher.html", category: "BEC", badge: "Faculty", icon: "👨‍🏫" },
+      { title: "CIE Marks Management System",
         desc: "Manage Continuous Internal Evaluation (CIE) tests, quizzes, and assignment records.",
-        url: "CIE Managent.html",
-        category: "faculty",
-        badge: "Assessment",
-        icon: "🗂️"
-      },
-      {
-        title: "CIE Quick Entry (FAB)",
+        url: "CIE Managent.html", category: "BEC", badge: "Assessment", icon: "🗂️" },
+      { title: "CIE Quick Entry (FAB)",
         desc: "Fast floating-action interface for recording and computing internal assessment marks.",
-        url: "cieFAB.html",
-        category: "faculty",
-        badge: "Faculty Tool",
-        icon: "⚡"
-      },
-      {
-        title: "YRC Blood Donor Directory",
-        desc: "Youth Red Cross blood donor registry and emergency contact finder.",
-        url: "blood donar.html",
-        category: "utilities",
-        badge: "Social / YRC",
-        icon: "🩸"
-      },
-      // 5. General Utilities & Community
-      {
-        title: "Academic & Professional Resume Builder",
+        url: "cieFAB.html", category: "BEC", badge: "Faculty Tool", icon: "⚡" },
+      { title: "NBA Accreditation Portal",
+        desc: "Documentation, criteria checklists, and calculation helpers for NBA accreditation.",
+        url: "nba.html", category: "BEC", badge: "NBA", icon: "🏅" },
+      { title: "NBA Criteria Helper (Part 2)",
+        desc: "Supplementary module for NBA SAR data compilation and departmental metrics.",
+        url: "nba1.html", category: "BEC", badge: "NBA", icon: "📋" },
+
+      // 6. General Utilities & Community
+      { title: "Academic & Professional Resume Builder",
         desc: "Generate clean, structured resumes tailored for students, researchers, and faculty.",
-        url: "Resume.html",
-        category: "utilities",
-        badge: "Career Tool",
-        icon: "📄"
-      },
-      {
-        title: "Expense Tracker",
+        url: "Resume.html", category: "utilities", badge: "Career Tool", icon: "📄" },
+      { title: "Expense Tracker",
         desc: "Simple personal or departmental budget and daily expense tracking web application.",
-        url: "expancetracker.html",
-        category: "utilities",
-        badge: "Finance",
-        icon: "💰"
-      },
-      {
-        title: "Free Web Tools Directory",
+        url: "expancetracker.html", category: "utilities", badge: "Finance", icon: "💰" },
+      { title: "Free Web Tools Directory",
         desc: "Collection of free browser-based productivity and academic tools.",
-        url: "free-tools.html",
-        category: "utilities",
-        badge: "Collection",
-        icon: "🧰"
-      },
-      {
-        title: "Personal Web Apps Index",
+        url: "free-tools.html", category: "utilities", badge: "Collection", icon: "🧰" },
+      { title: "Personal Web Apps Index",
         desc: "Original directory of custom web applications developed by Dr. Mahadev Biradar.",
-        url: "personal.html",
-        category: "utilities",
-        badge: "Directory",
-        icon: "🔗"
-      }
+        url: "personal.html", category: "utilities", badge: "Directory", icon: "🔗" },
+      { title: "YRC Blood Donor Directory",
+        desc: "Youth Red Cross blood donor registry and emergency contact finder.",
+        url: "blood donar.html", category: "utilities", badge: "Social / YRC", icon: "🩸" }
     ];
 
+    // FIX: Added "BEC" key so the title never becomes `undefined`
     const categoryNames = {
       all: "All Applications",
       vtu: "VTU & Student Tools",
       math: "Mathematics & Solvers",
       faculty: "Faculty, NBA & OBE Tools",
       exams: "Competitive Exams (GATE / JEE)",
+      BEC: "BEC — Basaveshwar Engineering College",
       utilities: "General & Community Utilities"
     };
 
     let activeCategory = "all";
     let searchQuery = "";
 
-    const appsGrid = document.getElementById("appsGrid");
-    const noResults = document.getElementById("noResults");
-    const currentCategoryTitle = document.getElementById("currentCategoryTitle");
-    const showingText = document.getElementById("showingText");
-    const searchInput = document.getElementById("appSearch");
-    const tabButtons = document.querySelectorAll(".tab-btn");
+    const appsGrid              = document.getElementById("appsGrid");
+    const noResults             = document.getElementById("noResults");
+    const currentCategoryTitle  = document.getElementById("currentCategoryTitle");
+    const showingText           = document.getElementById("showingText");
+    const searchInput           = document.getElementById("appSearch");
+    const tabButtons            = Array.from(document.querySelectorAll(".tab-btn"));
+
+    // FIX: derive category list from data — new categories picked up automatically
+    const categoryKeys = ["all", ...new Set(webApps.map(a => a.category))];
 
     // Populate category badge counts
     function updateCounts() {
       document.getElementById("count-all").textContent = webApps.length;
-      ["vtu", "math", "faculty", "exams", "utilities"].forEach(cat => {
-        const count = webApps.filter(app => app.category === cat).length;
-        document.getElementById(`count-${cat}`).textContent = count;
+      categoryKeys.filter(c => c !== "all").forEach(cat => {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) el.textContent = webApps.filter(a => a.category === cat).length;
       });
     }
 
     // Render filtered cards
     function renderApps() {
+      const q = searchQuery; // already lowercased & trimmed
       const filtered = webApps.filter(app => {
         const matchesCat = activeCategory === "all" || app.category === activeCategory;
+        const catLabel   = (categoryNames[app.category] || app.category).toLowerCase();
         const matchesSearch =
-          app.title.toLowerCase().includes(searchQuery) ||
-          app.desc.toLowerCase().includes(searchQuery) ||
-          app.badge.toLowerCase().includes(searchQuery);
+          !q ||
+          app.title.toLowerCase().includes(q) ||
+          app.desc.toLowerCase().includes(q) ||
+          app.badge.toLowerCase().includes(q) ||
+          catLabel.includes(q);
         return matchesCat && matchesSearch;
       });
 
-      currentCategoryTitle.textContent = categoryNames[activeCategory];
-      showingText.textContent = `Showing ${filtered.length} ${filtered.length === 1 ? "tool" : "tools"}`;
+      // FIX: guard against missing category label
+      currentCategoryTitle.textContent =
+        categoryNames[activeCategory] || activeCategory;
+      showingText.textContent =
+        `Showing ${filtered.length} ${filtered.length === 1 ? "tool" : "tools"}`;
 
       if (filtered.length === 0) {
         appsGrid.style.display = "none";
         noResults.style.display = "block";
+
+        // FIX: contextual empty-state message
+        noResults.querySelector("h3").textContent = q
+          ? "No tools match your search"
+          : "No applications in this category";
+        noResults.querySelector("p").textContent = q
+          ? "Try a different keyword, or click 'All Applications' to search every category."
+          : "Switch to another category tab to explore more tools.";
         return;
       }
 
@@ -776,7 +624,7 @@
         <a href="${encodeURI(app.url)}" class="app-card">
           <div>
             <div class="app-card-top">
-              <div class="app-icon">${app.icon}</div>
+              <div class="app-icon" aria-hidden="true">${app.icon}</div>
               <div>
                 <div class="app-title">${app.title}</div>
                 <span class="app-badge">${app.badge}</span>
@@ -792,22 +640,36 @@
       `).join("");
     }
 
-    // Tab click listeners
-    tabButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        tabButtons.forEach(b => {
-          b.classList.remove("active");
-          b.setAttribute("aria-selected", "false");
-        });
-        btn.classList.add("active");
-        btn.setAttribute("aria-selected", "true");
-        activeCategory = btn.dataset.category;
-        renderApps();
+    // Centralized tab activation (used by click + keyboard)
+    function activateTab(btn) {
+      tabButtons.forEach(b => {
+        b.classList.toggle("active", b === btn);
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      activeCategory = btn.dataset.category;
+      renderApps();
+    }
+
+    // Tab click + arrow-key navigation (a11y)
+    tabButtons.forEach((btn, idx) => {
+      btn.addEventListener("click", () => activateTab(btn));
+      btn.addEventListener("keydown", e => {
+        let next = null;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          next = tabButtons[(idx + 1) % tabButtons.length];
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          next = tabButtons[(idx - 1 + tabButtons.length) % tabButtons.length];
+        } else if (e.key === "Home") {
+          next = tabButtons[0];
+        } else if (e.key === "End") {
+          next = tabButtons[tabButtons.length - 1];
+        }
+        if (next) { e.preventDefault(); next.focus(); activateTab(next); }
       });
     });
 
     // Search listener
-    searchInput.addEventListener("input", (e) => {
+    searchInput.addEventListener("input", e => {
       searchQuery = e.target.value.trim().toLowerCase();
       renderApps();
     });
