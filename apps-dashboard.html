@@ -401,7 +401,6 @@
         <span class="tab-count" id="count-exams">0</span>
       </button>
 
-      <!-- FIXED: unique id (was id="count-exams" → duplicate) -->
       <button class="tab-btn" data-category="BEC" role="tab" aria-selected="false" aria-controls="appsPanel">
         <span class="tab-label">🏛️ BEC</span>
         <span class="tab-count" id="count-BEC">0</span>
@@ -439,7 +438,8 @@
   <script>
     // ─────────────────────────────────────────────────────────────────────
     // WEB APPS CATALOG
-    // FIX: BEC-specific tools now use category: "BEC" (previously "vtu"/"faculty")
+    // FIX: The array now correctly contains ALL entries, with the closing
+    //      `];` placed after the LAST entry (Personal Web Apps Index).
     // ─────────────────────────────────────────────────────────────────────
     const webApps = [
       // 1. VTU & Student Tools
@@ -485,7 +485,7 @@
         desc: "Comprehensive collection of engineering mathematics formulas, LaTeX guides, and tools.",
         url: "Mathematics Resources.html", category: "math", badge: "Reference", icon: "📐" },
 
-      // 3. Faculty, NBA & OBE Tools (generic — not BEC-specific)
+      // 3. Faculty, NBA & OBE Tools
       { title: "CO-PO Attainment Calculator",
         desc: "Automate Course Outcome (CO) and Program Outcome (PO) mapping and attainment calculations.",
         url: "co po calculator.html", category: "faculty", badge: "OBE / NBA", icon: "📈" },
@@ -495,13 +495,12 @@
       { title: "Bloom's Taxonomy & QP Checker",
         desc: "Analyze question papers for Bloom's cognitive levels (L1–L6) and CO distribution compliance.",
         url: "blooms.html", category: "faculty", badge: "Exam Audit", icon: "🎯" },
-       { title: "NBA Accreditation Portal",
+      { title: "NBA Accreditation Portal",
         desc: "Documentation, criteria checklists, and calculation helpers for NBA accreditation.",
         url: "nba.html", category: "faculty", badge: "NBA", icon: "🏅" },
       { title: "NBA Criteria Helper (Part 2)",
         desc: "Supplementary module for NBA SAR data compilation and departmental metrics.",
         url: "nba1.html", category: "faculty", badge: "NBA", icon: "📋" },
-
 
       // 4. Competitive Exams
       { title: "GATE Mathematics Practice Portal",
@@ -515,7 +514,6 @@
         url: "jee.html", category: "exams", badge: "JEE / NEET", icon: "🧪" },
 
       // 5. BEC — Basaveshwar Engineering College institutional tools
-      // FIX: These previously used category "vtu"/"faculty" — that's why BEC tab was empty.
       { title: "BEC Student Hub",
         desc: "Dedicated portal and academic updates for Basaveshwar Engineering College students.",
         url: "MY BEC Students.html", category: "BEC", badge: "BEC Bagalkote", icon: "🏛️" },
@@ -533,9 +531,8 @@
         url: "cieFAB.html", category: "BEC", badge: "Faculty Tool", icon: "⚡" },
       { title: "YRC Blood Donor Directory",
         desc: "Youth Red Cross blood donor registry and emergency contact finder.",
-        url: "blood donar.html", category: "BEC", badge: "Social / YRC", icon: "🩸" }
-    ];
-     
+        url: "blood donar.html", category: "BEC", badge: "Social / YRC", icon: "🩸" },
+
       // 6. General Utilities & Community
       { title: "Academic & Professional Resume Builder",
         desc: "Generate clean, structured resumes tailored for students, researchers, and faculty.",
@@ -548,10 +545,10 @@
         url: "free-tools.html", category: "utilities", badge: "Collection", icon: "🧰" },
       { title: "Personal Web Apps Index",
         desc: "Original directory of custom web applications developed by Dr. Mahadev Biradar.",
-        url: "personal.html", category: "utilities", badge: "Directory", icon: "🔗" },
-      
+        url: "personal.html", category: "utilities", badge: "Directory", icon: "🔗" }
+    ];
+    // ✅ array is now correctly closed after the last entry
 
-    // FIX: Added "BEC" key so the title never becomes `undefined`
     const categoryNames = {
       all: "All Applications",
       vtu: "VTU & Student Tools",
@@ -565,17 +562,16 @@
     let activeCategory = "all";
     let searchQuery = "";
 
-    const appsGrid              = document.getElementById("appsGrid");
-    const noResults             = document.getElementById("noResults");
-    const currentCategoryTitle  = document.getElementById("currentCategoryTitle");
-    const showingText           = document.getElementById("showingText");
-    const searchInput           = document.getElementById("appSearch");
-    const tabButtons            = Array.from(document.querySelectorAll(".tab-btn"));
+    const appsGrid             = document.getElementById("appsGrid");
+    const noResults            = document.getElementById("noResults");
+    const currentCategoryTitle = document.getElementById("currentCategoryTitle");
+    const showingText          = document.getElementById("showingText");
+    const searchInput          = document.getElementById("appSearch");
+    const tabButtons           = Array.from(document.querySelectorAll(".tab-btn"));
 
-    // FIX: derive category list from data — new categories picked up automatically
+    // Derive category list dynamically so new categories auto-register
     const categoryKeys = ["all", ...new Set(webApps.map(a => a.category))];
 
-    // Populate category badge counts
     function updateCounts() {
       document.getElementById("count-all").textContent = webApps.length;
       categoryKeys.filter(c => c !== "all").forEach(cat => {
@@ -584,22 +580,20 @@
       });
     }
 
-    // Render filtered cards
     function renderApps() {
-      const q = searchQuery; // already lowercased & trimmed
+      const q = searchQuery;
       const filtered = webApps.filter(app => {
         const matchesCat = activeCategory === "all" || app.category === activeCategory;
         const catLabel   = (categoryNames[app.category] || app.category).toLowerCase();
         const matchesSearch =
           !q ||
           app.title.toLowerCase().includes(q) ||
-          app.desc.toLowerCase().includes(q) ||
+          app.desc.toLowerCase().includes(q)  ||
           app.badge.toLowerCase().includes(q) ||
           catLabel.includes(q);
         return matchesCat && matchesSearch;
       });
 
-      // FIX: guard against missing category label
       currentCategoryTitle.textContent =
         categoryNames[activeCategory] || activeCategory;
       showingText.textContent =
@@ -608,8 +602,6 @@
       if (filtered.length === 0) {
         appsGrid.style.display = "none";
         noResults.style.display = "block";
-
-        // FIX: contextual empty-state message
         noResults.querySelector("h3").textContent = q
           ? "No tools match your search"
           : "No applications in this category";
@@ -642,7 +634,6 @@
       `).join("");
     }
 
-    // Centralized tab activation (used by click + keyboard)
     function activateTab(btn) {
       tabButtons.forEach(b => {
         b.classList.toggle("active", b === btn);
@@ -652,7 +643,6 @@
       renderApps();
     }
 
-    // Tab click + arrow-key navigation (a11y)
     tabButtons.forEach((btn, idx) => {
       btn.addEventListener("click", () => activateTab(btn));
       btn.addEventListener("keydown", e => {
@@ -670,13 +660,11 @@
       });
     });
 
-    // Search listener
     searchInput.addEventListener("input", e => {
       searchQuery = e.target.value.trim().toLowerCase();
       renderApps();
     });
 
-    // Initialize
     updateCounts();
     renderApps();
   </script>
