@@ -11,8 +11,17 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Academic & Utility Web Apps | Dr. Mahadev M Biradar</title>
-  <meta name="description" content="Categorized dashboard of VTU calculators, mathematical solvers, faculty NBA/CO-PO tools, and exam portals by Dr. Mahadev Mallikarjun Biradar.">
+  <title>Academic &amp; Free Utility Web Apps | Dr. Mahadev M Biradar</title>
+  <meta name="description" content="Categorized dashboard of VTU calculators, mathematical solvers, faculty NBA/CO-PO tools, PDF tools, image utilities, and free browser apps by Dr. Mahadev Mallikarjun Biradar.">
+
+  <!-- Speed up the CDN handshakes -->
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <!-- Lightweight Client-Side Libraries for Instant PDF & QR Tools -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -80,13 +89,13 @@
     .dashboard-hero p {
       font-size: 15px;
       opacity: 0.9;
-      max-width: 650px;
+      max-width: 680px;
       margin: 0 auto 20px auto;
     }
 
     /* Search Bar */
     .search-wrapper {
-      max-width: 480px;
+      max-width: 500px;
       margin: auto;
       position: relative;
     }
@@ -108,6 +117,7 @@
       transform: translateY(-50%);
       color: #666;
       font-size: 15px;
+      pointer-events: none;
     }
 
     /* ─── MAIN DASHBOARD LAYOUT (VERTICAL TABS) ─── */
@@ -116,7 +126,7 @@
       margin: 35px auto 60px auto;
       padding: 0 25px;
       display: grid;
-      grid-template-columns: 270px 1fr;
+      grid-template-columns: 275px 1fr;
       gap: 30px;
       align-items: start;
     }
@@ -133,15 +143,18 @@
     }
 
     .tabs-header {
-      font-size: 12px;
+      font-size: 11.5px;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #777;
       font-weight: 700;
-      padding: 8px 14px 10px 14px;
+      padding: 8px 14px 8px 14px;
       border-bottom: 1px solid #f0f2f5;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      margin-top: 6px;
     }
+
+    .tabs-header:first-child { margin-top: 0; }
 
     .tab-btn {
       width: 100%;
@@ -151,10 +164,10 @@
       text-align: left;
       background: transparent;
       border: none;
-      padding: 12px 14px;
+      padding: 11px 14px;
       margin-bottom: 4px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: #374151;
       cursor: pointer;
@@ -173,7 +186,7 @@
     .tab-label {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
     .tab-count {
@@ -190,7 +203,7 @@
       color: #ffffff;
     }
 
-    /* Accent the BEC tab (home-institution tools) */
+    /* Accent the BEC tab */
     .tab-btn[data-category="BEC"] {
       border-left: 3px solid #d94a32;
       padding-left: 11px;
@@ -218,7 +231,6 @@
     }
 
     .category-header h2 { color: #163b65; font-size: 22px; }
-
     .category-header span { font-size: 13px; color: #666; }
 
     .apps-grid {
@@ -240,6 +252,7 @@
       transition: all 0.25s ease;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
 
     .app-card:hover {
@@ -287,6 +300,11 @@
       margin-top: 4px;
     }
 
+    .app-badge.instant-badge {
+      color: #0f766e;
+      background: #f0fdfa;
+    }
+
     .app-desc {
       font-size: 13px;
       color: #555;
@@ -314,6 +332,166 @@
     }
 
     .no-results h3 { color: #163b65; margin-bottom: 8px; }
+    .no-results p { max-width: 520px; margin: 0 auto; }
+
+    /* Inline text button (used inside the "no results" hint) */
+    .link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #d94a32;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .link-btn:hover { color: #b93822; }
+
+    /* Keyboard focus visibility everywhere */
+    .app-card:focus-visible,
+    .tab-btn:focus-visible,
+    .t-btn:focus-visible,
+    .modal-close-btn:focus-visible,
+    .link-btn:focus-visible,
+    .search-wrapper input:focus-visible {
+      outline: 3px solid #1e4e84;
+      outline-offset: 2px;
+    }
+
+    /* ─── BUILT-IN FREE TOOL MODAL ─── */
+    .tool-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 45, 75, 0.65);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .tool-modal-overlay.open { display: flex; }
+
+    .tool-modal {
+      background: #ffffff;
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalPop 0.2s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .tool-modal-header {
+      background: #163b65;
+      color: #ffffff;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tool-modal-header h3 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #ffffff;
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close-btn:hover { background: #d94a32; }
+
+    .tool-modal-body {
+      padding: 22px;
+      overflow-y: auto;
+    }
+
+    .privacy-note {
+      background: #f0fdfa;
+      border: 1px solid #ccfbf1;
+      color: #0f766e;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    /* Tool Form Controls */
+    .t-group { margin-bottom: 14px; }
+    .t-label { display: block; font-size: 13px; font-weight: 600; color: #163b65; margin-bottom: 6px; }
+    .t-input, .t-select, .t-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .t-textarea { min-height: 130px; resize: vertical; }
+    .t-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .t-btn {
+      background: #163b65;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-right: 8px;
+      margin-top: 6px;
+    }
+    .t-btn:hover { background: #1e4e84; }
+    .t-btn.accent { background: #d94a32; }
+    .t-btn.accent:hover { background: #b93822; }
+    .t-btn.secondary { background: #eef5fb; color: #163b65; border: 1px solid #d6e4f0; }
+    .t-btn.secondary:hover { background: #dbe9f6; }
+
+    .t-result-box {
+      margin-top: 16px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    /* Result state variants */
+    .t-result-box.error   { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+    .t-result-box.success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+
+    .stat-pills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stat-pill {
+      background: #eef5fb;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-pill strong { display: block; font-size: 18px; color: #163b65; }
+    .stat-pill span { font-size: 11.5px; color: #555; }
 
     /* ─── FOOTER ─── */
     footer {
@@ -345,6 +523,12 @@
         padding: 10px 14px;
         flex-shrink: 0;
       }
+
+      .t-row { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
     }
   </style>
 </head>
@@ -353,18 +537,19 @@
   <!-- Header -->
   <header>
     <div class="navbar">
-      <a href="index.html" class="logo">Dr. Mahadev <span>Biradar</span> | Apps Portal</a>
+      <a href="index.html" class="logo">Dr. Mahadev <span>Biradar</span> | Free Apps &amp; Tools</a>
       <a href="index.html" class="back-btn">← Back to Main Website</a>
     </div>
   </header>
 
   <!-- Hero Banner with Live Filter -->
   <section class="dashboard-hero">
-    <h1>Academic &amp; Engineering Web Applications</h1>
-    <p>Interactive calculators, numerical solvers, accreditation tools, and exam preparation portals designed for students and faculty.</p>
+    <h1>Academic, Engineering &amp; Free Utility Web Apps</h1>
+    <p>Interactive VTU calculators, numerical solvers, faculty NBA/CO-PO portals, and 100% free browser-based PDF, Image, Text &amp; Developer tools.</p>
     <div class="search-wrapper">
       <span class="search-icon" aria-hidden="true">🔍</span>
-      <input type="text" id="appSearch" placeholder="Search tools (e.g., CGPA, Matrix, NBA, GATE, Resume)..."
+      <input type="search" id="appSearch" autocomplete="off"
+             placeholder="Search tools (e.g., CGPA, Merge PDF, QR Code, Compress Image, NBA)..."
              aria-label="Search applications">
     </div>
   </section>
@@ -374,10 +559,10 @@
 
     <!-- Left Sidebar: Vertical Category Tabs -->
     <aside class="vertical-tabs" role="tablist" aria-label="Application Categories">
-      <div class="tabs-header">Categories</div>
+      <div class="tabs-header">Academic &amp; Institutional</div>
 
       <button class="tab-btn active" data-category="all" role="tab" aria-selected="true" aria-controls="appsPanel">
-        <span class="tab-label">🌐 All Applications</span>
+        <span class="tab-label">🌐 All Tools &amp; Apps</span>
         <span class="tab-count" id="count-all">0</span>
       </button>
 
@@ -402,8 +587,25 @@
       </button>
 
       <button class="tab-btn" data-category="BEC" role="tab" aria-selected="false" aria-controls="appsPanel">
-        <span class="tab-label">🏛️ BEC</span>
+        <span class="tab-label">🏛️ BEC Portal</span>
         <span class="tab-count" id="count-BEC">0</span>
+      </button>
+
+      <div class="tabs-header">Free Browser Utilities</div>
+
+      <button class="tab-btn" data-category="pdf" role="tab" aria-selected="false" aria-controls="appsPanel">
+        <span class="tab-label">📄 PDF &amp; Text Tools</span>
+        <span class="tab-count" id="count-pdf">0</span>
+      </button>
+
+      <button class="tab-btn" data-category="image" role="tab" aria-selected="false" aria-controls="appsPanel">
+        <span class="tab-label">🖼️ Image &amp; QR Tools</span>
+        <span class="tab-count" id="count-image">0</span>
+      </button>
+
+      <button class="tab-btn" data-category="devtools" role="tab" aria-selected="false" aria-controls="appsPanel">
+        <span class="tab-label">⚡ Everyday &amp; Dev Tools</span>
+        <span class="tab-count" id="count-devtools">0</span>
       </button>
 
       <button class="tab-btn" data-category="utilities" role="tab" aria-selected="false" aria-controls="appsPanel">
@@ -415,31 +617,48 @@
     <!-- Right Panel: Filtered App Cards -->
     <section class="tab-content-area" id="appsPanel" role="tabpanel" aria-label="Application list">
       <div class="category-header">
-        <h2 id="currentCategoryTitle">All Applications</h2>
-        <span id="showingText">Showing all tools</span>
+        <h2 id="currentCategoryTitle">All Tools &amp; Apps</h2>
+        <span id="showingText" aria-live="polite">Showing all tools</span>
       </div>
 
       <div class="apps-grid" id="appsGrid">
-        <!-- Cards are dynamically rendered via JS -->
+        <!-- Cards dynamically rendered via JS -->
       </div>
 
-      <div class="no-results" id="noResults">
+      <div class="no-results" id="noResults" aria-live="polite">
         <h3>No matching applications found</h3>
-        <p>Try clearing your search term or switching to another category tab.</p>
+        <p id="noResultsHint">Try clearing your search term or switching to another category tab.</p>
       </div>
     </section>
 
   </main>
+
+  <!-- Interactive Free Tool Modal -->
+  <div class="tool-modal-overlay" id="toolModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="tool-modal">
+      <div class="tool-modal-header">
+        <h3 id="modalTitle">Tool</h3>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close tool">&times;</button>
+      </div>
+      <div class="tool-modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <noscript>
+    <p style="text-align:center;padding:20px;background:#fef2f2;color:#b91c1c;">
+      This dashboard needs JavaScript enabled to list and run the free tools.
+    </p>
+  </noscript>
 
   <footer>
     <p>© 2026 Dr. Mahadev Mallikarjun Biradar | Department of Mathematics, Basaveshwar Engineering College, Bagalkote</p>
   </footer>
 
   <script>
+    "use strict";
+
     // ─────────────────────────────────────────────────────────────────────
-    // WEB APPS CATALOG
-    // FIX: The array now correctly contains ALL entries, with the closing
-    //      `];` placed after the LAST entry (Personal Web Apps Index).
+    // UNIFIED WEB APPS & FREE TOOLS CATALOG
     // ─────────────────────────────────────────────────────────────────────
     const webApps = [
       // 1. VTU & Student Tools
@@ -513,7 +732,7 @@
         desc: "Interactive mock tests and practice quizzes for JEE Advanced and NEET aspirants.",
         url: "jee.html", category: "exams", badge: "JEE / NEET", icon: "🧪" },
 
-      // 5. BEC — Basaveshwar Engineering College institutional tools
+      // 5. BEC — Basaveshwar Engineering College
       { title: "BEC Student Hub",
         desc: "Dedicated portal and academic updates for Basaveshwar Engineering College students.",
         url: "MY BEC Students.html", category: "BEC", badge: "BEC Bagalkote", icon: "🏛️" },
@@ -533,7 +752,61 @@
         desc: "Youth Red Cross blood donor registry and emergency contact finder.",
         url: "blood donar.html", category: "BEC", badge: "Social / YRC", icon: "🩸" },
 
-      // 6. General Utilities & Community
+      // 6. PDF & Text Tools (Instant Built-in Tools)
+      { title: "Merge PDF Files",
+        desc: "Combine multiple PDF documents into a single PDF file privately in your browser.",
+        toolId: "pdfMerge", category: "pdf", badge: "Free PDF Tool", icon: "📑" },
+      { title: "Split / Extract PDF Pages",
+        desc: "Extract specific page ranges (e.g., 1-3, 5) from any PDF and download immediately.",
+        toolId: "pdfSplit", category: "pdf", badge: "Free PDF Tool", icon: "✂️" },
+      { title: "Images to PDF Converter",
+        desc: "Convert multiple JPG or PNG images into a clean, multi-page A4 PDF document.",
+        toolId: "imgToPdf", category: "pdf", badge: "Free PDF Tool", icon: "🗂️" },
+      { title: "Word, Character & Reading Time Counter",
+        desc: "Count words, characters, sentences, paragraphs, and estimated reading/speaking time.",
+        toolId: "wordCounter", category: "pdf", badge: "Free Text Tool", icon: "📝" },
+      { title: "Text Case & Formatter",
+        desc: "Convert text to UPPERCASE, lowercase, Title Case, Sentence case, or remove extra spaces.",
+        toolId: "caseConverter", category: "pdf", badge: "Free Text Tool", icon: "🔤" },
+      { title: "Text Compare / Diff Checker",
+        desc: "Compare two blocks of text line-by-line to spot additions, edits, or mismatches.",
+        toolId: "textDiff", category: "pdf", badge: "Free Text Tool", icon: "⚖️" },
+
+      // 7. Image & QR Tools (Instant Built-in Tools)
+      { title: "Image Compressor & Resizer",
+        desc: "Reduce JPG/PNG/WebP file size for portals and forms while preserving visual clarity.",
+        toolId: "imgCompress", category: "image", badge: "Free Image Tool", icon: "🗜️" },
+      { title: "Image Format Converter",
+        desc: "Convert images between PNG, JPG, and WebP formats instantly in your browser.",
+        toolId: "imgConvert", category: "image", badge: "Free Image Tool", icon: "🔄" },
+      { title: "Instant QR Code Generator",
+        desc: "Create high-resolution QR codes for URLs, Wi-Fi networks, WhatsApp links, or text.",
+        toolId: "qrGen", category: "image", badge: "Free QR Tool", icon: "📱" },
+      { title: "Color Picker & HEX/RGB Converter",
+        desc: "Pick any color and copy its HEX, RGB, and HSL codes for websites and presentations.",
+        toolId: "colorPicker", category: "image", badge: "Design Tool", icon: "🎨" },
+
+      // 8. Everyday & Dev Tools (Instant Built-in Tools)
+      { title: "JSON Formatter & Validator",
+        desc: "Beautify, minify, and validate JSON payloads with instant syntax error detection.",
+        toolId: "jsonFormatter", category: "devtools", badge: "Developer Tool", icon: "🧩" },
+      { title: "Base64 & URL Encoder/Decoder",
+        desc: "Encode or decode text to Base64 or URL-safe strings with one click.",
+        toolId: "base64Tool", category: "devtools", badge: "Developer Tool", icon: "🔐" },
+      { title: "Strong Password Generator",
+        desc: "Generate cryptographically random secure passwords with custom length and symbols.",
+        toolId: "passGen", category: "devtools", badge: "Security Tool", icon: "🔑" },
+      { title: "Engineering & Unit Converter",
+        desc: "Quickly convert Length, Mass, Temperature, Pressure, Area, and Data storage units.",
+        toolId: "unitConv", category: "devtools", badge: "Converter", icon: "📏" },
+      { title: "Age & Date Duration Calculator",
+        desc: "Calculate exact age or total days, weeks, and months between any two dates.",
+        toolId: "dateCalc", category: "devtools", badge: "Everyday Tool", icon: "🗓️" },
+      { title: "Pomodoro Focus & Study Timer",
+        desc: "25/5 minute productivity timer with audio chime for focused study and research sessions.",
+        toolId: "pomodoro", category: "devtools", badge: "Productivity", icon: "⏱️" },
+
+      // 9. General Utilities & Community
       { title: "Academic & Professional Resume Builder",
         desc: "Generate clean, structured resumes tailored for students, researchers, and faculty.",
         url: "Resume.html", category: "utilities", badge: "Career Tool", icon: "📄" },
@@ -547,94 +820,182 @@
         desc: "Original directory of custom web applications developed by Dr. Mahadev Biradar.",
         url: "personal.html", category: "utilities", badge: "Directory", icon: "🔗" }
     ];
-    // ✅ array is now correctly closed after the last entry
 
     const categoryNames = {
-      all: "All Applications",
+      all: "All Tools & Apps",
       vtu: "VTU & Student Tools",
       math: "Mathematics & Solvers",
       faculty: "Faculty, NBA & OBE Tools",
       exams: "Competitive Exams (GATE / JEE)",
       BEC: "BEC — Basaveshwar Engineering College",
+      pdf: "Free PDF & Document Tools",
+      image: "Free Image & QR Tools",
+      devtools: "Free Everyday & Developer Tools",
       utilities: "General & Community Utilities"
     };
 
+    /* ─────────────── SMALL HELPERS ─────────────── */
+    const $ = id => document.getElementById(id);
+
+    const escHtml = s => String(s).replace(/[&<>"']/g,
+      c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    /** Clipboard copy with a fallback for non-secure contexts (http://). */
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        ta.remove();
+        return ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /** Copies the value/textContent of an element and gives the button feedback. */
+    async function copyFrom(id, btn) {
+      const el = $(id);
+      if (!el) return;
+      const text = typeof el.value === "string" ? el.value : el.textContent;
+      if (!text) return;
+      const ok = await copyText(text);
+      if (btn) {
+        const original = btn.dataset.origLabel || btn.textContent;
+        btn.dataset.origLabel = original;
+        btn.textContent = ok ? "Copied ✓" : "Copy failed";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      }
+    }
+
+    function triggerDownload(blob, filename) {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    /* ─────────────── STATE ─────────────── */
     let activeCategory = "all";
     let searchQuery = "";
 
-    const appsGrid             = document.getElementById("appsGrid");
-    const noResults            = document.getElementById("noResults");
-    const currentCategoryTitle = document.getElementById("currentCategoryTitle");
-    const showingText          = document.getElementById("showingText");
-    const searchInput          = document.getElementById("appSearch");
+    const appsGrid             = $("appsGrid");
+    const noResults            = $("noResults");
+    const noResultsHint        = $("noResultsHint");
+    const currentCategoryTitle = $("currentCategoryTitle");
+    const showingText          = $("showingText");
+    const searchInput          = $("appSearch");
     const tabButtons           = Array.from(document.querySelectorAll(".tab-btn"));
 
-    // Derive category list dynamically so new categories auto-register
     const categoryKeys = ["all", ...new Set(webApps.map(a => a.category))];
 
+    /* ─────────────── RENDERING ─────────────── */
     function updateCounts() {
-      document.getElementById("count-all").textContent = webApps.length;
-      categoryKeys.filter(c => c !== "all").forEach(cat => {
-        const el = document.getElementById(`count-${cat}`);
+      const totalEl = $("count-all");
+      if (totalEl) totalEl.textContent = webApps.length;
+
+      categoryKeys.forEach(cat => {
+        if (cat === "all") return;
+        const el = $(`count-${cat}`);
         if (el) el.textContent = webApps.filter(a => a.category === cat).length;
       });
     }
 
+    function matchesSearch(app, q) {
+      if (!q) return true;
+      const catLabel = (categoryNames[app.category] || app.category).toLowerCase();
+      return app.title.toLowerCase().includes(q)
+          || app.desc.toLowerCase().includes(q)
+          || (app.badge || "").toLowerCase().includes(q)
+          || catLabel.includes(q);
+    }
+
     function renderApps() {
       const q = searchQuery;
-      const filtered = webApps.filter(app => {
-        const matchesCat = activeCategory === "all" || app.category === activeCategory;
-        const catLabel   = (categoryNames[app.category] || app.category).toLowerCase();
-        const matchesSearch =
-          !q ||
-          app.title.toLowerCase().includes(q) ||
-          app.desc.toLowerCase().includes(q)  ||
-          app.badge.toLowerCase().includes(q) ||
-          catLabel.includes(q);
-        return matchesCat && matchesSearch;
-      });
 
-      currentCategoryTitle.textContent =
-        categoryNames[activeCategory] || activeCategory;
+      const filtered = webApps.filter(app =>
+        (activeCategory === "all" || app.category === activeCategory) && matchesSearch(app, q)
+      );
+
+      currentCategoryTitle.textContent = categoryNames[activeCategory] || activeCategory;
       showingText.textContent =
-        `Showing ${filtered.length} ${filtered.length === 1 ? "tool" : "tools"}`;
+        `Showing ${filtered.length} ${filtered.length === 1 ? "tool" : "tools"}` +
+        (q ? ` for “${q}”` : "");
 
       if (filtered.length === 0) {
         appsGrid.style.display = "none";
         noResults.style.display = "block";
-        noResults.querySelector("h3").textContent = q
-          ? "No tools match your search"
-          : "No applications in this category";
-        noResults.querySelector("p").textContent = q
-          ? "Try a different keyword, or click 'All Applications' to search every category."
-          : "Switch to another category tab to explore more tools.";
+
+        // If the search has hits in other categories, offer a one-click jump.
+        const elsewhere = q && activeCategory !== "all"
+          ? webApps.filter(a => matchesSearch(a, q)).length
+          : 0;
+
+        noResultsHint.innerHTML = elsewhere
+          ? `No matches in <strong>${escHtml(categoryNames[activeCategory] || activeCategory)}</strong>,
+             but <strong>${elsewhere}</strong> matching tool${elsewhere === 1 ? "" : "s"} exist in other categories.
+             <button type="button" class="link-btn" onclick="showAllMatches()">Show all ${elsewhere} matches →</button>`
+          : "Try clearing your search term or switching to another category tab.";
         return;
       }
 
       appsGrid.style.display = "grid";
       noResults.style.display = "none";
 
-      appsGrid.innerHTML = filtered.map(app => `
-        <a href="${encodeURI(app.url)}" class="app-card">
-          <div>
-            <div class="app-card-top">
-              <div class="app-icon" aria-hidden="true">${app.icon}</div>
-              <div>
-                <div class="app-title">${app.title}</div>
-                <span class="app-badge">${app.badge}</span>
+      appsGrid.innerHTML = filtered.map(app => {
+        const isBuiltIn = Boolean(app.toolId);
+
+        const tagOpen = isBuiltIn
+          ? `<div class="app-card" role="button" tabindex="0"
+                  onclick="openBuiltInTool('${app.toolId}')"
+                  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBuiltInTool('${app.toolId}');}">`
+          : `<a class="app-card" href="${encodeURI(app.url)}">`;
+        const tagClose = isBuiltIn ? `</div>` : `</a>`;
+        const footerLabel = isBuiltIn ? "Open Free Tool" : "Launch Application";
+
+        return `
+          ${tagOpen}
+            <div>
+              <div class="app-card-top">
+                <div class="app-icon" aria-hidden="true">${app.icon}</div>
+                <div>
+                  <div class="app-title">${escHtml(app.title)}</div>
+                  <span class="app-badge ${isBuiltIn ? "instant-badge" : ""}">${escHtml(app.badge)}</span>
+                </div>
               </div>
+              <p class="app-desc">${escHtml(app.desc)}</p>
             </div>
-            <p class="app-desc">${app.desc}</p>
-          </div>
-          <div class="app-footer">
-            <span>Launch Application</span>
-            <span>→</span>
-          </div>
-        </a>
-      `).join("");
+            <div class="app-footer">
+              <span>${footerLabel}</span>
+              <span aria-hidden="true">→</span>
+            </div>
+          ${tagClose}
+        `;
+      }).join("");
+    }
+
+    function showAllMatches() {
+      const allTab = tabButtons.find(b => b.dataset.category === "all");
+      if (allTab) activateTab(allTab);
     }
 
     function activateTab(btn) {
+      if (!btn) return;
       tabButtons.forEach(b => {
         b.classList.toggle("active", b === btn);
         b.setAttribute("aria-selected", b === btn ? "true" : "false");
@@ -665,6 +1026,1015 @@
       renderApps();
     });
 
+    // ─────────────────────────────────────────────────────────────────────
+    // BUILT-IN FREE TOOLS ENGINE (100% Client-Side, Zero Server Upload)
+    // ─────────────────────────────────────────────────────────────────────
+    const modalOverlay = $("toolModalOverlay");
+    const modalTitle   = $("modalTitle");
+    const modalBody    = $("modalBody");
+
+    let activeTimer = null;     // shared by the Pomodoro tool
+    let lastFocused = null;     // element to restore focus to after closing
+
+    function closeModal() {
+      if (!modalOverlay.classList.contains("open")) return;
+      modalOverlay.classList.remove("open");
+      document.body.style.overflow = "";
+      if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+      modalBody.innerHTML = "";
+      if (lastFocused && typeof lastFocused.focus === "function") {
+        lastFocused.focus({ preventScroll: true });
+      }
+      lastFocused = null;
+    }
+
+    function openBuiltInTool(id) {
+      const tool = builtInTools[id];
+      if (!tool) return;
+
+      if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+
+      lastFocused = document.activeElement;
+      modalTitle.textContent = tool.title;
+      modalBody.innerHTML = tool.render();
+      modalBody.scrollTop = 0;
+
+      modalOverlay.classList.add("open");
+      document.body.style.overflow = "hidden";
+
+      if (tool.afterRender) tool.afterRender();
+
+      const firstField = modalBody.querySelector("input, select, textarea, button");
+      (firstField || $("modalCloseBtn")).focus({ preventScroll: true });
+    }
+
+    $("modalCloseBtn").addEventListener("click", closeModal);
+    modalOverlay.addEventListener("click", e => { if (e.target === modalOverlay) closeModal(); });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+    });
+
+    // Keep Tab / Shift+Tab inside the open dialog
+    modalOverlay.addEventListener("keydown", e => {
+      if (e.key !== "Tab") return;
+      const focusables = modalOverlay.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    /** Ensures pdf-lib actually loaded (CDN blocked / offline). */
+    function requirePdfLib() {
+      if (typeof PDFLib === "undefined") {
+        throw new Error("The PDF engine could not load. Check your internet connection and reload the page.");
+      }
+    }
+
+    /* ─────────────── TOOL DEFINITIONS ─────────────── */
+    const builtInTools = {
+      pdfMerge: {
+        title: "📑 Merge PDF Files",
+        render: () => `
+          <div class="privacy-note">🔒 100% Private: Files are merged directly inside your browser and never uploaded to any server.</div>
+          <div class="t-group">
+            <label class="t-label" for="mergeFiles">Select 2 or more PDF files (in the desired order):</label>
+            <input type="file" id="mergeFiles" class="t-input" accept="application/pdf" multiple>
+          </div>
+          <button class="t-btn accent" onclick="runPdfMerge()">Merge &amp; Download PDF</button>
+          <div id="mergeStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      pdfSplit: {
+        title: "✂️ Split / Extract PDF Pages",
+        render: () => `
+          <div class="privacy-note">🔒 100% Private: Processed locally on your device.</div>
+          <div class="t-group">
+            <label class="t-label" for="splitFile">Choose a PDF file:</label>
+            <input type="file" id="splitFile" class="t-input" accept="application/pdf">
+          </div>
+          <div class="t-group">
+            <label class="t-label" for="splitRange">Page numbers / ranges to extract (e.g., <code>1, 3-5, 8</code>):</label>
+            <input type="text" id="splitRange" class="t-input" placeholder="e.g., 1-3, 5">
+          </div>
+          <button class="t-btn accent" onclick="runPdfSplit()">Extract &amp; Download PDF</button>
+          <div id="splitStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      imgToPdf: {
+        title: "🗂️ Images to PDF Converter",
+        render: () => `
+          <div class="privacy-note">🔒 Converts JPG/PNG images into a clean A4 PDF directly in your browser.</div>
+          <div class="t-group">
+            <label class="t-label" for="imgPdfFiles">Select one or more images (JPG / PNG):</label>
+            <input type="file" id="imgPdfFiles" class="t-input" accept="image/jpeg,image/png" multiple>
+          </div>
+          <button class="t-btn accent" onclick="runImgToPdf()">Create &amp; Download PDF</button>
+          <div id="imgPdfStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      wordCounter: {
+        title: "📝 Word, Character & Reading Time Counter",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="wcInput">Paste or type your text below:</label>
+            <textarea id="wcInput" class="t-textarea" placeholder="Start typing or paste an abstract, essay, or report..." oninput="updateWordStats()"></textarea>
+          </div>
+          <div class="stat-pills">
+            <div class="stat-pill"><strong id="wcWords">0</strong><span>Words</span></div>
+            <div class="stat-pill"><strong id="wcChars">0</strong><span>Characters</span></div>
+            <div class="stat-pill"><strong id="wcNoSpace">0</strong><span>Chars (no spaces)</span></div>
+            <div class="stat-pill"><strong id="wcSentences">0</strong><span>Sentences</span></div>
+            <div class="stat-pill"><strong id="wcReadTime">0s</strong><span>Reading Time</span></div>
+          </div>
+        `
+      },
+      caseConverter: {
+        title: "🔤 Text Case & Whitespace Formatter",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="caseInput">Enter text to transform:</label>
+            <textarea id="caseInput" class="t-textarea" placeholder="Enter your text here..."></textarea>
+          </div>
+          <button class="t-btn" onclick="transformCase('upper')">UPPERCASE</button>
+          <button class="t-btn" onclick="transformCase('lower')">lowercase</button>
+          <button class="t-btn" onclick="transformCase('title')">Title Case</button>
+          <button class="t-btn" onclick="transformCase('sentence')">Sentence case</button>
+          <button class="t-btn secondary" onclick="transformCase('clean')">Clean Extra Spaces</button>
+          <button class="t-btn accent" onclick="copyFrom('caseInput', this)">Copy Text</button>
+        `
+      },
+      textDiff: {
+        title: "⚖️ Text Compare / Line Diff Checker",
+        render: () => `
+          <div class="t-row">
+            <div class="t-group">
+              <label class="t-label" for="diffA">Original Text:</label>
+              <textarea id="diffA" class="t-textarea" placeholder="Paste original version..."></textarea>
+            </div>
+            <div class="t-group">
+              <label class="t-label" for="diffB">Modified Text:</label>
+              <textarea id="diffB" class="t-textarea" placeholder="Paste updated version..."></textarea>
+            </div>
+          </div>
+          <button class="t-btn accent" onclick="runTextDiff()">Compare Texts</button>
+          <div id="diffOut" class="t-result-box" style="display:none; max-height:220px; overflow:auto;" role="status"></div>
+        `
+      },
+      imgCompress: {
+        title: "🗜️ Image Compressor & Resizer",
+        render: () => `
+          <div class="privacy-note">🔒 Ideal for resizing photos &amp; signatures for exam/application portals.</div>
+          <div class="t-group">
+            <label class="t-label" for="compFile">Select Image (JPG / PNG / WebP):</label>
+            <input type="file" id="compFile" class="t-input" accept="image/*">
+          </div>
+          <div class="t-row">
+            <div class="t-group">
+              <label class="t-label" for="compQual">Quality: <span id="qualVal">75</span>%</label>
+              <input type="range" id="compQual" min="10" max="95" value="75" class="t-input"
+                     oninput="document.getElementById('qualVal').textContent=this.value">
+            </div>
+            <div class="t-group">
+              <label class="t-label" for="compWidth">Max Width (px, optional):</label>
+              <input type="number" id="compWidth" class="t-input" min="16" placeholder="e.g., 1200">
+            </div>
+          </div>
+          <button class="t-btn accent" onclick="runImgCompress()">Compress &amp; Download JPG</button>
+          <div id="compStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      imgConvert: {
+        title: "🔄 Image Format Converter",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="convFile">Select Image:</label>
+            <input type="file" id="convFile" class="t-input" accept="image/*">
+          </div>
+          <div class="t-group">
+            <label class="t-label" for="convFormat">Target Format:</label>
+            <select id="convFormat" class="t-select">
+              <option value="image/png">PNG (.png)</option>
+              <option value="image/jpeg">JPEG (.jpg)</option>
+              <option value="image/webp">WebP (.webp)</option>
+            </select>
+          </div>
+          <button class="t-btn accent" onclick="runImgConvert()">Convert &amp; Download</button>
+          <div id="convStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      qrGen: {
+        title: "📱 Instant QR Code Generator",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="qrText">Enter URL, Text, Phone, or Wi-Fi text:</label>
+            <input type="text" id="qrText" class="t-input" value="https://mahadevbiradar.in"
+                   placeholder="https://example.com" oninput="debouncedQrGen()">
+          </div>
+          <button class="t-btn accent" onclick="runQrGen()">Generate QR Code</button>
+          <button class="t-btn secondary" onclick="downloadQr()">Download PNG</button>
+          <div id="qrBox" class="t-result-box" style="display:flex; justify-content:center; padding:20px;"></div>
+        `,
+        afterRender: () => runQrGen()
+      },
+      colorPicker: {
+        title: "🎨 Color Picker & HEX / RGB / HSL Converter",
+        render: () => `
+          <div class="t-row" style="align-items:center;">
+            <div class="t-group">
+              <label class="t-label" for="cpInput">Pick a Color:</label>
+              <input type="color" id="cpInput" value="#163b65"
+                     style="width:100%; height:60px; border:none; cursor:pointer; background:transparent;"
+                     oninput="updateColorVals(this.value)">
+            </div>
+            <div id="cpVals" class="t-result-box" style="margin-top:0;"></div>
+          </div>
+        `,
+        afterRender: () => updateColorVals("#163b65")
+      },
+      jsonFormatter: {
+        title: "🧩 JSON Formatter & Validator",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="jsonIn">Paste JSON string:</label>
+            <textarea id="jsonIn" class="t-textarea" spellcheck="false"
+                      placeholder='{"name":"Dr. Mahadev Biradar","dept":"Mathematics"}'></textarea>
+          </div>
+          <button class="t-btn" onclick="formatJson(2)">Beautify (2 Spaces)</button>
+          <button class="t-btn secondary" onclick="formatJson(0)">Minify</button>
+          <button class="t-btn accent" onclick="copyFrom('jsonIn', this)">Copy</button>
+          <div id="jsonStatus" class="t-result-box" style="display:none;" role="status"></div>
+        `
+      },
+      base64Tool: {
+        title: "🔐 Base64 & URL Encoder / Decoder",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="b64In">Input Text:</label>
+            <textarea id="b64In" class="t-textarea" placeholder="Enter text to encode or decode..."></textarea>
+          </div>
+          <button class="t-btn" onclick="runCodec('b64e')">Base64 Encode</button>
+          <button class="t-btn" onclick="runCodec('b64d')">Base64 Decode</button>
+          <button class="t-btn secondary" onclick="runCodec('urle')">URL Encode</button>
+          <button class="t-btn secondary" onclick="runCodec('urld')">URL Decode</button>
+          <div class="t-group" style="margin-top:12px;">
+            <label class="t-label" for="b64Out">Output:</label>
+            <textarea id="b64Out" class="t-textarea" readonly></textarea>
+          </div>
+          <button class="t-btn accent" onclick="copyFrom('b64Out', this)">Copy Output</button>
+        `
+      },
+      passGen: {
+        title: "🔑 Strong Password Generator",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="pwLen">Password Length: <strong id="pwLenLbl">16</strong></label>
+            <input type="range" id="pwLen" min="8" max="40" value="16" class="t-input"
+                   oninput="document.getElementById('pwLenLbl').textContent=this.value; genPassword()">
+          </div>
+          <div class="t-group" style="display:flex; gap:16px; flex-wrap:wrap; font-size:13.5px;">
+            <label><input type="checkbox" id="pwUpper" checked onchange="genPassword()"> Uppercase (A-Z)</label>
+            <label><input type="checkbox" id="pwLower" checked onchange="genPassword()"> Lowercase (a-z)</label>
+            <label><input type="checkbox" id="pwNum" checked onchange="genPassword()"> Numbers (0-9)</label>
+            <label><input type="checkbox" id="pwSym" checked onchange="genPassword()"> Symbols (!@#$)</label>
+          </div>
+          <div class="t-result-box" style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+            <code id="pwOut" style="font-size:17px; font-weight:700; color:#163b65; word-break:break-all;"></code>
+            <div>
+              <button class="t-btn secondary" onclick="genPassword()">Regenerate</button>
+              <button class="t-btn accent" onclick="copyFrom('pwOut', this)">Copy</button>
+            </div>
+          </div>
+        `,
+        afterRender: () => genPassword()
+      },
+      unitConv: {
+        title: "📏 Engineering & Everyday Unit Converter",
+        render: () => `
+          <div class="t-group">
+            <label class="t-label" for="uCat">Category:</label>
+            <select id="uCat" class="t-select" onchange="populateUnits()">
+              <option value="length">Length (m, km, cm, mm, inch, ft, mile)</option>
+              <option value="mass">Mass (kg, g, mg, lb, oz, ton)</option>
+              <option value="temp">Temperature (°C, °F, K)</option>
+              <option value="data">Digital Storage (B, KB, MB, GB, TB)</option>
+            </select>
+          </div>
+          <div class="t-row">
+            <div class="t-group">
+              <label class="t-label" for="uVal">From:</label>
+              <input type="number" id="uVal" class="t-input" value="1" oninput="convertUnits()">
+              <select id="uFrom" class="t-select" style="margin-top:6px;" onchange="convertUnits()"></select>
+            </div>
+            <div class="t-group">
+              <label class="t-label" for="uRes">To:</label>
+              <input type="text" id="uRes" class="t-input" readonly style="background:#eef5fb; font-weight:700;">
+              <select id="uTo" class="t-select" style="margin-top:6px;" onchange="convertUnits()"></select>
+            </div>
+          </div>
+        `,
+        afterRender: () => populateUnits()
+      },
+      dateCalc: {
+        title: "🗓️ Age & Date Duration Calculator",
+        render: () => `
+          <div class="t-row">
+            <div class="t-group">
+              <label class="t-label" for="dStart">Start Date (or Date of Birth):</label>
+              <input type="date" id="dStart" class="t-input" value="2000-01-01" onchange="calcDateDiff()">
+            </div>
+            <div class="t-group">
+              <label class="t-label" for="dEnd">End Date:</label>
+              <input type="date" id="dEnd" class="t-input" onchange="calcDateDiff()">
+            </div>
+          </div>
+          <div id="dResult" class="t-result-box" role="status"></div>
+        `,
+        afterRender: () => {
+          const now = new Date();
+          $("dEnd").value =
+            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+          calcDateDiff();
+        }
+      },
+      pomodoro: {
+        title: "⏱️ Pomodoro Focus & Study Timer",
+        render: () => `
+          <div style="text-align:center; padding:15px 0;">
+            <div id="pomoMode" style="font-weight:700; color:#d94a32; margin-bottom:6px;">FOCUS SESSION (25 MIN)</div>
+            <div id="pomoDisplay" style="font-size:52px; font-weight:800; color:#163b65; font-variant-numeric:tabular-nums;">25:00</div>
+            <div id="pomoMsg" class="privacy-note" style="display:none; margin-top:12px;" role="status"></div>
+            <div style="margin-top:16px;">
+              <button class="t-btn accent" onclick="startPomo()">Start</button>
+              <button class="t-btn" onclick="pausePomo()">Pause</button>
+              <button class="t-btn secondary" onclick="resetPomo(25, 'FOCUS SESSION (25 MIN)')">25m Focus</button>
+              <button class="t-btn secondary" onclick="resetPomo(5, 'SHORT BREAK (5 MIN)')">5m Break</button>
+            </div>
+          </div>
+        `,
+        afterRender: () => resetPomo(25, "FOCUS SESSION (25 MIN)")
+      }
+    };
+
+    /* ─────────────── TOOL HANDLERS ─────────────── */
+
+    async function runPdfMerge() {
+      const input  = $("mergeFiles");
+      const files  = input ? Array.from(input.files) : [];
+      const status = $("mergeStatus");
+
+      status.style.display = "block";
+      status.className = "t-result-box";
+
+      if (files.length < 2) {
+        status.className = "t-result-box error";
+        status.textContent = "Please select at least 2 PDF files.";
+        return;
+      }
+
+      status.textContent = `Merging ${files.length} files…`;
+      try {
+        requirePdfLib();
+        const merged = await PDFLib.PDFDocument.create();
+        for (const file of files) {
+          const doc   = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+          const pages = await merged.copyPages(doc, doc.getPageIndices());
+          pages.forEach(p => merged.addPage(p));
+        }
+        const bytes = await merged.save();
+        triggerDownload(new Blob([bytes], { type: "application/pdf" }), "merged-document.pdf");
+        status.className = "t-result-box success";
+        status.textContent = `Success! Merged ${files.length} files into ${merged.getPageCount()} pages.`;
+      } catch (err) {
+        status.className = "t-result-box error";
+        status.textContent = "Merge failed: " + (err.message || "a file may be corrupted or password-protected.");
+      }
+    }
+
+    async function runPdfSplit() {
+      const input    = $("splitFile");
+      const file     = input ? input.files[0] : null;
+      const rangeStr = $("splitRange").value.trim();
+      const status   = $("splitStatus");
+
+      status.style.display = "block";
+      status.className = "t-result-box";
+
+      if (!file)     { status.className = "t-result-box error"; status.textContent = "Please choose a PDF file."; return; }
+      if (!rangeStr) { status.className = "t-result-box error"; status.textContent = "Enter the pages to extract (e.g. 1-3, 5)."; return; }
+
+      status.textContent = "Extracting pages…";
+      try {
+        requirePdfLib();
+        const src   = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+        const total = src.getPageCount();
+        const indices = new Set();
+
+        rangeStr.split(",").forEach(part => {
+          const p = part.trim();
+          if (!p) return;
+          if (p.includes("-")) {
+            let [a, b] = p.split("-").map(n => parseInt(n, 10));
+            if (isNaN(a) && isNaN(b)) return;
+            if (isNaN(a)) a = b;
+            if (isNaN(b)) b = a;
+            if (a > b) { const t = a; a = b; b = t; }   // support "5-3"
+            for (let i = Math.max(1, a); i <= Math.min(total, b); i++) indices.add(i - 1);
+          } else {
+            const n = parseInt(p, 10);
+            if (!isNaN(n) && n >= 1 && n <= total) indices.add(n - 1);
+          }
+        });
+
+        if (indices.size === 0) {
+          status.className = "t-result-box error";
+          status.textContent = `No valid pages in that range — this PDF has ${total} page${total === 1 ? "" : "s"}.`;
+          return;
+        }
+
+        const out    = await PDFLib.PDFDocument.create();
+        const copied = await out.copyPages(src, [...indices]);
+        copied.forEach(p => out.addPage(p));
+
+        triggerDownload(new Blob([await out.save()], { type: "application/pdf" }), "extracted-pages.pdf");
+        status.className = "t-result-box success";
+        status.textContent = `Extracted ${indices.size} of ${total} pages.`;
+      } catch (err) {
+        status.className = "t-result-box error";
+        status.textContent = "Could not read this PDF: " + (err.message || "it may be corrupted or password-protected.");
+      }
+    }
+
+    async function runImgToPdf() {
+      const input  = $("imgPdfFiles");
+      const files  = input ? Array.from(input.files) : [];
+      const status = $("imgPdfStatus");
+
+      status.style.display = "block";
+      status.className = "t-result-box";
+
+      if (!files.length) {
+        status.className = "t-result-box error";
+        status.textContent = "Please choose at least one JPG or PNG image.";
+        return;
+      }
+
+      status.textContent = "Building PDF…";
+      try {
+        requirePdfLib();
+        const doc = await PDFLib.PDFDocument.create();
+        const A4  = [595.28, 841.89];
+        const MARGIN = 30;
+
+        for (const file of files) {
+          const bytes = await file.arrayBuffer();
+          const img = /png$/i.test(file.type)
+            ? await doc.embedPng(bytes)
+            : await doc.embedJpg(bytes);
+
+          const page  = doc.addPage(A4);
+          const scale = Math.min((A4[0] - MARGIN * 2) / img.width, (A4[1] - MARGIN * 2) / img.height, 1);
+          const w = img.width * scale;
+          const h = img.height * scale;
+
+          page.drawImage(img, { x: (A4[0] - w) / 2, y: (A4[1] - h) / 2, width: w, height: h });
+        }
+
+        triggerDownload(new Blob([await doc.save()], { type: "application/pdf" }), "images-to-pdf.pdf");
+        status.className = "t-result-box success";
+        status.textContent = `Created a ${files.length}-page A4 PDF.`;
+      } catch (err) {
+        status.className = "t-result-box error";
+        status.textContent = "Could not create the PDF: " + (err.message || "unsupported image file.");
+      }
+    }
+
+    function updateWordStats() {
+      const text    = $("wcInput").value;
+      const trimmed = text.trim();
+
+      const words     = trimmed ? trimmed.split(/\s+/).length : 0;
+      const sentences = trimmed ? trimmed.split(/[.!?]+/).filter(s => s.trim()).length : 0;
+      const secs      = Math.ceil((words / 200) * 60);   // ~200 words per minute
+
+      $("wcWords").textContent     = words;
+      $("wcChars").textContent     = text.length;
+      $("wcNoSpace").textContent   = text.replace(/\s/g, "").length;
+      $("wcSentences").textContent = sentences;
+      $("wcReadTime").textContent  = secs >= 60
+        ? `${Math.floor(secs / 60)}m ${secs % 60}s`
+        : `${secs}s`;
+    }
+
+    function transformCase(mode) {
+      const el = $("caseInput");
+      let v = el.value;
+
+      if (mode === "upper")        v = v.toUpperCase();
+      else if (mode === "lower")   v = v.toLowerCase();
+      else if (mode === "title")   v = v.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+      else if (mode === "sentence") v = v.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase());
+      else if (mode === "clean")   v = v.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+
+      el.value = v;
+    }
+
+    function runTextDiff() {
+      const a = $("diffA").value.split(/\r?\n/);
+      const b = $("diffB").value.split(/\r?\n/);
+      const max = Math.max(a.length, b.length);
+
+      let html = "";
+      let changes = 0;
+
+      for (let i = 0; i < max; i++) {
+        const la = a[i] ?? "";
+        const lb = b[i] ?? "";
+
+        if (la === lb) {
+          html += `<div style="color:#555;">&nbsp;&nbsp;${i + 1}: ${escHtml(la) || "<em>(empty line)</em>"}</div>`;
+        } else {
+          changes++;
+          html += `<div style="background:#fee2e2;color:#991b1b;padding:2px 6px;">− ${i + 1}: ${escHtml(la) || "<em>(empty)</em>"}</div>`;
+          html += `<div style="background:#dcfce7;color:#166534;padding:2px 6px;margin-bottom:4px;">+ ${i + 1}: ${escHtml(lb) || "<em>(empty)</em>"}</div>`;
+        }
+      }
+
+      const out = $("diffOut");
+      out.style.display = "block";
+      out.innerHTML = changes
+        ? `<div style="font-weight:700;margin-bottom:8px;">${changes} differing line${changes === 1 ? "" : "s"} found</div>${html}`
+        : `<div style="font-weight:700;color:#166534;">✅ The two texts are identical.</div>`;
+    }
+
+    function runImgCompress() {
+      const input  = $("compFile");
+      const file   = input ? input.files[0] : null;
+      const status = $("compStatus");
+      const qual   = Number($("compQual").value) / 100;
+      const maxW   = Number($("compWidth").value) || 0;
+
+      status.style.display = "block";
+      status.className = "t-result-box";
+
+      if (!file) {
+        status.className = "t-result-box error";
+        status.textContent = "Please choose an image first.";
+        return;
+      }
+
+      status.textContent = "Compressing…";
+      const srcUrl = URL.createObjectURL(file);
+      const img = new Image();
+
+      img.onload = () => {
+        let w = img.naturalWidth;
+        let h = img.naturalHeight;
+
+        if (maxW && w > maxW) {
+          h = Math.round(h * (maxW / w));
+          w = maxW;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width  = w;
+        canvas.height = h;
+
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";           // transparent PNG → white, not black
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+
+        canvas.toBlob(blob => {
+          URL.revokeObjectURL(srcUrl);
+          if (!blob) {
+            status.className = "t-result-box error";
+            status.textContent = "This image could not be compressed.";
+            return;
+          }
+          triggerDownload(blob, "compressed-image.jpg");
+          status.className = "t-result-box success";
+          status.textContent =
+            `Original: ${(file.size / 1024).toFixed(1)} KB → Compressed: ${(blob.size / 1024).toFixed(1)} KB (${w}×${h} px)`;
+        }, "image/jpeg", qual);
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(srcUrl);
+        status.className = "t-result-box error";
+        status.textContent = "This file could not be read as an image.";
+      };
+
+      img.src = srcUrl;
+    }
+
+    function runImgConvert() {
+      const input  = $("convFile");
+      const file   = input ? input.files[0] : null;
+      const fmt    = $("convFormat").value;
+      const status = $("convStatus");
+
+      status.style.display = "block";
+      status.className = "t-result-box";
+
+      if (!file) {
+        status.className = "t-result-box error";
+        status.textContent = "Please select an image first.";
+        return;
+      }
+
+      const ext    = fmt.split("/")[1].replace("jpeg", "jpg");
+      const srcUrl = URL.createObjectURL(file);
+      const img    = new Image();
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width  = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        const ctx = canvas.getContext("2d");
+        if (fmt === "image/jpeg") {          // JPEG has no alpha channel
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(blob => {
+          URL.revokeObjectURL(srcUrl);
+          if (!blob) {
+            status.className = "t-result-box error";
+            status.textContent = "Conversion failed.";
+            return;
+          }
+          triggerDownload(blob, `converted.${ext}`);
+          status.className = "t-result-box success";
+          status.textContent = `Converted and downloaded as .${ext}`;
+        }, fmt, 0.92);
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(srcUrl);
+        status.className = "t-result-box error";
+        status.textContent = "This file could not be read as an image.";
+      };
+
+      img.src = srcUrl;
+    }
+
+    let qrDebounce = null;
+    function debouncedQrGen() {
+      clearTimeout(qrDebounce);
+      qrDebounce = setTimeout(runQrGen, 300);
+    }
+
+    function runQrGen() {
+      const box = $("qrBox");
+      if (!box) return;
+
+      if (typeof QRCode === "undefined") {
+        box.innerHTML = '<p style="color:#b91c1c;">The QR library could not load. Check your connection and reload.</p>';
+        return;
+      }
+
+      const text = ($("qrText").value || "").trim() || "https://mahadevbiradar.in";
+      box.innerHTML = "";
+      new QRCode(box, {
+        text,
+        width: 220,
+        height: 220,
+        colorDark: "#163b65",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function downloadQr() {
+      const canvas = document.querySelector("#qrBox canvas");
+      const imgEl  = document.querySelector("#qrBox img");
+
+      if (canvas) {
+        canvas.toBlob(blob => triggerDownload(blob, "qr-code.png"));
+      } else if (imgEl && imgEl.src) {
+        const a = document.createElement("a");
+        a.href = imgEl.src;
+        a.download = "qr-code.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const l   = (max + min) / 2;
+      const d   = max - min;
+
+      let h = 0;
+      let s = 0;
+
+      if (d !== 0) {
+        s = d / (1 - Math.abs(2 * l - 1));
+        if (max === r)      h = ((g - b) / d) % 6;
+        else if (max === g) h = (b - r) / d + 2;
+        else                h = (r - g) / d + 4;
+        h *= 60;
+        if (h < 0) h += 360;
+      }
+
+      return { h: Math.round(h), s: Math.round(s * 100), l: Math.round(l * 100) };
+    }
+
+    function updateColorVals(hex) {
+      const box = $("cpVals");
+      if (!box) return;
+
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      const hsl = rgbToHsl(r, g, b);
+      const upper = hex.toUpperCase();
+
+      box.innerHTML = `
+        <div><strong>HEX:</strong> <code>${upper}</code></div>
+        <div><strong>RGB:</strong> <code>rgb(${r}, ${g}, ${b})</code></div>
+        <div><strong>HSL:</strong> <code>hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)</code></div>
+        <button class="t-btn secondary" style="margin-top:8px;" onclick="copyText('${upper}')">Copy HEX</button>
+      `;
+    }
+
+    function formatJson(spaces) {
+      const el = $("jsonIn");
+      const st = $("jsonStatus");
+
+      st.style.display = "block";
+      st.className = "t-result-box";
+
+      if (!el.value.trim()) {
+        st.className = "t-result-box error";
+        st.textContent = "Paste some JSON first.";
+        return;
+      }
+
+      try {
+        el.value = JSON.stringify(JSON.parse(el.value), null, spaces);
+        st.className = "t-result-box success";
+        st.textContent = spaces ? "Valid JSON — beautified successfully." : "Valid JSON — minified successfully.";
+      } catch (err) {
+        st.className = "t-result-box error";
+        st.textContent = "Invalid JSON: " + err.message;
+      }
+    }
+
+    /* Unicode-safe Base64 (no deprecated escape/unescape) */
+    function b64Encode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = "";
+      bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
+    }
+
+    function b64Decode(str) {
+      const binary = atob(str.replace(/\s+/g, ""));
+      const bytes  = Uint8Array.from(binary, c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function runCodec(type) {
+      const inp = $("b64In").value;
+      const out = $("b64Out");
+
+      try {
+        if (type === "b64e")      out.value = b64Encode(inp);
+        else if (type === "b64d") out.value = b64Decode(inp);
+        else if (type === "urle") out.value = encodeURIComponent(inp);
+        else if (type === "urld") out.value = decodeURIComponent(inp);
+      } catch (err) {
+        out.value = "Error: invalid input for this operation.";
+      }
+    }
+
+    /** Uniform random integer in [0, max) without modulo bias. */
+    function secureRandomInt(max) {
+      if (max <= 0) return 0;
+      const buf   = new Uint32Array(1);
+      const limit = Math.floor(0x100000000 / max) * max;
+      let x;
+      do {
+        crypto.getRandomValues(buf);
+        x = buf[0];
+      } while (x >= limit);
+      return x % max;
+    }
+
+    function genPassword() {
+      const outEl = $("pwOut");
+      if (!outEl) return;
+
+      const len = Number($("pwLen").value) || 16;
+
+      const sets = [];
+      if ($("pwUpper").checked) sets.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      if ($("pwLower").checked) sets.push("abcdefghijklmnopqrstuvwxyz");
+      if ($("pwNum").checked)   sets.push("0123456789");
+      if ($("pwSym").checked)   sets.push("!@#$%^&*()_+-=[]{}|;:,.<>?");
+
+      const pool = sets.length ? sets.join("") : "abcdefghijklmnopqrstuvwxyz0123456789";
+      const sourceSets = sets.length ? sets : [pool];
+
+      // Guarantee at least one character from every selected set…
+      const chars = sourceSets.map(set => set[secureRandomInt(set.length)]);
+
+      // …then fill the rest randomly…
+      while (chars.length < len) chars.push(pool[secureRandomInt(pool.length)]);
+
+      // …and shuffle so the guaranteed characters aren't in fixed positions.
+      for (let i = chars.length - 1; i > 0; i--) {
+        const j = secureRandomInt(i + 1);
+        [chars[i], chars[j]] = [chars[j], chars[i]];
+      }
+
+      outEl.textContent = chars.slice(0, len).join("");
+    }
+
+    const unitFactors = {
+      length: { m: 1, km: 1000, cm: 0.01, mm: 0.001, inch: 0.0254, ft: 0.3048, mile: 1609.344 },
+      mass:   { kg: 1, g: 0.001, mg: 0.000001, lb: 0.45359237, oz: 0.0283495, ton: 1000 },
+      data:   { B: 1, KB: 1024, MB: 1048576, GB: 1073741824, TB: 1099511627776 },
+      temp:   { C: 1, F: 1, K: 1 }
+    };
+
+    function populateUnits() {
+      const cat  = $("uCat").value;
+      const keys = Object.keys(unitFactors[cat]);
+
+      $("uFrom").innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join("");
+      $("uTo").innerHTML   = keys.map((k, i) => `<option value="${k}" ${i === 1 ? "selected" : ""}>${k}</option>`).join("");
+
+      convertUnits();
+    }
+
+    function convertUnits() {
+      const cat  = $("uCat").value;
+      const val  = parseFloat($("uVal").value);
+      const from = $("uFrom").value;
+      const to   = $("uTo").value;
+      const res  = $("uRes");
+
+      if (isNaN(val)) { res.value = ""; return; }
+
+      let out;
+      if (cat === "temp") {
+        const celsius = from === "C" ? val : from === "F" ? (val - 32) * 5 / 9 : val - 273.15;
+        out = to === "C" ? celsius : to === "F" ? celsius * 9 / 5 + 32 : celsius + 273.15;
+      } else {
+        out = (val * unitFactors[cat][from]) / unitFactors[cat][to];
+      }
+
+      res.value = Number(out.toPrecision(8));
+    }
+
+    /* Exact calendar difference — no 365.25 / 30.4375 approximations. */
+    function parseLocalDate(value) {
+      const [y, m, d] = value.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function calcDateDiff() {
+      const startVal = $("dStart").value;
+      const endVal   = $("dEnd").value;
+      const box      = $("dResult");
+      if (!box) return;
+
+      if (!startVal || !endVal) {
+        box.textContent = "Pick both a start date and an end date.";
+        return;
+      }
+
+      let start = parseLocalDate(startVal);
+      let end   = parseLocalDate(endVal);
+
+      if (isNaN(start) || isNaN(end)) {
+        box.textContent = "Those dates are not valid.";
+        return;
+      }
+
+      if (start > end) { const t = start; start = end; end = t; }  // order-independent
+
+      let years  = end.getFullYear() - start.getFullYear();
+      let months = end.getMonth()    - start.getMonth();
+      let days   = end.getDate()     - start.getDate();
+
+      if (days < 0) {
+        months--;
+        // days in the month preceding the end month
+        days += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      // DST-safe total day count (compare UTC midnights)
+      const totalDays = Math.round(
+        (Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
+         Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) / 86400000
+      );
+
+      box.innerHTML = `
+        <strong>Duration:</strong> ${years} year${years === 1 ? "" : "s"},
+        ${months} month${months === 1 ? "" : "s"}, ${days} day${days === 1 ? "" : "s"}<br>
+        <strong>Total days:</strong> ${totalDays.toLocaleString()} days
+        (${(totalDays / 7).toFixed(1)} weeks · ${totalDays * 24} hours)
+      `;
+    }
+
+    /* ─────────────── POMODORO ─────────────── */
+    let pomoSeconds   = 25 * 60;
+    let pomoModeLabel = "FOCUS SESSION (25 MIN)";
+
+    function renderPomo() {
+      const display = $("pomoDisplay");
+      if (display) {
+        const m = String(Math.floor(pomoSeconds / 60)).padStart(2, "0");
+        const s = String(pomoSeconds % 60).padStart(2, "0");
+        display.textContent = `${m}:${s}`;
+      }
+      const mode = $("pomoMode");
+      if (mode) mode.textContent = pomoModeLabel;
+    }
+
+    function chime() {
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        const ctx = new Ctx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.3);
+        setTimeout(() => { try { ctx.close(); } catch (e) {} }, 1600);
+      } catch (e) { /* audio is a nice-to-have */ }
+    }
+
+    function startPomo() {
+      if (activeTimer) return;
+      if (pomoSeconds <= 0) resetPomo(25, "FOCUS SESSION (25 MIN)");
+
+      const msg = $("pomoMsg");
+      if (msg) msg.style.display = "none";
+
+      activeTimer = setInterval(() => {
+        pomoSeconds--;
+
+        if (pomoSeconds <= 0) {
+          pomoSeconds = 0;
+          renderPomo();
+          clearInterval(activeTimer);
+          activeTimer = null;
+          chime();
+          const done = $("pomoMsg");
+          if (done) {
+            done.style.display = "block";
+            done.textContent = "✅ Session complete — take a short break!";
+          }
+        } else {
+          renderPomo();
+        }
+      }, 1000);
+    }
+
+    function pausePomo() {
+      if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+    }
+
+    function resetPomo(mins, label) {
+      pausePomo();
+      pomoSeconds   = mins * 60;
+      pomoModeLabel = label;
+      const msg = $("pomoMsg");
+      if (msg) { msg.style.display = "none"; msg.textContent = ""; }
+      renderPomo();
+    }
+
+    /* ─────────────── BOOT ─────────────── */
     updateCounts();
     renderApps();
   </script>
