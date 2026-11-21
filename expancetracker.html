@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Colorful Salary Expense Tracker dashboard — track credits, spends, accounts & IDs.">
+<meta name="theme-color" content="#4f46e5">
+<title>Salary Expense Tracker — Dr Mahadev Biradar</title>
+<style>
+  :root{
+    --bg:#eef2f9;
+    --card:#ffffff;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --soft:#f8fafc;
+    --soft-2:#f1f5f9;
+
+    --indigo:#4f46e5;
+    --blue:#3b82f6;
+    --sky:#0ea5e9;
+    --green:#10b981;
+    --green-d:#059669;
+    --red:#ef4444;
+    --red-d:#dc2626;
+    --amber:#f59e0b;
+    --violet:#8b5cf6;
+    --pink:#ec4899;
+    --teal:#14b8a6;
+
+    --radius:1.15rem;
+    --shadow-sm:0 2px 8px -2px rgba(15,23,42,.08);
+    --shadow-md:0 12px 30px -14px rgba(15,23,42,.25);
+    --shadow-lg:0 24px 50px -20px rgba(15,23,42,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,'Segoe UI',Roboto,'Helvetica Neue',sans-serif}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 0% -10%, #e0e7ff 0%, transparent 55%),
+      radial-gradient(1000px 500px at 110% 10%, #cffafe 0%, transparent 50%),
+      var(--bg);
+    min-height:100vh;color:var(--ink);
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:1.5rem;
+  }
+  :focus-visible{outline:3px solid rgba(79,70,229,.45);outline-offset:2px;border-radius:.5rem}
+
+  /* ============ APP SHELL ============ */
+  .app{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    width:100%;max-width:1250px;
+    background:var(--card);
+    border-radius:1.75rem;
+    box-shadow:var(--shadow-lg);
+    overflow:hidden;
+    min-height:calc(100vh - 3rem);
+  }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    background:
+      linear-gradient(160deg, #4338ca 0%, #6d28d9 55%, #db2777 100%);
+    color:#fff;
+    padding:1.75rem 1.25rem;
+    display:flex;flex-direction:column;gap:1.5rem;
+    position:relative;overflow:hidden;
+  }
+  .sidebar::before{
+    content:'';position:absolute;inset:-40% -40% auto auto;
+    width:280px;height:280px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.18), transparent 65%);
+    pointer-events:none;
+  }
+  .sidebar::after{
+    content:'';position:absolute;left:-60px;bottom:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.12), transparent 70%);
+    pointer-events:none;
+  }
+
+  .side-brand{display:flex;align-items:center;gap:.7rem;position:relative;z-index:1}
+  .side-brand .logo{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg,#facc15,#fb923c);
+    display:grid;place-items:center;font-size:1.4rem;
+    box-shadow:0 8px 20px -8px rgba(0,0,0,.5);
+  }
+  .side-brand h1{font-size:1.15rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .side-brand h1 span{color:#fde68a}
+  .side-brand p{font-size:.72rem;opacity:.75;margin-top:.15rem}
+
+  .balance-card{
+    position:relative;z-index:1;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:1rem;
+    padding:1rem 1.1rem;
+    backdrop-filter:blur(6px);
+  }
+  .balance-card .lbl{
+    font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+    font-weight:700;opacity:.8;
+  }
+  .balance-card .amt{
+    font-size:1.7rem;font-weight:800;letter-spacing:-.03em;
+    margin-top:.2rem;display:block;
+  }
+  .balance-card .amt.pos{color:#86efac}
+  .balance-card .amt.neg{color:#fecaca}
+
+  /* vertical tabs */
+  .side-nav{display:flex;flex-direction:column;gap:.4rem;position:relative;z-index:1}
+  .tab-btn{
+    display:flex;align-items:center;gap:.75rem;
+    padding:.8rem 1rem;
+    border:none;background:transparent;
+    color:rgba(255,255,255,.78);
+    font-size:.9rem;font-weight:600;
+    border-radius:.85rem;cursor:pointer;
+    text-align:left;width:100%;
+    transition:.18s;
+    position:relative;
+  }
+  .tab-btn .ico{font-size:1.05rem;display:inline-grid;place-items:center;width:22px}
+  .tab-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+  .tab-btn.active{
+    background:#fff;color:#4338ca;
+    box-shadow:0 10px 24px -12px rgba(0,0,0,.5);
+    font-weight:700;
+  }
+  .tab-btn.active::before{
+    content:'';position:absolute;left:-1.25rem;top:50%;transform:translateY(-50%);
+    width:4px;height:60%;border-radius:0 4px 4px 0;background:#facc15;
+  }
+
+  .side-footer{
+    margin-top:auto;position:relative;z-index:1;
+    font-size:.72rem;opacity:.75;line-height:1.5;
+  }
+  .side-footer a{color:#fde68a;text-decoration:none;font-weight:600}
+  .side-footer a:hover{text-decoration:underline}
+
+  /* settings switch inside sidebar */
+  .settings-switch{
+    display:flex;align-items:center;gap:.6rem;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    padding:.55rem .9rem;border-radius:2rem;
+    cursor:pointer;user-select:none;transition:.15s;
+    position:relative;z-index:1;width:100%;
+  }
+  .settings-switch:hover{background:rgba(255,255,255,.2)}
+  .settings-switch .label{
+    font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    color:#fff;flex:1;text-align:left;
+  }
+  .switch-track{
+    width:38px;height:22px;background:rgba(255,255,255,.35);
+    border-radius:2rem;position:relative;transition:.2s;flex-shrink:0;
+  }
+  .switch-track::after{
+    content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;
+    background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  .settings-switch.active .switch-track{background:#34d399}
+  .settings-switch.active .switch-track::after{transform:translateX(16px)}
+  .settings-switch.active .label{color:#bbf7d0}
+
+  /* ============ MAIN ============ */
+  .main{
+    padding:1.75rem 2rem 2rem;
+    display:flex;flex-direction:column;gap:1.25rem;
+    overflow-x:hidden;min-width:0;
+  }
+  .topbar{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:1rem;
+  }
+  .topbar .greeting h2{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+  .topbar .greeting p{font-size:.82rem;color:var(--muted);margin-top:.15rem}
+  .topbar-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+
+  /* ============ KPI CARDS ============ */
+  .kpis{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1rem;
+  }
+  .kpi{
+    border-radius:var(--radius);padding:1.15rem 1.25rem;
+    color:#fff;position:relative;overflow:hidden;
+    box-shadow:var(--shadow-md);
+    transition:transform .18s;
+  }
+  .kpi:hover{transform:translateY(-2px)}
+  .kpi::after{
+    content:'';position:absolute;right:-30px;top:-30px;
+    width:120px;height:120px;border-radius:50%;
+    background:rgba(255,255,255,.15);
+  }
+  .kpi .kpi-icon{
+    width:38px;height:38px;border-radius:12px;
+    display:grid;place-items:center;font-size:1.15rem;
+    background:rgba(255,255,255,.22);margin-bottom:.7rem;
+  }
+  .kpi .kpi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;font-weight:700;opacity:.9}
+  .kpi .kpi-value{font-size:1.55rem;font-weight:800;letter-spacing:-.02em;margin-top:.15rem}
+  .kpi.credit{background:linear-gradient(135deg,#10b981,#059669)}
+  .kpi.spend{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+  .kpi.balance{background:linear-gradient(135deg,#6366f1,#4338ca)}
+
+  /* ============ CARDS / PANELS ============ */
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.25rem 1.4rem;
+    box-shadow:var(--shadow-sm);
+  }
+  .panel-title{
+    font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);margin-bottom:.9rem;
+    display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;
+  }
+
+  /* period bar */
+  .period-bar{
+    display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;
+    background:linear-gradient(135deg,#eef2ff,#f0f9ff);
+    border:1px solid #dbeafe;
+  }
+  .period-bar label{font-weight:700;color:#3730a3;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+  .period-bar .period-label{
+    font-weight:800;color:#fff;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    padding:.35rem 1rem;border-radius:2rem;font-size:.85rem;
+    box-shadow:0 6px 14px -6px rgba(79,70,229,.6);
+  }
+  .spacer{flex:1}
+
+  /* form controls */
+  select,input{
+    padding:.6rem 1rem;border-radius:.75rem;border:1px solid #cbd5e1;
+    background:#fff;font-size:.9rem;font-weight:500;outline:none;transition:.15s;width:100%;
+    color:var(--ink);
+  }
+  select{cursor:pointer}
+  select:focus,input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,.18)}
+  input[type="number"]{font-variant-numeric:tabular-nums}
+
+  /* buttons */
+  .btn{
+    padding:.65rem 1.25rem;border-radius:.8rem;font-weight:700;font-size:.85rem;
+    border:none;cursor:pointer;transition:.15s;white-space:nowrap;
+    display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  }
+  .btn-credit{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 8px 18px -8px rgba(16,185,129,.7)}
+  .btn-spend{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 8px 18px -8px rgba(239,68,68,.7)}
+  .btn-update{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 8px 18px -8px rgba(245,158,11,.7)}
+  .btn-primary{background:linear-gradient(135deg,#4f46e5,#4338ca);color:#fff;box-shadow:0 8px 18px -8px rgba(79,70,229,.7)}
+  .btn-outline{background:#fff;border:1px solid #cbd5e1;color:#334155}
+  .btn-outline:hover{background:var(--soft-2)}
+  .btn-pdf{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 8px 18px -8px rgba(139,92,246,.7)}
+  .btn-save{background:linear-gradient(135deg,#14b8a6,#0f766e);color:#fff;box-shadow:0 8px 18px -8px rgba(20,184,166,.7)}
+  .btn-sm{padding:.5rem .95rem;font-size:.78rem}
+  .btn-ghost{background:transparent;color:var(--muted);padding:.5rem .8rem;font-size:.82rem}
+  .btn-ghost:hover{background:var(--soft-2);color:#334155}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+
+  /* ============ FORMS ============ */
+  .forms{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .form-card{
+    background:#fbfdff;border:1px solid #eef2f7;border-radius:var(--radius);
+    padding:1.15rem 1.25rem;display:flex;flex-direction:column;gap:.85rem;transition:.2s;
+  }
+  .form-card.credit-form{border-top:4px solid var(--green);background:linear-gradient(180deg,#f0fdf4,#ffffff 40%)}
+  .form-card.spend-form{border-top:4px solid var(--red);background:linear-gradient(180deg,#fef2f2,#ffffff 40%)}
+  .form-card.editing{box-shadow:0 0 0 3px #fde68a;background:#fffbeb}
+  .form-card h3{
+    font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);font-weight:800;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .editing-tag{background:var(--amber);color:#fff;font-size:.62rem;padding:.15rem .55rem;border-radius:2rem;letter-spacing:.04em}
+  .field{display:flex;flex-direction:column;gap:.3rem}
+  .field label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+
+  /* ============ ENTRIES TABLE ============ */
+  .entries-box{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .entries-head,.entry-row{
+    display:grid;grid-template-columns:2.2fr 1fr 1.1fr 1fr .9fr;
+    padding:.85rem 1.15rem;align-items:center;
+  }
+  .entries-head{
+    background:linear-gradient(180deg,#f8fafc,#f1f5f9);
+    font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);border-bottom:1px solid var(--line);
+  }
+  .entry-row{border-bottom:1px solid #f1f5f9;transition:background .12s;font-size:.9rem;padding:.9rem 1.15rem}
+  .entry-row:last-child{border-bottom:none}
+  .entry-row:hover{background:#fafbff}
+  .entry-row.editing-row{background:#fffbeb;box-shadow:inset 4px 0 0 var(--amber)}
+  .badge{
+    display:inline-block;padding:.22rem .75rem;border-radius:2rem;
+    font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;width:fit-content;
+  }
+  .badge-credit{background:#d1fae5;color:#065f46}
+  .badge-spend{background:#fee2e2;color:#991b1b}
+  .entry-desc{font-weight:700;color:#1e293b;word-break:break-word}
+  .entry-cat{font-size:.7rem;color:#94a3b8;font-weight:600;margin-top:.1rem}
+  .entry-amount{font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums}
+  .entry-amount.pos{color:var(--green-d)}
+  .entry-amount.neg{color:var(--red-d)}
+  .entry-date{font-size:.74rem;color:#94a3b8}
+  .row-actions{display:flex;gap:.2rem;justify-content:flex-end}
+  .icon-btn{
+    background:none;border:none;color:#94a3b8;font-size:.9rem;cursor:pointer;
+    padding:.35rem .45rem;border-radius:.5rem;transition:.12s;line-height:1;
+  }
+  .icon-btn.edit:hover{background:#fef3c7;color:#b45309}
+  .icon-btn.delete:hover{background:#fee2e2;color:#b91c1c}
+  .empty-state{padding:2.5rem 1rem;text-align:center;color:#94a3b8;font-style:italic;font-size:.9rem}
+
+  /* ============ SUMMARY ============ */
+  .summary{
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);
+    border:1px solid #ddd6fe;border-radius:var(--radius);
+    padding:1.15rem 1.4rem;display:flex;flex-wrap:wrap;align-items:center;
+    justify-content:space-between;gap:1rem;
+  }
+  .stats{display:flex;flex-wrap:wrap;gap:1.5rem}
+  .stat{display:flex;flex-direction:column}
+  .stat-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800;margin-bottom:.15rem}
+  .stat-value{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+  .stat-value.pos{color:var(--green-d)}
+  .stat-value.neg{color:var(--red-d)}
+  .divider{width:1px;background:#ddd6fe;align-self:stretch;margin:.15rem 0}
+
+  /* ============ CATEGORY CHIPS ============ */
+  .category-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.9rem}
+  .category-chip{
+    display:inline-flex;align-items:center;gap:.35rem;
+    background:#fff;border:1px solid #cbd5e1;
+    padding:.32rem .5rem .32rem .85rem;border-radius:2rem;
+    font-size:.78rem;font-weight:700;color:#334155;transition:.15s;
+  }
+  .category-chip:hover{border-color:var(--indigo);box-shadow:0 4px 10px -6px rgba(79,70,229,.4)}
+  .category-chip.no-edit{padding-right:.85rem}
+  .chip-btn{background:none;border:none;cursor:pointer;padding:.15rem .28rem;border-radius:50%;font-size:.72rem;line-height:1;color:#94a3b8;transition:.1s}
+  .chip-btn.edit:hover{background:#fef3c7;color:#b45309}
+  .chip-btn.remove:hover{background:#fee2e2;color:#b91c1c}
+  .category-add-row{display:flex;gap:.5rem;flex-wrap:wrap}
+  .category-add-row input{flex:1 1 180px;padding:.55rem .9rem;font-size:.85rem}
+  .category-add-row .btn{padding:.55rem 1rem;font-size:.78rem}
+
+  /* ============ ACCOUNTS ============ */
+  .account-form-card{
+    background:linear-gradient(180deg,#eff6ff,#ffffff 40%);
+    border:1px solid #dbeafe;border-top:4px solid var(--blue);
+    border-radius:var(--radius);padding:1.15rem 1.25rem;
+    display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.25rem;transition:.2s;
+  }
+  .account-form-card.editing{box-shadow:0 0 0 3px #fde68a;background:#fffbeb}
+  .account-form-card h3{
+    font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    font-weight:800;display:flex;align-items:center;justify-content:space-between;
+  }
+  .account-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem}
+
+  .type-badge{
+    display:inline-block;padding:.22rem .7rem;border-radius:2rem;
+    font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    width:fit-content;white-space:nowrap;
+  }
+  .type-bank{background:#dbeafe;color:#1e40af}
+  .type-pan{background:#fef3c7;color:#92400e}
+  .type-aadhaar{background:#e0e7ff;color:#3730a3}
+  .type-other{background:var(--soft-2);color:#334155}
+
+  .account-card{
+    background:#fff;border:1px solid var(--line);border-radius:1rem;
+    padding:1rem 1.2rem;margin-bottom:.7rem;
+    display:flex;flex-wrap:wrap;align-items:center;gap:1rem;transition:.15s;
+  }
+  .account-card:hover{border-color:#cbd5e1;box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+  .account-card.editing-card{background:#fffbeb;box-shadow:inset 4px 0 0 var(--amber);border-color:#fde68a}
+  .account-main{flex:2 1 260px;display:flex;flex-direction:column;gap:.3rem;min-width:0}
+  .account-name{font-weight:800;color:#1e293b;font-size:.95rem;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+  .account-number{
+    font-family:'Courier New',monospace;font-weight:700;color:#334155;
+    font-size:.9rem;letter-spacing:.04em;word-break:break-all;
+    background:var(--soft);padding:.35rem .7rem;border-radius:.5rem;
+    display:inline-block;width:fit-content;
+  }
+  .account-note{font-size:.75rem;color:#94a3b8;font-style:italic}
+  .account-actions{display:flex;gap:.2rem;margin-left:auto}
+
+  /* ============ HINTS ============ */
+  .readonly-hint,.accounts-empty-hint{
+    background:#fef9c3;border:1px solid #fde047;color:#854d0e;
+    border-radius:.85rem;padding:.65rem 1rem;font-size:.8rem;font-weight:600;
+    display:flex;align-items:center;gap:.5rem;
+  }
+  .accounts-empty-hint{display:none;margin-bottom:1rem;text-align:center;justify-content:center}
+  body.settings-mode .readonly-hint{display:none}
+  body:not(.settings-mode) .accounts-empty-hint{display:flex}
+
+  /* hide mutation controls when settings OFF */
+  body:not(.settings-mode) .row-actions,
+  body:not(.settings-mode) .account-actions,
+  body:not(.settings-mode) .chip-btn,
+  body:not(.settings-mode) .category-add-row,
+  body:not(.settings-mode) #clearMonthBtn,
+  body:not(.settings-mode) #creditFormCard,
+  body:not(.settings-mode) #spendFormCard,
+  body:not(.settings-mode) #accountFormCard,
+  body:not(.settings-mode) #resetCategoriesBtn,
+  body:not(.settings-mode) #resetAccountTypesBtn{display:none !important}
+
+  /* ---- FIX #1: hide the Actions column + fix grid in read-only mode ---- */
+  body:not(.settings-mode) .entries-head > *:nth-child(5){
+    display:none;
+  }
+  body:not(.settings-mode) .entries-head,
+  body:not(.settings-mode) .entry-row{
+    grid-template-columns:2.2fr 1fr 1.1fr 1fr;
+  }
+
+  /* tab panels */
+  .tab-panel{display:none}
+  .tab-panel.active{display:block;animation:fadeUp .25s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1000px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .kpi.balance{grid-column:1/-1}
+    .forms{grid-template-columns:1fr}
+    .account-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:820px){
+    .app{grid-template-columns:1fr;max-width:100%;min-height:auto}
+    .sidebar{flex-direction:row;flex-wrap:wrap;align-items:center;padding:1rem 1.1rem;gap:.75rem}
+    .side-brand{flex:1 1 100%}
+    .balance-card{flex:1 1 140px;padding:.7rem .9rem}
+    .balance-card .amt{font-size:1.25rem}
+    .side-nav{flex:1 1 100%;flex-direction:row;flex-wrap:wrap}
+    .tab-btn{flex:1 1 auto;justify-content:center}
+    .tab-btn.active::before{display:none}
+    .settings-switch{flex:1 1 100%}
+    .side-footer{display:none}
+    .main{padding:1.25rem}
+  }
+  @media (max-width:620px){
+    body{padding:.75rem}
+    .app{border-radius:1.25rem}
+    .kpis{grid-template-columns:1fr}
+    .kpi.balance{grid-column:auto}
+    .entries-head,.entry-row{grid-template-columns:2fr 1fr 1fr .9fr;font-size:.82rem;padding:.75rem .85rem}
+    .entries-head > *:nth-child(4),.entry-row > *:nth-child(4){display:none}
+    body:not(.settings-mode) .entries-head,
+    body:not(.settings-mode) .entry-row{
+      grid-template-columns:2fr 1fr 1fr;
+    }
+    .form-row{grid-template-columns:1fr}
+    .account-grid{grid-template-columns:1fr}
+    .btn{width:100%}
+    .topbar-actions{width:100%}
+    .topbar-actions .btn{flex:1}
+    .stats{gap:1rem;width:100%}
+    .summary{flex-direction:column;align-items:stretch}
+    .divider{display:none}
+  }
+
+  /* ============ PRINT ============ */
+  @media print{
+    body{background:#fff;padding:0}
+    .app{grid-template-columns:1fr;box-shadow:none;border-radius:0;min-height:auto;max-width:100%}
+    .sidebar,.topbar-actions,.tabs,.period-bar,.forms,.category-manager,.account-form-card,
+    .row-actions,.account-actions,.btn,.settings-switch,.readonly-hint,.accounts-empty-hint,
+    .kpis,.side-footer,.account-types-manager{display:none !important}
+    .main{padding:1rem}
+    .tab-panel{display:none !important}
+    .tab-panel.active{display:block !important}
+    .entries-box{border:1px solid #ccc}
+    .badge,.type-badge,.account-number{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar">
+    <div class="side-brand">
+      <div class="logo">💰</div>
+      <div>
+        <h1>Salary <span>Tracker</span></h1>
+        <p>by Dr Mahadev Biradar</p>
+      </div>
+    </div>
+
+    <div class="balance-card">
+      <span class="lbl">Net Balance</span>
+      <span class="amt pos" id="headerBalance">₹0</span>
+    </div>
+
+    <nav class="side-nav" role="tablist" aria-label="Main sections">
+      <button class="tab-btn active" data-tab="expenses" role="tab" aria-selected="true" type="button">
+        <span class="ico">📊</span> Expenses
+      </button>
+      <button class="tab-btn" data-tab="accounts" role="tab" aria-selected="false" type="button">
+        <span class="ico">🏦</span> Accounts &amp; IDs
+      </button>
+    </nav>
+
+    <button class="settings-switch" id="settingsSwitch" type="button" role="switch" aria-checked="false" title="Toggle settings mode">
+      <span class="label" id="settingsLabel">Settings Off</span>
+      <span class="switch-track" aria-hidden="true"></span>
+    </button>
+
+    <div class="side-footer">
+      🌐 <a href="https://www.mahadevbiradar.in" target="_blank" rel="noopener noreferrer">mahadevbiradar.in</a><br>
+      © <span id="year"></span> Dr Mahadev Biradar
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="greeting">
+        <h2 id="pageTitle">📊 Expenses Dashboard</h2>
+        <p id="pageSub">Track your credits, spends and balance at a glance.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-save btn-sm" id="saveBtn" type="button" title="Save all data">💾 Save</button>
+        <button class="btn btn-pdf btn-sm" id="downloadPdfBtn" type="button">📄 Export PDF</button>
+      </div>
+    </div>
+
+    <div class="readonly-hint">🔒 Read-only view. Turn on <strong>Settings</strong> (sidebar) to add, edit, or delete.</div>
+
+    <!-- ============ EXPENSES TAB ============ -->
+    <section class="tab-panel active" id="tab-expenses" role="tabpanel">
+
+      <!-- KPI cards -->
+      <div class="kpis">
+        <div class="kpi credit">
+          <div class="kpi-icon">⬆️</div>
+          <div class="kpi-label">Total Credits</div>
+          <div class="kpi-value" id="totalCredit">₹0</div>
+        </div>
+        <div class="kpi spend">
+          <div class="kpi-icon">⬇️</div>
+          <div class="kpi-label">Total Spends</div>
+          <div class="kpi-value" id="totalSpend">₹0</div>
+        </div>
+        <div class="kpi balance">
+          <div class="kpi-icon">💎</div>
+          <div class="kpi-label">Net Balance</div>
+          <div class="kpi-value" id="netBalance">₹0</div>
+        </div>
+      </div>
+
+      <!-- Period bar -->
+      <div class="panel period-bar">
+        <label for="monthSelect">📅 Month</label>
+        <select id="monthSelect" aria-label="Month" style="max-width:200px"></select>
+        <span class="period-label" id="periodLabel">—</span>
+        <span class="spacer"></span>
+      </div>
+
+      <!-- Category manager -->
+      <div class="panel category-manager">
+        <div class="panel-title">
+          <span>🏷️ Spend Categories</span>
+          <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#94a3b8;font-size:.72rem">add · edit · remove</span>
+        </div>
+        <div class="category-chips" id="categoryChips"></div>
+        <div class="category-add-row">
+          <input type="text" id="newCategoryInput" placeholder="New category name (e.g. Insurance, Gym)" aria-label="New category">
+          <button class="btn btn-primary btn-sm" id="addCategoryBtn" type="button">➕ Add</button>
+          <button class="btn btn-outline btn-sm" id="resetCategoriesBtn" type="button" title="Restore defaults">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- Forms -->
+      <div class="forms">
+        <div class="form-card credit-form" id="creditFormCard">
+          <h3>
+            <span id="creditFormTitle">⬆️ Add Salary / Credit</span>
+            <span class="editing-tag" id="creditEditingTag" style="display:none">Editing</span>
+          </h3>
+          <div class="field">
+            <label for="creditDesc">Description</label>
+            <input type="text" id="creditDesc" placeholder="e.g. Salary, Bonus" value="Salary">
+          </div>
+          <div class="field">
+            <label for="creditAmount">Amount (₹)</label>
+            <input type="number" id="creditAmount" placeholder="0" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-credit" id="addCreditBtn" type="button">Add Credit</button>
+            <button class="btn btn-ghost" id="cancelCreditEditBtn" type="button" style="display:none">Cancel</button>
+          </div>
+        </div>
+
+        <div class="form-card spend-form" id="spendFormCard">
+          <h3>
+            <span id="spendFormTitle">⬇️ Add Spend</span>
+            <span class="editing-tag" id="spendEditingTag" style="display:none">Editing</span>
+          </h3>
+          <div class="field">
+            <label for="spendDesc">Description</label>
+            <input type="text" id="spendDesc" placeholder="e.g. Rent, Groceries">
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="spendCategory">Category</label>
+              <select id="spendCategory"></select>
+            </div>
+            <div class="field">
+              <label for="spendAmount">Amount (₹)</label>
+              <input type="number" id="spendAmount" placeholder="0" min="0" step="0.01" inputmode="decimal">
+            </div>
+          </div>
+          <div class="form-row">
+            <button class="btn btn-spend" id="addSpendBtn" type="button">Add Spend</button>
+            <button class="btn btn-ghost" id="cancelSpendEditBtn" type="button" style="display:none">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entries -->
+      <div class="entries-box">
+        <div class="entries-head">
+          <span>Description</span><span>Type</span><span>Amount</span><span>Date</span>
+          <span style="text-align:right">Actions</span>
+        </div>
+        <div id="entriesList"></div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary">
+        <div class="stats">
+          <div class="stat"><span class="stat-label">Credits</span><span class="stat-value pos" id="sumCredit">₹0</span></div>
+          <div class="divider"></div>
+          <div class="stat"><span class="stat-label">Spends</span><span class="stat-value neg" id="sumSpend">₹0</span></div>
+          <div class="divider"></div>
+          <div class="stat"><span class="stat-label">Balance</span><span class="stat-value pos" id="sumNet">₹0</span></div>
+        </div>
+        <button class="btn btn-outline btn-sm" id="clearMonthBtn" type="button">🗑️ Clear this month</button>
+      </div>
+    </section>
+
+    <!-- ============ ACCOUNTS TAB ============ -->
+    <section class="tab-panel" id="tab-accounts" role="tabpanel">
+      <div class="accounts-empty-hint">🔒 Turn on <strong>Settings</strong> (sidebar) to add or edit accounts &amp; IDs.</div>
+
+      <!-- Custom Account/ID Types manager (add · edit · remove) -->
+      <div class="panel category-manager account-types-manager">
+        <div class="panel-title">
+          <span>🏷️ Account / ID Types</span>
+          <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#94a3b8;font-size:.72rem">add · edit · remove</span>
+        </div>
+        <div class="category-chips" id="accountTypeChips"></div>
+        <div class="category-add-row">
+          <input type="text" id="newAccountTypeInput" placeholder="New type (e.g. Credit Card, UPI, Demat, Passport)" aria-label="New account type">
+          <button class="btn btn-primary btn-sm" id="addAccountTypeBtn" type="button">➕ Add</button>
+          <button class="btn btn-outline btn-sm" id="resetAccountTypesBtn" type="button" title="Remove all custom types">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="account-form-card" id="accountFormCard">
+        <h3>
+          <span id="accountFormTitle">➕ Add Account / Important Number</span>
+          <span class="editing-tag" id="accountEditingTag" style="display:none">Editing</span>
+        </h3>
+        <div class="account-grid">
+          <div class="field">
+            <label for="accountType">Type</label>
+            <select id="accountType"></select>
+          </div>
+          <div class="field">
+            <label for="accountName">Label / Name</label>
+            <input type="text" id="accountName" placeholder="e.g. SBI Savings">
+          </div>
+          <div class="field">
+            <label for="accountNumber">Number / Details</label>
+            <input type="text" id="accountNumber" placeholder="e.g. 1234567890">
+          </div>
+          <div class="field">
+            <label for="accountNote">Note (optional)</label>
+            <input type="text" id="accountNote" placeholder="e.g. primary salary">
+          </div>
+        </div>
+        <div class="form-row" style="max-width:340px">
+          <button class="btn btn-primary" id="addAccountBtn" type="button">Save</button>
+          <button class="btn btn-ghost" id="cancelAccountEditBtn" type="button" style="display:none">Cancel</button>
+        </div>
+      </div>
+
+      <div id="accountsList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const STORAGE_ENTRIES = 'salary_tracker_entries_v3';
+  const STORAGE_CATEGORIES = 'salary_tracker_categories_v1';
+  const STORAGE_ACCOUNTS = 'salary_tracker_accounts_v1';
+  const STORAGE_CUSTOM_ACCOUNT_TYPES = 'salary_tracker_custom_account_types_v1';
+  const STORAGE_SETTINGS = 'salary_tracker_settings_mode';
+
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+
+  const DEFAULT_CATEGORIES = ['Rent','Groceries','EMI','Fuel','Utilities','Food',
+    'Shopping','Medical','Travel','Entertainment','Education','Savings','Other'];
+
+  /* Built-in account/ID types (always present, cannot be removed) */
+  const BASE_ACCOUNT_TYPES = {
+    bank:    { label: '🏦 Bank Account', cls: 'type-bank' },
+    pan:     { label: '🪪 PAN Card',     cls: 'type-pan' },
+    aadhaar: { label: '🆔 Aadhaar',      cls: 'type-aadhaar' },
+    other:   { label: '📌 Other',        cls: 'type-other' }
+  };
+
+  function getAccountTypeLabel(type) {
+    return BASE_ACCOUNT_TYPES[type] ? BASE_ACCOUNT_TYPES[type].label : '📌 ' + type;
+  }
+  function getAccountTypeClass(type) {
+    return BASE_ACCOUNT_TYPES[type] ? BASE_ACCOUNT_TYPES[type].cls : 'type-other';
+  }
+
+  let entries = [], categories = [], accounts = [], customAccountTypes = [];
+  let editingId = null, editingType = null, editingAccountId = null;
+  let settingsMode = false;
+
+  const $ = id => document.getElementById(id);
+
+  const monthSelect = $('monthSelect'), periodLabel = $('periodLabel');
+  const headerBalance = $('headerBalance');
+  const entriesList = $('entriesList');
+  const totalCreditEl = $('totalCredit'), totalSpendEl = $('totalSpend'), netBalanceEl = $('netBalance');
+  const sumCredit = $('sumCredit'), sumSpend = $('sumSpend'), sumNet = $('sumNet');
+  const downloadPdfBtn = $('downloadPdfBtn'), saveBtn = $('saveBtn');
+  const settingsSwitch = $('settingsSwitch'), settingsLabel = $('settingsLabel');
+
+  const creditFormCard = $('creditFormCard'), creditFormTitle = $('creditFormTitle');
+  const creditEditingTag = $('creditEditingTag'), creditDesc = $('creditDesc');
+  const creditAmount = $('creditAmount'), addCreditBtn = $('addCreditBtn');
+  const cancelCreditEditBtn = $('cancelCreditEditBtn');
+
+  const spendFormCard = $('spendFormCard'), spendFormTitle = $('spendFormTitle');
+  const spendEditingTag = $('spendEditingTag'), spendDesc = $('spendDesc');
+  const spendCategory = $('spendCategory'), spendAmount = $('spendAmount');
+  const addSpendBtn = $('addSpendBtn'), cancelSpendEditBtn = $('cancelSpendEditBtn');
+
+  const categoryChips = $('categoryChips'), newCategoryInput = $('newCategoryInput');
+  const addCategoryBtn = $('addCategoryBtn'), resetCategoriesBtn = $('resetCategoriesBtn');
+
+  const accountFormCard = $('accountFormCard'), accountFormTitle = $('accountFormTitle');
+  const accountEditingTag = $('accountEditingTag'), accountType = $('accountType');
+  const accountName = $('accountName'), accountNumber = $('accountNumber'), accountNote = $('accountNote');
+  const addAccountBtn = $('addAccountBtn'), cancelAccountEditBtn = $('cancelAccountEditBtn');
+  const accountsList = $('accountsList');
+  const clearMonthBtn = $('clearMonthBtn');
+  const pageTitle = $('pageTitle'), pageSub = $('pageSub');
+
+  /* Custom account types refs */
+  const accountTypeChips = $('accountTypeChips');
+  const newAccountTypeInput = $('newAccountTypeInput');
+  const addAccountTypeBtn = $('addAccountTypeBtn');
+  const resetAccountTypesBtn = $('resetAccountTypesBtn');
+
+  // ---------- Tabs ----------
+  const TAB_META = {
+    expenses: { title:'📊 Expenses Dashboard', sub:'Track your credits, spends and balance at a glance.' },
+    accounts: { title:'🏦 Accounts & IDs',     sub:'Keep your bank accounts, PAN, Aadhaar and IDs in one place.' }
+  };
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected','false');
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      $('tab-' + btn.dataset.tab).classList.add('active');
+      const meta = TAB_META[btn.dataset.tab];
+      if (meta) { pageTitle.textContent = meta.title; pageSub.textContent = meta.sub; }
+    });
+  });
+
+  // ---------- Settings ----------
+  function applySettingsMode() {
+    if (settingsMode) {
+      document.body.classList.add('settings-mode');
+      settingsSwitch.classList.add('active');
+      settingsSwitch.setAttribute('aria-checked','true');
+      settingsLabel.textContent = 'Settings On';
+    } else {
+      document.body.classList.remove('settings-mode');
+      settingsSwitch.classList.remove('active');
+      settingsSwitch.setAttribute('aria-checked','false');
+      settingsLabel.textContent = 'Settings Off';
+      resetEditState();
+      resetAccountEditState();
+    }
+    try { localStorage.setItem(STORAGE_SETTINGS, settingsMode ? '1' : '0'); } catch(e){}
+  }
+  settingsSwitch.addEventListener('click', () => {
+    settingsMode = !settingsMode;
+    applySettingsMode();
+    renderExpenses();
+    renderAccounts();
+    renderCategoryChips();
+    renderAccountTypeChips();
+  });
+
+  // ---------- Helpers ----------
+  /* FIX #2: correct negative formatting: -₹500 (not ₹-500) */
+  const formatINR = n => {
+    const num = Number(n) || 0;
+    const abs = Math.abs(num).toLocaleString('en-IN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    });
+    return (num < 0 ? '-₹' : '₹') + abs;
+  };
+  const getSelectedPeriod = () => ({ year:new Date().getFullYear(), month:parseInt(monthSelect.value,10) });
+  const getPeriodEntries = (year,month) => entries.filter(e => e.year===year && e.month===month);
+  const escapeHtml = str => String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function saveAll(silent) {
+    try {
+      localStorage.setItem(STORAGE_ENTRIES, JSON.stringify(entries));
+      localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(categories));
+      localStorage.setItem(STORAGE_ACCOUNTS, JSON.stringify(accounts));
+      localStorage.setItem(STORAGE_CUSTOM_ACCOUNT_TYPES, JSON.stringify(customAccountTypes));
+      if (!silent) {
+        const orig = saveBtn.textContent;
+        saveBtn.textContent = '✅ Saved!';
+        saveBtn.disabled = true;
+        setTimeout(() => { saveBtn.textContent = orig; saveBtn.disabled = false; }, 1200);
+      }
+    } catch(err) {
+      console.warn('Save failed:', err);
+      alert('Could not save data. Storage may be full or blocked.');
+    }
+  }
+
+  function loadAll() {
+    try {
+      const rawE = localStorage.getItem(STORAGE_ENTRIES);
+      const rawC = localStorage.getItem(STORAGE_CATEGORIES);
+      const rawA = localStorage.getItem(STORAGE_ACCOUNTS);
+      const rawT = localStorage.getItem(STORAGE_CUSTOM_ACCOUNT_TYPES);
+      const rawS = localStorage.getItem(STORAGE_SETTINGS);
+      entries = rawE ? JSON.parse(rawE) : [];
+      if (!Array.isArray(entries)) entries = [];
+      categories = rawC ? JSON.parse(rawC) : null;
+      if (!Array.isArray(categories) || !categories.length) categories = [...DEFAULT_CATEGORIES];
+      accounts = rawA ? JSON.parse(rawA) : [];
+      if (!Array.isArray(accounts)) accounts = [];
+      customAccountTypes = rawT ? JSON.parse(rawT) : [];
+      if (!Array.isArray(customAccountTypes)) customAccountTypes = [];
+      settingsMode = rawS === '1';
+    } catch(err) {
+      console.warn('Load failed:', err);
+      entries = []; categories = [...DEFAULT_CATEGORIES]; accounts = [];
+      customAccountTypes = []; settingsMode = false;
+    }
+  }
+
+  function populateSelectors() {
+    monthSelect.innerHTML = '';
+    MONTHS.forEach((name, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx; opt.textContent = name;
+      monthSelect.appendChild(opt);
+    });
+    monthSelect.value = new Date().getMonth();
+  }
+
+  // ---------- Spend Categories ----------
+  function refreshCategorySelect(preserveValue) {
+    const current = preserveValue !== undefined ? preserveValue : spendCategory.value;
+    spendCategory.innerHTML = '';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat; opt.textContent = cat;
+      spendCategory.appendChild(opt);
+    });
+    if (categories.includes(current)) spendCategory.value = current;
+    else if (categories.length) spendCategory.value = categories[0];
+  }
+
+  function renderCategoryChips() {
+    categoryChips.innerHTML = '';
+    if (!categories.length) {
+      const msg = document.createElement('span');
+      msg.style.cssText = 'color:#94a3b8;font-size:.82rem;font-style:italic';
+      msg.textContent = 'No categories yet. Add one below.';
+      categoryChips.appendChild(msg);
+      return;
+    }
+    categories.forEach(cat => {
+      const chip = document.createElement('span');
+      chip.className = 'category-chip' + (settingsMode ? '' : ' no-edit');
+      const name = document.createElement('span'); name.textContent = cat;
+      chip.appendChild(name);
+      if (settingsMode) {
+        const e = document.createElement('button');
+        e.className='chip-btn edit'; e.innerHTML='✏️'; e.title='Edit';
+        e.type='button';
+        e.addEventListener('click', () => editCategory(cat));
+        chip.appendChild(e);
+        const r = document.createElement('button');
+        r.className='chip-btn remove'; r.innerHTML='✕'; r.title='Remove';
+        r.type='button';
+        r.addEventListener('click', () => removeCategory(cat));
+        chip.appendChild(r);
+      }
+      categoryChips.appendChild(chip);
+    });
+  }
+
+  function addCategory() {
+    if (!settingsMode) return;
+    const name = (newCategoryInput.value || '').trim();
+    if (!name) return alert('Please enter a category name.');
+    if (categories.some(c => c.toLowerCase() === name.toLowerCase())) return alert('This category already exists.');
+    categories.push(name);
+    newCategoryInput.value = '';
+    saveAll(true);
+    refreshCategorySelect(name);
+    renderCategoryChips();
+  }
+
+  function editCategory(oldName) {
+    if (!settingsMode) return;
+    const newName = prompt(`Edit category "${oldName}":`, oldName);
+    if (newName === null) return;
+    const trimmed = newName.trim();
+    if (!trimmed) return alert('Category name cannot be empty.');
+    if (trimmed.toLowerCase() !== oldName.toLowerCase() &&
+        categories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+      return alert('Another category with that name already exists.');
+    }
+    const idx = categories.indexOf(oldName);
+    if (idx === -1) return;
+    categories[idx] = trimmed;
+    entries.forEach(e => { if (e.type==='spend' && e.category===oldName) e.category = trimmed; });
+    saveAll(true);
+    refreshCategorySelect(trimmed);
+    renderCategoryChips();
+    renderExpenses();
+  }
+
+  function removeCategory(name) {
+    if (!settingsMode) return;
+    if (categories.length <= 1) return alert('You need at least one category.');
+    const usedCount = entries.filter(e => e.type==='spend' && e.category===name).length;
+    let msg = `Remove category "${name}"?`;
+    if (usedCount) msg += `\n\n⚠️ ${usedCount} entr${usedCount===1?'y':'ies'} will be re-categorised.`;
+    if (!confirm(msg)) return;
+    categories = categories.filter(c => c !== name);
+    const fallback = categories.includes('Other') ? 'Other' : categories[0];
+    entries.forEach(e => { if (e.type==='spend' && e.category===name) e.category = fallback; });
+    saveAll(true);
+    refreshCategorySelect();
+    renderCategoryChips();
+    renderExpenses();
+  }
+
+  function resetCategories() {
+    if (!settingsMode) return;
+    if (!confirm('Reset categories to defaults? Affected entries will be set to "Other".')) return;
+    categories = [...DEFAULT_CATEGORIES];
+    entries.forEach(e => { if (e.type==='spend' && !categories.includes(e.category)) e.category='Other'; });
+    saveAll(true);
+    refreshCategorySelect();
+    renderCategoryChips();
+    renderExpenses();
+  }
+
+  // ---------- Custom Account/ID Types ----------
+  function refreshAccountTypeSelect(preserveValue) {
+    const current = preserveValue !== undefined ? preserveValue : accountType.value;
+    accountType.innerHTML = '';
+    Object.entries(BASE_ACCOUNT_TYPES).forEach(([key, val]) => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = val.label;
+      accountType.appendChild(opt);
+    });
+    customAccountTypes.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = '📌 ' + t;
+      accountType.appendChild(opt);
+    });
+    const allKeys = [...Object.keys(BASE_ACCOUNT_TYPES), ...customAccountTypes];
+    if (allKeys.includes(current)) accountType.value = current;
+    else accountType.value = 'bank';
+  }
+
+  function renderAccountTypeChips() {
+    accountTypeChips.innerHTML = '';
+    if (!customAccountTypes.length) {
+      const msg = document.createElement('span');
+      msg.style.cssText = 'color:#94a3b8;font-size:.82rem;font-style:italic';
+      msg.textContent = settingsMode
+        ? 'No custom types yet. Add one below (e.g. Credit Card, UPI, Demat).'
+        : 'No custom types added yet.';
+      accountTypeChips.appendChild(msg);
+      return;
+    }
+    customAccountTypes.forEach(t => {
+      const chip = document.createElement('span');
+      chip.className = 'category-chip' + (settingsMode ? '' : ' no-edit');
+      const name = document.createElement('span');
+      name.textContent = '📌 ' + t;
+      chip.appendChild(name);
+      if (settingsMode) {
+        /* NEW: ✏️ Edit (rename) button */
+        const e = document.createElement('button');
+        e.className = 'chip-btn edit';
+        e.innerHTML = '✏️';
+        e.title = 'Edit';
+        e.type = 'button';
+        e.addEventListener('click', () => editAccountType(t));
+        chip.appendChild(e);
+
+        const r = document.createElement('button');
+        r.className = 'chip-btn remove';
+        r.innerHTML = '✕';
+        r.title = 'Remove';
+        r.type = 'button';
+        r.addEventListener('click', () => removeAccountType(t));
+        chip.appendChild(r);
+      }
+      accountTypeChips.appendChild(chip);
+    });
+  }
+
+  /* NEW: rename a custom account type (and update every account using it) */
+  function editAccountType(oldName) {
+    if (!settingsMode) return;
+    const newName = prompt(`Edit custom type "${oldName}":`, oldName);
+    if (newName === null) return;
+    const trimmed = newName.trim();
+    if (!trimmed) return alert('Type name cannot be empty.');
+
+    const lower = trimmed.toLowerCase();
+    if (lower !== oldName.toLowerCase()) {
+      const baseLabels = Object.values(BASE_ACCOUNT_TYPES).map(v => v.label.toLowerCase());
+      if (Object.keys(BASE_ACCOUNT_TYPES).some(k => k.toLowerCase() === lower) ||
+          baseLabels.some(l => l.includes(lower))) {
+        return alert('This name matches a built-in type.');
+      }
+      if (customAccountTypes.some(t => t.toLowerCase() === lower)) {
+        return alert('Another custom type with that name already exists.');
+      }
+    }
+
+    const idx = customAccountTypes.indexOf(oldName);
+    if (idx === -1) return;
+    customAccountTypes[idx] = trimmed;
+
+    /* migrate accounts that used the old name */
+    accounts.forEach(a => { if (a.type === oldName) a.type = trimmed; });
+
+    saveAll(true);
+    refreshAccountTypeSelect(trimmed);
+    renderAccountTypeChips();
+    renderAccounts();
+  }
+
+  function addAccountType() {
+    if (!settingsMode) return;
+    const name = (newAccountTypeInput.value || '').trim();
+    if (!name) return alert('Please enter a type name.');
+    const lower = name.toLowerCase();
+    const baseLabels = Object.values(BASE_ACCOUNT_TYPES).map(v => v.label.toLowerCase());
+    if (Object.keys(BASE_ACCOUNT_TYPES).some(k => k.toLowerCase() === lower) ||
+        baseLabels.some(l => l.includes(lower))) {
+      return alert('This type already exists as a built-in type.');
+    }
+    if (customAccountTypes.some(t => t.toLowerCase() === lower)) {
+      return alert('This custom type already exists.');
+    }
+    customAccountTypes.push(name);
+    newAccountTypeInput.value = '';
+    saveAll(true);
+    refreshAccountTypeSelect(name);
+    renderAccountTypeChips();
+  }
+
+  function removeAccountType(name) {
+    if (!settingsMode) return;
+    const usedCount = accounts.filter(a => a.type === name).length;
+    let msg = `Remove custom type "${name}"?`;
+    if (usedCount) msg += `\n\n⚠️ ${usedCount} account${usedCount === 1 ? '' : 's'} using this type will be re-categorised to "Other".`;
+    if (!confirm(msg)) return;
+    customAccountTypes = customAccountTypes.filter(t => t !== name);
+    accounts.forEach(a => { if (a.type === name) a.type = 'other'; });
+    saveAll(true);
+    refreshAccountTypeSelect('other');
+    renderAccountTypeChips();
+    renderAccounts();
+  }
+
+  function resetAccountTypes() {
+    if (!settingsMode) return;
+    if (!customAccountTypes.length) return alert('No custom types to reset.');
+    if (!confirm('Remove all custom types? Accounts using them will be re-categorised to "Other".')) return;
+    customAccountTypes = [];
+    accounts.forEach(a => { if (!BASE_ACCOUNT_TYPES[a.type]) a.type = 'other'; });
+    saveAll(true);
+    refreshAccountTypeSelect('other');
+    renderAccountTypeChips();
+    renderAccounts();
+  }
+
+  // ---------- Expense edit state ----------
+  function resetEditState() {
+    editingId = null; editingType = null;
+    creditFormCard.classList.remove('editing');
+    creditFormTitle.textContent = '⬆️ Add Salary / Credit';
+    creditEditingTag.style.display = 'none';
+    cancelCreditEditBtn.style.display = 'none';
+    addCreditBtn.textContent = 'Add Credit';
+    addCreditBtn.classList.remove('btn-update');
+    addCreditBtn.classList.add('btn-credit');
+    creditDesc.value = 'Salary';
+    creditAmount.value = '';
+
+    spendFormCard.classList.remove('editing');
+    spendFormTitle.textContent = '⬇️ Add Spend';
+    spendEditingTag.style.display = 'none';
+    cancelSpendEditBtn.style.display = 'none';
+    addSpendBtn.textContent = 'Add Spend';
+    addSpendBtn.classList.remove('btn-update');
+    addSpendBtn.classList.add('btn-spend');
+    spendDesc.value = '';
+    spendAmount.value = '';
+    refreshCategorySelect(categories[0]);
+  }
+
+  function enterEditMode(entry) {
+    if (!settingsMode) return;
+    resetEditState();
+    editingId = entry.id; editingType = entry.type;
+    if (entry.type === 'credit') {
+      creditFormCard.classList.add('editing');
+      creditFormTitle.textContent = '✏️ Edit Salary / Credit';
+      creditEditingTag.style.display = 'inline-block';
+      cancelCreditEditBtn.style.display = 'inline-flex';
+      addCreditBtn.textContent = 'Update Credit';
+      addCreditBtn.classList.remove('btn-credit');
+      addCreditBtn.classList.add('btn-update');
+      creditDesc.value = entry.description;
+      creditAmount.value = entry.amount;
+      creditDesc.focus(); creditAmount.select();
+      creditFormCard.scrollIntoView({behavior:'smooth',block:'center'});
+    } else {
+      spendFormCard.classList.add('editing');
+      spendFormTitle.textContent = '✏️ Edit Spend';
+      spendEditingTag.style.display = 'inline-block';
+      cancelSpendEditBtn.style.display = 'inline-flex';
+      addSpendBtn.textContent = 'Update Spend';
+      addSpendBtn.classList.remove('btn-spend');
+      addSpendBtn.classList.add('btn-update');
+      spendDesc.value = entry.description;
+      refreshCategorySelect(entry.category || 'Other');
+      spendAmount.value = entry.amount;
+      spendDesc.focus(); spendAmount.select();
+      spendFormCard.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }
+
+  // ---------- Render expenses ----------
+  function renderExpenses() {
+    const { year, month } = getSelectedPeriod();
+    periodLabel.textContent = `${MONTHS[month]} ${year}`;
+    const periodEntries = getPeriodEntries(year, month);
+    const sorted = [...periodEntries].reverse();
+
+    /* FIX #5: coerce amounts to numbers safely */
+    let credits = 0, spends = 0;
+    periodEntries.forEach(e => {
+      const amt = Number(e.amount) || 0;
+      if (e.type === 'credit') credits += amt;
+      else spends += amt;
+    });
+    const net = credits - spends;
+
+    totalCreditEl.textContent = formatINR(credits);
+    totalSpendEl.textContent  = formatINR(spends);
+    netBalanceEl.textContent  = formatINR(net);
+    sumCredit.textContent = formatINR(credits);
+    sumSpend.textContent  = formatINR(spends);
+    sumNet.textContent    = formatINR(net);
+    sumNet.className = 'stat-value ' + (net>=0?'pos':'neg');
+
+    headerBalance.textContent = formatINR(net);
+    headerBalance.className = 'amt ' + (net>=0?'pos':'neg');
+
+    entriesList.innerHTML = '';
+    if (!sorted.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No entries for this month.' + (settingsMode ? ' Add a credit or spend above.' : ' Turn on Settings to add.');
+      entriesList.appendChild(empty);
+      return;
+    }
+
+    sorted.forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'entry-row';
+      if (entry.id === editingId) row.classList.add('editing-row');
+
+      const descWrap = document.createElement('div');
+      const desc = document.createElement('div');
+      desc.className = 'entry-desc'; desc.textContent = entry.description;
+      descWrap.appendChild(desc);
+      if (entry.type==='spend' && entry.category) {
+        const cat = document.createElement('div');
+        cat.className='entry-cat'; cat.textContent = entry.category;
+        descWrap.appendChild(cat);
+      }
+
+      const typeWrap = document.createElement('div');
+      const badge = document.createElement('span');
+      badge.className = 'badge ' + (entry.type==='credit'?'badge-credit':'badge-spend');
+      badge.textContent = entry.type==='credit'?'Credit':'Spend';
+      typeWrap.appendChild(badge);
+
+      const amount = document.createElement('div');
+      amount.className = 'entry-amount ' + (entry.type==='credit'?'pos':'neg');
+      amount.textContent = (entry.type==='credit'?'+ ':'− ') + formatINR(entry.amount);
+
+      const date = document.createElement('div');
+      date.className='entry-date'; date.textContent = entry.date || '—';
+
+      row.append(descWrap, typeWrap, amount, date);
+
+      if (settingsMode) {
+        const actions = document.createElement('div');
+        actions.className = 'row-actions';
+        const editBtn = document.createElement('button');
+        editBtn.className='icon-btn edit'; editBtn.innerHTML='✏️'; editBtn.title='Edit'; editBtn.type='button';
+        editBtn.addEventListener('click', () => enterEditMode(entry));
+        const delBtn = document.createElement('button');
+        delBtn.className='icon-btn delete'; delBtn.innerHTML='✕'; delBtn.title='Delete'; delBtn.type='button';
+        delBtn.addEventListener('click', () => deleteEntry(entry.id));
+        actions.append(editBtn, delBtn);
+        row.appendChild(actions);
+      }
+      entriesList.appendChild(row);
+    });
+  }
+
+  // ---------- Expense CRUD ----------
+  function addOrUpdateCredit() {
+    if (!settingsMode) return;
+    const description = (creditDesc.value || '').trim() || 'Salary';
+    const amount = parseFloat(creditAmount.value);
+    if (isNaN(amount) || amount <= 0) return alert('Please enter a valid positive amount.');
+
+    if (editingId && editingType === 'credit') {
+      const idx = entries.findIndex(e => e.id === editingId);
+      if (idx !== -1) { entries[idx].description = description; entries[idx].amount = amount; }
+      resetEditState();
+    } else {
+      const { year, month } = getSelectedPeriod();
+      /* FIX #3: correct date for non-current months */
+      const now = new Date();
+      const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth());
+      const day = isCurrentMonth ? now.getDate() : 1;
+      const dateStr = `${day}/${month + 1}/${year}`;
+      entries.push({
+        id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+        year, month, type:'credit', description, category:null, amount, date:dateStr
+      });
+      creditDesc.value = 'Salary'; creditAmount.value = ''; creditDesc.focus();
+    }
+    saveAll(true); renderExpenses();
+  }
+
+  function addOrUpdateSpend() {
+    if (!settingsMode) return;
+    const descriptionRaw = (spendDesc.value || '').trim();
+    const category = spendCategory.value || 'Other';
+    const description = descriptionRaw || category || 'Spend';
+    const amount = parseFloat(spendAmount.value);
+    if (isNaN(amount) || amount <= 0) return alert('Please enter a valid positive amount.');
+
+    if (editingId && editingType === 'spend') {
+      const idx = entries.findIndex(e => e.id === editingId);
+      if (idx !== -1) {
+        entries[idx].description = description;
+        entries[idx].category = category;
+        entries[idx].amount = amount;
+      }
+      resetEditState();
+    } else {
+      const { year, month } = getSelectedPeriod();
+      /* FIX #3: correct date for non-current months */
+      const now = new Date();
+      const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth());
+      const day = isCurrentMonth ? now.getDate() : 1;
+      const dateStr = `${day}/${month + 1}/${year}`;
+      entries.push({
+        id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+        year, month, type:'spend', description, category, amount, date:dateStr
+      });
+      spendDesc.value = ''; spendAmount.value = ''; spendDesc.focus();
+    }
+    saveAll(true); renderExpenses();
+  }
+
+  function deleteEntry(id) {
+    if (!settingsMode) return;
+    if (!confirm('Delete this entry?')) return;
+    if (editingId === id) resetEditState();
+    entries = entries.filter(e => e.id !== id);
+    saveAll(true); renderExpenses();
+  }
+
+  function clearCurrentMonth() {
+    if (!settingsMode) return;
+    const { year, month } = getSelectedPeriod();
+    const label = `${MONTHS[month]} ${year}`;
+    if (!confirm(`Delete all entries for ${label}?`)) return;
+    entries = entries.filter(e => !(e.year===year && e.month===month));
+    resetEditState(); saveAll(true); renderExpenses();
+  }
+
+  // ---------- Accounts ----------
+  function resetAccountEditState() {
+    editingAccountId = null;
+    accountFormCard.classList.remove('editing');
+    accountFormTitle.textContent = '➕ Add Account / Important Number';
+    accountEditingTag.style.display = 'none';
+    cancelAccountEditBtn.style.display = 'none';
+    addAccountBtn.textContent = 'Save';
+    accountName.value = ''; accountNumber.value = ''; accountNote.value = '';
+    accountType.value = 'bank';
+  }
+
+  function enterAccountEdit(acc) {
+    if (!settingsMode) return;
+    resetAccountEditState();
+    editingAccountId = acc.id;
+    accountFormCard.classList.add('editing');
+    accountFormTitle.textContent = '✏️ Edit Account / Number';
+    accountEditingTag.style.display = 'inline-block';
+    cancelAccountEditBtn.style.display = 'inline-flex';
+    addAccountBtn.textContent = 'Update';
+    /* ensure the account's type is present in the dropdown (fallback to 'other' if the type was removed) */
+    const allKeys = [...Object.keys(BASE_ACCOUNT_TYPES), ...customAccountTypes];
+    accountType.value = allKeys.includes(acc.type) ? acc.type : 'other';
+    accountName.value = acc.name || '';
+    accountNumber.value = acc.number || '';
+    accountNote.value = acc.note || '';
+    accountName.focus();
+    accountFormCard.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function saveAccount() {
+    if (!settingsMode) return;
+    const type = accountType.value;
+    const name = (accountName.value || '').trim();
+    const number = (accountNumber.value || '').trim();
+    const note = (accountNote.value || '').trim();
+    if (!name) return alert('Please enter a label / name.');
+    if (!number) return alert('Please enter the number or details.');
+    if (editingAccountId) {
+      const idx = accounts.findIndex(a => a.id === editingAccountId);
+      if (idx !== -1) accounts[idx] = { ...accounts[idx], type, name, number, note };
+      resetAccountEditState();
+    } else {
+      accounts.push({
+        id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+        type, name, number, note
+      });
+      resetAccountEditState();
+    }
+    saveAll(true); renderAccounts();
+  }
+
+  function deleteAccount(id) {
+    if (!settingsMode) return;
+    if (!confirm('Delete this saved number?')) return;
+    if (editingAccountId === id) resetAccountEditState();
+    accounts = accounts.filter(a => a.id !== id);
+    saveAll(true); renderAccounts();
+  }
+
+  function renderAccounts() {
+    accountsList.innerHTML = '';
+    if (!accounts.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'No saved accounts or numbers yet.' + (settingsMode ? ' Add above.' : ' Turn on Settings to add.');
+      accountsList.appendChild(empty);
+      return;
+    }
+    accounts.forEach(acc => {
+      const card = document.createElement('div');
+      card.className = 'account-card';
+      if (acc.id === editingAccountId) card.classList.add('editing-card');
+
+      const main = document.createElement('div');
+      main.className = 'account-main';
+
+      const nameRow = document.createElement('div');
+      nameRow.className = 'account-name';
+      const typeBadge = document.createElement('span');
+      typeBadge.className = 'type-badge ' + getAccountTypeClass(acc.type);
+      typeBadge.textContent = getAccountTypeLabel(acc.type);
+      nameRow.appendChild(typeBadge);
+      const nameText = document.createElement('span');
+      nameText.textContent = acc.name;
+      nameRow.appendChild(nameText);
+      main.appendChild(nameRow);
+
+      const num = document.createElement('div');
+      num.className = 'account-number';
+      num.textContent = acc.number;
+      main.appendChild(num);
+
+      if (acc.note) {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'account-note';
+        noteEl.textContent = acc.note;
+        main.appendChild(noteEl);
+      }
+      card.appendChild(main);
+
+      if (settingsMode) {
+        const actions = document.createElement('div');
+        actions.className = 'account-actions';
+        const editBtn = document.createElement('button');
+        editBtn.className='icon-btn edit'; editBtn.innerHTML='✏️'; editBtn.title='Edit'; editBtn.type='button';
+        editBtn.addEventListener('click', () => enterAccountEdit(acc));
+        const delBtn = document.createElement('button');
+        delBtn.className='icon-btn delete'; delBtn.innerHTML='✕'; delBtn.title='Delete'; delBtn.type='button';
+        delBtn.addEventListener('click', () => deleteAccount(acc.id));
+        actions.append(editBtn, delBtn);
+        card.appendChild(actions);
+      }
+      accountsList.appendChild(card);
+    });
+  }
+
+  // ---------- PDF ----------
+  function downloadPDF() {
+    const { year, month } = getSelectedPeriod();
+    const periodEntries = getPeriodEntries(year, month);
+    const sorted = [...periodEntries].reverse();
+    /* FIX #5: coerce amounts */
+    let credits = 0, spends = 0;
+    periodEntries.forEach(e => {
+      const amt = Number(e.amount) || 0;
+      if (e.type === 'credit') credits += amt;
+      else spends += amt;
+    });
+    const net = credits - spends;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return alert('Please allow pop-ups to download the PDF.');
+
+    const rowsHtml = sorted.length === 0
+      ? '<tr><td colspan="4" style="text-align:center;padding:2rem;color:#94a3b8;font-style:italic">No entries for this month.</td></tr>'
+      : sorted.map(e => `
+        <tr>
+          <td>
+            <div style="font-weight:700;color:#1e293b">${escapeHtml(e.description)}</div>
+            ${e.type==='spend' && e.category ? `<div style="font-size:.72rem;color:#94a3b8">${escapeHtml(e.category)}</div>` : ''}
+          </td>
+          <td>
+            <span style="display:inline-block;padding:.15rem .6rem;border-radius:2rem;font-size:.68rem;font-weight:700;text-transform:uppercase;${e.type==='credit'?'background:#d1fae5;color:#065f46':'background:#fee2e2;color:#991b1b'}">
+              ${e.type==='credit'?'Credit':'Spend'}
+            </span>
+          </td>
+          <td style="font-weight:800;text-align:right;color:${e.type==='credit'?'#059669':'#dc2626'}">${formatINR(e.amount)}</td>
+          <td style="color:#94a3b8;font-size:.8rem">${escapeHtml(e.date||'—')}</td>
+        </tr>
+      `).join('');
+
+    printWindow.document.open();
+    printWindow.document.write(`
+      <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Expense Report - ${MONTHS[month]} ${year}</title>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,'Segoe UI',Roboto,sans-serif}
+        body{padding:2rem;color:#1e293b;background:#fff}
+        .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #4f46e5;padding-bottom:1rem;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+        .header h1{font-size:1.5rem;color:#0f172a}
+        .header .period{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:.4rem 1rem;border-radius:2rem;font-weight:800;font-size:.85rem}
+        .brand{font-size:.78rem;color:#64748b;margin-top:.3rem}
+        .brand strong{color:#4338ca}
+        .brand a{color:#4f46e5;text-decoration:none}
+        .summary{display:flex;gap:1.5rem;flex-wrap:wrap;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #ddd6fe;border-radius:1rem;padding:1rem 1.4rem;margin-bottom:1.5rem}
+        .stat{display:flex;flex-direction:column}
+        .stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:800}
+        .stat-value{font-size:1.25rem;font-weight:800}
+        .green{color:#059669}.red{color:#dc2626}
+        table{width:100%;border-collapse:collapse;margin-bottom:1.5rem}
+        thead th{background:#f8fafc;padding:.7rem .9rem;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;border-bottom:1px solid #e2e8f0}
+        tbody td{padding:.75rem .9rem;border-bottom:1px solid #f1f5f9;font-size:.88rem;vertical-align:top}
+        tbody tr:last-child td{border-bottom:none}
+        .footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #e2e8f0;text-align:center;font-size:.78rem;color:#94a3b8}
+        .footer strong{color:#475569}.footer a{color:#4f46e5;text-decoration:none;font-weight:600}
+      </style></head><body>
+        <div class="header">
+          <div>
+            <h1>💰 Salary Tracker — Expense Report</h1>
+            <div class="brand">Created by <strong>Dr Mahadev Biradar</strong> · <a href="https://www.mahadevbiradar.in">www.mahadevbiradar.in</a></div>
+          </div>
+          <div class="period">${MONTHS[month]} ${year}</div>
+        </div>
+        <div class="summary">
+          <div class="stat"><span class="stat-label">Total Credits</span><span class="stat-value green">${formatINR(credits)}</span></div>
+          <div class="stat"><span class="stat-label">Total Spends</span><span class="stat-value red">${formatINR(spends)}</span></div>
+          <div class="stat"><span class="stat-label">Net Balance</span><span class="stat-value ${net>=0?'green':'red'}">${formatINR(net)}</span></div>
+        </div>
+        <table>
+          <thead><tr><th>Description</th><th>Type</th><th style="text-align:right">Amount</th><th>Date</th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        <div class="footer"><strong>Created by Dr Mahadev Biradar</strong> · Visit <a href="https://www.mahadevbiradar.in">www.mahadevbiradar.in</a></div>
+      </body></html>
+    `);
+    printWindow.document.close();
+    /* FIX #4: reliable print trigger */
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+    }, 300);
+  }
+
+  // ---------- Wire events ----------
+  addCreditBtn.addEventListener('click', addOrUpdateCredit);
+  addSpendBtn.addEventListener('click', addOrUpdateSpend);
+  cancelCreditEditBtn.addEventListener('click', resetEditState);
+  cancelSpendEditBtn.addEventListener('click', resetEditState);
+  clearMonthBtn.addEventListener('click', clearCurrentMonth);
+  downloadPdfBtn.addEventListener('click', downloadPDF);
+  saveBtn.addEventListener('click', () => saveAll(false));
+  monthSelect.addEventListener('change', () => { resetEditState(); renderExpenses(); });
+
+  creditAmount.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); addOrUpdateCredit(); } });
+  spendAmount.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); addOrUpdateSpend(); } });
+
+  addCategoryBtn.addEventListener('click', addCategory);
+  newCategoryInput.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); addCategory(); } });
+  resetCategoriesBtn.addEventListener('click', resetCategories);
+
+  /* Custom account type events */
+  addAccountTypeBtn.addEventListener('click', addAccountType);
+  newAccountTypeInput.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); addAccountType(); } });
+  resetAccountTypesBtn.addEventListener('click', resetAccountTypes);
+
+  addAccountBtn.addEventListener('click', saveAccount);
+  cancelAccountEditBtn.addEventListener('click', resetAccountEditState);
+  accountNumber.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); saveAccount(); } });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (editingId) resetEditState();
+      if (editingAccountId) resetAccountEditState();
+    }
+  });
+
+  // ---------- Init ----------
+  $('year').textContent = new Date().getFullYear();
+  populateSelectors();
+  loadAll();
+  refreshCategorySelect();
+  refreshAccountTypeSelect();
+  applySettingsMode();
+  renderCategoryChips();
+  renderAccountTypeChips();
+  renderExpenses();
+  renderAccounts();
+})();
+</script>
+</body>
+</html>
